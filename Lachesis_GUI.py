@@ -180,14 +180,14 @@ def processing_ddo():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder_ddo}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False)
+        df.to_excel(f'{path_to_end_folder_ddo}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False,engine='xlsxwriter')
 
         # Создаем сокращенный вариант
         send_df = df.iloc[:, :threshold_ddo]
         # Добавляем колонки с результатами
         send_df['Результат'] = df['Результат']
         send_df['Описание_результата'] = df['Описание_результата']
-        send_df.to_excel(f'{path_to_end_folder_ddo}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',index=False)
+        send_df.to_excel(f'{path_to_end_folder_ddo}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',index=False,engine='xlsxwriter')
 
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
@@ -472,14 +472,14 @@ def processing_sppu():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder_sppu}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False)
+        df.to_excel(f'{path_to_end_folder_sppu}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False,engine='xlsxwriter')
 
         # Создаем сокращенный вариант
         send_df = df.iloc[:, :threshold_sppu]
         # Добавляем колонки с результатами
         send_df['Результат'] = df['Результат']
         send_df['Описание_результата'] = df['Описание_результата']
-        send_df.to_excel(f'{path_to_end_folder_sppu}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',index=False)
+        send_df.to_excel(f'{path_to_end_folder_sppu}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',index=False,engine='xlsxwriter')
 
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
@@ -867,7 +867,7 @@ def processing_optl():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder_optl}/Полная таблица с результатами ОПТЛ от {current_time}.xlsx', index=False)
+        df.to_excel(f'{path_to_end_folder_optl}/Полная таблица с результатами ОПТЛ от {current_time}.xlsx', index=False,engine='xlsxwriter')
 
         # Создаем сокращенный вариант
         send_df = df.iloc[:, :threshold_optl]
@@ -875,7 +875,7 @@ def processing_optl():
         send_df['Результат'] = df['Результат']
         send_df['Описание_результата'] = df['Описание_результата']
         send_df.to_excel(f'{path_to_end_folder_optl}/Краткая таблица с результатами ОТПЛ  от {current_time}.xlsx',
-                         index=False)
+                         index=False,engine='xlsxwriter')
 
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
@@ -1504,7 +1504,6 @@ def processing_dcok():
 
         # соединяем после обработки
         df = pd.concat([base_df, answers_df], axis=1)
-
         description_result = """
 1) Профессиональная компетентность -быть профессионалом, мастером в своем деле. 
 Эта ориентация связана с наличием способностей и талантов в определенной области.
@@ -1540,7 +1539,7 @@ def processing_dcok():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder_dcok}/Полная таблица с результатами ДЦОК от {current_time}.xlsx', index=False)
+        df.to_excel(f'{path_to_end_folder_dcok}/Полная таблица с результатами ДЦОК от {current_time}.xlsx', index=False,engine='xlsxwriter')
 
         # Создаем сокращенный вариант
         send_df = df.iloc[:, :threshold_dcok]
@@ -1548,7 +1547,7 @@ def processing_dcok():
         send_df['Обработанный_результат'] = df['Обработанный_результат']
         send_df['Описание_результата'] = df['Описание_результата']
         send_df.to_excel(f'{path_to_end_folder_dcok}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
-                         index=False)
+                         index=False,engine='xlsxwriter')
 
 
 
