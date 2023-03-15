@@ -32,53 +32,28 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+"""
+Фунции ДДО
+"""
 
-def select_folder_data():
-    """
-    Функция для выбора папки c данными
-    :return:
-    """
-    global path_folder_data
-    path_folder_data = filedialog.askdirectory()
-
-def select_end_folder():
+def select_end_folder_ddo():
     """
     Функция для выбора конечной папки куда будут складываться итоговые файлы
     :return:
     """
-    global path_to_end_folder
-    path_to_end_folder = filedialog.askdirectory()
+    global path_to_end_folder_ddo
+    path_to_end_folder_ddo = filedialog.askdirectory()
 
-def select_file_docx():
-    """
-    Функция для выбора файла Word
-    :return: Путь к файлу шаблона
-    """
-    global file_docx
-    file_docx = filedialog.askopenfilename(
-        filetypes=(('Word files', '*.docx'), ('all files', '*.*')))
 
-def select_file_data_xlsx():
+
+def select_file_data_xlsx_ddo():
     """
     Функция для выбора файла с данными на основе которых будет генерироваться документ
     :return: Путь к файлу с данными
     """
-    global file_data_xlsx
+    global file_data_xlsx_ddo
     # Получаем путь к файлу
-    file_data_xlsx = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
-
-def select_files_data_xlsx():
-    """
-    Функция для выбора нескоьких файлов с данными на основе которых будет генерироваться документ
-    :return: Путь к файлу с данными
-    """
-    global files_data_xlsx
-    # Получаем путь файлы
-    files_data_xlsx = filedialog.askopenfilenames(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
-
-"""
-Фунции ДДО
-"""
+    file_data_xlsx_ddo = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
 
 def processing_ddo():
     """
@@ -142,7 +117,7 @@ def processing_ddo():
 Важнейшие требования, которые предъявляют профессии, связанные с изобразительной, музыкальной, литературно-художественной, актерско-сценической деятельностью человека это
 наличие способности к искусствам, творческое воображение, образное мышление, талант, трудолюбие."""}
 
-        df = pd.read_excel(file_data_xlsx)
+        df = pd.read_excel(file_data_xlsx_ddo)
 
         # переименовываем колонки
         df.columns = range(df.shape[1])
@@ -162,7 +137,7 @@ def processing_ddo():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False)
+        df.to_excel(f'{path_to_end_folder_ddo}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False)
 
         # Создаем сокращенный вариант
         send_df = df[
@@ -183,7 +158,7 @@ def processing_ddo():
         wb['Sheet'].column_dimensions['G'].width = 20
         wb['Sheet'].column_dimensions['H'].width = 40
 
-        wb.save(f'{path_to_end_folder}/Таблица для рассылки с результатами ДДО  от {current_time}.xlsx')
+        wb.save(f'{path_to_end_folder_ddo}/Таблица для рассылки с результатами ДДО  от {current_time}.xlsx')
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
@@ -383,13 +358,32 @@ def processing_result_ddo(row):
 """
 СППУ
 """
+def select_end_folder_sppu():
+    """
+    Функция для выбора конечной папки куда будут складываться итоговые файлы
+    :return:
+    """
+    global path_to_end_folder_sppu
+    path_to_end_folder_sppu = filedialog.askdirectory()
+
+
+
+def select_file_data_xlsx_sppu():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_data_xlsx_sppu
+    # Получаем путь к файлу
+    file_data_xlsx_sppu = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
 def processing_sppu():
     """
     Функция для обработки результатов тестирования сферы профессиональных предпочтений учащихся
     :return:
     """
     try:
-        df = pd.read_excel(file_data_xlsx)
+        df = pd.read_excel(file_data_xlsx_sppu)
 
         # переименовываем колонки
         df.columns = range(df.shape[1])
@@ -415,7 +409,7 @@ def processing_sppu():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False)
+        df.to_excel(f'{path_to_end_folder_sppu}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False)
 
         # Создаем сокращенный вариант
         send_df = df[
@@ -436,7 +430,7 @@ def processing_sppu():
         wb['Sheet'].column_dimensions['G'].width = 20
         wb['Sheet'].column_dimensions['H'].width = 40
 
-        wb.save(f'{path_to_end_folder}/Таблица для рассылки с результатами СППУ  от {current_time}.xlsx')
+        wb.save(f'{path_to_end_folder_sppu}/Таблица для рассылки с результатами СППУ  от {current_time}.xlsx')
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
@@ -766,24 +760,24 @@ if __name__ == '__main__':
           ).grid(column=1, row=0, padx=10, pady=25)
 
     # Создаем кнопку Выбрать файл с данными
-    btn_choose_data = Button(tab_report_ddo, text='1) Выберите файл с результатами', font=('Arial Bold', 20),
-                          command=select_file_data_xlsx
+    btn_choose_data_ddo = Button(tab_report_ddo, text='1) Выберите файл с результатами', font=('Arial Bold', 20),
+                          command=select_file_data_xlsx_ddo
                           )
-    btn_choose_data.grid(column=0, row=2, padx=10, pady=10)
+    btn_choose_data_ddo.grid(column=0, row=2, padx=10, pady=10)
 
     # Создаем кнопку для выбора папки куда будут генерироваться файлы
 
-    btn_choose_end_folder = Button(tab_report_ddo, text='2) Выберите конечную папку', font=('Arial Bold', 20),
-                                       command=select_end_folder
+    btn_choose_end_folder_ddo = Button(tab_report_ddo, text='2) Выберите конечную папку', font=('Arial Bold', 20),
+                                       command=select_end_folder_ddo
                                        )
-    btn_choose_end_folder.grid(column=0, row=3, padx=10, pady=10)
+    btn_choose_end_folder_ddo.grid(column=0, row=3, padx=10, pady=10)
 
     #Создаем кнопку обработки данных
 
-    btn_proccessing_data = Button(tab_report_ddo, text='3) Обработать данные', font=('Arial Bold', 20),
+    btn_proccessing_data_ddo = Button(tab_report_ddo, text='3) Обработать данные', font=('Arial Bold', 20),
                                        command=processing_ddo
                                        )
-    btn_proccessing_data.grid(column=0, row=4, padx=10, pady=10)
+    btn_proccessing_data_ddo.grid(column=0, row=4, padx=10, pady=10)
 
     """
     Сфера профессиональных предпочтений учащихся
@@ -807,17 +801,17 @@ if __name__ == '__main__':
           ).grid(column=1, row=0, padx=10, pady=25)
 
     # Создаем кнопку Выбрать файл с данными
-    btn_choose_data = Button(tab_report_sppu, text='1) Выберите файл с результатами', font=('Arial Bold', 20),
-                          command=select_file_data_xlsx
+    btn_choose_data_sppu = Button(tab_report_sppu, text='1) Выберите файл с результатами', font=('Arial Bold', 20),
+                          command=select_file_data_xlsx_sppu
                           )
-    btn_choose_data.grid(column=0, row=2, padx=10, pady=10)
+    btn_choose_data_sppu.grid(column=0, row=2, padx=10, pady=10)
 
     # Создаем кнопку для выбора папки куда будут генерироваться файлы
 
-    btn_choose_end_folder = Button(tab_report_sppu, text='2) Выберите конечную папку', font=('Arial Bold', 20),
-                                       command=select_end_folder
+    btn_choose_end_folder_sppu = Button(tab_report_sppu, text='2) Выберите конечную папку', font=('Arial Bold', 20),
+                                       command=select_end_folder_sppu
                                        )
-    btn_choose_end_folder.grid(column=0, row=3, padx=10, pady=10)
+    btn_choose_end_folder_sppu.grid(column=0, row=3, padx=10, pady=10)
 
     #Создаем кнопку обработки данных
 
