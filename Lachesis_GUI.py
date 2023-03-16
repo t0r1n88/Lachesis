@@ -11,22 +11,28 @@ import warnings
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 import pandas as pd
-import numpy as np
-import openpyxl
-from openpyxl import load_workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font
-from openpyxl.styles import Alignment
+import tempfile
 import time
+import datetime
 import re
-import traceback
-
+import logging
+logging.basicConfig(
+    level=logging.WARNING,
+    filename="error.log",
+    filemode='w',
+    # чтобы файл лога перезаписывался  при каждом запуске.Чтобы избежать больших простыней. По умолчанию идет 'a'
+    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+    datefmt='%H:%M:%S',
+)
+from docxtpl import DocxTemplate
+from docxcompose.composer import Composer
+from docx import Document
 
 
 """
 Обработка результатов профориентационных тестов из яндекс форм
 """
-
+#Общие функции и классы
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller
@@ -46,12 +52,26 @@ def report_callback_exception(self, exc, val, tb):
     https://stackoverflow.com/questions/15246523/handling-exception-in-python-tkinter
     """
     messagebox.showerror("Введите число !", message=str(val))
+# Классы для исключений
 
 class WrongNumberColumn(Exception):
     """
     Класс для исключения проверяющего количество колонок в в таблице
     """
     pass
+
+class CheckBoxException(Exception):
+    """
+    Класс для вызовы исключения в случае если неправильно выставлены чекбоксы
+    """
+    pass
+
+class NotFoundValue(Exception):
+    """
+    Класс для обозначения того что значение не найдено
+    """
+    pass
+
 
 """
 Фунции ДДО
@@ -200,17 +220,17 @@ def processing_ddo():
         send_df.to_excel(f'{path_to_end_folder_ddo}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',index=False,engine='xlsxwriter')
 
     except NameError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except FileNotFoundError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -218,7 +238,7 @@ def processing_ddo():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                             'Данные успешно обработаны')
 
 
@@ -685,17 +705,17 @@ def processing_sppu():
         send_df.to_excel(f'{path_to_end_folder_sppu}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',index=False,engine='xlsxwriter')
 
     except NameError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except FileNotFoundError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -703,7 +723,7 @@ def processing_sppu():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                             'Данные успешно обработаны')
 
 
@@ -1092,17 +1112,17 @@ def processing_optl():
                          index=False,engine='xlsxwriter')
 
     except NameError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except FileNotFoundError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -1110,7 +1130,7 @@ def processing_optl():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                             'Данные успешно обработаны')
 
 
@@ -1779,17 +1799,17 @@ def processing_dcok():
 
 
     except NameError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except FileNotFoundError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -1797,7 +1817,7 @@ def processing_dcok():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                             'Данные успешно обработаны')
 
 """
@@ -2239,17 +2259,17 @@ def processing_complex():
             index=False, engine='xlsxwriter')
 
     except NameError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except FileNotFoundError:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -2258,15 +2278,213 @@ def processing_complex():
                              f'ДДО - 20 колонок т.е. 20 тестовых колонок')
 
     else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.1',
+        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.2',
                             'Данные успешно обработаны')
 
+def select_file_template_doc():
+    """
+    Функция для выбора файла шаблона
+    :return: Путь к файлу шаблона
+    """
+    global name_file_template_doc
+    name_file_template_doc = filedialog.askopenfilename(
+        filetypes=(('Word files', '*.docx'), ('all files', '*.*')))
 
+
+def select_file_data_doc():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global name_file_data_doc
+    # Получаем путь к файлу
+    name_file_data_doc = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def select_end_folder_doc():
+    """
+    Функция для выбора папки куда будут генерироваться файлы
+    :return:
+    """
+    global path_to_end_folder_doc
+    path_to_end_folder_doc = filedialog.askdirectory()
+
+def create_doc_convert_date(cell):
+    """
+    Функция для конвертации даты при создании документов
+    :param cell:
+    :return:
+    """
+    try:
+        string_date = datetime.datetime.strftime(cell, '%d.%m.%Y')
+        return string_date
+    except ValueError:
+        return 'Не удалось конвертировать дату.Проверьте значение ячейки!!!'
+    except TypeError:
+        return 'Не удалось конвертировать дату.Проверьте значение ячейки!!!'
+
+def combine_all_docx(filename_master, files_lst):
+    """
+    Функция для объединения файлов Word взято отсюда
+    https://stackoverflow.com/questions/24872527/combine-word-document-using-python-docx
+    :param filename_master: базовый файл
+    :param files_list: список с созданными файлами
+    :return: итоговый файл
+    """
+    # Получаем текущее время
+    t = time.localtime()
+    current_time = time.strftime('%H_%M_%S', t)
+
+    number_of_sections = len(files_lst)
+    # Открываем и обрабатываем базовый файл
+    master = Document(filename_master)
+    composer = Composer(master)
+    # Перебираем и добавляем файлы к базовому
+    for i in range(0, number_of_sections):
+        doc_temp = Document(files_lst[i])
+        composer.append(doc_temp)
+    # Сохраняем файл
+    composer.save(f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.docx")
+
+def generate_docs_other():
+    """
+    Функция для создания документов из произвольных таблиц(т.е. отличающихся от структуры базы данных Веста Обработка таблиц и создание документов ver 1.29)
+    :return:
+    """
+    try:
+        name_column = entry_name_column_data.get()
+        name_type_file = entry_type_file.get()
+        name_value_column = entry_value_column.get()
+
+        # Считываем данные
+        # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
+        df = pd.read_excel(name_file_data_doc, dtype=str)
+
+        # Заполняем Nan
+        df.fillna(' ', inplace=True)
+
+        # получаем первую строку датафрейма
+        # first_row = df.iloc[0, :]
+        # lst_first_row = list(first_row)
+        lst_date_columns = []
+        # Перебираем
+        #  for idx, value in enumerate(lst_first_row):
+        #      result = check_date_columns(idx, value)
+        #      if result:
+        #          lst_date_columns.append(result)
+        #      else:
+        #          continue
+        for idx, column in enumerate(df.columns):
+            if 'дата' in column.lower():
+                lst_date_columns.append(idx)
+
+        # Конвертируем в пригодный строковый формат
+        for i in lst_date_columns:
+            df.iloc[:, i] = pd.to_datetime(df.iloc[:, i], errors='coerce', dayfirst=True)
+            df.iloc[:, i] = df.iloc[:, i].apply(create_doc_convert_date)
+
+        # Конвертируем датафрейм в список словарей
+        data = df.to_dict('records')
+        # Получаем состояние  чекбокса объединения файлов в один
+
+        mode_combine = mode_combine_value.get()
+        # Получаем состояние чекбокса создания индвидуального файла
+        mode_group = mode_group_doc.get()
+
+        # В зависимости от состояния чекбоксов обрабатываем файлы
+        if mode_combine == 'No':
+            if mode_group == 'No':
+                # Создаем в цикле документы
+                for row in data:
+                    doc = DocxTemplate(name_file_template_doc)
+                    context = row
+                    # print(context)
+                    doc.render(context)
+                    # Сохраняенм файл
+                    doc.save(f'{path_to_end_folder_doc}/{name_type_file} {row[name_column]}.docx')
+            else:
+                # Отбираем по значению строку
+
+                single_df = df[df[name_column] == name_value_column]
+                # Конвертируем датафрейм в список словарей
+                single_data = single_df.to_dict('records')
+                # Проверяем количество найденных совпадений
+                if len(single_data) == 1:
+                    for row in single_data:
+                        doc = DocxTemplate(name_file_template_doc)
+                        doc.render(row)
+                        # Сохраняенм файл
+                        doc.save(f'{path_to_end_folder_doc}/{name_type_file} {name_value_column}.docx')
+                elif len(single_data) > 1:
+                    for idx, row in enumerate(single_data):
+                        doc = DocxTemplate(name_file_template_doc)
+                        doc.render(row)
+                        # Сохраняенм файл
+                        doc.save(f'{path_to_end_folder_doc}/{name_type_file} {name_value_column}_{idx}.docx')
+                else:
+                    raise NotFoundValue
+
+
+
+        else:
+            if mode_group == 'No':
+                # Список с созданными файлами
+                files_lst = []
+                # Создаем временную папку
+                with tempfile.TemporaryDirectory() as tmpdirname:
+                    print('created temporary directory', tmpdirname)
+                    # Создаем и сохраняем во временную папку созданные документы Word
+                    for row in data:
+                        doc = DocxTemplate(name_file_template_doc)
+                        context = row
+                        doc.render(context)
+                        # Сохраняем файл
+                        doc.save(f'{tmpdirname}/{row[name_column]}.docx')
+                        # Добавляем путь к файлу в список
+                        files_lst.append(f'{tmpdirname}/{row[name_column]}.docx')
+                    # Получаем базовый файл
+                    main_doc = files_lst.pop(0)
+                    # Запускаем функцию
+                    combine_all_docx(main_doc, files_lst)
+            else:
+                raise CheckBoxException
+
+
+    except NameError as e:
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except KeyError as e:
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             f'В таблице не найдена указанная колонка {e.args}')
+    except PermissionError:
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             f'Закройте все файлы Word созданные Вестой')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except FileNotFoundError:
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам')
+    except CheckBoxException:
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             f'Уберите галочку из чекбокса Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)'
+                             )
+    except NotFoundValue:
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             f'Указанное значение не найдено в выбранной колонке\nПроверьте наличие такого значения в таблице'
+                             )
+    except:
+        logging.exception('AN ERROR HAS OCCURRED')
+        messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.2',
+                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
+
+    else:
+        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.29', 'Создание документов завершено!')
 
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахезис Обработка результатов профориентационных тестов ver 1.1')
+    window.title('Лахезис Обработка результатов профориентационных тестов ver 1.2')
     window.geometry('700x860')
     window.resizable(False, False)
     tkinter.Tk.report_callback_exception = report_callback_exception
@@ -2537,9 +2755,121 @@ if __name__ == '__main__':
                                           command=processing_complex
                                           )
     btn_proccessing_data_complex.grid(column=0, row=6, padx=10, pady=10)
+    """
+    Создание отчетов
+    """
 
+    tab_create_doc = ttk.Frame(tab_control)
+    tab_control.add(tab_create_doc, text='Создание документов')
+    tab_control.pack(expand=1, fill='both')
 
+    # Добавляем виджеты на вкладку Создание документов
+    # Создаем метку для описания назначения программы
+    lbl_hello = Label(tab_create_doc,
+                      text='Центр опережающей профессиональной подготовки Республики Бурятия\nГенерация документов по шаблону'
+                           '\nДля корректной работы программмы уберите из таблицы объединенные ячейки'
+                           '\nДанные обрабатываются только с первого листа файла Excel!!!')
+    lbl_hello.grid(column=0, row=0, padx=10, pady=25)
 
+    # Картинка
+    path_to_img = resource_path('logo.png')
+    img = PhotoImage(file=path_to_img)
+    Label(tab_create_doc,
+          image=img
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Создаем область для того чтобы поместить туда подготовительные кнопки(выбрать файл,выбрать папку и т.п.)
+    frame_data_for_doc = LabelFrame(tab_create_doc, text='Подготовка')
+    frame_data_for_doc.grid(column=0, row=2, padx=10)
+
+    # Создаем кнопку Выбрать шаблон
+    btn_template_doc = Button(frame_data_for_doc, text='1) Выберите шаблон документа', font=('Arial Bold', 15),
+                              command=select_file_template_doc
+                              )
+    btn_template_doc.grid(column=0, row=3, padx=10, pady=10)
+    #
+    # Создаем кнопку Выбрать файл с данными
+    btn_data_doc = Button(frame_data_for_doc, text='2) Выберите файл с данными', font=('Arial Bold', 15),
+                          command=select_file_data_doc
+                          )
+    btn_data_doc.grid(column=0, row=4, padx=10, pady=10)
+    #
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    # Определяем текстовую переменную
+    entry_name_column_data = StringVar()
+    # Описание поля
+    label_name_column_data = Label(frame_data_for_doc,
+                                   text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
+    label_name_column_data.grid(column=0, row=5, padx=10, pady=5)
+    # поле ввода
+    data_column_entry = Entry(frame_data_for_doc, textvariable=entry_name_column_data, width=30)
+    data_column_entry.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
+
+    # Поле для ввода названия генериуемых документов
+    # Определяем текстовую переменную
+    entry_type_file = StringVar()
+    # Описание поля
+    label_name_column_type_file = Label(frame_data_for_doc, text='4) Введите название создаваемых документов')
+    label_name_column_type_file.grid(column=0, row=7, padx=10, pady=5)
+    # поле ввода
+    type_file_column_entry = Entry(frame_data_for_doc, textvariable=entry_type_file, width=30)
+    type_file_column_entry.grid(column=0, row=8, padx=5, pady=5, ipadx=30, ipady=4)
+
+    btn_choose_end_folder_doc = Button(frame_data_for_doc, text='5) Выберите конечную папку', font=('Arial Bold', 15),
+                                       command=select_end_folder_doc
+                                       )
+    btn_choose_end_folder_doc.grid(column=0, row=9, padx=10, pady=10)
+
+    # Создаем область для того чтобы поместить туда опции
+    frame_data_for_options = LabelFrame(tab_create_doc, text='Дополнительные опции')
+    frame_data_for_options.grid(column=0, row=10, padx=10)
+
+    # Создаем переменную для хранения результа переключения чекбокса
+    mode_combine_value = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_combine_value.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+
+    chbox_mode_calculate = Checkbutton(frame_data_for_options,
+                                       text='Поставьте галочку, если вам нужно чтобы все файлы были объединены в один',
+                                       variable=mode_combine_value,
+                                       offvalue='No',
+                                       onvalue='Yes')
+    chbox_mode_calculate.grid(column=0, row=11, padx=10, pady=5)
+
+    # создаем чекбокс для единичного документа
+
+    # Создаем переменную для хранения результа переключения чекбокса
+    mode_group_doc = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_group_doc.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+    chbox_mode_group = Checkbutton(frame_data_for_options,
+                                   text='Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)',
+                                   variable=mode_group_doc,
+                                   offvalue='No',
+                                   onvalue='Yes')
+    chbox_mode_group.grid(column=0, row=12, padx=10, pady=5)
+    # Создаем поле для ввода значения по которому будет создаваться единичный документ
+    # Определяем текстовую переменную
+    entry_value_column = StringVar()
+    # Описание поля
+    label_name_column_group = Label(frame_data_for_options,
+                                    text='Введите значение из колонки\nуказанной на шаге 3 для которого нужно создать один документ,\nнапример конкретное ФИО')
+    label_name_column_group.grid(column=0, row=13, padx=10, pady=5)
+    # поле ввода
+    type_file_group_entry = Entry(frame_data_for_options, textvariable=entry_value_column, width=30)
+    type_file_group_entry.grid(column=0, row=14, padx=5, pady=5, ipadx=30, ipady=4)
+
+    # Создаем кнопку для создания документов из таблиц с произвольной структурой
+    btn_create_files_other = Button(tab_create_doc, text='6) Создать документ(ы)',
+                                    font=('Arial Bold', 15),
+                                    command=generate_docs_other
+                                    )
+    btn_create_files_other.grid(column=0, row=14, padx=10, pady=10)
 
 
     window.mainloop()
