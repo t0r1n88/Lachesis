@@ -52,7 +52,7 @@ def report_callback_exception(self, exc, val, tb):
     https://stackoverflow.com/questions/15246523/handling-exception-in-python-tkinter
     """
     messagebox.showerror("Введите число !", message=str(val))
-# Классы для исключений
+# # Классы для исключений
 
 class WrongNumberColumn(Exception):
     """
@@ -1778,7 +1778,7 @@ def processing_dcok():
     try:
         threshold_dcok = var_entry_threshold_dcok.get()
         df = pd.read_excel(file_data_xlsx_dcok)
-        if df.shape[1] - threshold_dcok != 41:
+        if df.shape[1] - threshold_dcok <= 41:
             raise WrongNumberColumn
 
         base_df = df.iloc[:, :threshold_dcok]  # создаем датафрейм с данными не относящимися к тесту
@@ -1791,7 +1791,7 @@ def processing_dcok():
         # очищаем от всех символов кроме букв цифр
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
-        answers_df = df.iloc[:, threshold_dcok:]  # датафрейм с результатами
+        answers_df = df.iloc[:, threshold_dcok:threshold_dcok + 41]  # датафрейм с результатами
 
         answers_df.columns = [f'ДЦОК_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -1855,10 +1855,6 @@ def processing_dcok():
         send_df['ДЦОК_Описание_результата'] = df['ДЦОК_Описание_результата']
         send_df.to_excel(f'{path_to_end_folder_dcok}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
                          index=False, engine='xlsxwriter')
-
-
-
-
 
 
     except NameError:
