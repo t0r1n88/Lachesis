@@ -164,7 +164,7 @@ def processing_ddo():
 
         df = pd.read_excel(file_data_xlsx_ddo)
         threshold_ddo = var_entry_threshold_ddo.get()  # количество колонок не относящихся к вопросам
-        if df.shape[1] -threshold_ddo !=20:
+        if df.shape[1] -threshold_ddo <=20:
             raise WrongNumberColumn
 
         base_df = df.iloc[:, :threshold_ddo]  # создаем датафрейм с данными не относящимися к тесту
@@ -177,7 +177,7 @@ def processing_ddo():
         # очищаем от всех символов кроме букв цифр
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
-        answers_df = df.iloc[:, threshold_ddo:]  # датафрейм с результатами
+        answers_df = df.iloc[:, threshold_ddo:threshold_ddo+20]  # датафрейм с результатами
 
         answers_df.columns = [f'ДДО_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -679,7 +679,7 @@ def processing_sppu():
         df = pd.read_excel(file_data_xlsx_sppu)
         threshold_sppu = var_entry_threshold_sppu.get()  # количество колонок не относящихся к вопросам
 
-        if df.shape[1] - threshold_sppu != 24:
+        if df.shape[1] - threshold_sppu <= 24:
             raise WrongNumberColumn
 
         base_df = df.iloc[:, :threshold_sppu]  # создаем датафрейм с данными не относящимися к тесту
@@ -692,7 +692,7 @@ def processing_sppu():
         # очищаем от всех символов кроме букв цифр
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
-        answers_df = df.iloc[:, threshold_sppu:]  # датафрейм с результатами
+        answers_df = df.iloc[:, threshold_sppu:threshold_sppu+24]  # датафрейм с результатами
 
         answers_df.columns = [f'СППУ_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -1075,7 +1075,7 @@ def processing_optl():
 
         df = pd.read_excel(file_data_xlsx_optl)
 
-        if df.shape[1] - threshold_optl != 30:
+        if df.shape[1] - threshold_optl <= 30:
             raise WrongNumberColumn
 
         base_df = df.iloc[:, :threshold_optl]  # создаем датафрейм с данными не относящимися к тесту
@@ -1088,7 +1088,7 @@ def processing_optl():
         # очищаем от всех символов кроме букв цифр
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
-        answers_df = df.iloc[:, threshold_optl:]  # датафрейм с результатами
+        answers_df = df.iloc[:, threshold_optl:threshold_optl+30]  # датафрейм с результатами
 
         answers_df.columns = [f'ОТПЛ_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -1910,7 +1910,7 @@ def processing_complex():
 
         primal_df = pd.read_excel(file_data_xlsx_complex)
         # проверяем количество колонок
-        if primal_df.shape[1] - threshold_complex != 115:
+        if primal_df.shape[1] - threshold_complex <= 115:
             raise WrongNumberColumn
 
         base_df = primal_df.iloc[:, :threshold_complex]  # создаем датафрейм с данными не относящимися к тесту
