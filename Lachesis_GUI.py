@@ -27,7 +27,7 @@ logging.basicConfig(
 from docxtpl import DocxTemplate
 from docxcompose.composer import Composer
 from docx import Document
-
+import xlsxwriter
 
 """
 Обработка результатов профориентационных тестов из яндекс форм
