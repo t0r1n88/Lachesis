@@ -8,7 +8,6 @@ from tkinter import messagebox
 from tkinter import ttk
 # pd.options.mode.chained_assignment = None  # default='warn'
 import warnings
-
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 import pandas as pd
 import tempfile
