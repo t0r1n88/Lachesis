@@ -1282,7 +1282,7 @@ def processing_dcok(base_df:pd.DataFrame,answers_df:pd.DataFrame,size:int):
     :return:
     """
     try:
-        if answers_df.shape[1]  != 41:
+        if answers_df.shape[1]  != size:
             raise WrongNumberColumn
         answers_df.columns = [f'ДЦОК_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -1376,7 +1376,7 @@ def processing_optl(base_df:pd.DataFrame,answers_df:pd.DataFrame,size:int):
     Функция для обработки результатов на определение профессионального типа личности
     """
     try:
-        if answers_df.shape[1] != 30:
+        if answers_df.shape[1] != size:
             raise WrongNumberColumn
 
         answers_df.columns = [f'ОТПЛ_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
@@ -1456,7 +1456,6 @@ def processing_optl(base_df:pd.DataFrame,answers_df:pd.DataFrame,size:int):
         # создаем датафреймы для возврата в основную функцию
         out_full_df = df.iloc[:,threshold_base:] # датафрейм с вопросами и результатами без анкетных данных
         out_result_df = send_df.iloc[:,threshold_base:]
-        out_result_df.to_excel('1.xlsx')
 
         return out_full_df,out_result_df
 
@@ -1480,28 +1479,15 @@ def processing_optl(base_df:pd.DataFrame,answers_df:pd.DataFrame,size:int):
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
 
-def processing_sppu():
+def processing_sppu(base_df:pd.DataFrame,answers_df:pd.DataFrame,size:int):
     """
     Функция для обработки результатов тестирования сферы профессиональных предпочтений учащихся
     :return:
     """
     try:
-        df = pd.read_excel(file_data_xlsx_sppu)
 
-        if df.shape[1] - threshold_sppu <= 24:
+        if answers_df.shape[1] != size:
             raise WrongNumberColumn
-
-        base_df = df.iloc[:, :threshold_sppu]  # создаем датафрейм с данными не относящимися к тесту
-
-        # делаем строковыми названия колонок
-        base_df.columns = list(map(str, base_df.columns))
-        # заменяем пробелы на нижнее подчеркивание и очищаем от пробельных символов в начале и конце
-        base_df.columns = [column.strip().replace(' ', '_') for column in base_df.columns]
-
-        # очищаем от всех символов кроме букв цифр
-        base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
-
-        answers_df = df.iloc[:, threshold_sppu:threshold_sppu+24]  # датафрейм с результатами
 
         answers_df.columns = [f'СППУ_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -1544,16 +1530,23 @@ def processing_sppu():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder_sppu}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False,
+        df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False,
                     engine='xlsxwriter')
 
         # Создаем сокращенный вариант
-        send_df = df.iloc[:, :threshold_sppu]
+        send_df = df.iloc[:, :threshold_base]
         # Добавляем колонки с результатами
         send_df['СППУ_Обработанный_результат'] = df['СППУ_Обработанный_результат']
         send_df['СППУ_Описание_результата'] = df['СППУ_Описание_результата']
-        send_df.to_excel(f'{path_to_end_folder_sppu}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
+        send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
                          index=False, engine='xlsxwriter')
+
+        # создаем датафреймы для возврата в основную функцию
+        out_full_df = df.iloc[:,threshold_base:] # датафрейм с вопросами и результатами без анкетных данных
+        out_result_df = send_df.iloc[:,threshold_base:]
+
+        return out_full_df,out_result_df
+
 
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.3',
@@ -1573,18 +1566,13 @@ def processing_sppu():
                              f'ОПТЛ - 30 колонок т.е. 30 тестовых вопросов\n'
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
-    else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.3',
-                            'Данные успешно обработаны')
 
-def processing_ddo():
+def processing_ddo(base_df:pd.DataFrame,answers_df:pd.DataFrame,size:int):
     """
     Фугкция для обработки данных ДДО
     :return:
     """
     try:
-
-
         # Создаем словари для создания текста письма
         global dct_prof
         dct_prof = {
@@ -1642,22 +1630,8 @@ def processing_ddo():
 Наличие способности к искусствам, творческое воображение, образное мышление, талант, трудолюбие.
 """}
 
-        df = pd.read_excel(file_data_xlsx_ddo)
-        threshold_ddo = var_entry_threshold_ddo.get()  # количество колонок не относящихся к вопросам
-        if df.shape[1] -threshold_ddo <=20:
+        if answers_df.shape[1] != size:
             raise WrongNumberColumn
-
-        base_df = df.iloc[:, :threshold_ddo]  # создаем датафрейм с данными не относящимися к тесту
-        # делаем строковыми названия колонок
-        base_df.columns = list(map(str, base_df.columns))
-
-        # заменяем пробелы на нижнее подчеркивание и очищаем от пробельных символов в начале и конце
-        base_df.columns = [column.strip().replace(' ', '_') for column in base_df.columns]
-
-        # очищаем от всех символов кроме букв цифр
-        base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
-
-        answers_df = df.iloc[:, threshold_ddo:threshold_ddo+20]  # датафрейм с результатами
 
         answers_df.columns = [f'ДДО_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
@@ -1687,27 +1661,23 @@ def processing_ddo():
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        df.to_excel(f'{path_to_end_folder_ddo}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False,
+        df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False,
                     engine='xlsxwriter')
 
         # Создаем сокращенный вариант
-        send_df = df.iloc[:, :threshold_ddo]
+        send_df = df.iloc[:, :threshold_base]
         # Добавляем колонки с результатами
         send_df['ДДО_Необработанный_результат'] = df['ДДО_Необработанный_результат']
         send_df['ДДО_Обработанный_результат'] = df['ДДО_Обработанный_результат']
         send_df['ДДО_Описание_результата'] = df['ДДО_Описание_результата']
-        send_df.to_excel(f'{path_to_end_folder_ddo}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',
+        send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',
                          index=False, engine='xlsxwriter')
 
+        # создаем датафреймы для возврата в основную функцию
+        out_full_df = df.iloc[:,threshold_base:] # датафрейм с вопросами и результатами без анкетных данных
+        out_result_df = send_df.iloc[:,threshold_base:]
 
-
-
-
-
-
-
-
-
+        return out_full_df,out_result_df
 
     except NameError:
         messagebox.showerror('Лахезис Обработка результатов профориентационных тестов ver 1.3',
@@ -1727,9 +1697,6 @@ def processing_ddo():
                              f'ОПТЛ - 30 колонок т.е. 30 тестовых вопросов\n'
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
-    else:
-        messagebox.showinfo('Лахезис Обработка результатов профориентационных тестов ver 1.3',
-                            'Данные успешно обработаны')
 
 
 def processing_complex():
@@ -1740,16 +1707,18 @@ def processing_complex():
     # создаем словарь с параметрами скриптов формата {аббревиатура:(название функции для обработки, количество вопросов(колонок))}
     global DCT_PARAMS_SCRIPT
     DCT_PARAMS_SCRIPT = {'ДЦОК':(processing_dcok,41),'ОПТЛ':(processing_optl,30),'СППУ':(processing_sppu,24),'ДДО':(processing_ddo,20)}
-    global file_data_xlsx_complex
-    file_data_xlsx_complex = 'data/complex.xlsx'
-    global file_params
-    file_params = 'data/параметры ДЦОК ОПТЛ СППУ ДДО.xlsx'
+    # file_data_xlsx_complex = 'data/complex.xlsx'
+    # file_params = 'data/параметры ДЦОК ОПТЛ СППУ ДДО.xlsx'
+    file_data_xlsx_complex = 'data/OPTL DDO.xlsx'
+    file_params = 'data/параметры ОПТЛ ДДО.xlsx'
     global path_to_end_folder_complex
     path_to_end_folder_complex = 'data'
     global threshold_base
     threshold_base = 7
     # создаем счетчик обработанных колонок
     threshold_finshed = threshold_base
+
+
     # получаем базовый датафрейм
     df = pd.read_excel(file_data_xlsx_complex)
 
@@ -1765,8 +1734,7 @@ def processing_complex():
 
     params_df = pd.read_excel(file_params,header=None) # считываем файл с параметрами
     lst_tests = params_df[0].tolist()
-    lst_tests = ['ДЦОК','ОПТЛ']
-    # Создаем копию датафрейма с анкетными данными
+    # Создаем копию датафрейма с анкетными данными для передачи в функцию
     base_df_for_func = base_df.copy()
     # создаем копию для датафрейма с результатами
     result_df = base_df.copy()
@@ -1803,12 +1771,6 @@ def processing_complex():
         f'{path_to_end_folder_complex}/Краткая таблица с результатами комплексного теста от {current_time}.xlsx',
         index=False,
         engine='xlsxwriter')
-
-
-
-
-
-
 
 
 
