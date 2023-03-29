@@ -77,6 +77,52 @@ class NotFoundValue(Exception):
     """
     pass
 
+def extract_key_max_value(cell:str) ->str:
+    """
+    Функция для извлечения ключа с максимальным значением
+    :param cell: строка формата ключ - значение;
+    :return: ключ словаря в формате строки
+    """
+    # проверяем если некорректное значение
+    if 'Скопируйте правильные значения для указанных вопросов из квадратных скобок' in cell:
+        return cell
+    dct_result = {}
+    cell = cell.replace('\n','') # убираем переносы
+    lst_temp = cell.split(';') # сплитим по точке с запятой
+    print(lst_temp)
+    for result in lst_temp:
+        # отбрасываем пустую строку
+        if result:
+            key,value = result.split(' - ') # извлекаем ключ и значение
+            dct_result[key] = int(value)
+
+    # возвращаем элемент с максимальным значением
+    return max(dct_result, key=dct_result.get)
+
+def extract_max_value(cell:str):
+    """
+    Функция для извлечения значения ключа с максимальным значением , ха звучит странно
+    :param cell: строка формата ключ - значение;
+    :return: ключ словаря в формате строки
+    """
+    # проверяем если некорректное значение
+    if 'Скопируйте правильные значения для указанных вопросов из квадратных скобок' in cell:
+        return cell
+    dct_result = {}
+    cell = cell.replace('\n','') # убираем переносы
+    lst_temp = cell.split(';') # сплитим по точке с запятой
+    print(lst_temp)
+    for result in lst_temp:
+        # отбрасываем пустую строку
+        if result:
+            key,value = result.split(' - ') # извлекаем ключ и значение
+            dct_result[key] = int(value)
+
+    # возвращаем элемент с максимальным значением
+    return dct_result[max(dct_result, key=dct_result.get)]
+
+
+
 
 def create_out_str_ddo(x):
     """
@@ -1084,149 +1130,6 @@ def processing_result_optl(row):
 
 def processing_result_dcok(row):
     """
-    Функция для обработки результатов теста Диагностика ценностных ориентаций в карьере
-    """
-    # Создаем словарь для хранения данных
-    dct_type = {'Профессиональная компетентность': 0, 'Менеджмент': 0, 'Автономия (независимость)': 0,
-                'Стабильность работы': 0,
-                'Стабильность места жительства': 0, 'Служение': 0, 'Вызов': 0,
-                'Интеграция стилей жизни': 0, 'Предпринимательство': 0}
-    dct_error = {}  # словарь для хранения ошибочных  значений, для того чтобы было легче находить ошибки при обновлении
-    # 1
-    dct_type['Профессиональная компетентность'] += row[0]
-
-    # 2
-    dct_type['Менеджмент'] += row[1]
-
-    # 3
-    dct_type['Автономия (независимость)'] += row[2]
-
-    # 4
-    dct_type['Стабильность работы'] += row[3]
-
-    # 5
-    dct_type['Служение'] += row[4]
-
-    # 6
-    dct_type['Вызов'] += row[5]
-
-    # 7
-    dct_type['Интеграция стилей жизни'] += row[6]
-
-    # 8
-    dct_type['Предпринимательство'] += row[7]
-
-    # 9
-    dct_type['Профессиональная компетентность'] += row[8]
-
-    # 10
-    dct_type['Менеджмент'] += row[9]
-
-    # 11
-    dct_type['Автономия (независимость)'] += row[10]
-
-    # 12
-    dct_type['Стабильность работы'] += row[11]
-
-    # 13
-    dct_type['Служение'] += row[12]
-
-    # 14
-    dct_type['Вызов'] += row[13]
-
-    # 15
-    dct_type['Интеграция стилей жизни'] += row[14]
-
-    # 16
-    dct_type['Предпринимательство'] += row[15]
-
-    # 17
-    dct_type['Профессиональная компетентность'] += row[16]
-
-    # 18
-    dct_type['Менеджмент'] += row[17]
-
-    # 19
-    dct_type['Автономия (независимость)'] += row[18]
-
-    # 20
-    dct_type['Стабильность места жительства'] += row[19]
-
-    # 21
-    dct_type['Служение'] += row[20]
-
-    # 22
-    dct_type['Вызов'] += row[21]
-
-    # 23
-    dct_type['Интеграция стилей жизни'] += row[22]
-
-    # 24
-    dct_type['Предпринимательство'] += row[23]
-
-    # 25
-    dct_type['Профессиональная компетентность'] += row[24]
-
-    # 26
-    dct_type['Менеджмент'] += row[25]
-
-    # 27
-    dct_type['Автономия (независимость)'] += row[26]
-
-    # 28
-    dct_type['Стабильность места жительства'] += row[27]
-
-    # 29
-    dct_type['Служение'] += row[28]
-
-    # 30
-    dct_type['Вызов'] += row[29]
-
-    # 31
-    dct_type['Интеграция стилей жизни'] += row[30]
-
-    # 32
-    dct_type['Предпринимательство'] += row[31]
-
-    # 33
-    dct_type['Профессиональная компетентность'] += row[32]
-
-    # 34
-    dct_type['Менеджмент'] += row[33]
-
-    # 35
-    dct_type['Автономия (независимость)'] += row[34]
-
-    # 36
-    dct_type['Стабильность работы'] += row[35]
-
-    # 37
-    dct_type['Служение'] += row[36]
-
-    # 38
-    dct_type['Вызов'] += row[37]
-
-    # 39
-    dct_type['Интеграция стилей жизни'] += row[38]
-
-    # 40
-    dct_type['Предпринимательство'] += row[39]
-
-    # 41
-    dct_type['Стабильность места жительства'] += row[40]
-
-    # Сортируем словарь
-    result_lst = sorted(dct_type.items(), key=lambda t: t[1], reverse=True)
-    begin_str = ''
-    # создаем строку с результатами
-    for sphere, value in result_lst:
-        begin_str += f'{sphere} - {value};\n'
-
-    return begin_str
-
-
-def processing_finish_result_dcok(row):
-    """
 Функция для вычисления итогового балла  результатов теста Диагностика ценностных ориентаций в карьере
 """
 
@@ -1385,11 +1288,9 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 
     # Создаем колонку для результов первичного подсчета
     answers_df['ДЦОК_Необработанный_результат'] = answers_df.apply(processing_result_dcok, axis=1)
-    answers_df['ДЦОК_Необработанный_результат'] = answers_df['ДЦОК_Необработанный_результат'].astype(str)
+    answers_df['ДЦОК_Обработанный_результат'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df['Числовое_значение_результата'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_max_value)
 
-    # Создаем колонку для итоговой обработки
-    answers_df['ДЦОК_Обработанный_результат'] = answers_df.apply(processing_finish_result_dcok, axis=1)
-    answers_df['ДЦОК_Обработанный_результат'] = answers_df['ДЦОК_Обработанный_результат'].astype(str)
 
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
@@ -1421,10 +1322,10 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # создаем описание результата
     if 'ФИО' in df.columns:
         df['ДЦОК_Описание_результата'] = df['ФИО'] + '.' + ' \nДиагностика ценностных ориентаций в карьере.\n' + df[
-            'ДЦОК_Обработанный_результат'] + description_result
+            'ДЦОК_Необработанный_результат'] + description_result
     else:
         df['ДЦОК_Описание_результата'] = 'Диагностика ценностных ориентаций в карьере.\n' + df[
-            'ДЦОК_Обработанный_результат'] + description_result
+            'ДЦОК_Необработанный_результат'] + description_result
 
     # генерируем текущее время
     t = time.localtime()
@@ -1438,6 +1339,7 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Добавляем колонки с результатами
     send_df['ДЦОК_Необработанный_результат'] = df['ДЦОК_Необработанный_результат']
     send_df['ДЦОК_Обработанный_результат'] = df['ДЦОК_Обработанный_результат']
+    send_df['Числовое_значение_результата'] = df['Числовое_значение_результата']
     send_df['ДЦОК_Описание_результата'] = df['ДЦОК_Описание_результата']
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
@@ -1461,8 +1363,9 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     answers_df = answers_df.astype(str)
 
     answers_df = answers_df.applymap(lambda x: x.strip())
-    answers_df['ОПТЛ_Обработанный_результат'] = answers_df.apply(processing_result_optl, axis=1)
-    answers_df['ОПТЛ_Обработанный_результат'] = answers_df['ОПТЛ_Обработанный_результат'].astype(str)
+    answers_df['ОПТЛ_Необработанный_результат'] = answers_df.apply(processing_result_optl, axis=1)
+    answers_df['ОПТЛ_Обработанный_результат'] = answers_df['ОПТЛ_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df['ОПТЛ_Числовое_значение_результата'] = answers_df['ОПТЛ_Необработанный_результат'].apply(extract_max_value)
 
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
@@ -1508,10 +1411,10 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 """
     if 'ФИО' in df.columns:
         df['ОПТЛ_Описание_результата'] = df['ФИО'] + '.' + ' \nОпределение профессионального типа личности.\n' + df[
-            'ОПТЛ_Обработанный_результат'] + description_result
+            'ОПТЛ_Необработанный_результат'] + description_result
     else:
         df['ОПТЛ_Описание_результата'] = 'Определение профессионального типа личности.\n' + df[
-            'ОПТЛ_Обработанный_результат'] + description_result
+            'ОПТЛ_Необработанный_результат'] + description_result
 
     # генерируем текущее время
     t = time.localtime()
@@ -1523,7 +1426,9 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
+    send_df['ОПТЛ_Необработанный_результат'] = df['ОПТЛ_Необработанный_результат']
     send_df['ОПТЛ_Обработанный_результат'] = df['ОПТЛ_Обработанный_результат']
+    send_df['ОПТЛ_Числовое_значение_результата'] = df['ОПТЛ_Числовое_значение_результата']
     send_df['ОПТЛ_Описание_результата'] = df['ОПТЛ_Описание_результата']
 
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ОТПЛ  от {current_time}.xlsx',
@@ -1550,9 +1455,9 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 
     answers_df = answers_df.applymap(lambda x: x.strip())
 
-    answers_df['СППУ_Обработанный_результат'] = answers_df.apply(processing_result_sppu, axis=1)
-
-    answers_df['СППУ_Обработанный_результат'] = answers_df['СППУ_Обработанный_результат'].astype(str)
+    answers_df['СППУ_Необработанный_результат'] = answers_df.apply(processing_result_sppu, axis=1)
+    answers_df['СППУ_Обработанный_результат'] = answers_df['СППУ_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df['СППУ_Числовое_значение_результата'] = answers_df['СППУ_Необработанный_результат'].apply(extract_max_value)
 
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
@@ -1576,10 +1481,10 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 
     if 'ФИО' in df.columns:
         df['СППУ_Описание_результата'] = df['ФИО'] + '.' + ' \nСфера профессиональных предпочтений учащихся.\n' + \
-                                         df['СППУ_Обработанный_результат'] + description_result
+                                         df['СППУ_Необработанный_результат'] + description_result
     else:
         df['СППУ_Описание_результата'] = 'Сфера профессиональных предпочтений учащихся.\n' + df[
-            'СППУ_Обработанный_результат'] + description_result
+            'СППУ_Необработанный_результат'] + description_result
 
     # генерируем текущее время
     t = time.localtime()
@@ -1591,7 +1496,9 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
+    send_df['СППУ_Необработанный_результат'] = df['СППУ_Необработанный_результат']
     send_df['СППУ_Обработанный_результат'] = df['СППУ_Обработанный_результат']
+    send_df['СППУ_Числовое_значение_результата'] = df['СППУ_Числовое_значение_результата']
     send_df['СППУ_Описание_результата'] = df['СППУ_Описание_результата']
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
@@ -1673,12 +1580,11 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     answers_df = answers_df.astype(str)
 
     answers_df = answers_df.applymap(lambda x: x.strip())
-
+    # получаем результаты
     answers_df['ДДО_Необработанный_результат'] = answers_df.apply(processing_result_ddo, axis=1)
-    answers_df['ДДО_Необработанный_результат'] = answers_df['ДДО_Необработанный_результат'].astype(str)
-
-    answers_df['ДДО_Обработанный_результат'] = answers_df.apply(processing_finish_result_ddo, axis=1)
-    answers_df['ДДО_Обработанный_результат'] = answers_df['ДДО_Обработанный_результат'].astype(str)
+    # обрабатываем результаты и получаем ключ с максимальным значением
+    answers_df['ДДО_Обработанный_результат'] = answers_df['ДДО_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df['ДДО_Числовое_значение_результата'] = answers_df['ДДО_Необработанный_результат'].apply(extract_max_value)
     answers_df['ДДО_Описание_результата'] = answers_df['ДДО_Обработанный_результат'].apply(create_out_str_ddo)
 
     # соединяем после обработки
@@ -1704,6 +1610,7 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Добавляем колонки с результатами
     send_df['ДДО_Необработанный_результат'] = df['ДДО_Необработанный_результат']
     send_df['ДДО_Обработанный_результат'] = df['ДДО_Обработанный_результат']
+    send_df['ДДО_Числовое_значение_результата'] = df['ДДО_Числовое_значение_результата']
     send_df['ДДО_Описание_результата'] = df['ДДО_Описание_результата']
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
