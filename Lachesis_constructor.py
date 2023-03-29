@@ -1289,6 +1289,20 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     answers_df['ДЦОК_Обработанный_результат'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_key_max_value)
     answers_df['ДЦОК_Числовое_значение_результата'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_max_value)
 
+    # Создаем датафрейм для данных отчета
+    report_df = answers_df.iloc[::, size + 1:]
+
+    # Создаем датафрейм в который будем заносить итоговые результаты
+    finish_report_df = report_df['ДЦОК_Обработанный_результат'].value_counts().to_frame()
+
+    # получаем процента
+    finish_report_df['Доля_от_общего_количества'] = round(
+        (finish_report_df['ДЦОК_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+
+    finish_report_df = finish_report_df.reset_index()
+
+    finish_report_df.columns = ['Категория', 'Количество', 'Доля в % от общего количества']
+
 
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
@@ -1349,6 +1363,8 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
                 engine='xlsxwriter')
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет ДЦОК  от {current_time}.xlsx',
+                              index=False, engine='xlsxwriter')
 
 
 
@@ -1370,6 +1386,20 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     answers_df['ОПТЛ_Необработанный_результат'] = answers_df.apply(processing_result_optl, axis=1)
     answers_df['ОПТЛ_Обработанный_результат'] = answers_df['ОПТЛ_Необработанный_результат'].apply(extract_key_max_value)
     answers_df['ОПТЛ_Числовое_значение_результата'] = answers_df['ОПТЛ_Необработанный_результат'].apply(extract_max_value)
+
+    # Создаем датафрейм для данных отчета
+    report_df = answers_df.iloc[::, size + 1:]
+
+    # Создаем датафрейм в который будем заносить итоговые результаты
+    finish_report_df = report_df['ОПТЛ_Обработанный_результат'].value_counts().to_frame()
+
+    # получаем процента
+    finish_report_df['Доля_от_общего_количества'] = round(
+        (finish_report_df['ОПТЛ_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+
+    finish_report_df = finish_report_df.reset_index()
+
+    finish_report_df.columns = ['Категория', 'Количество', 'Доля в % от общего количества']
 
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
@@ -1443,6 +1473,8 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
                 engine='xlsxwriter')
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ОТПЛ  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет ОТПЛ  от {current_time}.xlsx',
+                              index=False, engine='xlsxwriter')
 
 
 
@@ -1466,6 +1498,20 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     answers_df['СППУ_Необработанный_результат'] = answers_df.apply(processing_result_sppu, axis=1)
     answers_df['СППУ_Обработанный_результат'] = answers_df['СППУ_Необработанный_результат'].apply(extract_key_max_value)
     answers_df['СППУ_Числовое_значение_результата'] = answers_df['СППУ_Необработанный_результат'].apply(extract_max_value)
+
+    # Создаем датафрейм для данных отчета
+    report_df = answers_df.iloc[::, size + 1:]
+
+    # Создаем датафрейм в который будем заносить итоговые результаты
+    finish_report_df = report_df['СППУ_Обработанный_результат'].value_counts().to_frame()
+
+    # получаем процента
+    finish_report_df['Доля_от_общего_количества'] = round(
+        (finish_report_df['СППУ_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+
+    finish_report_df = finish_report_df.reset_index()
+
+    finish_report_df.columns = ['Категория', 'Количество', 'Доля в % от общего количества']
 
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
@@ -1519,7 +1565,8 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
 
-
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет СППУ  от {current_time}.xlsx',
+                              index=False, engine='xlsxwriter')
     return out_full_df, out_result_df
 
 
@@ -1600,6 +1647,20 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     answers_df['ДДО_Числовое_значение_результата'] = answers_df['ДДО_Необработанный_результат'].apply(extract_max_value)
     answers_df['ДДО_Описание_результата'] = answers_df['ДДО_Обработанный_результат'].apply(create_out_str_ddo)
 
+    # Создаем датафрейм для данных отчета
+    report_df = answers_df.iloc[::, size + 1:]
+
+    # Создаем датафрейм в который будем заносить итоговые результаты
+    finish_report_df = report_df['ДДО_Обработанный_результат'].value_counts().to_frame()
+
+    # получаем процента
+    finish_report_df['Доля_от_общего_количества'] = round(
+        (finish_report_df['ДДО_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+
+    finish_report_df = finish_report_df.reset_index()
+
+    finish_report_df.columns = ['Категория', 'Количество', 'Доля в % от общего количества']
+
     # соединяем после обработки
     df = pd.concat([base_df, answers_df], axis=1)
 
@@ -1634,7 +1695,8 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
                 engine='xlsxwriter')
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
-
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет ДДО  от {current_time}.xlsx',
+                              index=False, engine='xlsxwriter')
 
     return out_full_df, out_result_df
 
@@ -1649,7 +1711,7 @@ def processing_complex():
     global DCT_PARAMS_SCRIPT
     DCT_PARAMS_SCRIPT = {'ДЦОК': (processing_dcok, 41), 'ОПТЛ': (processing_optl, 30),
                          'СППУ': (processing_sppu, 24), 'ДДО': (processing_ddo, 20)}
-    file_data_xlsx_complex = 'data/complex.xlsx'
+    file_data_xlsx_complex = 'data/Иволгинск.xlsx'
     file_params_complex = 'data/параметры ДЦОК ОПТЛ СППУ ДДО.xlsx'
     # # file_data_xlsx_complex = 'data/OPTL DDO.xlsx'
     # # file_params = 'data/параметры ОПТЛ ДДО.xlsx'
