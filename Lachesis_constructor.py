@@ -89,7 +89,6 @@ def extract_key_max_value(cell:str) ->str:
     dct_result = {}
     cell = cell.replace('\n','') # убираем переносы
     lst_temp = cell.split(';') # сплитим по точке с запятой
-    print(lst_temp)
     for result in lst_temp:
         # отбрасываем пустую строку
         if result:
@@ -107,11 +106,10 @@ def extract_max_value(cell:str):
     """
     # проверяем если некорректное значение
     if 'Скопируйте правильные значения для указанных вопросов из квадратных скобок' in cell:
-        return cell
+        return 0
     dct_result = {}
     cell = cell.replace('\n','') # убираем переносы
     lst_temp = cell.split(';') # сплитим по точке с запятой
-    print(lst_temp)
     for result in lst_temp:
         # отбрасываем пустую строку
         if result:
@@ -1289,7 +1287,7 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем колонку для результов первичного подсчета
     answers_df['ДЦОК_Необработанный_результат'] = answers_df.apply(processing_result_dcok, axis=1)
     answers_df['ДЦОК_Обработанный_результат'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_key_max_value)
-    answers_df['Числовое_значение_результата'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_max_value)
+    answers_df['ДЦОК_Числовое_значение_результата'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_max_value)
 
 
     # соединяем после обработки
@@ -1331,22 +1329,28 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
 
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДЦОК от {current_time}.xlsx', index=False,
-                engine='xlsxwriter')
+
 
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
     send_df['ДЦОК_Необработанный_результат'] = df['ДЦОК_Необработанный_результат']
     send_df['ДЦОК_Обработанный_результат'] = df['ДЦОК_Обработанный_результат']
-    send_df['Числовое_значение_результата'] = df['Числовое_значение_результата']
+    send_df['ДЦОК_Числовое_значение_результата'] = df['ДЦОК_Числовое_значение_результата']
     send_df['ДЦОК_Описание_результата'] = df['ДЦОК_Описание_результата']
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
-                     index=False, engine='xlsxwriter')
-
     # создаем датафреймы для возврата в основную функцию
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
+
+    # Сортировка
+    df.sort_values(by='ДЦОК_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by='ДЦОК_Числовое_значение_результата', ascending=False, inplace=True)
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДЦОК от {current_time}.xlsx', index=False,
+                engine='xlsxwriter')
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
+                     index=False, engine='xlsxwriter')
+
+
 
     return out_full_df, out_result_df
 
@@ -1420,8 +1424,7 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
 
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ОПТЛ от {current_time}.xlsx', index=False,
-                engine='xlsxwriter')
+
 
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
@@ -1430,13 +1433,18 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     send_df['ОПТЛ_Обработанный_результат'] = df['ОПТЛ_Обработанный_результат']
     send_df['ОПТЛ_Числовое_значение_результата'] = df['ОПТЛ_Числовое_значение_результата']
     send_df['ОПТЛ_Описание_результата'] = df['ОПТЛ_Описание_результата']
-
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ОТПЛ  от {current_time}.xlsx',
-                     index=False, engine='xlsxwriter')
-
     # создаем датафреймы для возврата в основную функцию
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
+    # Сортировка
+    df.sort_values(by='ОПТЛ_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by='ОПТЛ_Числовое_значение_результата', ascending=False, inplace=True)
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ОПТЛ от {current_time}.xlsx', index=False,
+                engine='xlsxwriter')
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ОТПЛ  от {current_time}.xlsx',
+                     index=False, engine='xlsxwriter')
+
+
 
     return out_full_df, out_result_df
 
@@ -1490,8 +1498,7 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
 
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False,
-                engine='xlsxwriter')
+
 
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
@@ -1500,12 +1507,18 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     send_df['СППУ_Обработанный_результат'] = df['СППУ_Обработанный_результат']
     send_df['СППУ_Числовое_значение_результата'] = df['СППУ_Числовое_значение_результата']
     send_df['СППУ_Описание_результата'] = df['СППУ_Описание_результата']
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
-                     index=False, engine='xlsxwriter')
-
     # создаем датафреймы для возврата в основную функцию
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
+    # Сортируем по убыванию
+    df.sort_values(by='СППУ_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by='СППУ_Числовое_значение_результата', ascending=False, inplace=True)
+
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False,
+                engine='xlsxwriter')
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
+                     index=False, engine='xlsxwriter')
+
 
     return out_full_df, out_result_df
 
@@ -1602,8 +1615,7 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
 
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False,
-                engine='xlsxwriter')
+
 
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
@@ -1612,12 +1624,17 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     send_df['ДДО_Обработанный_результат'] = df['ДДО_Обработанный_результат']
     send_df['ДДО_Числовое_значение_результата'] = df['ДДО_Числовое_значение_результата']
     send_df['ДДО_Описание_результата'] = df['ДДО_Описание_результата']
+    # создаем датафреймы для возврата в основную функцию, до сортировки
+    out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
+    out_result_df = send_df.iloc[:, threshold_base:]
+
+    df.sort_values(by='ДДО_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by='ДДО_Числовое_значение_результата', ascending=False, inplace=True)
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False,
+                engine='xlsxwriter')
     send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
 
-    # создаем датафреймы для возврата в основную функцию
-    out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
-    out_result_df = send_df.iloc[:, threshold_base:]
 
     return out_full_df, out_result_df
 
