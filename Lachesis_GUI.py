@@ -1272,31 +1272,31 @@ def processing_result_dcok(row):
 
     return begin_str
 
-def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
+def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int,name_test):
     """
     Фугкция для обработки данных ДЦОК
     :return:
     """
     if answers_df.shape[1] != size:
         raise WrongNumberColumn
-    answers_df.columns = [f'ДЦОК_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
+    answers_df.columns = [f'{name_test}_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
     answers_df = answers_df.astype(int)
 
     # Создаем колонку для результов первичного подсчета
-    answers_df['ДЦОК_Необработанный_результат'] = answers_df.apply(processing_result_dcok, axis=1)
-    answers_df['ДЦОК_Обработанный_результат'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_key_max_value)
-    answers_df['ДЦОК_Числовое_значение_результата'] = answers_df['ДЦОК_Необработанный_результат'].apply(extract_max_value)
+    answers_df[f'{name_test}_Необработанный_результат'] = answers_df.apply(processing_result_dcok, axis=1)
+    answers_df[f'{name_test}_Обработанный_результат'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df[f'{name_test}_Числовое_значение_результата'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_max_value)
 
     # Создаем датафрейм для данных отчета
     report_df = answers_df.iloc[::, size + 1:]
 
     # Создаем датафрейм в который будем заносить итоговые результаты
-    finish_report_df = report_df['ДЦОК_Обработанный_результат'].value_counts().to_frame()
+    finish_report_df = report_df[f'{name_test}_Обработанный_результат'].value_counts().to_frame()
 
     # получаем процента
     finish_report_df['Доля_от_общего_количества'] = round(
-        (finish_report_df['ДЦОК_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+        (finish_report_df[f'{name_test}_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
 
     finish_report_df = finish_report_df.reset_index()
 
@@ -1332,11 +1332,11 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 """
     # создаем описание результата
     if 'ФИО' in df.columns:
-        df['ДЦОК_Описание_результата'] = df['ФИО'] + '.' + ' \nДиагностика ценностных ориентаций в карьере.\n' + df[
-            'ДЦОК_Необработанный_результат'] + description_result
+        df[f'{name_test}_Описание_результата'] = df['ФИО'] + '.' + ' \nДиагностика ценностных ориентаций в карьере.\n' + df[
+            f'{name_test}_Необработанный_результат'] + description_result
     else:
-        df['ДЦОК_Описание_результата'] = 'Диагностика ценностных ориентаций в карьере.\n' + df[
-            'ДЦОК_Необработанный_результат'] + description_result
+        df[f'{name_test}_Описание_результата'] = 'Диагностика ценностных ориентаций в карьере.\n' + df[
+            f'{name_test}_Необработанный_результат'] + description_result
 
     # генерируем текущее время
     t = time.localtime()
@@ -1347,22 +1347,22 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
-    send_df['ДЦОК_Необработанный_результат'] = df['ДЦОК_Необработанный_результат']
-    send_df['ДЦОК_Обработанный_результат'] = df['ДЦОК_Обработанный_результат']
-    send_df['ДЦОК_Числовое_значение_результата'] = df['ДЦОК_Числовое_значение_результата']
-    send_df['ДЦОК_Описание_результата'] = df['ДЦОК_Описание_результата']
+    send_df[f'{name_test}_Необработанный_результат'] = df[f'{name_test}_Необработанный_результат']
+    send_df[f'{name_test}_Обработанный_результат'] = df[f'{name_test}_Обработанный_результат']
+    send_df[f'{name_test}_Числовое_значение_результата'] = df[f'{name_test}_Числовое_значение_результата']
+    send_df[f'{name_test}_Описание_результата'] = df[f'{name_test}_Описание_результата']
     # создаем датафреймы для возврата в основную функцию
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
 
     # Сортировка
-    df.sort_values(by='ДЦОК_Числовое_значение_результата', ascending=False, inplace=True)
-    send_df.sort_values(by='ДЦОК_Числовое_значение_результата', ascending=False, inplace=True)
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДЦОК от {current_time}.xlsx', index=False,
+    df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами {name_test} от {current_time}.xlsx', index=False,
                 engine='xlsxwriter')
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДЦОК  от {current_time}.xlsx',
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами {name_test}  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
-    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет ДЦОК  от {current_time}.xlsx',
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет {name_test}  от {current_time}.xlsx',
                               index=False, engine='xlsxwriter')
 
 
@@ -1370,31 +1370,31 @@ def processing_dcok(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     return out_full_df, out_result_df
 
 
-def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
+def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int,name_test):
     """
     Функция для обработки результатов на определение профессионального типа личности
     """
     if answers_df.shape[1] != size:
         raise WrongNumberColumn
 
-    answers_df.columns = [f'ОТПЛ_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
+    answers_df.columns = [f'{name_test}_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
     answers_df = answers_df.astype(str)
 
     answers_df = answers_df.applymap(lambda x: x.strip())
-    answers_df['ОПТЛ_Необработанный_результат'] = answers_df.apply(processing_result_optl, axis=1)
-    answers_df['ОПТЛ_Обработанный_результат'] = answers_df['ОПТЛ_Необработанный_результат'].apply(extract_key_max_value)
-    answers_df['ОПТЛ_Числовое_значение_результата'] = answers_df['ОПТЛ_Необработанный_результат'].apply(extract_max_value)
+    answers_df[f'{name_test}_Необработанный_результат'] = answers_df.apply(processing_result_optl, axis=1)
+    answers_df[f'{name_test}_Обработанный_результат'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df[f'{name_test}_Числовое_значение_результата'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_max_value)
 
     # Создаем датафрейм для данных отчета
     report_df = answers_df.iloc[::, size + 1:]
 
     # Создаем датафрейм в который будем заносить итоговые результаты
-    finish_report_df = report_df['ОПТЛ_Обработанный_результат'].value_counts().to_frame()
+    finish_report_df = report_df[f'{name_test}_Обработанный_результат'].value_counts().to_frame()
 
     # получаем процента
     finish_report_df['Доля_от_общего_количества'] = round(
-        (finish_report_df['ОПТЛ_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+        (finish_report_df[f'{name_test}_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
 
     finish_report_df = finish_report_df.reset_index()
 
@@ -1443,11 +1443,11 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 Только поэты и женщины умеют обращаться с деньгами так, как деньги того заслуживают. А.Боннар 
 """
     if 'ФИО' in df.columns:
-        df['ОПТЛ_Описание_результата'] = df['ФИО'] + '.' + ' \nОпределение профессионального типа личности.\n' + df[
-            'ОПТЛ_Необработанный_результат'] + description_result
+        df[f'{name_test}_Описание_результата'] = df['ФИО'] + '.' + ' \nОпределение профессионального типа личности.\n' + df[
+            f'{name_test}_Необработанный_результат'] + description_result
     else:
-        df['ОПТЛ_Описание_результата'] = 'Определение профессионального типа личности.\n' + df[
-            'ОПТЛ_Необработанный_результат'] + description_result
+        df[f'{name_test}_Описание_результата'] = 'Определение профессионального типа личности.\n' + df[
+            f'{name_test}_Необработанный_результат'] + description_result
 
     # генерируем текущее время
     t = time.localtime()
@@ -1458,21 +1458,21 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
-    send_df['ОПТЛ_Необработанный_результат'] = df['ОПТЛ_Необработанный_результат']
-    send_df['ОПТЛ_Обработанный_результат'] = df['ОПТЛ_Обработанный_результат']
-    send_df['ОПТЛ_Числовое_значение_результата'] = df['ОПТЛ_Числовое_значение_результата']
-    send_df['ОПТЛ_Описание_результата'] = df['ОПТЛ_Описание_результата']
+    send_df[f'{name_test}_Необработанный_результат'] = df[f'{name_test}_Необработанный_результат']
+    send_df[f'{name_test}_Обработанный_результат'] = df[f'{name_test}_Обработанный_результат']
+    send_df[f'{name_test}_Числовое_значение_результата'] = df[f'{name_test}_Числовое_значение_результата']
+    send_df[f'{name_test}_Описание_результата'] = df[f'{name_test}_Описание_результата']
     # создаем датафреймы для возврата в основную функцию
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
     # Сортировка
-    df.sort_values(by='ОПТЛ_Числовое_значение_результата', ascending=False, inplace=True)
-    send_df.sort_values(by='ОПТЛ_Числовое_значение_результата', ascending=False, inplace=True)
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ОПТЛ от {current_time}.xlsx', index=False,
+    df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами {name_test} от {current_time}.xlsx', index=False,
                 engine='xlsxwriter')
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ОТПЛ  от {current_time}.xlsx',
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами {name_test}  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
-    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет ОТПЛ  от {current_time}.xlsx',
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет {name_test}  от {current_time}.xlsx',
                               index=False, engine='xlsxwriter')
 
 
@@ -1480,7 +1480,7 @@ def processing_optl(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     return out_full_df, out_result_df
 
 
-def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
+def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int,name_test):
     """
     Функция для обработки результатов тестирования сферы профессиональных предпочтений учащихся
     :return:
@@ -1488,25 +1488,25 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     if answers_df.shape[1] != size:
         raise WrongNumberColumn
 
-    answers_df.columns = [f'СППУ_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
+    answers_df.columns = [f'{name_test}_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
     answers_df = answers_df.astype(str)
 
     answers_df = answers_df.applymap(lambda x: x.strip())
 
-    answers_df['СППУ_Необработанный_результат'] = answers_df.apply(processing_result_sppu, axis=1)
-    answers_df['СППУ_Обработанный_результат'] = answers_df['СППУ_Необработанный_результат'].apply(extract_key_max_value)
-    answers_df['СППУ_Числовое_значение_результата'] = answers_df['СППУ_Необработанный_результат'].apply(extract_max_value)
+    answers_df[f'{name_test}_Необработанный_результат'] = answers_df.apply(processing_result_sppu, axis=1)
+    answers_df[f'{name_test}_Обработанный_результат'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df[f'{name_test}_Числовое_значение_результата'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_max_value)
 
     # Создаем датафрейм для данных отчета
     report_df = answers_df.iloc[::, size + 1:]
 
     # Создаем датафрейм в который будем заносить итоговые результаты
-    finish_report_df = report_df['СППУ_Обработанный_результат'].value_counts().to_frame()
+    finish_report_df = report_df[f'{name_test}_Обработанный_результат'].value_counts().to_frame()
 
     # получаем процента
     finish_report_df['Доля_от_общего_количества'] = round(
-        (finish_report_df['СППУ_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+        (finish_report_df[f'{name_test}_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
 
     finish_report_df = finish_report_df.reset_index()
 
@@ -1533,11 +1533,11 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
 """
 
     if 'ФИО' in df.columns:
-        df['СППУ_Описание_результата'] = df['ФИО'] + '.' + ' \nСфера профессиональных предпочтений учащихся.\n' + \
-                                         df['СППУ_Необработанный_результат'] + description_result
+        df[f'{name_test}_Описание_результата'] = df['ФИО'] + '.' + ' \nСфера профессиональных предпочтений учащихся.\n' + \
+                                         df[f'{name_test}_Необработанный_результат'] + description_result
     else:
-        df['СППУ_Описание_результата'] = 'Сфера профессиональных предпочтений учащихся.\n' + df[
-            'СППУ_Необработанный_результат'] + description_result
+        df[f'{name_test}_Описание_результата'] = 'Сфера профессиональных предпочтений учащихся.\n' + df[
+            f'{name_test}_Необработанный_результат'] + description_result
 
     # генерируем текущее время
     t = time.localtime()
@@ -1548,28 +1548,28 @@ def processing_sppu(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
-    send_df['СППУ_Необработанный_результат'] = df['СППУ_Необработанный_результат']
-    send_df['СППУ_Обработанный_результат'] = df['СППУ_Обработанный_результат']
-    send_df['СППУ_Числовое_значение_результата'] = df['СППУ_Числовое_значение_результата']
-    send_df['СППУ_Описание_результата'] = df['СППУ_Описание_результата']
+    send_df[f'{name_test}_Необработанный_результат'] = df[f'{name_test}_Необработанный_результат']
+    send_df[f'{name_test}_Обработанный_результат'] = df[f'{name_test}_Обработанный_результат']
+    send_df[f'{name_test}_Числовое_значение_результата'] = df[f'{name_test}_Числовое_значение_результата']
+    send_df[f'{name_test}_Описание_результата'] = df[f'{name_test}_Описание_результата']
     # создаем датафреймы для возврата в основную функцию
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
     # Сортируем по убыванию
-    df.sort_values(by='СППУ_Числовое_значение_результата', ascending=False, inplace=True)
-    send_df.sort_values(by='СППУ_Числовое_значение_результата', ascending=False, inplace=True)
+    df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
 
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами СППУ от {current_time}.xlsx', index=False,
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами {name_test} от {current_time}.xlsx', index=False,
                 engine='xlsxwriter')
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами СППУ  от {current_time}.xlsx',
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами {name_test}  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
 
-    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет СППУ  от {current_time}.xlsx',
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет {name_test}  от {current_time}.xlsx',
                               index=False, engine='xlsxwriter')
     return out_full_df, out_result_df
 
 
-def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
+def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int,name_test):
     """
     Фугкция для обработки данных ДДО
     :return:
@@ -1634,27 +1634,27 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     if answers_df.shape[1] != size:
         raise WrongNumberColumn
 
-    answers_df.columns = [f'ДДО_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
+    answers_df.columns = [f'{name_test}_Вопрос_ №_{i}' for i in range(1, answers_df.shape[1] + 1)]
 
     answers_df = answers_df.astype(str)
 
     answers_df = answers_df.applymap(lambda x: x.strip())
     # получаем результаты
-    answers_df['ДДО_Необработанный_результат'] = answers_df.apply(processing_result_ddo, axis=1)
+    answers_df[f'{name_test}_Необработанный_результат'] = answers_df.apply(processing_result_ddo, axis=1)
     # обрабатываем результаты и получаем ключ с максимальным значением
-    answers_df['ДДО_Обработанный_результат'] = answers_df['ДДО_Необработанный_результат'].apply(extract_key_max_value)
-    answers_df['ДДО_Числовое_значение_результата'] = answers_df['ДДО_Необработанный_результат'].apply(extract_max_value)
-    answers_df['ДДО_Описание_результата'] = answers_df['ДДО_Обработанный_результат'].apply(create_out_str_ddo)
+    answers_df[f'{name_test}_Обработанный_результат'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_key_max_value)
+    answers_df[f'{name_test}_Числовое_значение_результата'] = answers_df[f'{name_test}_Необработанный_результат'].apply(extract_max_value)
+    answers_df[f'{name_test}_Описание_результата'] = answers_df[f'{name_test}_Обработанный_результат'].apply(create_out_str_ddo)
 
     # Создаем датафрейм для данных отчета
     report_df = answers_df.iloc[::, size + 1:]
 
     # Создаем датафрейм в который будем заносить итоговые результаты
-    finish_report_df = report_df['ДДО_Обработанный_результат'].value_counts().to_frame()
+    finish_report_df = report_df[f'{name_test}_Обработанный_результат'].value_counts().to_frame()
 
     # получаем процента
     finish_report_df['Доля_от_общего_количества'] = round(
-        (finish_report_df['ДДО_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
+        (finish_report_df[f'{name_test}_Обработанный_результат'] / report_df.shape[0]) * 100, 2)
 
     finish_report_df = finish_report_df.reset_index()
 
@@ -1666,11 +1666,11 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Проверяем наличие колонки ФИО, если она есть то добавляем ее значение, если нет не используем
 
     if 'ФИО' in df.columns:
-        df['ДДО_Описание_результата'] = df['ФИО'] + '.' + ' \nДифференциально-диагностический опросник.\n' + df[
-            'ДДО_Описание_результата']
+        df[f'{name_test}_Описание_результата'] = df['ФИО'] + '.' + ' \nДифференциально-диагностический опросник.\n' + df[
+            f'{name_test}_Описание_результата']
     else:
-        df['ДДО_Описание_результата'] = 'Дифференциально-диагностический опросник.\n' + df[
-            'ДДО_Описание_результата']
+        df[f'{name_test}_Описание_результата'] = 'Дифференциально-диагностический опросник.\n' + df[
+            f'{name_test}_Описание_результата']
     # генерируем текущее время
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
@@ -1680,21 +1680,21 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int):
     # Создаем сокращенный вариант
     send_df = df.iloc[:, :threshold_base]
     # Добавляем колонки с результатами
-    send_df['ДДО_Необработанный_результат'] = df['ДДО_Необработанный_результат']
-    send_df['ДДО_Обработанный_результат'] = df['ДДО_Обработанный_результат']
-    send_df['ДДО_Числовое_значение_результата'] = df['ДДО_Числовое_значение_результата']
-    send_df['ДДО_Описание_результата'] = df['ДДО_Описание_результата']
+    send_df[f'{name_test}_Необработанный_результат'] = df[f'{name_test}_Необработанный_результат']
+    send_df[f'{name_test}_Обработанный_результат'] = df[f'{name_test}_Обработанный_результат']
+    send_df[f'{name_test}_Числовое_значение_результата'] = df[f'{name_test}_Числовое_значение_результата']
+    send_df[f'{name_test}_Описание_результата'] = df[f'{name_test}_Описание_результата']
     # создаем датафреймы для возврата в основную функцию, до сортировки
     out_full_df = df.iloc[:, threshold_base:]  # датафрейм с вопросами и результатами без анкетных данных
     out_result_df = send_df.iloc[:, threshold_base:]
 
-    df.sort_values(by='ДДО_Числовое_значение_результата', ascending=False, inplace=True)
-    send_df.sort_values(by='ДДО_Числовое_значение_результата', ascending=False, inplace=True)
-    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами ДДО от {current_time}.xlsx', index=False,
+    df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    send_df.sort_values(by=f'{name_test}_Числовое_значение_результата', ascending=False, inplace=True)
+    df.to_excel(f'{path_to_end_folder_complex}/Полная таблица с результатами {name_test} от {current_time}.xlsx', index=False,
                 engine='xlsxwriter')
-    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами ДДО  от {current_time}.xlsx',
+    send_df.to_excel(f'{path_to_end_folder_complex}/Краткая таблица с результатами {name_test}  от {current_time}.xlsx',
                      index=False, engine='xlsxwriter')
-    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет ДДО  от {current_time}.xlsx',
+    finish_report_df.to_excel(f'{path_to_end_folder_complex}/Отчет {name_test}  от {current_time}.xlsx',
                               index=False, engine='xlsxwriter')
 
     return out_full_df, out_result_df
@@ -1778,7 +1778,7 @@ def processing_complex():
             temp_df = df.iloc[:, threshold_finshed:threshold_finshed + DCT_PARAMS_SCRIPT[name_test][1]]
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
             temp_full_df, temp_result_df = DCT_PARAMS_SCRIPT[name_test][0](base_df_for_func, temp_df,
-                                                                           DCT_PARAMS_SCRIPT[name_test][1])
+                                                                           DCT_PARAMS_SCRIPT[name_test][1],name_test)
             base_df = pd.concat([base_df, temp_full_df],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
             result_df = pd.concat([result_df, temp_result_df], axis=1)
