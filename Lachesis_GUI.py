@@ -3,23 +3,34 @@
 скрипт для обработки произвольных тестов
 """
 
-import tkinter
-import sys
+import pandas as pd
+import numpy as np
 import os
+from dateutil.parser import ParserError
+from docxtpl import DocxTemplate
+from docxcompose.composer import Composer
+from docx import Document
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
-# pd.options.mode.chained_assignment = None  # default='warn'
-import warnings
-warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
-import pandas as pd
-import tempfile
+import tkinter
+import openpyxl
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import Font
+from openpyxl.styles import Alignment
+from openpyxl import load_workbook
 import time
 import datetime
-import re
+import warnings
+from collections import Counter
+warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
+pd.options.mode.chained_assignment = None
+import sys
+import locale
 import logging
-
+import tempfile
+import re
 logging.basicConfig(
     level=logging.WARNING,
     filename="error.log",
@@ -28,10 +39,7 @@ logging.basicConfig(
     format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
     datefmt='%H:%M:%S',
 )
-from docxtpl import DocxTemplate
-from docxcompose.composer import Composer
-from docx import Document
-import xlsxwriter
+
 
 
 def resource_path(relative_path):
@@ -45,6 +53,42 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+"""
+Функции для создания контекстного меню(Копировать,вставить,вырезать)
+"""
+def make_textmenu(root):
+    """
+    Функции для контекстного меню( вырезать,копировать,вставить)
+    взято отсюда https://gist.github.com/angeloped/91fb1bb00f1d9e0cd7a55307a801995f
+    """
+    # эта штука делает меню
+    global the_menu
+    the_menu = Menu(root, tearoff=0)
+    the_menu.add_command(label="Вырезать")
+    the_menu.add_command(label="Копировать")
+    the_menu.add_command(label="Вставить")
+    the_menu.add_separator()
+    the_menu.add_command(label="Выбрать все")
+
+def callback_select_all(event):
+    """
+    Функции для контекстного меню( вырезать,копировать,вставить)
+    взято отсюда https://gist.github.com/angeloped/91fb1bb00f1d9e0cd7a55307a801995f
+    """
+    # select text after 50ms
+    window.after(50, lambda: event.widget.select_range(0, 'end'))
+
+def show_textmenu(event):
+    """
+    Функции для контекстного меню( вырезать,копировать,вставить)
+    взято отсюда https://gist.github.com/angeloped/91fb1bb00f1d9e0cd7a55307a801995f
+    """
+    e_widget = event.widget
+    the_menu.entryconfigure("Вырезать", command=lambda: e_widget.event_generate("<<Cut>>"))
+    the_menu.entryconfigure("Копировать", command=lambda: e_widget.event_generate("<<Copy>>"))
+    the_menu.entryconfigure("Вставить", command=lambda: e_widget.event_generate("<<Paste>>"))
+    the_menu.entryconfigure("Выбрать все", command=lambda: e_widget.select_range(0, 'end'))
+    the_menu.tk.call("tk_popup", the_menu, event.x_root, event.y_root)
 
 # any name as accepted but not signature
 def report_callback_exception(self, exc, val, tb):
@@ -1801,18 +1845,18 @@ def processing_complex():
 
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
                              f'Проверьте правильность написания по руководству пользователя')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -1820,7 +1864,7 @@ def processing_complex():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                             'Данные успешно обработаны')
 
 
@@ -1989,43 +2033,365 @@ def generate_docs_other():
 
 
     except NameError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'В таблице не найдена указанная колонка {e.args}')
     except PermissionError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Закройте все файлы Word созданные Вестой')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except CheckBoxException:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Уберите галочку из чекбокса Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)'
                              )
     except NotFoundValue:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              f'Указанное значение не найдено в выбранной колонке\nПроверьте наличие такого значения в таблице'
                              )
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 3.1',
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
                             'Создание документов завершено!')
+
+def select_file_params_comparsion():
+    """
+    Функция для выбора файла с параметрами колонок т.е. кокие колонки нужно обрабатывать
+    :return:
+    """
+    global file_params
+    file_params = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def select_first_comparison():
+    """
+    Функция для выбора  первого файла с данными которые нужно сравнить
+    :return: Путь к файлу с данными
+    """
+    global name_first_file_comparison
+    # Получаем путь к файлу
+    name_first_file_comparison = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def select_second_comparison():
+    """
+    Функция для выбора  второго файла с данными которые нужно сравнить
+    :return: Путь к файлу с данными
+    """
+    global name_second_file_comparison
+    # Получаем путь к файлу
+    name_second_file_comparison = filedialog.askopenfilename(
+        filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def select_end_folder_comparison():
+    """
+    Функция для выбора папки куда будет генерироваться итоговый файл
+    :return:
+    """
+    global path_to_end_folder_comparison
+    path_to_end_folder_comparison = filedialog.askdirectory()
+
+def convert_columns_to_str(df, number_columns):
+    """
+    Функция для конвертации указанных столбцов в строковый тип и очистки от пробельных символов в начале и конце
+    """
+
+    for column in number_columns:  # Перебираем список нужных колонок
+        try:
+            df.iloc[:, column] = df.iloc[:, column].astype(str)
+            # Очищаем колонку от пробельных символов с начала и конца
+            df.iloc[:, column] = df.iloc[:, column].apply(lambda x: x.strip())
+        except IndexError:
+            messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.29',
+                                 'Проверьте порядковые номера колонок которые вы хотите обработать.')
+
+
+def convert_params_columns_to_int(lst):
+    """
+    Функция для конвератации значений колонок которые нужно обработать.
+    Очищает от пустых строк, чтобы в итоге остался список из чисел в формате int
+    """
+    out_lst = [] # Создаем список в который будем добавлять только числа
+    for value in lst: # Перебираем список
+        try:
+            # Обрабатываем случай с нулем, для того чтобы после приведения к питоновскому отсчету от нуля не получилась колонка с номером -1
+            number = int(value)
+            if number != 0:
+                out_lst.append(value) # Если конвертирования прошло без ошибок то добавляем
+            else:
+                continue
+        except: # Иначе пропускаем
+            continue
+    return out_lst
+
+
+def clean_ending_columns(lst_columns:list,name_first_df,name_second_df):
+    """
+    Функция для очистки колонок таблицы с совпадающими данными от окончаний _x _y
+
+    :param lst_columns:
+    :param time_generate
+    :param name_first_df
+    :param name_second_df
+    :return:
+    """
+    out_columns = [] # список для очищенных названий
+    for name_column in lst_columns:
+        if '_x' in name_column:
+            # если они есть то проводим очистку и добавление времени
+            cut_name_column = name_column[:-2] # обрезаем
+            temp_name = f'{cut_name_column}_{name_first_df}' # соединяем
+            out_columns.append(temp_name) # добавляем
+        elif '_y' in name_column:
+            cut_name_column = name_column[:-2]  # обрезаем
+            temp_name = f'{cut_name_column}_{name_second_df}'  # соединяем
+            out_columns.append(temp_name)  # добавляем
+        else:
+            out_columns.append(name_column)
+    return out_columns
+
+def processing_comparison():
+    """
+    Функция для сравнения 2 колонок
+    :return:
+    """
+    try:
+        # Получаем значения текстовых полей
+        first_sheet_name = str(entry_first_sheet_name.get())
+        second_sheet_name = str(entry_second_sheet_name.get())
+        # загружаем файлы
+        first_df = pd.read_excel(name_first_file_comparison, sheet_name=first_sheet_name, dtype=str,
+                                 keep_default_na=False)
+        # получаем имя файла
+        name_first_df = name_first_file_comparison.split('/')[-1]
+        name_first_df = name_first_df.split('.xlsx')[0]
+
+        second_df = pd.read_excel(name_second_file_comparison, sheet_name=second_sheet_name, dtype=str,
+                                  keep_default_na=False)
+        # получаем имя файла
+        name_second_df = name_second_file_comparison.split('/')[-1]
+        name_second_df = name_second_df.split('.xlsx')[0]
+
+        params = pd.read_excel(file_params, header=None, keep_default_na=False)
+
+        # Преврашаем каждую колонку в список
+        params_first_columns = params[0].tolist()
+        params_second_columns = params[1].tolist()
+
+        # Конвертируем в инт заодно проверяя корректность введенных данных
+        int_params_first_columns = convert_params_columns_to_int(params_first_columns)
+        int_params_second_columns = convert_params_columns_to_int(params_second_columns)
+
+        # Отнимаем 1 от каждого значения чтобы привести к питоновским индексам
+        int_params_first_columns = list(map(lambda x: x - 1, int_params_first_columns))
+        int_params_second_columns = list(map(lambda x: x - 1, int_params_second_columns))
+
+        # Конвертируем нужные нам колонки в str
+        convert_columns_to_str(first_df, int_params_first_columns)
+        convert_columns_to_str(second_df, int_params_second_columns)
+
+        # Проверяем наличие колонок с датами в списке колонок для объединения чтобы привести их в нормальный вид
+        for number_column_params in int_params_first_columns:
+            if 'дата' in first_df.columns[number_column_params].lower():
+                first_df.iloc[:, number_column_params] = pd.to_datetime(first_df.iloc[:, number_column_params],
+                                                                        errors='coerce', dayfirst=True)
+                first_df.iloc[:, number_column_params] = first_df.iloc[:, number_column_params].apply(
+                    create_doc_convert_date)
+
+        for number_column_params in int_params_second_columns:
+            if 'дата' in second_df.columns[number_column_params].lower():
+                second_df.iloc[:, number_column_params] = pd.to_datetime(second_df.iloc[:, number_column_params],
+                                                                         errors='coerce', dayfirst=True)
+                second_df.iloc[:, number_column_params] = second_df.iloc[:, number_column_params].apply(
+                    create_doc_convert_date)
+
+        # в этом месте конвертируем даты в формат ДД.ММ.ГГГГ
+        # processing_date_column(first_df, int_params_first_columns)
+        # processing_date_column(second_df, int_params_second_columns)
+
+        # Проверяем наличие колонки _merge
+        if '_merge' in first_df.columns:
+            first_df.drop(columns=['_merge'], inplace=True)
+        if '_merge' in second_df.columns:
+            second_df.drop(columns=['_merge'], inplace=True)
+        # Проверяем наличие колонки ID
+        if 'ID_объединения' in first_df.columns:
+            first_df.drop(columns=['ID_объединения'], inplace=True)
+        if 'ID_объединения' in second_df.columns:
+            second_df.drop(columns=['ID_объединения'], inplace=True)
+
+        # Создаем в каждом датафрейме колонку с айди путем склеивания всех нужных колонок в одну строку
+        first_df['ID_объединения'] = first_df.iloc[:, int_params_first_columns].sum(axis=1)
+        second_df['ID_объединения'] = second_df.iloc[:, int_params_second_columns].sum(axis=1)
+
+        first_df['ID_объединения'] = first_df['ID_объединения'].apply(lambda x: x.replace(' ', ''))
+        second_df['ID_объединения'] = second_df['ID_объединения'].apply(lambda x: x.replace(' ', ''))
+
+
+        # В результат объединения попадают совпадающие по ключу записи обеих таблиц и все строки из этих двух таблиц, для которых пар не нашлось. Порядок таблиц в запросе не
+
+        # Создаем документ
+        wb = openpyxl.Workbook()
+        # создаем листы
+        ren_sheet = wb['Sheet']
+        ren_sheet.title = 'Таблица 1'
+        wb.create_sheet(title='Таблица 2', index=1)
+        wb.create_sheet(title='Совпадающие данные', index=2)
+        wb.create_sheet(title='Обновленная таблица', index=3)
+        wb.create_sheet(title='Объединённая таблица', index=4)
+
+
+        # Создаем переменные содержащие в себе количество колонок в базовых датареймах
+        first_df_quantity_cols = len(first_df.columns)  # не забываем что там добавилась колонка ID
+
+        # Проводим слияние
+        itog_df = pd.merge(first_df, second_df, how='outer', left_on=['ID_объединения'], right_on=['ID_объединения'],
+                           indicator=True)
+
+        # копируем в отдельный датафрейм для создания таблицы с обновлениями
+        update_df = itog_df.copy()
+
+        # Записываем каждый датафрейм в соответсвующий лист
+        # Левая таблица
+        left_df = itog_df[itog_df['_merge'] == 'left_only']
+        left_df.drop(['_merge'], axis=1, inplace=True)
+
+        # Удаляем колонки второй таблицы чтобы не мешались
+        left_df.drop(left_df.iloc[:, first_df_quantity_cols:], axis=1, inplace=True)
+
+        # Переименовываем колонки у которых были совпадение во второй таблице, в таких колонках есть добавление _x
+        clean_left_columns = list(map(lambda x: x[:-2] if '_x' in x else x, list(left_df.columns)))
+        left_df.columns = clean_left_columns
+        for r in dataframe_to_rows(left_df, index=False, header=True):
+            wb['Таблица 1'].append(r)
+
+        right_df = itog_df[itog_df['_merge'] == 'right_only']
+        right_df.drop(['_merge'], axis=1, inplace=True)
+
+        # Удаляем колонки первой таблицы таблицы чтобы не мешались
+        right_df.drop(right_df.iloc[:, :first_df_quantity_cols - 1], axis=1, inplace=True)
+
+        # Переименовываем колонки у которых были совпадение во второй таблице, в таких колонках есть добавление _x
+        clean_right_columns = list(map(lambda x: x[:-2] if '_y' in x else x, list(right_df.columns)))
+        right_df.columns = clean_right_columns
+
+        for r in dataframe_to_rows(right_df, index=False, header=True):
+            wb['Таблица 2'].append(r)
+
+        both_df = itog_df[itog_df['_merge'] == 'both']
+        both_df.drop(['_merge'], axis=1, inplace=True)
+        # Очищаем от _x  и _y
+        clean_both_columns = clean_ending_columns(list(both_df.columns), name_first_df, name_second_df)
+        both_df.columns = clean_both_columns
+
+        for r in dataframe_to_rows(both_df, index=False, header=True):
+            wb['Совпадающие данные'].append(r)
+
+        # Сохраняем общую таблицу
+        # Заменяем названия индикаторов на более понятные
+        itog_df['_merge'] = itog_df['_merge'].apply(lambda x: 'Данные из первой таблицы' if x == 'left_only' else
+        ('Данные из второй таблицы' if x == 'right_only' else 'Совпадающие данные'))
+        itog_df['_merge'] = itog_df['_merge'].astype(str)
+
+        clean_itog_df = clean_ending_columns(list(itog_df.columns), name_first_df, name_second_df)
+        itog_df.columns = clean_itog_df
+        for r in dataframe_to_rows(itog_df, index=False, header=True):
+            wb['Объединённая таблица'].append(r)
+
+        # получаем список с совпадающими колонками первой таблицы
+        first_df_columns = [column for column in list(update_df.columns) if str(column).endswith('_x')]
+        # получаем список с совпадающими колонками второй таблицы
+        second_df_columns = [column for column in list(update_df.columns) if str(column).endswith('_y')]
+        # Создаем из списка совпадающих колонок второй таблицы словарь, чтобы было легче обрабатывать
+        # да конечно можно было сделать в одном выражении но как я буду читать это через 2 недели?
+        dct_second_columns = {column.split('_y')[0]: column for column in second_df_columns}
+
+        for column in first_df_columns:
+            # очищаем от _x
+            name_column = column.split('_x')[0]
+            # Обновляем значение в случае если в колонке _merge стоит both, иначе оставляем старое значение,
+            # Чтобы обновить значение в ячейке, во второй таблице не должно быть пустого значения или пробела в аналогичной колонке
+
+            update_df[column] = np.where(
+                (update_df['_merge'] == 'both') & (update_df[dct_second_columns[name_column]]) & (
+                            update_df[dct_second_columns[name_column]] != ' '),
+                update_df[dct_second_columns[name_column]], update_df[column])
+
+            # Удаляем колонки с _y
+        update_df.drop(columns=[column for column in update_df.columns if column.endswith('_y')], inplace=True)
+
+        # Переименовываем колонки с _x
+        update_df.columns = list(map(lambda x: x[:-2] if x.endswith('_x') else x, update_df.columns))
+
+        # удаляем строки с _merge == right_only
+        update_df = update_df[update_df['_merge'] != 'right_only']
+
+        # Удаляем служебные колонки
+        update_df.drop(columns=['ID_объединения', '_merge'], inplace=True)
+
+        # используем уже созданный датафрейм right_df Удаляем лишнюю колонку в right_df
+        right_df.drop(columns=['ID_объединения'], inplace=True)
+
+        # Добавляем нехватающие колонки
+        new_right_df = right_df.reindex(columns=update_df.columns, fill_value=None)
+
+        update_df = pd.concat([update_df, new_right_df])
+
+        for r in dataframe_to_rows(update_df, index=False, header=True):
+            wb['Обновленная таблица'].append(r)
+
+        # генерируем текущее время
+        t = time.localtime()
+        current_time = time.strftime('%H_%M_%S', t)
+        # Сохраняем итоговый файл
+        wb.save(f'{path_to_end_folder_comparison}/Результат слияния 2 таблиц от {current_time}.xlsx')
+        # Сохраняем отдельно обновленную таблицу
+        update_df.to_excel(
+            f'{path_to_end_folder_comparison}/Таблица с обновленными данными и колонками от {current_time}.xlsx',
+            index=False)
+
+    except NameError:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+                             f'Выберите файлы с данными и папку куда будет генерироваться файл')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except KeyError:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+                             f'В таблице нет такой колонки!\nПроверьте написание названия колонки')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except ValueError:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+                             f'В таблице нет листа с таким названием!\nПроверьте написание названия листа')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except FileNotFoundError:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам')
+    except:
+        logging.exception('AN ERROR HAS OCCURRED')
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
+    else:
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 4.0', 'Данные успешно обработаны')
+
 
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов профориентационных тестов ver 3.1')
+    window.title('Лахеcис Обработка результатов профориентационных тестов ver 4.0')
     window.geometry('700x860')
     window.resizable(False, False)
+    make_textmenu(window)
     tkinter.Tk.report_callback_exception = report_callback_exception
 
     # Создаем объект вкладок
@@ -2036,14 +2402,14 @@ if __name__ == '__main__':
     """
     # Создаем вкладку обработки данных complex
     tab_report_complex = ttk.Frame(tab_control)
-    tab_control.add(tab_report_complex, text='Комплексный тест')
+    tab_control.add(tab_report_complex, text='Обработка результатов')
     tab_control.pack(expand=1, fill='both')
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
     lbl_hello_complex = Label(tab_report_complex,
                               text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест \n'
-                                   'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале и в конце таблицы.\n'
-                                   'ДЦОК,ОПТЛ,СППУ,ДДО')
+                                   'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале и в конце таблицы.'
+                                   )
     lbl_hello_complex.grid(column=0, row=0, padx=10, pady=25)
 
     # Картинка
@@ -2208,5 +2574,87 @@ if __name__ == '__main__':
                                     command=generate_docs_other
                                     )
     btn_create_files_other.grid(column=0, row=14, padx=10, pady=10)
+
+
+    """
+    Объединение таблиц
+    """
+    tab_comparison = ttk.Frame(tab_control)
+    tab_control.add(tab_comparison, text='Слияние 2 таблиц')
+    tab_control.pack(expand=1, fill='both')
+
+    # Добавляем виджеты на вкладку Создание документов
+    # Создаем метку для описания назначения программы
+    lbl_hello = Label(tab_comparison,
+                      text='Центр опережающей профессиональной подготовки Республики Бурятия\n'
+                           '\nДля корректной работы программмы уберите из таблицы объединенные ячейки')
+    lbl_hello.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_com = resource_path('logo.png')
+    img_comparison = PhotoImage(file=path_com)
+    Label(tab_comparison,
+          image=img
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Создаем область для того чтобы поместить туда подготовительные кнопки(выбрать файл,выбрать папку и т.п.)
+    frame_data_for_comparison = LabelFrame(tab_comparison, text='Подготовка')
+    frame_data_for_comparison.grid(column=0, row=2, padx=10)
+
+    # Создаем кнопку выбрать файл с параметрами
+    btn_columns_params = Button(frame_data_for_comparison, text='1) Выберите файл с параметрами слияния',
+                                font=('Arial Bold', 10),
+                                command=select_file_params_comparsion)
+    btn_columns_params.grid(column=0, row=3, padx=10, pady=10)
+
+    # Создаем кнопку Выбрать  первый файл с данными
+    btn_data_first_comparison = Button(frame_data_for_comparison, text='2) Выберите первый файл с данными',
+                                       font=('Arial Bold', 10),
+                                       command=select_first_comparison
+                                       )
+    btn_data_first_comparison.grid(column=0, row=4, padx=10, pady=10)
+
+    # Определяем текстовую переменную
+    entry_first_sheet_name = StringVar()
+    # Описание поля
+    label_first_sheet_name = Label(frame_data_for_comparison,
+                                   text='3) Введите название листа в первом файле')
+    label_first_sheet_name.grid(column=0, row=5, padx=10, pady=10)
+    # поле ввода имени листа
+    first_sheet_name_entry = Entry(frame_data_for_comparison, textvariable=entry_first_sheet_name, width=30)
+    first_sheet_name_entry.grid(column=0, row=6, padx=5, pady=5, ipadx=15, ipady=10)
+
+    # Создаем кнопку Выбрать  второй файл с данными
+    btn_data_second_comparison = Button(frame_data_for_comparison, text='4) Выберите второй файл с данными',
+                                        font=('Arial Bold', 10),
+                                        command=select_second_comparison
+                                        )
+    btn_data_second_comparison.grid(column=0, row=7, padx=10, pady=10)
+
+    # Определяем текстовую переменную
+    entry_second_sheet_name = StringVar()
+    # Описание поля
+    label_second_sheet_name = Label(frame_data_for_comparison,
+                                    text='5) Введите название листа во втором файле')
+    label_second_sheet_name.grid(column=0, row=8, padx=10, pady=10)
+    # поле ввода
+    second__sheet_name_entry = Entry(frame_data_for_comparison, textvariable=entry_second_sheet_name, width=30)
+    second__sheet_name_entry.grid(column=0, row=9, padx=5, pady=5, ipadx=15, ipady=10)
+
+    # Создаем кнопку выбора папки куда будет генерироваьться файл
+    btn_select_end_comparison = Button(frame_data_for_comparison, text='6) Выберите конечную папку',
+                                       font=('Arial Bold', 10),
+                                       command=select_end_folder_comparison
+                                       )
+    btn_select_end_comparison.grid(column=0, row=10, padx=10, pady=10)
+
+    # Создаем кнопку Обработать данные
+    btn_data_do_comparison = Button(tab_comparison, text='7) Произвести слияние\nтаблиц', font=('Arial Bold', 20),
+                                    command=processing_comparison
+                                    )
+    btn_data_do_comparison.grid(column=0, row=11, padx=10, pady=10)
+
+    window.bind_class("Entry", "<Button-3><ButtonRelease-3>", show_textmenu)
+    window.bind_class("Entry", "<Control-a>", callback_select_all)
 
     window.mainloop()
