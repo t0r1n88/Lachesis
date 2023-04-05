@@ -2389,7 +2389,7 @@ def processing_comparison():
 if __name__ == '__main__':
     window = Tk()
     window.title('Лахеcис Обработка результатов профориентационных тестов ver 4.0')
-    window.geometry('700x860')
+    window.geometry('750x860')
     window.resizable(False, False)
     make_textmenu(window)
     tkinter.Tk.report_callback_exception = report_callback_exception
