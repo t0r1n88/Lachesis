@@ -2479,19 +2479,19 @@ def groupby_category():
             f'{path_to_end_folder_groupby}/Подсчет частоты значений для всех колонок таблицы от {current_time}.xlsx')
 
     except NameError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Выберите файл с данными и папку куда будет генерироваться файл')
 
     except FileNotFoundError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
-        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.30', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0', 'Данные успешно обработаны')
 
 
 def groupby_stat():
@@ -2571,21 +2571,21 @@ def groupby_stat():
 
 
     except NameError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Выберите файл с данными и папку куда будет генерироваться файл')
         logging.exception('AN ERROR HAS OCCURRED')
 
     except FileNotFoundError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
-        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.30', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0', 'Данные успешно обработаны')
 
 
 """
@@ -2606,7 +2606,7 @@ def calculate_age(born):
         return selected_date.year - born.year - ((selected_date.month, selected_date.day) < (born.month, born.day))
 
     except ValueError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Введена некорректная дата относительно которой нужно провести обработку\nПример корректной даты 01.09.2022')
         logging.exception('AN ERROR HAS OCCURRED')
         quit()
@@ -2623,7 +2623,7 @@ def convert_date(cell):
 
     except TypeError:
         print(cell)
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              'Проверьте правильность заполнения ячеек с датой!!!')
         logging.exception('AN ERROR HAS OCCURRED')
         quit()
@@ -2897,24 +2897,373 @@ def calculate_date():
         # Сохраняем итоговый файл
         wb.save(f'{path_to_end_folder_date}/Результат обработки колонки {name_column} от {current_time}.xlsx')
     except NameError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Выберите файл с данными и папку куда будет генерироваться файл')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'В таблице нет такой колонки!\nПроверьте написание названия колонки')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
 
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
-        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.30', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0', 'Данные успешно обработаны')
+
+
+"""
+Слияние файлов
+"""
+# Функции для слияния таблиц
+
+def select_end_folder_merger():
+    """
+    Функция для выбора папки куда будет генерироваться итоговый файл
+    :return:
+    """
+    global path_to_end_folder_merger
+    path_to_end_folder_merger = filedialog.askdirectory()
+
+
+def select_folder_data_merger():
+    """
+    Функция для выбора папки где хранятся нужные файлы
+    :return:
+    """
+    global dir_name
+    dir_name = filedialog.askdirectory()
+
+def select_params_file_merger():
+    """
+    Функция для выбора файла c ячейками которые нужно подсчитать
+    :return: Путь к файлу
+    """
+    if group_rb_type_harvest.get() == 2:
+        global params_harvest
+        params_harvest = filedialog.askopenfilename(
+            filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+    else:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0','Выберите вариант слияния В и попробуйте снова ')
+
+
+
+def select_standard_file_merger():
+    """
+    Функция для выбора файла c ячейками которые нужно подсчитать
+    :return: Путь к файлу
+    """
+    global file_standard_merger
+    file_standard_merger = filedialog.askopenfilename(
+        filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def merge_tables():
+    """
+    Функция для слияния таблиц с одинаковой структурой в одну большую таблицу
+    """
+    # Получаем значения из полей ввода и проверяем их на тип
+    try:
+        checkbox_harvest = group_rb_type_harvest.get()
+        if checkbox_harvest != 2:
+            skip_rows = int(merger_entry_skip_rows.get())
+    except ValueError:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
+                             'Введите целое число в поле для ввода количества пропускаемых строк!!!')
+    else:
+        # Оборачиваем в try
+        try:
+            # Создаем датафрейм куда будем сохранять ошибочные файлы
+            err_df = pd.DataFrame(columns=['Название файла', 'Наименование листа', 'Тип ошибки', 'Описание ошибки'])
+
+            name_file_standard_merger = file_standard_merger.split('/')[-1]  # получаем имя файла
+
+            standard_wb = load_workbook(filename=file_standard_merger)  # Загружаем эталонный файл
+
+            standard_sheets = sorted(
+                standard_wb.sheetnames)  # отсортрованный список листов по которому будет вестись сравнение
+            set_standard_sheets = set(standard_sheets)  # создаем множество из листов эталонного файла
+            standard_size_sheets = len(standard_sheets)
+
+            "Удаляем пустые и строки с заливкой которые могут тянуться вниз и из этого данные из других файлов начина" \
+            "ются с тысячных строк"
+            for sheet in standard_wb.sheetnames:
+                del_cols_df = pd.read_excel(file_standard_merger,
+                                            sheet_name=sheet)  # загружаем датафрейм чтобы узнать сколько есть заполненны строк
+
+                temp_sheet_max_row = standard_wb[sheet].max_row  # получаем последнюю строку
+                standard_wb[sheet].delete_rows(del_cols_df.shape[0] + 2, temp_sheet_max_row)  # удаляем все лишнее
+
+            dct_df = dict()  # создаем словарь в котором будем хранить да
+
+            for sheet in standard_wb.sheetnames:  # Добавляем в словарь датафреймы
+                temp_df = pd.read_excel(file_standard_merger, sheet_name=sheet, dtype=str)
+                dct_df[sheet] = temp_df
+
+            if checkbox_harvest == 0:  # Вариант объединения по названию листов
+                for dirpath, dirnames, filenames in os.walk(dir_name):
+                    for filename in filenames:
+                        if (filename.endswith('.xlsx') and not filename.startswith(
+                                '~$')) and filename != name_file_standard_merger:  # не обрабатываем эталонный файл
+                            # Получаем название файла без расширения
+                            name_file = filename.split('.xlsx')[0]
+                            print(name_file)
+                            temb_wb = load_workbook(
+                                filename=f'{dirpath}/{filename}')  # загружаем файл, для проверки листов
+                            """
+                            Проверяем наличие листов из эталонного файла в проверяемом файле, если они есть то начинаем 
+                            дальнейшую проверку
+                            """
+                            if set_standard_sheets.issubset(set(temb_wb.sheetnames)):
+                                count_errors = 0
+                                # проверяем наличие листов указанных в файле параметров
+                                for name_sheet, df in dct_df.items():  # Проводим проверку на совпадение
+                                    lst_df = pd.read_excel(f'{dirpath}/{filename}', sheet_name=name_sheet)
+                                    if lst_df.shape[1] != df.shape[1]:
+                                        # если количество колонок не совпадает то записываем как ошибку
+                                        temp_error_df = pd.DataFrame(
+                                            columns=['Название файла', 'Наименование листа', 'Тип ошибки',
+                                                     'Описание ошибки'],
+                                            data=[[name_file, name_sheet, 'Количество колонок отличается от эталонного',
+                                                   f'Ожидалось {df.shape[1]} колонок, а в листе {lst_df.shape[1]}']])  # создаем временный датафрейм. потом надо подумать над словарем
+
+                                        err_df = pd.concat([err_df, temp_error_df],
+                                                           ignore_index=True)  # добавляем в датафрейм ошибок
+                                        count_errors += 1
+
+                                # если хоть одна ошибка то проверяем следующий файл
+                                if count_errors != 0:
+                                    continue
+                                # если нет то начинаем обрабатывать листы
+                                for name_sheet, df in dct_df.items():
+                                    temp_df = pd.read_excel(f'{dirpath}/{filename}', sheet_name=name_sheet,
+                                                            dtype=str, skiprows=skip_rows,header=None)  # загружаем датафрейм
+                                    if temp_df.shape[1] > 3:
+                                        temp_df = temp_df.dropna(axis=0,thresh=2)
+
+                                    temp_df['Номер строки'] = range(1, temp_df.shape[0] + 1)
+                                    temp_df['Откуда взяты данные'] = name_file
+                                    for row in dataframe_to_rows(temp_df, index=False, header=False):
+                                        standard_wb[name_sheet].append(row)  # добавляем данные
+
+                            elif len(
+                                    temb_wb.sheetnames) == standard_size_sheets:  # сравниваем количество листов в файле
+                                diff_name_sheets = set(temb_wb.sheetnames).difference(
+                                    set(standard_sheets))  # проверяем разницу в названиях листов
+                                print(diff_name_sheets)
+                                if len(diff_name_sheets) != 0:  # если разница в названиях есть то записываем в ошибки и обрабатываем следующий файл
+                                    temp_error_df = pd.DataFrame(
+                                        columns=['Название файла', 'Наименование листа', 'Тип ошибки',
+                                                 'Описание ошибки'], data=[
+                                            [name_file, '', 'Названия листов отличаются от эталонных',
+                                             f'Отличаются следующие названия листов {diff_name_sheets}']])  # создаем временный датафрейм. потом надо подумать над словарем
+
+                                    err_df = pd.concat([err_df, temp_error_df],
+                                                       ignore_index=True)  # добавляем в датафрейм ошибок
+
+                                    continue
+
+                            else:
+                                temp_error_df = pd.DataFrame(
+                                    columns=['Название файла', 'Наименование листа', 'Тип ошибки', 'Описание ошибки'],
+                                    data=[[name_file, '', 'Не совпадает количество или название листов в файле',
+                                           f'Листы, которые есть в файле: {",".join(temb_wb.sheetnames)}']])  # создаем временный датафрейм. потом надо подумать над словарем
+
+                                err_df = pd.concat([err_df, temp_error_df],
+                                                   ignore_index=True)  # добавляем в датафрейм ошибок
+
+                # Получаем текущую дату
+                current_time = time.strftime('%H_%M_%S %d.%m.%Y')
+                standard_wb.save(
+                    f'{path_to_end_folder_merger}/Слияние по варианту А Общая таблица от {current_time}.xlsx')  # сохраняем
+                err_out_wb = openpyxl.Workbook()  # создаем объект openpyxl для сохранения датафрейма
+                for row in dataframe_to_rows(err_df, index=False, header=True):
+                    err_out_wb['Sheet'].append(row)  # добавляем данные
+                # устанавливаем размер колонок
+                err_out_wb['Sheet'].column_dimensions['A'].width = 40
+                err_out_wb['Sheet'].column_dimensions['B'].width = 30
+                err_out_wb['Sheet'].column_dimensions['C'].width = 55
+                err_out_wb['Sheet'].column_dimensions['D'].width = 100
+                err_out_wb.save(f'{path_to_end_folder_merger}/Слияние по варианту А Ошибки от {current_time}.xlsx')
+
+            elif checkbox_harvest == 1:  # Вариант объединения по порядку
+                for dirpath, dirnames, filenames in os.walk(dir_name):
+                    for filename in filenames:
+                        if (filename.endswith('.xlsx') and not filename.startswith(
+                                '~$')) and filename != name_file_standard_merger:  # не обрабатываем эталонный файл
+                            # Получаем название файла без расширения
+                            name_file = filename.split('.xlsx')[0]
+                            print(name_file)
+                            temb_wb = load_workbook(filename=f'{dirpath}/{filename}')  # загружаем файл
+
+                            if standard_size_sheets == len(
+                                    temb_wb.sheetnames):  # если количество листов одинаково то обрабатываем
+                                count_errors = 0  # счетчик ошибок
+                                dct_name_sheet = {}  # создаем словарь где ключ это название листа в эталонном файле а значение это название листа в обрабатываемом файле
+                                for idx, data in enumerate(dct_df.items()):  # Проводим проверку на совпадение
+                                    name_sheet = data[0]  # получаем название листа
+                                    df = data[1]  # получаем датафрейм
+                                    temp_name_sheet = temb_wb.sheetnames[idx]  #
+                                    lst_df = pd.read_excel(f'{dirpath}/{filename}', sheet_name=temp_name_sheet)
+                                    if lst_df.shape[1] != df.shape[1]:
+                                        # если количество колонок не совпадает то записываем как ошибку
+                                        temp_error_df = pd.DataFrame(
+                                            columns=['Название файла', 'Наименование листа', 'Тип ошибки',
+                                                     'Описание ошибки'],
+                                            data=[
+                                                [name_file, name_sheet, 'Количество колонок отличается от эталонного',
+                                                 f'Ожидалось {df.shape[1]} колонок, а в листе {lst_df.shape[1]}']])  # создаем временный датафрейм. потом надо подумать над словарем
+
+                                        err_df = pd.concat([err_df, temp_error_df],
+                                                           ignore_index=True)  # добавляем в датафрейм ошибок
+                                        count_errors += 1
+
+                                    else:
+                                        dct_name_sheet[name_sheet] = temp_name_sheet
+                                # если хоть одна ошибка то проверяем следующий файл
+                                if count_errors != 0:
+                                    continue
+                                    # если нет то начинаем обрабатывать листы
+                                for name_sheet, df in dct_df.items():
+                                    temp_df = pd.read_excel(f'{dirpath}/{filename}',
+                                                            sheet_name=dct_name_sheet[name_sheet],
+                                                            dtype=str, skiprows=skip_rows,header=None)  # загружаем датафрейм
+                                    if temp_df.shape[1] > 3:
+                                        temp_df = temp_df.dropna(axis=0, thresh=2)
+                                    temp_df['Номер строки'] = range(1, temp_df.shape[0] + 1)
+                                    temp_df['Откуда взяты данные'] = name_file
+                                    for row in dataframe_to_rows(temp_df, index=False, header=False):
+                                        standard_wb[name_sheet].append(row)  # добавляем данные
+                            else:
+                                temp_error_df = pd.DataFrame(
+                                    columns=['Название файла', 'Наименование листа', 'Тип ошибки', 'Описание ошибки'],
+                                    data=[[name_file, '', 'Не совпадает количество или название листов в файле',
+                                           f'Листы, которые есть в файле: {",".join(temb_wb.sheetnames)}']])  # создаем временный датафрейм. потом надо подумать над словарем
+
+                                err_df = pd.concat([err_df, temp_error_df],
+                                                   ignore_index=True)  # добавляем в датафрейм ошибок
+
+                # Получаем текущую дату
+                current_time = time.strftime('%H_%M_%S %d.%m.%Y')
+                standard_wb.save(
+                    f'{path_to_end_folder_merger}/Слияние по варианту Б Общая таблица от {current_time}.xlsx')  # сохраняем
+
+                err_out_wb = openpyxl.Workbook()  # создаем объект openpyxl для сохранения датафрейма
+                for row in dataframe_to_rows(err_df, index=False, header=True):
+                    err_out_wb['Sheet'].append(row)  # добавляем данные
+                # устанавливаем размер колонок
+                err_out_wb['Sheet'].column_dimensions['A'].width = 40
+                err_out_wb['Sheet'].column_dimensions['B'].width = 30
+                err_out_wb['Sheet'].column_dimensions['C'].width = 55
+                err_out_wb['Sheet'].column_dimensions['D'].width = 100
+                err_out_wb.save(f'{path_to_end_folder_merger}/Слияние по варианту Б Ошибки от {current_time}.xlsx')
+
+            # Если выбран управляемый сбор данных
+            elif checkbox_harvest == 2:
+                df_params = pd.read_excel(params_harvest, header=None)  # загружаем параметры
+                df_params[0] = df_params[0].astype(
+                    str)  # делаем данные строковыми чтобы корректно работало обращение по названию листов
+
+                tmp_name_sheets = df_params[0].tolist()  # создаем списки чтобы потом из них сделать словарь
+                tmp_skip_rows = df_params[1].tolist()
+                dct_manage_harvest = dict(zip(tmp_name_sheets,
+                                              tmp_skip_rows))  # создаем словарь где ключ это название листа а значение это сколько строк нужно пропустить
+                set_params_sheets = set(
+                    dct_manage_harvest.keys())  # создаем множество из ключей(листов) которые нужно обработать
+                if not set_params_sheets.issubset(
+                        set_standard_sheets):  # проверяем совпадение названий в эталонном файле и в файле параметров
+                    diff_value = set(dct_manage_harvest.keys()).difference(set(standard_sheets))  # получаем разницу
+
+                    messagebox.showerror('',
+                                         f'Не совпадают следующие названия листов в файле параметров и в эталонном файле\n'
+                                         f'{diff_value}!')
+                # начинаем обработку
+                for dirpath, dirnames, filenames in os.walk(dir_name):
+                    for filename in filenames:
+                        if (filename.endswith('.xlsx') and not filename.startswith(
+                                '~$')) and filename != name_file_standard_merger:  # не обрабатываем эталонный файл
+                            # Получаем название файла без расширения
+                            name_file = filename.split('.xlsx')[0]
+                            print(name_file)
+                            temb_wb = load_workbook(filename=f'{dirpath}/{filename}')  # загружаем файл
+                            if set_params_sheets.issubset(set(temb_wb.sheetnames)):
+                                count_errors = 0
+                                # проверяем наличие листов указанных в файле параметров
+                                for name_sheet, skip_r in dct_manage_harvest.items():  # Проводим проверку на совпадение количества колонок
+                                    lst_df = pd.read_excel(f'{dirpath}/{filename}', sheet_name=name_sheet)
+                                    if lst_df.shape[1] != dct_df[name_sheet].shape[1]:
+                                        # если количество колонок не совпадает то записываем как ошибку
+                                        temp_error_df = pd.DataFrame(
+                                            columns=['Название файла', 'Наименование листа', 'Тип ошибки',
+                                                     'Описание ошибки'],
+                                            data=[[name_file, name_sheet, 'Количество колонок отличается от эталонного',
+                                                   f'Ожидалось {dct_df[name_sheet].shape[1]} колонок, а в листе {lst_df.shape[1]}']])  # создаем временный датафрейм. потом надо подумать над словарем
+                                        err_df = pd.concat([err_df, temp_error_df],
+                                                           ignore_index=True)  # добавляем в датафрейм ошибок
+                                        count_errors += 1
+                                #
+                                # если хоть одна ошибка то проверяем следующий файл
+                                if count_errors != 0:
+                                    continue
+                                # если нет то начинаем обрабатывать листы
+                                for name_sheet, skip_r in dct_manage_harvest.items():
+                                    temp_df = pd.read_excel(f'{dirpath}/{filename}', sheet_name=name_sheet,
+                                                            skiprows=skip_r,
+                                                            dtype=str, header=None)  # загружаем датафрейм
+
+                                    if temp_df.shape[1] > 3:
+                                        temp_df = temp_df.dropna(axis=0,thresh=2)
+                                    temp_df['Номер строки'] = range(1, temp_df.shape[0] + 1)
+                                    temp_df['Откуда взяты данные'] = name_file
+                                    for row in dataframe_to_rows(temp_df, index=False, header=False):
+                                        standard_wb[name_sheet].append(row)  # добавляем данные
+                            else:
+                                temp_error_df = pd.DataFrame(
+                                    columns=['Название файла', 'Наименование листа', 'Тип ошибки', 'Описание ошибки'],
+                                    data=[[name_file, '', 'Не совпадает количество или название листов в файле',
+                                           f'Листы, которые есть в файле: {",".join(temb_wb.sheetnames)}']])  # создаем временный датафрейм. потом надо подумать над словарем
+
+                                err_df = pd.concat([err_df, temp_error_df],
+                                                   ignore_index=True)  # добавляем в датафрейм ошибок
+
+                # # Получаем текущую дату
+                current_time = time.strftime('%H_%M_%S %d.%m.%Y')
+                standard_wb.save(
+                    f'{path_to_end_folder_merger}/Слияние по варианту В Общая таблица от {current_time}.xlsx')  # сохраняем
+                err_out_wb = openpyxl.Workbook()  # создаем объект openpyxl для сохранения датафрейма
+                for row in dataframe_to_rows(err_df, index=False, header=True):
+                    err_out_wb['Sheet'].append(row)  # добавляем данные
+                # устанавливаем размер колонок
+                err_out_wb['Sheet'].column_dimensions['A'].width = 40
+                err_out_wb['Sheet'].column_dimensions['B'].width = 30
+                err_out_wb['Sheet'].column_dimensions['C'].width = 55
+                err_out_wb['Sheet'].column_dimensions['D'].width = 100
+                err_out_wb.save(f'{path_to_end_folder_merger}/Слияние по варианту В Ошибки от {current_time}.xlsx')
+
+        except NameError:
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
+                                 f'Выберите папку с файлами,эталонный файл и папку куда будут генерироваться файлы')
+        except PermissionError:
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
+                                 f'Закройте файл выбранный эталонным или файлы из обрабатываемой папки')
+        except FileNotFoundError:
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
+                                 f'Выберите файл с параметрами!\n'
+                                 f'Если вы выбрали файл с параметрами, а ошибка повторяется,то перенесите папку \n'
+                                 f'с файлами которые вы хотите обработать в корень диска. Проблема может быть в \n '
+                                 f'в слишком длинном пути к обрабатываемым файлам')
+        except:
+            logging.exception('AN ERROR HAS OCCURRED')
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
+                                 'Возникла ошибка!!! Подробности ошибки в файле error.log')
+        else:
+            messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
+                                'Создание общей таблицы успешно завершено!!!')
 
 
 
@@ -3293,6 +3642,86 @@ if __name__ == '__main__':
     btn_calculate_date.grid(column=0, row=8, padx=10, pady=10)
 
 
+    """
+    Создание вкладки для объединения таблиц в одну большую
+    """
+    # Создаем вкладку для подсчета данных по категориям
+    tab_merger_tables = ttk.Frame(tab_control)
+    tab_control.add(tab_merger_tables, text='Слияние файлов')
+    tab_control.pack(expand=1, fill='both')
+
+    # Добавляем виджеты на вкладку Подсчет данных  по категориям
+    # Создаем метку для описания назначения программы
+    lbl_hello = Label(tab_merger_tables,
+                      text='Центр опережающей профессиональной подготовки Республики Бурятия\nСлияние файлов Excel с одинаковой структурой'
+                           '\nДля корректной работы программмы уберите из таблицы объединенные ячейки'
+                      )
+    lbl_hello.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_to_img = resource_path('logo.png')
+    img_merger = PhotoImage(file=path_to_img)
+    Label(tab_merger_tables,
+          image=img_merger
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Переключатель:вариант слияния файлов
+    # Создаем переключатель
+    group_rb_type_harvest = IntVar()
+    # Создаем фрейм для размещения переключателей(pack и грид не используются в одном контейнере)
+    frame_rb_type_harvest = LabelFrame(tab_merger_tables, text='1) Выберите вариант слияния')
+    frame_rb_type_harvest.grid(column=0, row=1, padx=10)
+    #
+    Radiobutton(frame_rb_type_harvest, text='А) Простое слияние по названию листов', variable=group_rb_type_harvest, value=0).pack()
+    Radiobutton(frame_rb_type_harvest, text='Б) Слияние по порядку листов', variable=group_rb_type_harvest, value=1).pack()
+    Radiobutton(frame_rb_type_harvest, text='В) Сложное слияние по названию листов', variable=group_rb_type_harvest, value=2).pack()
+
+    # Создаем область для того чтобы поместить туда подготовительные кнопки(выбрать файл,выбрать папку и т.п.)
+    frame_data_for_merger = LabelFrame(tab_merger_tables, text='Подготовка')
+    frame_data_for_merger.grid(column=0, row=2, padx=10)
+
+    #Создаем кнопку Выбрать папку с данными
+
+    btn_data_merger = Button(frame_data_for_merger, text='2) Выберите папку с данными', font=('Arial Bold', 14),
+                             command=select_folder_data_merger
+                             )
+    btn_data_merger.grid(column=0, row=3, padx=5, pady=5)
+
+    # Создаем кнопку Выбрать эталонный файл
+
+    btn_example_merger = Button(frame_data_for_merger, text='3) Выберите эталонный файл', font=('Arial Bold', 14),
+                                command=select_standard_file_merger)
+    btn_example_merger.grid(column=0, row=4, padx=5, pady=5)
+
+    btn_choose_end_folder_merger = Button(frame_data_for_merger, text='4) Выберите конечную папку',
+                                          font=('Arial Bold', 14),
+                                          command=select_end_folder_merger
+                                          )
+    btn_choose_end_folder_merger.grid(column=0, row=5, padx=5, pady=5)
+
+
+    # Определяем переменную в которой будем хранить количество пропускаемых строк
+    merger_entry_skip_rows = StringVar()
+    # Описание поля
+    merger_label_skip_rows = Label(frame_data_for_merger,
+                                   text='5) Введите количество строк\nв листах,чтобы пропустить\nзаголовок\n'
+                                        'ТОЛЬКО для вариантов слияния А и Б ')
+    merger_label_skip_rows.grid(column=0, row=8, padx=10, pady=10)
+    # поле ввода
+    merger_number_skip_rows = Entry(frame_data_for_merger, textvariable=merger_entry_skip_rows, width=5)
+    merger_number_skip_rows.grid(column=0, row=9, padx=5, pady=5, ipadx=10, ipady=7)
+
+    # Создаем кнопку выбора файла с параметрами
+    btn_params_merger = Button(frame_data_for_merger, text='Выберите файл с параметрами слияния\n'
+                                                           'ТОЛЬКО для варианта В', font=('Arial Bold', 14),
+                                command=select_params_file_merger)
+    btn_params_merger.grid(column=0, row=10, padx=5, pady=5)
+     # Создаем кнопку слияния
+
+    btn_merger_process = Button(tab_merger_tables, text='6) Произвести слияние \nфайлов',
+                                font=('Arial Bold', 20),
+                                command=merge_tables)
+    btn_merger_process.grid(column=0, row=11, padx=10, pady=10)
 
 
 
