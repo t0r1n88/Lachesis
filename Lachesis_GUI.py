@@ -1845,18 +1845,18 @@ def processing_complex():
 
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
                              f'Проверьте правильность написания по руководству пользователя')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -1864,7 +1864,7 @@ def processing_complex():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                             'Данные успешно обработаны')
 
 
@@ -2045,35 +2045,35 @@ def generate_docs_other():
 
 
     except NameError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'В таблице не найдена указанная колонка {e.args}')
     except PermissionError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Закройте все файлы Word созданные Вестой')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except CheckBoxException:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Уберите галочку из чекбокса Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)'
                              )
     except NotFoundValue:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Указанное значение не найдено в выбранной колонке\nПроверьте наличие такого значения в таблице'
                              )
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                             'Создание документов завершено!')
 
 def select_file_params_comparsion():
@@ -2374,33 +2374,555 @@ def processing_comparison():
             index=False)
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'В таблице нет такой колонки!\nПроверьте написание названия колонки')
         logging.exception('AN ERROR HAS OCCURRED')
     except ValueError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'В таблице нет листа с таким названием!\nПроверьте написание названия листа')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 4.0',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.0',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 4.0', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.0', 'Данные успешно обработаны')
+
+
+"""
+Подсчет данных
+"""
+
+def select_file_data_groupby():
+    """
+    Функция для выбора файла с данными
+    :return:
+    """
+    global name_file_data_groupby
+    # Получаем путь к файлу
+    name_file_data_groupby = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def select_end_folder_groupby():
+    """
+    Функция для выбора папки куда будет генерироваться итоговый файл
+    :return:
+    """
+    global path_to_end_folder_groupby
+    path_to_end_folder_groupby = filedialog.askdirectory()
+
+
+def groupby_category():
+    """
+    Функция для подсчета выбранной колонки по категориям
+    :return:
+    """
+    try:
+        df = pd.read_excel(name_file_data_groupby)
+        df.columns = list(map(str, list(df.columns)))
+        # Создаем шрифт которым будем выделять названия таблиц
+        font_name_table = Font(name='Arial Black', size=15, italic=True)
+        # Создаем файл excel
+        wb = openpyxl.Workbook()
+
+        # Проверяем наличие возможных дубликатов ,котороые могут получиться если обрезать по 30 символов
+        lst_length_column = [column[:30] for column in df.columns]
+        check_dupl_length = [k for k,v in Counter(lst_length_column).items() if v>1]
+
+        # проверяем наличие объединенных ячеек
+        check_merge = [column for column in df.columns if 'Unnamed' in column]
+        # если есть хоть один Unnamed то просто заменяем названия колонок на Колонка №цифра
+        if check_merge or check_dupl_length:
+            df.columns = [f'Колонка №{i}' for i in range(1, df.shape[1] + 1)]
+        # очищаем названия колонок от символов */\ []''
+        # Создаем регулярное выражение
+        pattern_symbols = re.compile(r"[/*'\[\]/\\]")
+        clean_df_columns = [re.sub(pattern_symbols,'',column) for column in df.columns]
+        df.columns = clean_df_columns
+
+        # Добавляем столбец для облегчения подсчета по категориям
+        df['Для подсчета'] = 1
+
+        # Создаем листы
+        for idx, name_column in enumerate(df.columns):
+            # Делаем короткое название не более 30 символов
+            wb.create_sheet(title=name_column[:30], index=idx)
+
+        for idx, name_column in enumerate(df.columns):
+            group_df = df.groupby([name_column]).agg({'Для подсчета': 'sum'})
+            group_df.columns = ['Количество']
+
+            # Сортируем по убыванию
+            group_df.sort_values(by=['Количество'], inplace=True, ascending=False)
+
+            for r in dataframe_to_rows(group_df, index=True, header=True):
+                if len(r) != 1:
+                    wb[name_column[:30]].append(r)
+            wb[name_column[:30]].column_dimensions['A'].width = 50
+
+        # генерируем текущее время
+        t = time.localtime()
+        current_time = time.strftime('%H_%M_%S', t)
+        # Удаляем листы
+        del wb['Sheet']
+        del wb['Для подсчета']
+        # Сохраняем итоговый файл
+        wb.save(
+            f'{path_to_end_folder_groupby}/Подсчет частоты значений для всех колонок таблицы от {current_time}.xlsx')
+
+    except NameError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Выберите файл с данными и папку куда будет генерироваться файл')
+
+    except FileNotFoundError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам')
+    except:
+        logging.exception('AN ERROR HAS OCCURRED')
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
+    else:
+        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.30', 'Данные успешно обработаны')
+
+
+def groupby_stat():
+    """
+    Функция для подсчета выбранной колонки по количественным показателям(сумма,среднее,медиана,мин,макс)
+    :return:
+    """
+
+    try:
+        df = pd.read_excel(name_file_data_groupby)
+        # Делаем названия колонок строковыми
+        df.columns = list(map(str, list(df.columns)))
+
+        # Создаем шрифт которым будем выделять названия таблиц
+        font_name_table = Font(name='Arial Black', size=15, italic=True)
+        # Создаем файл excel
+        wb = openpyxl.Workbook()
+
+        # Проверяем наличие возможных дубликатов ,котороые могут получиться если обрезать по 30 символов
+        lst_length_column = [column[:30] for column in df.columns]
+        check_dupl_length = [k for k,v in Counter(lst_length_column).items() if v>1]
+
+        # проверяем наличие объединенных ячеек
+        check_merge = [column for column in df.columns if 'Unnamed' in column]
+        # если есть хоть один Unnamed или дубликат то просто заменяем названия колонок на Колонка №цифра
+        if check_merge or check_dupl_length:
+            df.columns = [f'Колонка №{i}' for i in range(1, df.shape[1] + 1)]
+
+        # очищаем названия колонок от символов */\ []''
+        # Создаем регулярное выражение
+        pattern_symbols = re.compile(r"[/*'\[\]/\\]")
+        clean_df_columns = [re.sub(pattern_symbols,'',column) for column in df.columns]
+        df.columns = clean_df_columns
+
+
+        # Добавляем столбец для облегчения подсчета по категориям
+        df['Итого'] = 1
+
+        # Создаем листы
+        for idx, name_column in enumerate(df.columns):
+            # Делаем короткое название не более 30 символов
+            wb.create_sheet(title=name_column[:30], index=idx)
+
+        for idx, name_column in enumerate(df.columns):
+            group_df = df[name_column].describe().to_frame()
+            if group_df.shape[0] == 8:
+                # подсчитаем сумму
+                all_sum = df[name_column].sum()
+                dct_row = {name_column: all_sum}
+                row = pd.DataFrame(data=dct_row, index=['Сумма'])
+                # Добавим в датафрейм
+                group_df = pd.concat([group_df, row], axis=0)
+
+                # Обновим названия индексов
+                group_df.index = ['Количество значений', 'Среднее', 'Стандартное отклонение', 'Минимальное значение',
+                                  '25%(Первый квартиль)', 'Медиана', '75%(Третий квартиль)', 'Максимальное значение',
+                                  'Сумма']
+
+            elif group_df.shape[0] == 4:
+                group_df.index = ['Количество значений', 'Количество уникальных значений', 'Самое частое значение',
+                                  'Количество повторений самого частого значения', ]
+            for r in dataframe_to_rows(group_df, index=True, header=True):
+                if len(r) != 1:
+                    wb[name_column[:30]].append(r)
+            wb[name_column[:30]].column_dimensions['A'].width = 50
+
+        # генерируем текущее время
+        t = time.localtime()
+        current_time = time.strftime('%H_%M_%S', t)
+        # Удаляем лист
+        del wb['Sheet']
+        del wb['Итого']
+        # Сохраняем итоговый файл
+        wb.save(
+            f'{path_to_end_folder_groupby}/Подсчет базовых статистик для всех колонок таблицы от {current_time}.xlsx')
+
+
+
+    except NameError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Выберите файл с данными и папку куда будет генерироваться файл')
+        logging.exception('AN ERROR HAS OCCURRED')
+
+    except FileNotFoundError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам')
+    except:
+        logging.exception('AN ERROR HAS OCCURRED')
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
+
+    else:
+        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.30', 'Данные успешно обработаны')
+
+
+"""
+Обработка дат рождения
+"""
+def calculate_age(born):
+    """
+    Функция для расчета текущего возраста взято с https://stackoverflow.com/questions/2217488/age-from-birthdate-in-python/9754466#9754466
+    :param born: дата рождения
+    :return: возраст
+    """
+
+    try:
+
+        # today = date.today()
+        selected_date = pd.to_datetime(raw_selected_date, dayfirst=True)
+        # return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        return selected_date.year - born.year - ((selected_date.month, selected_date.day) < (born.month, born.day))
+
+    except ValueError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Введена некорректная дата относительно которой нужно провести обработку\nПример корректной даты 01.09.2022')
+        logging.exception('AN ERROR HAS OCCURRED')
+        quit()
+
+
+def convert_date(cell):
+    """
+    Функция для конвертации даты в формате 1957-05-10 в формат 10.05.1957(строковый)
+    """
+
+    try:
+        string_date = datetime.datetime.strftime(cell, '%d.%m.%Y')
+        return string_date
+
+    except TypeError:
+        print(cell)
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             'Проверьте правильность заполнения ячеек с датой!!!')
+        logging.exception('AN ERROR HAS OCCURRED')
+        quit()
+
+def select_end_folder_date():
+    """
+    Функция для выбора папки куда будет генерироваться итоговый файл
+    :return:
+    """
+    global path_to_end_folder_date
+    path_to_end_folder_date = filedialog.askdirectory()
+
+def select_file_data_date():
+    """
+    Функция для выбора файла с данными для которого нужно разбить по категориям
+    :return: Путь к файлу с данными
+    """
+    global name_file_data_date
+    # Получаем путь к файлу
+    name_file_data_date = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def check_date_columns(i, value):
+    """
+    Функция для проверки типа колонки. Необходимо найти колонки с датой
+    :param i:
+    :param value:
+    :return:
+    """
+    try:
+        itog = pd.to_datetime(str(value), infer_datetime_format=True)
+    except:
+        pass
+    else:
+        return i
+
+
+def set_rus_locale():
+    """
+    Функция чтобы можно было извлечь русские названия месяцев
+    """
+    locale.setlocale(
+        locale.LC_ALL,
+        'rus_rus' if sys.platform == 'win32' else 'ru_RU.UTF-8')
+
+def processing_date_column(df, lst_columns):
+    """
+    Функция для обработки столбцов с датами. конвертация в строку формата ДД.ММ.ГГГГ
+    """
+    # получаем первую строку
+    first_row = df.iloc[0, lst_columns]
+
+    lst_first_row = list(first_row)  # Превращаем строку в список
+    lst_date_columns = []  # Создаем список куда будем сохранять колонки в которых находятся даты
+    tupl_row = list(zip(lst_columns,
+                        lst_first_row))  # Создаем список кортежей формата (номер колонки,значение строки в этой колонке)
+
+    for idx, value in tupl_row:  # Перебираем кортеж
+        result = check_date_columns(idx, value)  # проверяем является ли значение датой
+        if result:  # если да то добавляем список порядковый номер колонки
+            lst_date_columns.append(result)
+        else:  # иначе проверяем следующее значение
+            continue
+    for i in lst_date_columns:  # Перебираем список с колонками дат, превращаем их в даты и конвертируем в нужный строковый формат
+        df.iloc[:, i] = pd.to_datetime(df.iloc[:, i], errors='coerce', dayfirst=True)
+        df.iloc[:, i] = df.iloc[:, i].apply(create_doc_convert_date)
+
+
+def extract_number_month(cell):
+    """
+    Функция для извлечения номера месяца
+    """
+    return cell.month
+
+
+def extract_name_month(cell):
+    """
+    Функция для извлечения названия месяца
+    Взято отсюда https://ru.stackoverflow.com/questions/1045154/Вывод-русских-символов-из-pd-timestamp-month-name
+    """
+    return cell.month_name(locale='Russian')
+
+
+def extract_year(cell):
+    """
+    Функция для извлечения года рождения
+    """
+    return cell.year
+
+
+def calculate_date():
+    """
+    Функция для разбиения по категориям, подсчета текущего возраста и выделения месяца,года
+    :return:
+    """
+    try:
+        # делаем глобальным значение даты.Дада я знаю что это костыль
+        global raw_selected_date
+        raw_selected_date = entry_date.get()
+
+        name_column = entry_name_column.get()
+        # Устанавливаем русскую локаль
+        set_rus_locale()
+
+        # Считываем файл
+        df = pd.read_excel(name_file_data_date)
+        # Конвертируем его в формат даты
+        # В случае ошибок заменяем значение NaN
+        df[name_column] = pd.to_datetime(df[name_column], dayfirst=True, errors='coerce')
+        # Создаем шрифт которым будем выделять названия таблиц
+        font_name_table = Font(name='Arial Black', size=15, italic=True)
+
+        # Создаем файл excel
+        wb = openpyxl.Workbook()
+        # Создаем листы
+        # Переименовываем лист чтобы в итоговом файле не было пустого листа
+        ren_sheet = wb['Sheet']
+        ren_sheet.title = 'Итоговая таблица'
+
+        # wb.create_sheet(title='Итоговая таблица', index=0)
+        wb.create_sheet(title='Свод по возрастам', index=1)
+        wb.create_sheet(title='Свод по месяцам', index=2)
+        wb.create_sheet(title='Свод по годам', index=3)
+        wb.create_sheet(title='Свод по 1-ПК', index=4)
+        wb.create_sheet(title='Свод по 1-ПО', index=5)
+        wb.create_sheet(title='Свод по СПО-1', index=6)
+        wb.create_sheet(title='Свод по категориям Росстата', index=7)
+
+        # Подсчитываем текущий возраст
+        df['Текущий возраст'] = df[name_column].apply(calculate_age)
+
+        # Получаем номер месяца
+        df['Порядковый номер месяца рождения'] = df[name_column].apply(extract_number_month)
+
+        # Получаем название месяца
+        df['Название месяца рождения'] = df[name_column].apply(extract_name_month)
+
+        # Получаем год рождения
+        df['Год рождения'] = df[name_column].apply(extract_year)
+
+        # Присваиваем категорию по 1-ПК
+        df['1-ПК Категория'] = pd.cut(df['Текущий возраст'], [0, 24, 29, 34, 39, 44, 49, 54, 59, 64, 101, 10000],
+                                      labels=['моложе 25 лет', '25-29', '30-34', '35-39',
+                                              '40-44', '45-49', '50-54', '55-59', '60-64',
+                                              '65 и более',
+                                              'Возраст  больше 101'])
+        # Приводим к строковому виду, иначе не запишется на лист
+        df['1-ПК Категория'] = df['1-ПК Категория'].astype(str)
+
+        # Присваиваем категорию по 1-ПО
+        df['1-ПО Категория'] = pd.cut(df['Текущий возраст'],
+                                      [0, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+                                       26, 27, 28,
+                                       29, 34, 39, 44, 49, 54, 59, 64, 101],
+                                      labels=['моложе 14 лет', '14 лет', '15 лет',
+                                              '16 лет',
+                                              '17 лет', '18 лет', '19 лет', '20 лет',
+                                              '21 год', '22 года',
+                                              '23 года', '24 года', '25 лет',
+                                              '26 лет', '27 лет', '28 лет', '29 лет',
+                                              '30-34 лет',
+                                              '35-39 лет', '40-44 лет', '45-49 лет',
+                                              '50-54 лет',
+                                              '55-59 лет',
+                                              '60-64 лет',
+                                              '65 лет и старше'])
+        # Приводим к строковому виду, иначе не запишется на лист
+        df['1-ПО Категория'] = df['1-ПО Категория'].astype(str)
+
+        # Присваиваем категорию по 1-СПО
+        df['СПО-1 Категория'] = pd.cut(df['Текущий возраст'],
+                                       [0, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 34,
+                                        39,
+                                        101],
+                                       labels=['моложе 13 лет', '13 лет', '14 лет', '15 лет', '16 лет', '17 лет',
+                                               '18 лет',
+                                               '19 лет', '20 лет'
+                                           , '21 год', '22 года', '23 года', '24 года', '25 лет', '26 лет', '27 лет',
+                                               '28 лет',
+                                               '29 лет',
+                                               '30-34 лет', '35-39 лет', '40 лет и старше'])
+        ## Приводим к строковому виду, иначе не запишется на лист
+        df['СПО-1 Категория'] = df['СПО-1 Категория'].astype(str)
+
+        # Присваиваем категорию по Росстату
+        df['Росстат Категория'] = pd.cut(df['Текущий возраст'],
+                                         [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 200],
+                                         labels=['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34',
+                                                 '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69',
+                                                 '70 лет и старше'])
+        ## Приводим к строковому виду, иначе не запишется на лист
+        df['Росстат Категория'] = df['Росстат Категория'].astype(str)
+
+        # Заполняем пустые строки
+        df.fillna('Не заполнено!!!', inplace=True)
+
+        # заполняем сводные таблицы
+        # Сводная по возрастам
+
+        df_svod_by_age = df.groupby(['Текущий возраст']).agg({name_column: 'count'})
+        df_svod_by_age.columns = ['Количество']
+
+        for r in dataframe_to_rows(df_svod_by_age, index=True, header=True):
+            wb['Свод по возрастам'].append(r)
+
+        # Сводная по месяцам
+        df_svod_by_month = df.groupby(['Название месяца рождения']).agg({name_column: 'count'})
+        df_svod_by_month.columns = ['Количество']
+
+        # Сортируем индекс чтобы месяцы шли в хоронологическом порядке
+        # Взял отсюда https://stackoverflow.com/questions/40816144/pandas-series-sort-by-month-index
+        df_svod_by_month.index = pd.CategoricalIndex(df_svod_by_month.index,
+                                                     categories=['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                                                                 'Июль',
+                                                                 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                                                     ordered=True)
+        df_svod_by_month.sort_index(inplace=True)
+
+        for r in dataframe_to_rows(df_svod_by_month, index=True, header=True):
+            wb['Свод по месяцам'].append(r)
+
+        # Сводная по годам
+        df_svod_by_year = df.groupby(['Год рождения']).agg({name_column: 'count'})
+        df_svod_by_year.columns = ['Количество']
+
+        for r in dataframe_to_rows(df_svod_by_year, index=True, header=True):
+            wb['Свод по годам'].append(r)
+
+        # Сводная по 1-ПК
+        df_svod_by_1PK = df.groupby(['1-ПК Категория']).agg({name_column: 'count'})
+        df_svod_by_1PK.columns = ['Количество']
+
+        for r in dataframe_to_rows(df_svod_by_1PK, index=True, header=True):
+            wb['Свод по 1-ПК'].append(r)
+
+        # Сводная по 1-ПО
+        df_svod_by_1PO = df.groupby(['1-ПО Категория']).agg({name_column: 'count'})
+        df_svod_by_1PO.columns = ['Количество']
+
+        for r in dataframe_to_rows(df_svod_by_1PO, index=True, header=True):
+            wb['Свод по 1-ПО'].append(r)
+
+        # Сводная по СПО-1
+        df_svod_by_SPO1 = df.groupby(['СПО-1 Категория']).agg({name_column: 'count'})
+        df_svod_by_SPO1.columns = ['Количество']
+
+        for r in dataframe_to_rows(df_svod_by_SPO1, index=True, header=True):
+            wb['Свод по СПО-1'].append(r)
+
+        # Сводная по Росстату
+        df_svod_by_Ros = df.groupby(['Росстат Категория']).agg({name_column: 'count'})
+        df_svod_by_Ros.columns = ['Количество']
+
+        # Сортируем индекс
+        df_svod_by_Ros.index = pd.CategoricalIndex(df_svod_by_Ros.index,
+                                                   categories=['0-4', '5-9', '10-14', '15-19', '20-24', '25-29',
+                                                               '30-34',
+                                                               '35-39', '40-44', '45-49', '50-54', '55-59', '60-64',
+                                                               '65-69',
+                                                               '70 лет и старше', 'nan'],
+                                                   ordered=True)
+        df_svod_by_Ros.sort_index(inplace=True)
+
+        for r in dataframe_to_rows(df_svod_by_Ros, index=True, header=True):
+            wb['Свод по категориям Росстата'].append(r)
+
+        for r in dataframe_to_rows(df, index=False, header=True):
+            wb['Итоговая таблица'].append(r)
+
+        t = time.localtime()
+        current_time = time.strftime('%H_%M_%S', t)
+        # Сохраняем итоговый файл
+        wb.save(f'{path_to_end_folder_date}/Результат обработки колонки {name_column} от {current_time}.xlsx')
+    except NameError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Выберите файл с данными и папку куда будет генерироваться файл')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except KeyError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'В таблице нет такой колонки!\nПроверьте написание названия колонки')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except FileNotFoundError:
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам')
+
+    except:
+        logging.exception('AN ERROR HAS OCCURRED')
+        messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.30',
+                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
+    else:
+        messagebox.showinfo('Веста Обработка таблиц и создание документов ver 1.30', 'Данные успешно обработаны')
+
+
 
 
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов профориентационных тестов ver 4.0')
+    window.title('Лахеcис Обработка результатов профориентационных тестов ver 5.0')
     window.geometry('750x860')
     window.resizable(False, False)
     make_textmenu(window)
@@ -2665,6 +3187,115 @@ if __name__ == '__main__':
                                     command=processing_comparison
                                     )
     btn_data_do_comparison.grid(column=0, row=11, padx=10, pady=10)
+
+
+    # Создаем вкладку для подсчета данных по категориям
+    tab_groupby_data = ttk.Frame(tab_control)
+    tab_control.add(tab_groupby_data, text='Подсчет данных')
+    tab_control.pack(expand=1, fill='both')
+
+    # Добавляем виджеты на вкладку Подсчет данных  по категориям
+    # Создаем метку для описания назначения программы
+    lbl_hello = Label(tab_groupby_data,
+                      text='Центр опережающей профессиональной подготовки Республики Бурятия\nПодсчет данных'
+                           '\nДанные обрабатываются только с первого листа файла Excel!!!')
+    lbl_hello.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_to_img = resource_path('logo.png')
+    img_groupby = PhotoImage(file=path_to_img)
+    Label(tab_groupby_data,
+          image=img_groupby
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Создаем область для того чтобы поместить туда подготовительные кнопки(выбрать файл,выбрать папку и т.п.)
+    frame_data_for_groupby = LabelFrame(tab_groupby_data, text='Подготовка')
+    frame_data_for_groupby.grid(column=0, row=2, padx=10)
+
+    # Создаем кнопку Выбрать файл с данными
+    btn_data_groupby = Button(frame_data_for_groupby, text='1) Выберите файл с данными', font=('Arial Bold', 20),
+                              command=select_file_data_groupby
+                              )
+    btn_data_groupby.grid(column=0, row=3, padx=10, pady=10)
+
+    btn_choose_end_folder_groupby = Button(frame_data_for_groupby, text='2) Выберите конечную папку',
+                                           font=('Arial Bold', 20),
+                                           command=select_end_folder_groupby
+                                           )
+    btn_choose_end_folder_groupby.grid(column=0, row=4, padx=10, pady=10)
+
+       # Создаем кнопки подсчета
+
+    btn_groupby_category = Button(tab_groupby_data, text='Подсчитать количество по категориям\nдля всех колонок',
+                                  font=('Arial Bold', 20),
+                                  command=groupby_category)
+    btn_groupby_category.grid(column=0, row=5, padx=10, pady=10)
+
+    btn_groupby_stat = Button(tab_groupby_data, text='Подсчитать базовую статистику\nдля всех колонок',
+                              font=('Arial Bold', 20),
+                              command=groupby_stat)
+    btn_groupby_stat.grid(column=0, row=6, padx=10, pady=10)
+
+
+    # Создаем вклдаку для обработки дат рождения
+
+    tab_calculate_date = ttk.Frame(tab_control)
+    tab_control.add(tab_calculate_date, text='Обработка дат рождения')
+    tab_control.pack(expand=1, fill='both')
+
+    # Добавляем виджеты на вкладку Обработка дат рождения
+    # Создаем метку для описания назначения программы
+    lbl_hello = Label(tab_calculate_date,
+                      text='Центр опережающей профессиональной подготовки Республики Бурятия\nПодсчет по категориям,выделение месяца,года,подсчет текущего возраста'
+                           '\nДля корректной работы программмы уберите из таблицы объединенные ячейки'
+                           '\nДанные обрабатываются только с первого листа файла Excel!!!')
+    lbl_hello.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_to_img = resource_path('logo.png')
+    img_date = PhotoImage(file=path_to_img)
+    Label(tab_calculate_date,
+          image=img_date
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Определяем текстовую переменную которая будет хранить дату
+    entry_date = StringVar()
+    # Описание поля
+    label_name_date_field = Label(tab_calculate_date,
+                                  text='Введите  дату в формате XX.XX.XXXX\n относительно, которой нужно подсчитать текущий возраст')
+    label_name_date_field.grid(column=0, row=2, padx=10, pady=10)
+    # поле ввода
+    date_field = Entry(tab_calculate_date, textvariable=entry_date, width=30)
+    date_field.grid(column=0, row=3, padx=5, pady=5, ipadx=30, ipady=15)
+
+    # Создаем кнопку Выбрать файл с данными
+    btn_data_date = Button(tab_calculate_date, text='1) Выберите файл с данными', font=('Arial Bold', 20),
+                           command=select_file_data_date)
+    btn_data_date.grid(column=0, row=4, padx=10, pady=10)
+
+    btn_choose_end_folder_date = Button(tab_calculate_date, text='2) Выберите конечную папку', font=('Arial Bold', 20),
+                                        command=select_end_folder_date
+                                        )
+    btn_choose_end_folder_date.grid(column=0, row=5, padx=10, pady=10)
+
+    # Определяем текстовую переменную
+    entry_name_column = StringVar()
+    # Описание поля
+    label_name_column = Label(tab_calculate_date,
+                              text='3) Введите название колонки с датами рождения,\nкоторые нужно обработать ')
+    label_name_column.grid(column=0, row=6, padx=10, pady=10)
+    # поле ввода
+    column_entry = Entry(tab_calculate_date, textvariable=entry_name_column, width=30)
+    column_entry.grid(column=0, row=7, padx=7, pady=5, ipadx=30, ipady=15)
+
+    btn_calculate_date = Button(tab_calculate_date, text='4) Обработать', font=('Arial Bold', 20),
+                                command=calculate_date)
+    btn_calculate_date.grid(column=0, row=8, padx=10, pady=10)
+
+
+
+
+
 
     window.bind_class("Entry", "<Button-3><ButtonRelease-3>", show_textmenu)
     window.bind_class("Entry", "<Control-a>", callback_select_all)
