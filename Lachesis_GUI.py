@@ -1977,13 +1977,18 @@ def generate_docs_other():
         if mode_combine == 'No':
             if mode_group == 'No':
                 # Создаем в цикле документы
-                for row in data:
+                for idx,row in enumerate(data):
                     doc = DocxTemplate(name_file_template_doc)
                     context = row
                     # print(context)
                     doc.render(context)
-                    # Сохраняенм файл
-                    doc.save(f'{path_to_end_folder_doc}/{name_type_file} {row[name_column]}.docx')
+                    # Сохраняенм файл0
+                    name_file = f'{name_type_file} {row[name_column]}'
+                    name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                    # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
+                    if os.path.exists(f'{path_to_end_folder_doc}/{name_file}.docx'):
+                        doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
+                    doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
             else:
                 # Отбираем по значению строку
 
@@ -1991,18 +1996,21 @@ def generate_docs_other():
                 # Конвертируем датафрейм в список словарей
                 single_data = single_df.to_dict('records')
                 # Проверяем количество найденных совпадений
+                # очищаем от запрещенных символов
+                name_file = f'{name_type_file} {name_value_column}'
+                name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                 if len(single_data) == 1:
                     for row in single_data:
                         doc = DocxTemplate(name_file_template_doc)
                         doc.render(row)
                         # Сохраняенм файл
-                        doc.save(f'{path_to_end_folder_doc}/{name_type_file} {name_value_column}.docx')
+                        doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
                 elif len(single_data) > 1:
                     for idx, row in enumerate(single_data):
                         doc = DocxTemplate(name_file_template_doc)
                         doc.render(row)
                         # Сохраняенм файл
-                        doc.save(f'{path_to_end_folder_doc}/{name_type_file} {name_value_column}_{idx}.docx')
+                        doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
                 else:
                     raise NotFoundValue
 
@@ -2021,9 +2029,13 @@ def generate_docs_other():
                         context = row
                         doc.render(context)
                         # Сохраняем файл
-                        doc.save(f'{tmpdirname}/{row[name_column]}.docx')
-                        # Добавляем путь к файлу в список
-                        files_lst.append(f'{tmpdirname}/{row[name_column]}.docx')
+                        #очищаем от запрещенных символов
+                        name_file = f'{row[name_column]}'
+                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+
+                        doc.save(f'{tmpdirname}/{name_file}.docx')
+                        # Добавляем путь\ к файлу в список
+                        files_lst.append(f'{tmpdirname}/{name_file}.docx')
                     # Получаем базовый файл
                     main_doc = files_lst.pop(0)
                     # Запускаем функцию
