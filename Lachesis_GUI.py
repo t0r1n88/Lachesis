@@ -3461,13 +3461,13 @@ if __name__ == '__main__':
     mode_pdf_value.set('No')
     # Создаем чекбокс для выбора режима подсчета
 
-    chbox_mode_calculate = Checkbutton(frame_data_for_options,
+    chbox_mode_pdf = Checkbutton(frame_data_for_options,
                                        text='Поставьте галочку, если вам нужно чтобы \n'
                                             'дополнительно создавались pdf версии документов',
                                        variable=mode_pdf_value,
                                        offvalue='No',
                                        onvalue='Yes')
-    chbox_mode_calculate.grid(column=0, row=12, padx=1, pady=1)
+    chbox_mode_pdf.grid(column=0, row=12, padx=1, pady=1)
 
     # создаем чекбокс для единичного документа
 
