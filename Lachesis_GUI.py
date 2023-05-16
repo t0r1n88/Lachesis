@@ -10,6 +10,7 @@ from dateutil.parser import ParserError
 from docxtpl import DocxTemplate
 from docxcompose.composer import Composer
 from docx import Document
+from docx2pdf import convert
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -1845,18 +1846,18 @@ def processing_complex():
 
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
                              f'Проверьте правильность написания по руководству пользователя')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -1864,7 +1865,7 @@ def processing_complex():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                             'Данные успешно обработаны')
 
 
@@ -1920,6 +1921,8 @@ def combine_all_docx(filename_master, files_lst):
     :param files_list: список с созданными файлами
     :return: итоговый файл
     """
+    # получаем значение переключателя pdf
+    mode_pdf = mode_pdf_value.get()
     # Получаем текущее время
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
@@ -1934,6 +1937,10 @@ def combine_all_docx(filename_master, files_lst):
         composer.append(doc_temp)
     # Сохраняем файл
     composer.save(f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.docx")
+    # создаем pdf
+    if mode_pdf == 'Yes':
+        convert(f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.docx",f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.pdf",keep_active=True)
+
 
 
 def generate_docs_other():
@@ -1945,6 +1952,10 @@ def generate_docs_other():
         name_column = entry_name_column_data.get()
         name_type_file = entry_type_file.get()
         name_value_column = entry_value_column.get()
+
+        # получаем состояние чекбокса создания pdf
+        mode_pdf = mode_pdf_value.get()
+
 
         # Считываем данные
         # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
@@ -1989,6 +2000,11 @@ def generate_docs_other():
                     if os.path.exists(f'{path_to_end_folder_doc}/{name_file}.docx'):
                         doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
                     doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
+                    # создаем pdf
+                    if mode_pdf == 'Yes':
+                        convert(f'{path_to_end_folder_doc}/{name_file}.docx',f'{path_to_end_folder_doc}/{name_file}.pdf',keep_active=True)
+
+
             else:
                 # Отбираем по значению строку
 
@@ -2005,12 +2021,18 @@ def generate_docs_other():
                         doc.render(row)
                         # Сохраняенм файл
                         doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
+                        # создаем pdf
+                        if mode_pdf == 'Yes':
+                            convert(f'{path_to_end_folder_doc}/{name_file}.docx',f'{path_to_end_folder_doc}/{name_file}.pdf',keep_active=True)
                 elif len(single_data) > 1:
                     for idx, row in enumerate(single_data):
                         doc = DocxTemplate(name_file_template_doc)
                         doc.render(row)
                         # Сохраняенм файл
                         doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
+                        # создаем pdf
+                        if mode_pdf == 'Yes':
+                            convert(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx',f'{path_to_end_folder_doc}/{name_file}_{idx}.pdf',keep_active=True)
                 else:
                     raise NotFoundValue
 
@@ -2045,35 +2067,35 @@ def generate_docs_other():
 
 
     except NameError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except PermissionError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Закройте все файлы Word созданные Вестой')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except CheckBoxException:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Уберите галочку из чекбокса Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)'
                              )
     except NotFoundValue:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Указанное значение не найдено в выбранной колонке\nПроверьте наличие такого значения в таблице'
                              )
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                             'Создание документов завершено!')
 
 def select_file_params_comparsion():
@@ -2378,28 +2400,28 @@ def processing_comparison():
             index=False)
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'В таблице нет такой колонки!\nПроверьте написание названия колонки')
         logging.exception('AN ERROR HAS OCCURRED')
     except ValueError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'В таблице нет листа с таким названием!\nПроверьте написание названия листа')
         logging.exception('AN ERROR HAS OCCURRED')
 
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2', 'Данные успешно обработаны')
 
 
 """
@@ -2484,19 +2506,19 @@ def groupby_category():
             f'{path_to_end_folder_groupby}/Подсчет частоты значений для всех колонок таблицы от {current_time}.xlsx')
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Выберите файл с данными и папку куда будет генерироваться файл')
 
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2', 'Данные успешно обработаны')
 
 
 def groupby_stat():
@@ -2576,21 +2598,21 @@ def groupby_stat():
 
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Выберите файл с данными и папку куда будет генерироваться файл')
         logging.exception('AN ERROR HAS OCCURRED')
 
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2', 'Данные успешно обработаны')
 
 
 """
@@ -2611,7 +2633,7 @@ def calculate_age(born):
         return selected_date.year - born.year - ((selected_date.month, selected_date.day) < (born.month, born.day))
 
     except ValueError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Введена некорректная дата относительно которой нужно провести обработку\nПример корректной даты 01.09.2022')
         logging.exception('AN ERROR HAS OCCURRED')
         quit()
@@ -2628,7 +2650,7 @@ def convert_date(cell):
 
     except TypeError:
         print(cell)
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Проверьте правильность заполнения ячеек с датой!!!')
         logging.exception('AN ERROR HAS OCCURRED')
         quit()
@@ -2902,24 +2924,24 @@ def calculate_date():
         # Сохраняем итоговый файл
         wb.save(f'{path_to_end_folder_date}/Результат обработки колонки {name_column} от {current_time}.xlsx')
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Выберите файл с данными и папку куда будет генерироваться файл')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'В таблице нет такой колонки!\nПроверьте написание названия колонки')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
 
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1', 'Данные успешно обработаны')
+        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2', 'Данные успешно обработаны')
 
 
 """
@@ -2954,7 +2976,7 @@ def select_params_file_merger():
         params_harvest = filedialog.askopenfilename(
             filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
     else:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1','Выберите вариант слияния В и попробуйте снова ')
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2','Выберите вариант слияния В и попробуйте снова ')
 
 
 
@@ -2978,7 +3000,7 @@ def merge_tables():
         if checkbox_harvest != 2:
             skip_rows = int(merger_entry_skip_rows.get())
     except ValueError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                              'Введите целое число в поле для ввода количества пропускаемых строк!!!')
     else:
         # Оборачиваем в try
@@ -3251,23 +3273,23 @@ def merge_tables():
                 err_out_wb.save(f'{path_to_end_folder_merger}/Слияние по варианту В Ошибки от {current_time}.xlsx')
 
         except NameError:
-            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                                  f'Выберите папку с файлами,эталонный файл и папку куда будут генерироваться файлы')
         except PermissionError:
-            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                                  f'Закройте файл выбранный эталонным или файлы из обрабатываемой папки')
         except FileNotFoundError:
-            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                                  f'Выберите файл с параметрами!\n'
                                  f'Если вы выбрали файл с параметрами, а ошибка повторяется,то перенесите папку \n'
                                  f'с файлами которые вы хотите обработать в корень диска. Проблема может быть в \n '
                                  f'в слишком длинном пути к обрабатываемым файлам')
         except:
             logging.exception('AN ERROR HAS OCCURRED')
-            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+            messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                                  'Возникла ошибка!!! Подробности ошибки в файле error.log')
         else:
-            messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.1',
+            messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
                                 'Создание общей таблицы успешно завершено!!!')
 
 
@@ -3276,7 +3298,7 @@ def merge_tables():
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов профориентационных тестов ver 5.1')
+    window.title('Лахеcис Обработка результатов профориентационных тестов ver 5.2')
     window.geometry('750x860')
     window.resizable(False, False)
     make_textmenu(window)
@@ -3429,7 +3451,23 @@ if __name__ == '__main__':
                                        variable=mode_combine_value,
                                        offvalue='No',
                                        onvalue='Yes')
-    chbox_mode_calculate.grid(column=0, row=11, padx=10, pady=5)
+    chbox_mode_calculate.grid(column=0, row=11, padx=1, pady=1)
+
+    # Создаем чекбокс для режима создания pdf
+    # Создаем переменную для хранения результа переключения чекбокса
+    mode_pdf_value = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_pdf_value.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+
+    chbox_mode_calculate = Checkbutton(frame_data_for_options,
+                                       text='Поставьте галочку, если вам нужно чтобы \n'
+                                            'дополнительно создавались pdf версии документов',
+                                       variable=mode_pdf_value,
+                                       offvalue='No',
+                                       onvalue='Yes')
+    chbox_mode_calculate.grid(column=0, row=12, padx=1, pady=1)
 
     # создаем чекбокс для единичного документа
 
@@ -3444,24 +3482,24 @@ if __name__ == '__main__':
                                    variable=mode_group_doc,
                                    offvalue='No',
                                    onvalue='Yes')
-    chbox_mode_group.grid(column=0, row=12, padx=10, pady=5)
+    chbox_mode_group.grid(column=0, row=13, padx=1, pady=1)
     # Создаем поле для ввода значения по которому будет создаваться единичный документ
     # Определяем текстовую переменную
     entry_value_column = StringVar()
     # Описание поля
     label_name_column_group = Label(frame_data_for_options,
                                     text='Введите значение из колонки\nуказанной на шаге 3 для которого нужно создать один документ,\nнапример конкретное ФИО')
-    label_name_column_group.grid(column=0, row=13, padx=10, pady=5)
+    label_name_column_group.grid(column=0, row=14, padx=1, pady=1)
     # поле ввода
     type_file_group_entry = Entry(frame_data_for_options, textvariable=entry_value_column, width=30)
-    type_file_group_entry.grid(column=0, row=14, padx=5, pady=5, ipadx=30, ipady=4)
+    type_file_group_entry.grid(column=0, row=15, padx=5, pady=5, ipadx=30, ipady=4)
 
     # Создаем кнопку для создания документов из таблиц с произвольной структурой
     btn_create_files_other = Button(tab_create_doc, text='6) Создать документ(ы)',
                                     font=('Arial Bold', 15),
                                     command=generate_docs_other
                                     )
-    btn_create_files_other.grid(column=0, row=14, padx=10, pady=10)
+    btn_create_files_other.grid(column=0, row=16, padx=10, pady=10)
 
 
     """
