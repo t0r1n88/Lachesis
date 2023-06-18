@@ -3,8 +3,6 @@ import os
 import pandas as pd
 from dateutil.parser import ParserError
 from docxtpl import DocxTemplate
-from docxcompose.composer import Composer
-from docx import Document
 from docx2pdf import convert
 from tkinter import *
 from tkinter import filedialog
@@ -25,7 +23,15 @@ pd.options.mode.chained_assignment = None
 import sys
 import locale
 import logging
-import tempfile
+logging.basicConfig(
+    level=logging.WARNING,
+    filename="error.log",
+    filemode='w',
+    # чтобы файл лога перезаписывался  при каждом запуске.Чтобы избежать больших простыней. По умолчанию идет 'a'
+    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+    datefmt='%H:%M:%S',
+)
+
 import re
 
 def resource_path(relative_path):
