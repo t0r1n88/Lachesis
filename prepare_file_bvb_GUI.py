@@ -72,6 +72,15 @@ def select_file_mun():
     # Получаем путь к файлу
     munic_file = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
 
+def select_file_template():
+    """
+    Функция для выбора файла с данными муниципалитета
+    :return: Путь к файлу с данными
+    """
+    global template_file
+    # Получаем путь к файлу
+    template_file = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
 
 def restore_inn_org(value):
     """
@@ -119,6 +128,7 @@ def processing_data():
     global lst_mun
     lst_mun = munic_df['Наименование'].to_list()
 
+
     try:
         for file in os.listdir(path_to_dir):
             print(file)
@@ -135,7 +145,16 @@ def processing_data():
             df['Имя'] = df['Имя'].apply(lambda x: x.strip())
             df['Отчество'] = df['Отчество'].apply(lambda x: x.strip())
 
-            df.to_excel(f'{path_to_end}/+{file}', index=False) # сохраняем
+            wb = load_workbook(template_file)
+            for r in dataframe_to_rows(df,index=False,header=False):
+                wb['Списко пользователей'].append(r)
+
+            wb.save(f'{path_to_end}/+{file}')
+            wb.close()
+
+
+
+            #df.to_excel(f'{path_to_end}/+{file}', index=False) # сохраняем
     except NameError as e:
         messagebox.showerror('Подготовка к импорту 1.0',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
@@ -168,30 +187,35 @@ if __name__ == '__main__':
     tab_create_program_prob = ttk.Frame(tab_control)
     tab_control.add(tab_create_program_prob, text='Очистка')
     tab_control.pack(expand=1, fill='both')
+    # Создаем кнопку Выбрать файл с данными
+    btn_data_template = Button(tab_create_program_prob, text='1) Выберите шаблон', font=('Arial Bold', 15),
+                          command=select_file_template
+                          )
+    btn_data_template.grid(column=0, row=4, padx=10, pady=10)
 
     # Создаем кнопку Выбрать файл с данными
-    btn_data_doc = Button(tab_create_program_prob, text='1) Выберите файл с данными', font=('Arial Bold', 15),
+    btn_data_doc = Button(tab_create_program_prob, text='2) Выберите файл с данными', font=('Arial Bold', 15),
                           command=select_file_mun
                           )
-    btn_data_doc.grid(column=0, row=4, padx=10, pady=10)
+    btn_data_doc.grid(column=0, row=5, padx=10, pady=10)
     #
     # Создаем кнопку для выбора папки куда будут генерироваться файлы
 
-    btn_choose_folder = Button(tab_create_program_prob, text='2) Выберите папку с данными', font=('Arial Bold', 15),
+    btn_choose_folder = Button(tab_create_program_prob, text='3) Выберите папку с данными', font=('Arial Bold', 15),
                                        command=select_folder
                                        )
-    btn_choose_folder.grid(column=0, row=5, padx=10, pady=10)
+    btn_choose_folder.grid(column=0, row=6, padx=10, pady=10)
 
-    btn_choose_folder_end = Button(tab_create_program_prob, text='3) Выберите конечную папку', font=('Arial Bold', 15),
+    btn_choose_folder_end = Button(tab_create_program_prob, text='4) Выберите конечную папку', font=('Arial Bold', 15),
                                        command=select_end_folder
                                        )
-    btn_choose_folder_end.grid(column=0, row=6, padx=10, pady=10)
+    btn_choose_folder_end.grid(column=0, row=7, padx=10, pady=10)
 
     # Создаем кнопку для создания документов из таблиц с произвольной структурой
-    btn_processing = Button(tab_create_program_prob, text='4) Очистить',
+    btn_processing = Button(tab_create_program_prob, text='5) Очистить',
                                     font=('Arial Bold', 15),
                                     command=processing_data
                                     )
-    btn_processing.grid(column=0, row=7, padx=10, pady=10)
+    btn_processing.grid(column=0, row=8, padx=10, pady=10)
 
     window.mainloop()
