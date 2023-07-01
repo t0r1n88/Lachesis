@@ -149,12 +149,11 @@ def processing_data():
             for r in dataframe_to_rows(df,index=False,header=False):
                 wb['Списко пользователей'].append(r)
 
-            wb.save(f'{path_to_end}/+{file}')
+            wb.save(f'{path_to_end}/{file}')
             wb.close()
 
 
 
-            #df.to_excel(f'{path_to_end}/+{file}', index=False) # сохраняем
     except NameError as e:
         messagebox.showerror('Подготовка к импорту 1.0',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
