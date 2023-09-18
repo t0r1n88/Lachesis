@@ -132,6 +132,7 @@ def generate_docs_other():
         for idx, row in enumerate(data):
             flag_error = False
             name_author = row['ФИО']
+            print(name_author)
             name_prob = row['Наименование_профессионального_направления']
             inf_lst = row['Инфраструктурный_лист'].split('*')
 
@@ -202,10 +203,10 @@ def generate_docs_other():
         messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
-    except:
-        logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
-                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
+    # except:
+    #     logging.exception('AN ERROR HAS OCCURRED')
+    #     messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+    #                          'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
         if error_df.shape[0] != 0:
