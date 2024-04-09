@@ -132,6 +132,7 @@ def generate_docs_other():
         for idx, row in enumerate(data):
             flag_error = False
             name_author = row['ФИО']
+            print(name_author)
             name_prob = row['Наименование_профессионального_направления']
             inf_lst = row['Инфраструктурный_лист'].split('*')
 
@@ -188,37 +189,37 @@ def generate_docs_other():
 
         error_df.to_excel(f'{path_to_end_folder_doc}/Файлы в которых есть ошибки.xlsx', index=False)
     except NameError as e:
-        messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+        messagebox.showerror('Минерва Создание программ профпроб ver 1.2',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
     except KeyError as e:
-        messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+        messagebox.showerror('Минерва Создание программ профпроб ver 1.2',
                              f'В таблице не найдена указанная колонка {e.args}')
     except PermissionError:
-        messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+        messagebox.showerror('Минерва Создание программ профпроб ver 1.2',
                              f'Закройте все файлы созданные Минервой')
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
-        messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+        messagebox.showerror('Минерва Создание программ профпроб ver 1.2',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+        messagebox.showerror('Минерва Создание программ профпроб ver 1.2',
                              'Возникла ошибка!!! Подробности ошибки в файле error.log')
 
     else:
         if error_df.shape[0] != 0:
-            messagebox.showerror('Минерва Создание программ профпроб ver 1.1',
+            messagebox.showerror('Минерва Создание программ профпроб ver 1.2',
                                  f'В некоторых файлах обнаружены проблемы. Проверьте данные для указанных в файле Ошибки ФИО и названий проб ')
         else:
-            messagebox.showinfo('Минерва Создание программ профпроб ver 1.1',
+            messagebox.showinfo('Минерва Создание программ профпроб ver 1.2',
                             'Создание документов завершено!')
 
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Минерва Создание программ профпроб ver 1.1')
+    window.title('Минерва Создание программ профпроб ver 1.2')
     window.geometry('750x860')
     window.resizable(False, False)
 
