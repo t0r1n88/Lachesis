@@ -5,11 +5,20 @@
 import pandas as pd
 import os
 import re
+from docxcompose.composer import Composer
+from docx import Document
+from docxtpl import DocxTemplate
+from docx2pdf import convert
 
-
-class NotNumberColumn(BaseException):
+class NotNumberColumn(Exception):
     """
-    ИСключения для обработки варианта когда в таблице нет колонки с таким порядковым номером
+    Исключение для обработки варианта когда в таблице нет колонки с таким порядковым номером
+    """
+    pass
+
+class NoMoreNumberColumn(Exception):
+    """
+    Исключение для обработки варианта когда в таблице нет колонки с таким порядковым номером
     """
     pass
 
@@ -26,13 +35,21 @@ def prepare_entry_str(raw_str:str,pattern:str,repl_str:str,sep_lst:str)->list:
     lst_number_column_folder_structure = number_column_folder_structure.split(sep_lst) # создаем список по запятой
     # отбрасываем возможные лишние элементы из за лишних запятых
     lst_number_column_folder_structure = [value for value in lst_number_column_folder_structure if value]
+    # заменяем 0 на единицу
+    lst_number_column_folder_structure = ['1' if x == '0' else x for x in lst_number_column_folder_structure]
+    # Превращаем в числа и отнимаем 1 чтобы соответствовать индексам питона
     lst_number_column_folder_structure = list(map(lambda x:int(x)-1,lst_number_column_folder_structure))
+
+    # очищаем от возможных дублей
+    lst_number_column_folder_structure = list(set(lst_number_column_folder_structure))
     return lst_number_column_folder_structure
 
 
 
+
+
 def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_to_end_folder_doc:str,
-                         folder_structure:str,name_file:str,name_type_file:str,count_support_column:str,mode_pdf:str):
+                         folder_structure:str,name_file:str,name_type_file:str,mode_pdf:str):
     """
     Функция для генерации документов по результатам тестирования с разбиением по папкам и определенным названиям
     :param name_file_data_doc: таблица с яндекс форм
@@ -41,7 +58,6 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     :param folder_structure:строка с порядковыми номерами колонок по которым будет создаваться структура папок - 3,4
     :param name_file: строка с порядковыми номерами колонок по которым будет создаваться имя файла - 5,6,7
     :param name_type_file: название создаваемых документов которое будет находится в начале имен создаваемых файлов - Справка, Результат
-    :param count_support_column: количство колонок в начале таблицы занятых вспомогательной информацией
     :param mode_pdf: нужно ли создавать пдф версии создаваемых файлов
     :return:
     """
@@ -49,19 +65,75 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     # Считываем данные
     # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
     df = pd.read_excel(name_file_data_doc, dtype=str)
-
-    # # Заполняем Nan
-    df.fillna(' ', inplace=True)
+    df.fillna('Не заполнено',inplace=True)
+    # очищаем строку от лишних символов и превращаем в список номеров колонок
     lst_number_column_folder_structure = prepare_entry_str(folder_structure,r'[^\d,]','',',')
-    print(lst_number_column_folder_structure)
+
+    # проверяем длину списка не более 3 и не равно 0
+    if len(lst_number_column_folder_structure) == 0 or len(lst_number_column_folder_structure) > 3:
+        raise NoMoreNumberColumn
+
     # проверяем чтобы номер колонки не превышал количество колонок в датафрейме
     for number_column in lst_number_column_folder_structure:
         if number_column > len(df):
             raise NotNumberColumn
 
+    # обрабатываем колонки с именем с названием файла
+    # очищаем строку от лишних символов и превращаем в список номеров колонок
+    lst_number_column_name_file = prepare_entry_str(name_file,r'[^\d,]','',',')
 
+    # проверяем длину списка не более 3 и не равно 0
+    if len(lst_number_column_name_file) == 0 or len(lst_number_column_name_file) > 2:
+        raise NoMoreNumberColumn
 
+    # проверяем чтобы номер колонки не превышал количество колонок в датафрейме
+    for number_column in lst_number_column_name_file:
+        if number_column > len(df):
+            raise NotNumberColumn
 
+    print(lst_number_column_folder_structure)
+
+    if len(lst_number_column_folder_structure) == 1:
+        # Если нужно создавать одноуровневую структуру
+        # получаем название колонки
+        name_column = df.columns[lst_number_column_folder_structure[0]]
+        lst_unique_value = df[name_column].unique() # получаем список уникальных значений
+        for name_folder in lst_unique_value:
+            temp_df = df[df[name_column] == name_folder] # фильтруем по названию
+            # Конвертируем датафрейм в список словарей
+            clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', name_folder)  # очищаем название от лишних символов
+            finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
+            print(finish_path)
+            if not os.path.exists(finish_path):
+                os.makedirs(finish_path)
+            data = temp_df.to_dict('records')
+
+            # В зависимости от состояния чекбоксов обрабатываем файлы
+            # Создаем в цикле документы
+            if len(lst_number_column_name_file) == 1:
+                # если указана только одна колонка
+                name_column = temp_df.columns[lst_number_column_name_file[0]]
+                for idx, row in enumerate(data):
+                    doc = DocxTemplate(name_file_template_doc)
+                    context = row
+                    doc.render(context)
+                    # Сохраняем файл
+                    name_file = f'{name_type_file} {row[name_column]}'
+                    name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                    threshold_name = 200 - (len(finish_path) + 10)
+                    if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                        raise OSError
+                    name_file = name_file[:threshold_name]  # ограничиваем название файла
+                    # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
+                    if os.path.exists(f'{finish_path}/{name_file}.docx'):
+                        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+                    else:
+                        doc.save(f'{finish_path}/{name_file}.docx')
+                #     # создаем pdf
+                    if mode_pdf == 'Yes':
+                        convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                keep_active=True)
+            #
 
 
 
@@ -114,16 +186,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     #     combine_all_docx(main_doc, files_lst)
 
 if __name__ == '__main__':
-    main_name_file_data_doc = 'data/Таблица с обезличенными результатами.xlsx'
-    main_name_file_template_doc = 'data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
-    main_path_to_end_folder_doc = 'data/Результат'
+    main_name_file_data_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Таблица с обезличенными результатами.xlsx'
+    main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
+    main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4dfg, '
-    main_name_file = '5,6'
+    main_folder_structure = '3'
+    main_name_file = '5'
     main_name_type_file = 'Результат тестирования'
-    main_count_support_columns = '6'
-    main_mode_pdf = 'No'
+    main_mode_pdf = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
-                         main_folder_structure,main_name_file,main_name_type_file,main_count_support_columns,main_mode_pdf)
+                         main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
 
     print('Lindy Booth')
