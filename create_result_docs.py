@@ -118,7 +118,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     context = row
                     doc.render(context)
                     # Сохраняем файл
-                    name_file = f'{name_type_file} {row[name_column]}'
+                    name_file = f'{name_type_file}_{row[name_column]}'
                     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                     threshold_name = 200 - (len(finish_path) + 10)
                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -127,13 +127,44 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
                     if os.path.exists(f'{finish_path}/{name_file}.docx'):
                         doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+                        if mode_pdf == 'Yes':
+                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                                    keep_active=True)
                     else:
                         doc.save(f'{finish_path}/{name_file}.docx')
-                #     # создаем pdf
-                    if mode_pdf == 'Yes':
-                        convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
-                                keep_active=True)
-            #
+                        if mode_pdf == 'Yes':
+                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                    keep_active=True)
+
+            elif len(lst_number_column_name_file) == 2:
+                name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
+                name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
+                for idx, row in enumerate(data):
+                    doc = DocxTemplate(name_file_template_doc)
+                    context = row
+                    doc.render(context)
+                    # Сохраняем файл
+                    name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                    name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                    threshold_name = 200 - (len(finish_path) + 10)
+                    if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                        raise OSError
+                    name_file = name_file[:threshold_name]  # ограничиваем название файла
+                    # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
+                    if os.path.exists(f'{finish_path}/{name_file}.docx'):
+                        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+                        if mode_pdf == 'Yes':
+                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                                    keep_active=True)
+                    else:
+                        doc.save(f'{finish_path}/{name_file}.docx')
+                        if mode_pdf == 'Yes':
+                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                    keep_active=True)
+
+
+
+
 
 
 
@@ -191,7 +222,7 @@ if __name__ == '__main__':
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4dfg, '
     main_folder_structure = '3'
-    main_name_file = '5'
+    main_name_file = '5,6'
     main_name_type_file = 'Результат тестирования'
     main_mode_pdf = 'Yes'
 
