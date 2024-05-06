@@ -2,6 +2,7 @@
 """
 скрипт для обработки произвольных тестов
 """
+from create_result_docs import generate_result_docs # импортируем функцию по созданию документов
 
 import pandas as pd
 import numpy as np
@@ -1889,127 +1890,25 @@ def combine_all_docx(filename_master, files_lst):
 
 
 
-def generate_docs_other():
+def processing_generate_docs():
     """
     Функция для создания документов из произвольных таблиц(т.е. отличающихся от структуры базы данных Веста Обработка таблиц и создание документов ver 1.29)
     :return:
     """
     try:
-        name_column = entry_name_column_data.get()
-        name_type_file = entry_type_file.get()
-        name_value_column = entry_value_column.get()
+        folder_structure = entry_folder_structure.get() # получаем по каким колонкам будет формироваться структура папок
+        name_file = entry_name_file.get() # получаем по каким колонкам будет формироваться название файла
+        name_type_file = entry_type_file.get() # получаем тип документа который будет создаваться
+
 
         # получаем состояние чекбокса создания pdf
-        mode_pdf = mode_pdf_value.get()
+        mode_pdf = mode_pdf_value.get() # чекбокс нужно ли создавать пдф версии
 
-
-        # Считываем данные
-        # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
-        df = pd.read_excel(name_file_data_doc, dtype=str)
-
-        # Заполняем Nan
-        df.fillna(' ', inplace=True)
-
-        lst_date_columns = []
-        # Перебираем
-
-        for idx, column in enumerate(df.columns):
-            if 'дата' in column.lower():
-                lst_date_columns.append(idx)
-
-        # Конвертируем в пригодный строковый формат
-        for i in lst_date_columns:
-            df.iloc[:, i] = pd.to_datetime(df.iloc[:, i], errors='coerce', dayfirst=True)
-            df.iloc[:, i] = df.iloc[:, i].apply(create_doc_convert_date)
-
-        # Конвертируем датафрейм в список словарей
-        data = df.to_dict('records')
-        # Получаем состояние  чекбокса объединения файлов в один
-
-        mode_combine = mode_combine_value.get()
-        # Получаем состояние чекбокса создания индвидуального файла
-        mode_group = mode_group_doc.get()
-
-        # В зависимости от состояния чекбоксов обрабатываем файлы
-        if mode_combine == 'No':
-            if mode_group == 'No':
-                # Создаем в цикле документы
-                for idx,row in enumerate(data):
-                    doc = DocxTemplate(name_file_template_doc)
-                    context = row
-                    # print(context)
-                    doc.render(context)
-                    # Сохраняенм файл0
-                    name_file = f'{name_type_file} {row[name_column]}'
-                    name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
-                    # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
-                    if os.path.exists(f'{path_to_end_folder_doc}/{name_file}.docx'):
-                        doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
-                    doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
-                    # создаем pdf
-                    if mode_pdf == 'Yes':
-                        convert(f'{path_to_end_folder_doc}/{name_file}.docx',f'{path_to_end_folder_doc}/{name_file}.pdf',keep_active=True)
-
-
-            else:
-                # Отбираем по значению строку
-
-                single_df = df[df[name_column] == name_value_column]
-                # Конвертируем датафрейм в список словарей
-                single_data = single_df.to_dict('records')
-                # Проверяем количество найденных совпадений
-                # очищаем от запрещенных символов
-                name_file = f'{name_type_file} {name_value_column}'
-                name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
-                if len(single_data) == 1:
-                    for row in single_data:
-                        doc = DocxTemplate(name_file_template_doc)
-                        doc.render(row)
-                        # Сохраняенм файл
-                        doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
-                        # создаем pdf
-                        if mode_pdf == 'Yes':
-                            convert(f'{path_to_end_folder_doc}/{name_file}.docx',f'{path_to_end_folder_doc}/{name_file}.pdf',keep_active=True)
-                elif len(single_data) > 1:
-                    for idx, row in enumerate(single_data):
-                        doc = DocxTemplate(name_file_template_doc)
-                        doc.render(row)
-                        # Сохраняенм файл
-                        doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
-                        # создаем pdf
-                        if mode_pdf == 'Yes':
-                            convert(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx',f'{path_to_end_folder_doc}/{name_file}_{idx}.pdf',keep_active=True)
-                else:
-                    raise NotFoundValue
+        generate_result_docs(name_file_data_doc,name_file_template_doc,path_to_end_folder_doc,folder_structure,name_file,name_type_file,mode_pdf)
 
 
 
-        else:
-            if mode_group == 'No':
-                # Список с созданными файлами
-                files_lst = []
-                # Создаем временную папку
-                with tempfile.TemporaryDirectory() as tmpdirname:
-                    print('created temporary directory', tmpdirname)
-                    # Создаем и сохраняем во временную папку созданные документы Word
-                    for row in data:
-                        doc = DocxTemplate(name_file_template_doc)
-                        context = row
-                        doc.render(context)
-                        # Сохраняем файл
-                        #очищаем от запрещенных символов
-                        name_file = f'{row[name_column]}'
-                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
 
-                        doc.save(f'{tmpdirname}/{name_file}.docx')
-                        # Добавляем путь\ к файлу в список
-                        files_lst.append(f'{tmpdirname}/{name_file}.docx')
-                    # Получаем базовый файл
-                    main_doc = files_lst.pop(0)
-                    # Запускаем функцию
-                    combine_all_docx(main_doc, files_lst)
-            else:
-                raise CheckBoxException
 
 
     except NameError as e:
@@ -2446,13 +2345,13 @@ if __name__ == '__main__':
     # Создаем кнопку для выбора папки куда будут генерироваться файлы
 
     # Определяем текстовую переменную
-    entry_name_column_data = StringVar()
+    entry_folder_structure = StringVar()
     # Описание поля
     label_name_column_data = Label(frame_data_for_doc,
                                    text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
     label_name_column_data.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
-    data_column_entry = Entry(frame_data_for_doc, textvariable=entry_name_column_data, width=30)
+    data_column_entry = Entry(frame_data_for_doc, textvariable=entry_folder_structure, width=30)
     data_column_entry.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
 
     # Поле для ввода названия генериуемых документов
@@ -2520,19 +2419,19 @@ if __name__ == '__main__':
     chbox_mode_group.grid(column=0, row=13, padx=1, pady=1)
     # Создаем поле для ввода значения по которому будет создаваться единичный документ
     # Определяем текстовую переменную
-    entry_value_column = StringVar()
+    entry_name_file = StringVar()
     # Описание поля
     label_name_column_group = Label(frame_data_for_options,
                                     text='Введите значение из колонки\nуказанной на шаге 3 для которого нужно создать один документ,\nнапример конкретное ФИО')
     label_name_column_group.grid(column=0, row=14, padx=1, pady=1)
     # поле ввода
-    type_file_group_entry = Entry(frame_data_for_options, textvariable=entry_value_column, width=30)
+    type_file_group_entry = Entry(frame_data_for_options, textvariable=entry_name_file, width=30)
     type_file_group_entry.grid(column=0, row=15, padx=5, pady=5, ipadx=30, ipady=4)
 
     # Создаем кнопку для создания документов из таблиц с произвольной структурой
     btn_create_files_other = Button(tab_create_doc, text='6) Создать документ(ы)',
                                     font=('Arial Bold', 14),
-                                    command=generate_docs_other
+                                    command=processing_generate_docs
                                     )
     btn_create_files_other.grid(column=0, row=16, padx=10, pady=10)
 
