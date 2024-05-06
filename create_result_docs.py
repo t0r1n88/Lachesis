@@ -238,6 +238,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             if mode_pdf == 'Yes':
                                 convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
                                         keep_active=True)
+    elif len()
 
 
 
