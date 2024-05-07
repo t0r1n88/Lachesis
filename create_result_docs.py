@@ -3,6 +3,7 @@
 Скрипт для генерации документов по результатам тестирования
 """
 import pandas as pd
+pd.options.mode.copy_on_write = True
 import os
 import re
 import time
@@ -149,7 +150,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     # очищаем строку от лишних символов и превращаем в список номеров колонок
     lst_number_column_name_file = prepare_entry_str(name_file,r'[^\d,]','',',')
 
-    # проверяем длину списка не более 3 и не равно 0
+    # проверяем длину списка не более 2 и не равно 0
     if len(lst_number_column_name_file) == 0 or len(lst_number_column_name_file) > 2:
         raise NoMoreNumberColumn
 
@@ -171,6 +172,17 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
             finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
             if not os.path.exists(finish_path):
                 os.makedirs(finish_path)
+
+            # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
+            if len(lst_number_column_name_file) == 1:
+                # если указана только одна колонка
+                name_column = temp_df.columns[lst_number_column_name_file[0]]
+                temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
+            elif len(lst_number_column_name_file) == 2:
+                name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
+                name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
+                temp_df.rename(columns={name_main_column: 'Код_1',name_second_column: 'Код_2'}, inplace=True)
+
             data = temp_df.to_dict('records')
 
             # Список с созданными файлами
@@ -197,6 +209,9 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
             if len(lst_number_column_name_file) == 1:
                 # если указана только одна колонка
                 name_column = temp_df.columns[lst_number_column_name_file[0]]
+                temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
+
+
                 for idx, row in enumerate(data):
                     doc = DocxTemplate(name_file_template_doc)
                     context = row
@@ -250,6 +265,17 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                 finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
                 if not os.path.exists(finish_path):
                     os.makedirs(finish_path)
+
+                # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
+                if len(lst_number_column_name_file) == 1:
+                    # если указана только одна колонка
+                    name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
+                    temp_df_second_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                elif len(lst_number_column_name_file) == 2:
+                    name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                    name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                    temp_df_second_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+
                 data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
 
                 # Создаем в цикле документы
@@ -321,6 +347,14 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}'
                     if not os.path.exists(finish_path):
                         os.makedirs(finish_path)
+                    if len(lst_number_column_name_file) == 1:
+                        # если указана только одна колонка
+                        name_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]
+                        temp_df_third_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                    elif len(lst_number_column_name_file) == 2:
+                        name_main_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                        name_second_column = temp_df_third_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                        temp_df_third_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
                     data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
 
                     # Создаем в цикле документы
@@ -422,11 +456,11 @@ if __name__ == '__main__':
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4,5'
-    main_folder_structure = '3'
+    main_folder_structure = '3,4,5'
     main_name_file = '6,7'
     main_name_file = '6,7'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'Yes'
+    main_mode_pdf = 'No'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
