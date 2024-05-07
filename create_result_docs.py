@@ -91,7 +91,6 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
         if number_column > len(df):
             raise NotNumberColumn
 
-    print(lst_number_column_folder_structure)
 
     if len(lst_number_column_folder_structure) == 1:
         # Если нужно создавать одноуровневую структуру
@@ -103,7 +102,6 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
             # Конвертируем датафрейм в список словарей
             clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', name_folder)  # очищаем название от лишних символов
             finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
-            print(finish_path)
             if not os.path.exists(finish_path):
                 os.makedirs(finish_path)
             data = temp_df.to_dict('records')
@@ -128,12 +126,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     if os.path.exists(f'{finish_path}/{name_file}.docx'):
                         doc.save(f'{finish_path}/{name_file}_{idx}.docx')
                         if mode_pdf == 'Yes':
-                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                            if not os.path.exists(f'{finish_path}/PDF'):
+                                os.makedirs(f'{finish_path}/PDF')
+                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
                                     keep_active=True)
                     else:
                         doc.save(f'{finish_path}/{name_file}.docx')
                         if mode_pdf == 'Yes':
-                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                            if not os.path.exists(f'{finish_path}/PDF'):
+                                os.makedirs(f'{finish_path}/PDF')
+                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                                     keep_active=True)
 
             elif len(lst_number_column_name_file) == 2:
@@ -154,12 +156,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     if os.path.exists(f'{finish_path}/{name_file}.docx'):
                         doc.save(f'{finish_path}/{name_file}_{idx}.docx')
                         if mode_pdf == 'Yes':
-                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                            if not os.path.exists(f'{finish_path}/PDF'):
+                                os.makedirs(f'{finish_path}/PDF')
+                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
                                     keep_active=True)
                     else:
                         doc.save(f'{finish_path}/{name_file}.docx')
                         if mode_pdf == 'Yes':
-                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                            if not os.path.exists(f'{finish_path}/PDF'):
+                                os.makedirs(f'{finish_path}/PDF')
+                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                                     keep_active=True)
     elif len(lst_number_column_folder_structure) == 2:
         # Если нужно создавать двухуровневую структуру
@@ -181,7 +187,6 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                 clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', second_name_folder)  # очищаем название от лишних символов
 
                 finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
-                print(finish_path)
                 if not os.path.exists(finish_path):
                     os.makedirs(finish_path)
                 data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
@@ -205,12 +210,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         if os.path.exists(f'{finish_path}/{name_file}.docx'):
                             doc.save(f'{finish_path}/{name_file}_{idx}.docx')
                             if mode_pdf == 'Yes':
-                                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                                if not os.path.exists(f'{finish_path}/PDF'):
+                                    os.makedirs(f'{finish_path}/PDF')
+                                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
                                         keep_active=True)
                         else:
                             doc.save(f'{finish_path}/{name_file}.docx')
                             if mode_pdf == 'Yes':
-                                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                if not os.path.exists(f'{finish_path}/PDF'):
+                                    os.makedirs(f'{finish_path}/PDF')
+                                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                                         keep_active=True)
 
                 elif len(lst_number_column_name_file) == 2:
@@ -231,12 +240,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         if os.path.exists(f'{finish_path}/{name_file}.docx'):
                             doc.save(f'{finish_path}/{name_file}_{idx}.docx')
                             if mode_pdf == 'Yes':
-                                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                                if not os.path.exists(f'{finish_path}/PDF'):
+                                    os.makedirs(f'{finish_path}/PDF')
+                                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
                                         keep_active=True)
                         else:
                             doc.save(f'{finish_path}/{name_file}.docx')
                             if mode_pdf == 'Yes':
-                                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                if not os.path.exists(f'{finish_path}/PDF'):
+                                    os.makedirs(f'{finish_path}/PDF')
+                                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                                         keep_active=True)
     elif len(lst_number_column_folder_structure) == 3:
         # Если нужно создавать трехуровневую структуру Например Школа-Класс-буква класса
@@ -269,7 +282,6 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         temp_df_second_layer[name_third_layer_column] == third_name_folder]
 
                     finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}'
-                    print(finish_path)
                     if not os.path.exists(finish_path):
                         os.makedirs(finish_path)
                     data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
@@ -293,13 +305,17 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             if os.path.exists(f'{finish_path}/{name_file}.docx'):
                                 doc.save(f'{finish_path}/{name_file}_{idx}.docx')
                                 if mode_pdf == 'Yes':
+                                    if not os.path.exists(f'{finish_path}/PDF'):
+                                        os.makedirs(f'{finish_path}/PDF')
                                     convert(f'{finish_path}/{name_file}_{idx}.docx',
-                                            f'{finish_path}/{name_file}_{idx}.pdf',
+                                            f'{finish_path}/PDF/{name_file}_{idx}.pdf',
                                             keep_active=True)
                             else:
                                 doc.save(f'{finish_path}/{name_file}.docx')
                                 if mode_pdf == 'Yes':
-                                    convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                    if not os.path.exists(f'{finish_path}/PDF'):
+                                        os.makedirs(f'{finish_path}/PDF')
+                                    convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                                             keep_active=True)
 
                     elif len(lst_number_column_name_file) == 2:
@@ -322,13 +338,17 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             if os.path.exists(f'{finish_path}/{name_file}.docx'):
                                 doc.save(f'{finish_path}/{name_file}_{idx}.docx')
                                 if mode_pdf == 'Yes':
+                                    if not os.path.exists(f'{finish_path}/PDF'):
+                                        os.makedirs(f'{finish_path}/PDF')
                                     convert(f'{finish_path}/{name_file}_{idx}.docx',
-                                            f'{finish_path}/{name_file}_{idx}.pdf',
+                                            f'{finish_path}/PDF/{name_file}_{idx}.pdf',
                                             keep_active=True)
                             else:
                                 doc.save(f'{finish_path}/{name_file}.docx')
                                 if mode_pdf == 'Yes':
-                                    convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                                    if not os.path.exists(f'{finish_path}/PDF'):
+                                        os.makedirs(f'{finish_path}/PDF')
+                                    convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                                             keep_active=True)
 
 
@@ -391,9 +411,10 @@ if __name__ == '__main__':
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4,5'
+    main_folder_structure = '3,4,5'
     main_name_file = '6,7'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'No'
+    main_mode_pdf = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
