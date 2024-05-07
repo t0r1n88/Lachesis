@@ -9,6 +9,7 @@ from docxcompose.composer import Composer
 from docx import Document
 from docxtpl import DocxTemplate
 from docx2pdf import convert
+import zipfile
 
 class NotNumberColumn(Exception):
     """
@@ -45,7 +46,45 @@ def prepare_entry_str(raw_str:str,pattern:str,repl_str:str,sep_lst:str)->list:
     return lst_number_column_folder_structure
 
 
+def zip_folder(folder_name, output_filename):
+    # Создаем zip-файл
+    with zipfile.ZipFile(output_filename, 'w', compression=zipfile.ZIP_DEFLATED) as ziph:
+        # Берем содержимое папки
+        for root, dirs, files in os.walk(folder_name):
+            # Проходимся по каждому файлу
+            for file in files:
+                print(file)
+                # Создаем полный путь к файлу
+                src_path = os.path.join(root, file)
+                # Добавляем файл в zip-архив
+                ziph.write(src_path, arcname=os.path.relpath(src_path, folder_name))
 
+
+def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode_pdf:str):
+    """
+    Функция для сохранения результатов
+    :param finish_path: путь к папке сохранения
+    :param name_file: название файла
+    :param doc: объект DocxTemplate
+    :param idx: счетчик
+    :param mode_pdf: чекбокс сохранения PDF
+    :return:
+    """
+    print(finish_path)
+    if os.path.exists(f'{finish_path}/{name_file}.docx'):
+        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+        if mode_pdf == 'Yes':
+            if not os.path.exists(f'{finish_path}/PDF'):
+                os.makedirs(f'{finish_path}/PDF')
+            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
+                    keep_active=True)
+    else:
+        doc.save(f'{finish_path}/{name_file}.docx')
+        if mode_pdf == 'Yes':
+            if not os.path.exists(f'{finish_path}/PDF'):
+                os.makedirs(f'{finish_path}/PDF')
+            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
+                    keep_active=True)
 
 
 def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_to_end_folder_doc:str,
@@ -95,10 +134,10 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     if len(lst_number_column_folder_structure) == 1:
         # Если нужно создавать одноуровневую структуру
         # получаем название колонки
-        name_column = df.columns[lst_number_column_folder_structure[0]]
-        lst_unique_value = df[name_column].unique() # получаем список уникальных значений
+        main_layer_name_column = df.columns[lst_number_column_folder_structure[0]]
+        lst_unique_value = df[main_layer_name_column].unique() # получаем список уникальных значений
         for name_folder in lst_unique_value:
-            temp_df = df[df[name_column] == name_folder] # фильтруем по названию
+            temp_df = df[df[main_layer_name_column] == name_folder] # фильтруем по названию
             # Конвертируем датафрейм в список словарей
             clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', name_folder)  # очищаем название от лишних символов
             finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
@@ -122,21 +161,9 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
                         raise OSError
                     name_file = name_file[:threshold_name]  # ограничиваем название файла
-                    # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
-                    if os.path.exists(f'{finish_path}/{name_file}.docx'):
-                        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
-                        if mode_pdf == 'Yes':
-                            if not os.path.exists(f'{finish_path}/PDF'):
-                                os.makedirs(f'{finish_path}/PDF')
-                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
-                                    keep_active=True)
-                    else:
-                        doc.save(f'{finish_path}/{name_file}.docx')
-                        if mode_pdf == 'Yes':
-                            if not os.path.exists(f'{finish_path}/PDF'):
-                                os.makedirs(f'{finish_path}/PDF')
-                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
-                                    keep_active=True)
+                    # Сохраняем файл
+                    save_result_file(finish_path,name_file,doc,idx,mode_pdf)
+
 
             elif len(lst_number_column_name_file) == 2:
                 name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
@@ -152,21 +179,9 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
                         raise OSError
                     name_file = name_file[:threshold_name]  # ограничиваем название файла
-                    # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
-                    if os.path.exists(f'{finish_path}/{name_file}.docx'):
-                        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
-                        if mode_pdf == 'Yes':
-                            if not os.path.exists(f'{finish_path}/PDF'):
-                                os.makedirs(f'{finish_path}/PDF')
-                            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
-                                    keep_active=True)
-                    else:
-                        doc.save(f'{finish_path}/{name_file}.docx')
-                        if mode_pdf == 'Yes':
-                            if not os.path.exists(f'{finish_path}/PDF'):
-                                os.makedirs(f'{finish_path}/PDF')
-                            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
-                                    keep_active=True)
+                    # Сохраняем файл
+                    save_result_file(finish_path,name_file,doc,idx,mode_pdf)
+
     elif len(lst_number_column_folder_structure) == 2:
         # Если нужно создавать двухуровневую структуру
         # получаем название колонки для первого уровня папок
@@ -411,10 +426,11 @@ if __name__ == '__main__':
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4,5'
-    main_folder_structure = '3,4,5'
+    main_folder_structure = '3'
+    main_name_file = '6,7'
     main_name_file = '6,7'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'Yes'
+    main_mode_pdf = 'No'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
