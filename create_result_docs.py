@@ -5,6 +5,8 @@
 import pandas as pd
 import os
 import re
+import time
+import tempfile
 from docxcompose.composer import Composer
 from docx import Document
 from docxtpl import DocxTemplate
@@ -22,6 +24,29 @@ class NoMoreNumberColumn(Exception):
     Исключение для обработки варианта когда в таблице нет колонки с таким порядковым номером
     """
     pass
+
+def combine_all_docx(filename_master, files_lst,finish_path):
+    """
+    Функция для объединения файлов Word взято отсюда
+    https://stackoverflow.com/questions/24872527/combine-word-document-using-python-docx
+    :param filename_master: базовый файл
+    :param files_list: список с созданными файлами
+    :return: итоговый файл
+    """
+
+    number_of_sections = len(files_lst)
+    # Открываем и обрабатываем базовый файл
+    master = Document(filename_master)
+    composer = Composer(master)
+    # Перебираем и добавляем файлы к базовому
+    for i in range(0, number_of_sections):
+        doc_temp = Document(files_lst[i])
+        composer.append(doc_temp)
+    # Сохраняем файл
+    composer.save(f"{finish_path}/Объединеный файл.docx")
+
+
+
 
 def prepare_entry_str(raw_str:str,pattern:str,repl_str:str,sep_lst:str)->list:
     """
@@ -148,6 +173,25 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                 os.makedirs(finish_path)
             data = temp_df.to_dict('records')
 
+            # Список с созданными файлами
+            files_lst = []
+            # Создаем временную папку
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                # Создаем и сохраняем во временную папку созданные документы Word
+                for idx, row in enumerate(data):
+                    doc = DocxTemplate(name_file_template_doc)
+                    context = row
+                    doc.render(context)
+                    # Сохраняем файл
+
+                    doc.save(f'{tmpdirname}/{idx}.docx')
+                    # Добавляем путь\ к файлу в список
+                    files_lst.append(f'{tmpdirname}/{idx}.docx')
+                # Получаем базовый файл
+                main_doc = files_lst.pop(0)
+                # Запускаем функцию
+                combine_all_docx(main_doc, files_lst,finish_path)
+
             # В зависимости от состояния чекбоксов обрабатываем файлы
             # Создаем в цикле документы
             if len(lst_number_column_name_file) == 1:
@@ -157,7 +201,6 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     doc = DocxTemplate(name_file_template_doc)
                     context = row
                     doc.render(context)
-                    # Сохраняем файл
                     name_file = f'{name_type_file}_{row[name_column]}'
                     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                     threshold_name = 200 - (len(finish_path) + 10)
@@ -379,11 +422,11 @@ if __name__ == '__main__':
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4,5'
-    main_folder_structure = '3,4,5'
+    main_folder_structure = '3'
     main_name_file = '6,7'
     main_name_file = '6,7'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'No'
+    main_mode_pdf = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
