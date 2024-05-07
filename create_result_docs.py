@@ -228,7 +228,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     name_file = name_file[:threshold_name]  # ограничиваем название файла
                     # Сохраняем файл
                     save_result_file(finish_path,name_file,doc,idx,mode_pdf)
-                zip_folder(finish_path, 'Результаты тестирования.zip')
+                zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
 
 
             elif len(lst_number_column_name_file) == 2:
@@ -247,7 +247,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     name_file = name_file[:threshold_name]  # ограничиваем название файла
                     # Сохраняем файл
                     save_result_file(finish_path,name_file,doc,idx,mode_pdf)
-                zip_folder(finish_path, 'Результаты тестирования.zip')
+                zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
 
     elif len(lst_number_column_folder_structure) == 2:
         # Если нужно создавать двухуровневую структуру
@@ -302,7 +302,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         name_file = name_file[:threshold_name]  # ограничиваем название файла
                         # Сохраняем файл
                         save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                    zip_folder(finish_path, 'Результаты тестирования.zip') # архивируем файлы docx
+                    zip_folder(finish_path, f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip') # архивируем файлы docx
 
 
                 elif len(lst_number_column_name_file) == 2:
@@ -321,7 +321,8 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         name_file = name_file[:threshold_name]  # ограничиваем название файла
                         # Сохраняем файл
                         save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                    zip_folder(finish_path, 'Результаты тестирования.zip')  # архивируем файлы docx
+                    zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip')  # архивируем файлы docx
+
 
     elif len(lst_number_column_folder_structure) == 3:
         # Если нужно создавать трехуровневую структуру Например Школа-Класс-буква класса
@@ -386,7 +387,8 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
                             save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                        zip_folder(finish_path, 'Результаты тестирования.zip')  # архивируем файлы docx
+                        zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
+
 
 
                     elif len(lst_number_column_name_file) == 2:
@@ -407,7 +409,8 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
                             save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                        zip_folder(finish_path, 'Результаты тестирования.zip')  # архивируем файлы docx
+                        zip_folder(finish_path,
+                                   f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
 
 
 if __name__ == '__main__':
