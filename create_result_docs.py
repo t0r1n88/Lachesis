@@ -26,25 +26,47 @@ class NoMoreNumberColumn(Exception):
     """
     pass
 
-def combine_all_docx(filename_master, files_lst,finish_path):
+def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:str):
     """
     Функция для объединения файлов Word взято отсюда
     https://stackoverflow.com/questions/24872527/combine-word-document-using-python-docx
-    :param filename_master: базовый файл
-    :param files_list: список с созданными файлами
-    :return: итоговый файл
+    :param data: таблица с данными
+    :param name_file_template_doc: файл шаблона
+    :param finish_path: куда сохранять файл
+    :param mode_pdf: создавать ли pdf
     """
+    # Список с созданными файлами
+    files_lst = []
+    # Создаем временную папку
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Создаем и сохраняем во временную папку созданные документы Word
+        for idx, row in enumerate(data):
+            doc = DocxTemplate(name_file_template_doc)
+            context = row
+            doc.render(context)
+            # Сохраняем файл
+            doc.save(f'{tmpdirname}/{idx}.docx')
+            # Добавляем путь\ к файлу в список
+            files_lst.append(f'{tmpdirname}/{idx}.docx')
+        # Получаем базовый файл
+        main_doc = files_lst.pop(0)
+        # Запускаем функцию
 
-    number_of_sections = len(files_lst)
-    # Открываем и обрабатываем базовый файл
-    master = Document(filename_master)
-    composer = Composer(master)
-    # Перебираем и добавляем файлы к базовому
-    for i in range(0, number_of_sections):
-        doc_temp = Document(files_lst[i])
-        composer.append(doc_temp)
-    # Сохраняем файл
-    composer.save(f"{finish_path}/Объединеный файл.docx")
+        number_of_sections = len(files_lst)
+        # Открываем и обрабатываем базовый файл
+        master = Document(main_doc)
+        composer = Composer(master)
+        # Перебираем и добавляем файлы к базовому
+        for i in range(0, number_of_sections):
+            doc_temp = Document(files_lst[i])
+            composer.append(doc_temp)
+        # Сохраняем файл
+        composer.save(f"{finish_path}/Объединеный файл.docx")
+        if mode_pdf == 'Yes':
+            if not os.path.exists(f'{finish_path}/PDF'):
+                os.makedirs(f'{finish_path}/PDF')
+            convert(f'{finish_path}/Объединеный файл.docx', f'{finish_path}/PDF/Объединеный файл.pdf',
+                    keep_active=True)
 
 
 
@@ -184,24 +206,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
             data = temp_df.to_dict('records')
 
-            # Список с созданными файлами
-            files_lst = []
-            # Создаем временную папку
-            with tempfile.TemporaryDirectory() as tmpdirname:
-                # Создаем и сохраняем во временную папку созданные документы Word
-                for idx, row in enumerate(data):
-                    doc = DocxTemplate(name_file_template_doc)
-                    context = row
-                    doc.render(context)
-                    # Сохраняем файл
-
-                    doc.save(f'{tmpdirname}/{idx}.docx')
-                    # Добавляем путь\ к файлу в список
-                    files_lst.append(f'{tmpdirname}/{idx}.docx')
-                # Получаем базовый файл
-                main_doc = files_lst.pop(0)
-                # Запускаем функцию
-                combine_all_docx(main_doc, files_lst,finish_path)
+            combine_all_docx(data,name_file_template_doc,finish_path,mode_pdf)
 
             # В зависимости от состояния чекбоксов обрабатываем файлы
             # Создаем в цикле документы
@@ -278,7 +283,8 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     temp_df_second_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
 
                 data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
-
+                # Создаем объединенный файл в формате docx и pdf
+                combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
                 # Создаем в цикле документы
                 if len(lst_number_column_name_file) == 1:
                     # если указана только одна колонка
@@ -358,7 +364,10 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         name_main_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]  # первая колонка
                         name_second_column = temp_df_third_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
                         temp_df_third_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+
                     data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
+                    # Создаем объединенный файл в формате docx и pdf
+                    combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
 
                     # Создаем в цикле документы
                     if len(lst_number_column_name_file) == 1:
@@ -401,71 +410,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                         zip_folder(finish_path, 'Результаты тестирования.zip')  # архивируем файлы docx
 
 
-
-
-
-
-
-
-
-
-    #
-    # # Конвертируем датафрейм в список словарей
-    # data = df.to_dict('records')
-    #
-    # # В зависимости от состояния чекбоксов обрабатываем файлы
-    # # Создаем в цикле документы
-    # for idx, row in enumerate(data):
-    #     doc = DocxTemplate(name_file_template_doc)
-    #     context = row
-    #     # print(context)
-    #     doc.render(context)
-    #     # Сохраняенм файл0
-    #     name_file = f'{name_type_file} {row[name_column]}'
-    #     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
-    #     # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
-    #     if os.path.exists(f'{path_to_end_folder_doc}/{name_file}.docx'):
-    #         doc.save(f'{path_to_end_folder_doc}/{name_file}_{idx}.docx')
-    #     doc.save(f'{path_to_end_folder_doc}/{name_file}.docx')
-    #     # создаем pdf
-    #     if mode_pdf == 'Yes':
-    #         convert(f'{path_to_end_folder_doc}/{name_file}.docx', f'{path_to_end_folder_doc}/{name_file}.pdf',
-    #                 keep_active=True)
-    #
-    #
-    # # Список с созданными файлами
-    # files_lst = []
-    # # Создаем временную папку
-    # with tempfile.TemporaryDirectory() as tmpdirname:
-    #     print('created temporary directory', tmpdirname)
-    #     # Создаем и сохраняем во временную папку созданные документы Word
-    #     for row in data:
-    #         doc = DocxTemplate(name_file_template_doc)
-    #         context = row
-    #         doc.render(context)
-    #         # Сохраняем файл
-    #         # очищаем от запрещенных символов
-    #         name_file = f'{row[name_column]}'
-    #         name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
-    #
-    #         doc.save(f'{tmpdirname}/{name_file}.docx')
-    #         # Добавляем путь\ к файлу в список
-    #         files_lst.append(f'{tmpdirname}/{name_file}.docx')
-    #     # Получаем базовый файл
-    #     main_doc = files_lst.pop(0)
-    #     # Запускаем функцию
-    #     combine_all_docx(main_doc, files_lst)
-
 if __name__ == '__main__':
     main_name_file_data_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Таблица с обезличенными результатами.xlsx'
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4,5'
-    main_folder_structure = '3'
+    main_folder_structure = '3,4,5'
     main_name_file = '6,7'
-    main_name_file = '6'
+    main_name_file = '6,7'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'No'
+    main_mode_pdf = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
