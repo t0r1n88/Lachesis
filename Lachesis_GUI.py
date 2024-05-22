@@ -1860,35 +1860,6 @@ def create_doc_convert_date(cell):
         return 'Не удалось конвертировать дату.Проверьте значение ячейки!!!'
 
 
-def combine_all_docx(filename_master, files_lst):
-    """
-    Функция для объединения файлов Word взято отсюда
-    https://stackoverflow.com/questions/24872527/combine-word-document-using-python-docx
-    :param filename_master: базовый файл
-    :param files_list: список с созданными файлами
-    :return: итоговый файл
-    """
-    # получаем значение переключателя pdf
-    mode_pdf = mode_pdf_value.get()
-    # Получаем текущее время
-    t = time.localtime()
-    current_time = time.strftime('%H_%M_%S', t)
-
-    number_of_sections = len(files_lst)
-    # Открываем и обрабатываем базовый файл
-    master = Document(filename_master)
-    composer = Composer(master)
-    # Перебираем и добавляем файлы к базовому
-    for i in range(0, number_of_sections):
-        doc_temp = Document(files_lst[i])
-        composer.append(doc_temp)
-    # Сохраняем файл
-    composer.save(f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.docx")
-    # создаем pdf
-    if mode_pdf == 'Yes':
-        convert(f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.docx",f"{path_to_end_folder_doc}/Объединеный файл от {current_time}.pdf",keep_active=True)
-
-
 
 def processing_generate_docs():
     """
@@ -1906,42 +1877,9 @@ def processing_generate_docs():
 
         generate_result_docs(name_file_data_doc,name_file_template_doc,path_to_end_folder_doc,folder_structure,name_file,name_type_file,mode_pdf)
 
-
-
-
-
-
     except NameError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
-        logging.exception('AN ERROR HAS OCCURRED')
-    except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                             f'В таблице не найдена указанная колонка {e.args}')
-    except PermissionError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                             f'Закройте все файлы Word созданные Вестой')
-        logging.exception('AN ERROR HAS OCCURRED')
-    except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
-                             f'в слишком длинном пути к обрабатываемым файлам')
-    except CheckBoxException:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                             f'Уберите галочку из чекбокса Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)'
-                             )
-    except NotFoundValue:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                             f'Указанное значение не найдено в выбранной колонке\nПроверьте наличие такого значения в таблице'
-                             )
-    except:
-        logging.exception('AN ERROR HAS OCCURRED')
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
-
-    else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
-                            'Создание документов завершено!')
 
 def select_file_params_comparsion():
     """
@@ -2220,7 +2158,7 @@ def set_window_size(window):
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов профориентационных тестов ver 5.2')
+    window.title('Лахеcис Обработка результатов профориентационных тестов ver 6.0')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
@@ -2308,15 +2246,14 @@ if __name__ == '__main__':
     """
 
     tab_create_doc = ttk.Frame(tab_control)
-    tab_control.add(tab_create_doc, text='Создание документов')
+    tab_control.add(tab_create_doc, text='Генерация результатов тестирования')
     tab_control.pack(expand=1, fill='both')
 
     # Добавляем виджеты на вкладку Создание документов
     # Создаем метку для описания назначения программы
     lbl_hello = Label(tab_create_doc,
-                      text='Центр опережающей профессиональной подготовки Республики Бурятия\nГенерация документов по шаблону'
-                           '\nДля корректной работы программмы уберите из таблицы объединенные ячейки'
-                           '\nДанные обрабатываются только с первого листа файла Excel!!!')
+                      text='Центр опережающей профессиональной подготовки Республики Бурятия\nГенерация результатов тестирования'
+                           '')
     lbl_hello.grid(column=0, row=0, padx=10, pady=25)
 
     # Картинка
@@ -2347,93 +2284,67 @@ if __name__ == '__main__':
     # Определяем текстовую переменную
     entry_folder_structure = StringVar()
     # Описание поля
-    label_name_column_data = Label(frame_data_for_doc,
-                                   text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
-    label_name_column_data.grid(column=0, row=5, padx=10, pady=5)
+    label_folder_structure = Label(frame_data_for_doc,
+                                   text='3) Введите через запятую порядковые номера колонок таблице\n по которым будет создаваться структура папок.\n'
+                                        'Например 3,4.5 или 2,3. Может быть указано не более 3 колонок')
+    label_folder_structure.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
-    data_column_entry = Entry(frame_data_for_doc, textvariable=entry_folder_structure, width=30)
-    data_column_entry.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
+    entry_folder_structure = Entry(frame_data_for_doc, textvariable=entry_folder_structure, width=30)
+    entry_folder_structure.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
 
     # Поле для ввода названия генериуемых документов
     # Определяем текстовую переменную
+    entry_name_file = StringVar()
+    # Описание поля
+    label_name_file = Label(frame_data_for_doc,
+                                   text='4) Введите через запятую порядковые номера колонок в таблице\n по которым файлы будут называться.\n'
+                                        'Например 6,7 или 3,4. Может быть указано не более 2 колонок')
+    label_name_file.grid(column=0, row=7, padx=10, pady=5)
+    # поле ввода
+    entry_name_file = Entry(frame_data_for_doc, textvariable=entry_name_file, width=30)
+    entry_name_file.grid(column=0, row=8, padx=5, pady=5, ipadx=30, ipady=4)
+
+
     entry_type_file = StringVar()
     # Описание поля
-    label_name_column_type_file = Label(frame_data_for_doc, text='4) Введите название создаваемых документов')
-    label_name_column_type_file.grid(column=0, row=7, padx=10, pady=5)
+    label_name_column_type_file = Label(frame_data_for_doc, text='5) Введите что вы создаете.\n Например Результат тестирования или просто Результат')
+    label_name_column_type_file.grid(column=0, row=9, padx=10, pady=5)
     # поле ввода
     type_file_column_entry = Entry(frame_data_for_doc, textvariable=entry_type_file, width=30)
-    type_file_column_entry.grid(column=0, row=8, padx=5, pady=5, ipadx=30, ipady=4)
+    type_file_column_entry.grid(column=0, row=10, padx=5, pady=5, ipadx=30, ipady=4)
 
-    btn_choose_end_folder_doc = Button(frame_data_for_doc, text='5) Выберите конечную папку', font=('Arial Bold', 14),
+    btn_choose_end_folder_doc = Button(frame_data_for_doc, text='6) Выберите конечную папку', font=('Arial Bold', 14),
                                        command=select_end_folder_doc
                                        )
-    btn_choose_end_folder_doc.grid(column=0, row=9, padx=10, pady=10)
+    btn_choose_end_folder_doc.grid(column=0, row=11, padx=10, pady=10)
 
-    # Создаем область для того чтобы поместить туда опции
-    frame_data_for_options = LabelFrame(tab_create_doc, text='Дополнительные опции')
-    frame_data_for_options.grid(column=0, row=10, padx=10)
 
-    # Создаем переменную для хранения результа переключения чекбокса
-    mode_combine_value = StringVar()
 
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
-    mode_combine_value.set('No')
-    # Создаем чекбокс для выбора режима подсчета
-
-    chbox_mode_calculate = Checkbutton(frame_data_for_options,
-                                       text='Поставьте галочку, если вам нужно чтобы все файлы были объединены в один',
-                                       variable=mode_combine_value,
-                                       offvalue='No',
-                                       onvalue='Yes')
-    chbox_mode_calculate.grid(column=0, row=11, padx=1, pady=1)
 
     # Создаем чекбокс для режима создания pdf
     # Создаем переменную для хранения результа переключения чекбокса
     mode_pdf_value = StringVar()
 
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию PDF варианты создаваться не будут
     mode_pdf_value.set('No')
+
     # Создаем чекбокс для выбора режима подсчета
 
-    chbox_mode_pdf = Checkbutton(frame_data_for_options,
-                                       text='Поставьте галочку, если вам нужно чтобы \n'
-                                            'дополнительно создавались pdf версии документов',
-                                       variable=mode_pdf_value,
-                                       offvalue='No',
-                                       onvalue='Yes')
+    chbox_mode_pdf = Checkbutton(frame_data_for_doc,
+                                 text='Поставьте галочку, если вам нужно чтобы \n'
+                                      'дополнительно создавались pdf версии результатов',
+                                 variable=mode_pdf_value,
+                                 offvalue='No',
+                                 onvalue='Yes')
     chbox_mode_pdf.grid(column=0, row=12, padx=1, pady=1)
 
-    # создаем чекбокс для единичного документа
-
-    # Создаем переменную для хранения результа переключения чекбокса
-    mode_group_doc = StringVar()
-
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
-    mode_group_doc.set('No')
-    # Создаем чекбокс для выбора режима подсчета
-    chbox_mode_group = Checkbutton(frame_data_for_options,
-                                   text='Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)',
-                                   variable=mode_group_doc,
-                                   offvalue='No',
-                                   onvalue='Yes')
-    chbox_mode_group.grid(column=0, row=13, padx=1, pady=1)
-    # Создаем поле для ввода значения по которому будет создаваться единичный документ
-    # Определяем текстовую переменную
-    entry_name_file = StringVar()
-    # Описание поля
-    label_name_column_group = Label(frame_data_for_options,
-                                    text='Введите значение из колонки\nуказанной на шаге 3 для которого нужно создать один документ,\nнапример конкретное ФИО')
-    label_name_column_group.grid(column=0, row=14, padx=1, pady=1)
-    # поле ввода
-    type_file_group_entry = Entry(frame_data_for_options, textvariable=entry_name_file, width=30)
-    type_file_group_entry.grid(column=0, row=15, padx=5, pady=5, ipadx=30, ipady=4)
 
     # Создаем кнопку для создания документов из таблиц с произвольной структурой
-    btn_create_files_other = Button(tab_create_doc, text='6) Создать документ(ы)',
+    btn_create_files_other = Button(tab_create_doc, text='7) Получить результаты',
                                     font=('Arial Bold', 14),
                                     command=processing_generate_docs
                                     )
-    btn_create_files_other.grid(column=0, row=16, padx=10, pady=10)
+    btn_create_files_other.grid(column=0, row=13, padx=10, pady=10)
 
 
 
