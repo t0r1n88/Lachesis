@@ -553,7 +553,7 @@ if __name__ == '__main__':
     main_folder_structure = '3,4'
     main_name_file = '5,6'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'Yes'
+    main_mode_pdf = 'No'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
