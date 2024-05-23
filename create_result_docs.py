@@ -63,11 +63,11 @@ def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:st
             doc_temp = Document(files_lst[i])
             composer.append(doc_temp)
         # Сохраняем файл
-        composer.save(f"{finish_path}/Объединеный файл.docx")
+        composer.save(f"{finish_path}/Объединенный файл.docx")
         if mode_pdf == 'Yes':
             if not os.path.exists(f'{finish_path}/PDF'):
                 os.makedirs(f'{finish_path}/PDF')
-            convert(f'{finish_path}/Объединеный файл.docx', f'{finish_path}/PDF/Объединеный файл.pdf',
+            convert(f'{finish_path}/Объединенный файл.docx', f'{finish_path}/PDF/Объединенный файл.pdf',
                     keep_active=True)
 
 
@@ -82,6 +82,7 @@ def prepare_entry_str(raw_str:str,pattern:str,repl_str:str,sep_lst:str)->list:
     :param sep_lst: разделитель по которому будет делиться список
     :return: список
     """
+    raw_str = str(raw_str).replace('.',',')
     number_column_folder_structure = re.sub(pattern,repl_str,raw_str) # убираем из строки все лишние символы
     lst_number_column_folder_structure = number_column_folder_structure.split(sep_lst) # создаем список по запятой
     # отбрасываем возможные лишние элементы из за лишних запятых
@@ -549,10 +550,10 @@ if __name__ == '__main__':
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_folder_structure = '3,4,5'
-    main_folder_structure = '17,18,4,5'
-    main_name_file = '6,7'
+    main_folder_structure = '3,4'
+    main_name_file = '5,6'
     main_name_type_file = 'Результат тестирования'
-    main_mode_pdf = 'No'
+    main_mode_pdf = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
