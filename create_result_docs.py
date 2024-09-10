@@ -165,7 +165,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
         # проверяем чтобы номер колонки не превышал количество колонок в датафрейме
         for number_column in lst_number_column_folder_structure:
-            if number_column > len(df):
+            if number_column > df.shape[1]:
                 raise NotNumberColumn
 
         # обрабатываем колонки с именем с названием файла
@@ -178,7 +178,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
         # проверяем чтобы номер колонки не превышал количество колонок в датафрейме
         for number_column in lst_number_column_name_file:
-            if number_column > len(df):
+            if number_column > df.shape[1]:
                 raise NotNumberColumn
 
 
