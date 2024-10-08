@@ -139,7 +139,7 @@ def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode
 
 
 def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_to_end_folder_doc:str,
-                         folder_structure:str,name_file:str,name_type_file:str,mode_pdf:str):
+                         folder_structure:str,name_file:str,name_type_file:str,mode_pdf:str,mode_full:str):
     """
     Функция для генерации документов по результатам тестирования с разбиением по папкам и определенным названиям
     :param name_file_data_doc: таблица с яндекс форм
@@ -149,6 +149,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     :param name_file: строка с порядковыми номерами колонок по которым будет создаваться имя файла - 5,6,7
     :param name_type_file: название создаваемых документов которое будет находится в начале имен создаваемых файлов - Справка, Результат
     :param mode_pdf: нужно ли создавать пдф версии создаваемых файлов
+    :param mode_full: по умолчанию создаются только pdf версии документов если включен то создаются docx и объединенные файлы
     :return:
     """
     try:
@@ -159,7 +160,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
         df.fillna('Не заполнено',inplace=True)
         # очищаем строку от лишних символов и превращаем в список номеров колонок
         lst_number_column_folder_structure = prepare_entry_str(folder_structure,r'[^\d,]','',',')
-        # проверяем длину списка не более 3 и не равно 0
+        # проверяем длину списка не более 4 и не равно 0
         if len(lst_number_column_folder_structure) == 0 or len(lst_number_column_folder_structure) > 4:
             raise NoMoreNumberColumn
 

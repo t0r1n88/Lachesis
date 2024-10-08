@@ -1871,11 +1871,13 @@ def processing_generate_docs():
         name_file = entry_name_file.get() # получаем по каким колонкам будет формироваться название файла
         name_type_file = entry_type_file.get() # получаем тип документа который будет создаваться
 
-
+        # получаем состояние переключателя режима
+        mode_full = mode_full_type.get()
         # получаем состояние чекбокса создания pdf
         mode_pdf = mode_pdf_value.get() # чекбокс нужно ли создавать пдф версии
 
-        generate_result_docs(name_file_data_doc,name_file_template_doc,path_to_end_folder_doc,folder_structure,name_file,name_type_file,mode_pdf)
+        generate_result_docs(name_file_data_doc,name_file_template_doc,path_to_end_folder_doc,folder_structure,
+                             name_file,name_type_file,mode_pdf,mode_full)
 
     except NameError as e:
         messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов',
@@ -2318,7 +2320,17 @@ if __name__ == '__main__':
                                        )
     btn_choose_end_folder_doc.grid(column=0, row=11, padx=10, pady=10)
 
-
+    # Создаем переключатель для вариантов короткого или полного
+    mode_full_type = StringVar()
+    mode_full_type.set('No')
+    # Создаем чекбокс для выбора режима создания документов
+    chbox_full_type = Checkbutton(frame_data_for_doc,
+                                 text='Поставьте галочку, если вам нужно  \n'
+                                      'включить полный режим при нем будут создаваться docx документы и объединенные файлы',
+                                 variable=mode_full_type,
+                                 offvalue='No',
+                                 onvalue='Yes')
+    chbox_full_type.grid(column=0, row=12, padx=1, pady=1)
 
 
     # Создаем чекбокс для режима создания pdf
@@ -2332,11 +2344,11 @@ if __name__ == '__main__':
 
     chbox_mode_pdf = Checkbutton(frame_data_for_doc,
                                  text='Поставьте галочку, если вам нужно чтобы \n'
-                                      'дополнительно создавались pdf версии результатов',
+                                      'в полном режиме дополнительно создавались pdf версии документов',
                                  variable=mode_pdf_value,
                                  offvalue='No',
                                  onvalue='Yes')
-    chbox_mode_pdf.grid(column=0, row=12, padx=1, pady=1)
+    chbox_mode_pdf.grid(column=0, row=13, padx=1, pady=1)
 
 
     # Создаем кнопку для создания документов из таблиц с произвольной структурой
@@ -2344,7 +2356,7 @@ if __name__ == '__main__':
                                     font=('Arial Bold', 14),
                                     command=processing_generate_docs
                                     )
-    btn_create_files_other.grid(column=0, row=13, padx=10, pady=10)
+    btn_create_files_other.grid(column=0, row=14, padx=10, pady=10)
 
 
 
