@@ -136,6 +136,30 @@ def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode
             convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
                     keep_active=True)
 
+def short_version_save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int):
+    """
+    Функция для сохранения результатов
+    :param finish_path: путь к папке сохранения
+    :param name_file: название файла
+    :param doc: объект DocxTemplate
+    :param idx: счетчик
+    :return:
+    """
+    if os.path.exists(f'{finish_path}/{name_file}.docx'):
+        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+        convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
+                keep_active=True)
+        os.remove(f'{finish_path}/{name_file}_{idx}.docx')
+    else:
+        doc.save(f'{finish_path}/{name_file}.docx')
+        convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
+                keep_active=True)
+        os.remove(f'{finish_path}/{name_file}.docx')
+
+
+
+
+
 
 
 def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_to_end_folder_doc:str,
@@ -182,120 +206,46 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
             if number_column > df.shape[1]:
                 raise NotNumberColumn
 
-
-        if len(lst_number_column_folder_structure) == 1:
-            # Если нужно создавать одноуровневую структуру
-            # получаем название колонки
-            main_layer_name_column = df.columns[lst_number_column_folder_structure[0]]
-            lst_unique_value = df[main_layer_name_column].unique() # получаем список уникальных значений
-            for name_folder in lst_unique_value:
-                temp_df = df[df[main_layer_name_column] == name_folder] # фильтруем по названию
-                # Конвертируем датафрейм в список словарей
-                clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', name_folder)  # очищаем название от лишних символов
-                finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
-                if not os.path.exists(finish_path):
-                    os.makedirs(finish_path)
-
-                # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
-                if len(lst_number_column_name_file) == 1:
-                    # если указана только одна колонка
-                    name_column = temp_df.columns[lst_number_column_name_file[0]]
-                    temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
-                elif len(lst_number_column_name_file) == 2:
-                    name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
-                    name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
-                    temp_df.rename(columns={name_main_column: 'Код_1',name_second_column: 'Код_2'}, inplace=True)
-
-                data = temp_df.to_dict('records')
-
-                combine_all_docx(data,name_file_template_doc,finish_path,mode_pdf)
-
-                # В зависимости от состояния чекбоксов обрабатываем файлы
-                # Создаем в цикле документы
-                if len(lst_number_column_name_file) == 1:
-                    # если указана только одна колонка
-                    name_column = temp_df.columns[lst_number_column_name_file[0]]
-                    temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
-
-
-                    for idx, row in enumerate(data):
-                        doc = DocxTemplate(name_file_template_doc)
-                        context = row
-                        doc.render(context)
-                        name_file = f'{name_type_file}_{row[name_column]}'
-                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
-                        threshold_name = 200 - (len(finish_path) + 10)
-                        if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
-                            raise OSError
-                        name_file = name_file[:threshold_name]  # ограничиваем название файла
-                        # Сохраняем файл
-                        save_result_file(finish_path,name_file,doc,idx,mode_pdf)
-                    zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
-
-
-                elif len(lst_number_column_name_file) == 2:
-                    name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
-                    name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
-                    for idx, row in enumerate(data):
-                        doc = DocxTemplate(name_file_template_doc)
-                        context = row
-                        doc.render(context)
-                        # Сохраняем файл
-                        name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
-                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
-                        threshold_name = 200 - (len(finish_path) + 10)
-                        if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
-                            raise OSError
-                        name_file = name_file[:threshold_name]  # ограничиваем название файла
-                        # Сохраняем файл
-                        save_result_file(finish_path,name_file,doc,idx,mode_pdf)
-                    zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
-
-        elif len(lst_number_column_folder_structure) == 2:
-            # Если нужно создавать двухуровневую структуру
-            # получаем название колонки для первого уровня папок
-            name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
-            name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
-
-            lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
-            for first_name_folder in lst_unique_value_first_layer:
-                clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                 first_name_folder)  # очищаем название от лишних символов
-
-                # получаем отфильтрованный датафрейм по значениям колонки первого уровня
-                temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
-                lst_unique_value_second_layer = temp_df_first_layer[name_second_layer_column].unique()  # получаем список уникальных значений
-                # фильтруем по значениям колонки второго уровня
-                for second_name_folder in lst_unique_value_second_layer:
-                    temp_df_second_layer = temp_df_first_layer[temp_df_first_layer[name_second_layer_column] == second_name_folder]
-                    clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', second_name_folder)  # очищаем название от лишних символов
-
-                    finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
+        if mode_full == 'No':
+            if len(lst_number_column_folder_structure) == 1:
+                # Если нужно создавать одноуровневую структуру
+                # получаем название колонки
+                main_layer_name_column = df.columns[lst_number_column_folder_structure[0]]
+                lst_unique_value = df[main_layer_name_column].unique() # получаем список уникальных значений
+                for name_folder in lst_unique_value:
+                    temp_df = df[df[main_layer_name_column] == name_folder] # фильтруем по названию
+                    # Конвертируем датафрейм в список словарей
+                    clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', name_folder)  # очищаем название от лишних символов
+                    finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
                     if not os.path.exists(finish_path):
                         os.makedirs(finish_path)
 
                     # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
                     if len(lst_number_column_name_file) == 1:
                         # если указана только одна колонка
-                        name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
-                        temp_df_second_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                        name_column = temp_df.columns[lst_number_column_name_file[0]]
+                        temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
                     elif len(lst_number_column_name_file) == 2:
-                        name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
-                        name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
-                        temp_df_second_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+                        name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
+                        name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
+                        temp_df.rename(columns={name_main_column: 'Код_1',name_second_column: 'Код_2'}, inplace=True)
 
-                    data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
-                    # Создаем объединенный файл в формате docx и pdf
-                    combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
+                    data = temp_df.to_dict('records')
+
+                    combine_all_docx(data,name_file_template_doc,finish_path,mode_pdf)
+
+                    # В зависимости от состояния чекбоксов обрабатываем файлы
                     # Создаем в цикле документы
                     if len(lst_number_column_name_file) == 1:
                         # если указана только одна колонка
-                        name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
+                        name_column = temp_df.columns[lst_number_column_name_file[0]]
+                        temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
+
+
                         for idx, row in enumerate(data):
                             doc = DocxTemplate(name_file_template_doc)
                             context = row
                             doc.render(context)
-                            # Сохраняем файл
                             name_file = f'{name_type_file}_{row[name_column]}'
                             name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                             threshold_name = 200 - (len(finish_path) + 10)
@@ -303,13 +253,13 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 raise OSError
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
-                            save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                        zip_folder(finish_path, f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip') # архивируем файлы docx
+                            save_result_file(finish_path,name_file,doc,idx,mode_pdf)
+                        zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
 
 
                     elif len(lst_number_column_name_file) == 2:
-                        name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
-                        name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                        name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
+                        name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
                         for idx, row in enumerate(data):
                             doc = DocxTemplate(name_file_template_doc)
                             context = row
@@ -322,60 +272,49 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 raise OSError
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
-                            save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                        zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip')  # архивируем файлы docx
+                            save_result_file(finish_path,name_file,doc,idx,mode_pdf)
+                        zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
 
+            elif len(lst_number_column_folder_structure) == 2:
+                # Если нужно создавать двухуровневую структуру
+                # получаем название колонки для первого уровня папок
+                name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
+                name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
 
-        elif len(lst_number_column_folder_structure) == 3:
-            # Если нужно создавать трехуровневую структуру Например Школа-Класс-буква класса
-            # получаем названия колонок для трех уровней
-            name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
-            name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
-            name_third_layer_column = df.columns[lst_number_column_folder_structure[2]]
+                lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
+                for first_name_folder in lst_unique_value_first_layer:
+                    clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                     first_name_folder)  # очищаем название от лишних символов
 
-            lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
-            for first_name_folder in lst_unique_value_first_layer:
-                clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                 first_name_folder)  # очищаем название от лишних символов
+                    # получаем отфильтрованный датафрейм по значениям колонки первого уровня
+                    temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
+                    lst_unique_value_second_layer = temp_df_first_layer[name_second_layer_column].unique()  # получаем список уникальных значений
+                    # фильтруем по значениям колонки второго уровня
+                    for second_name_folder in lst_unique_value_second_layer:
+                        temp_df_second_layer = temp_df_first_layer[temp_df_first_layer[name_second_layer_column] == second_name_folder]
+                        clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', second_name_folder)  # очищаем название от лишних символов
 
-                # получаем отфильтрованный датафрейм по значениям колонки первого уровня
-                temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
-                lst_unique_value_second_layer = temp_df_first_layer[
-                    name_second_layer_column].unique()  # получаем список уникальных значений второго уровня
-                # фильтруем по значениям колонки второго уровня
-                for second_name_folder in lst_unique_value_second_layer:
-                    temp_df_second_layer = temp_df_first_layer[
-                        temp_df_first_layer[name_second_layer_column] == second_name_folder]
-                    clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                      second_name_folder)  # очищаем название от лишних символов
-                    lst_unique_value_third_layer = temp_df_second_layer[
-                        name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
-                    for third_name_folder in lst_unique_value_third_layer:
-                        clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                          third_name_folder)  # очищаем название от лишних символов
-                        temp_df_third_layer = temp_df_second_layer[
-                            temp_df_second_layer[name_third_layer_column] == third_name_folder]
-
-                        finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}'
+                        finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
                         if not os.path.exists(finish_path):
                             os.makedirs(finish_path)
+
+                        # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
                         if len(lst_number_column_name_file) == 1:
                             # если указана только одна колонка
-                            name_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]
-                            temp_df_third_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                            name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
+                            temp_df_second_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
                         elif len(lst_number_column_name_file) == 2:
-                            name_main_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]  # первая колонка
-                            name_second_column = temp_df_third_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
-                            temp_df_third_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+                            name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                            name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                            temp_df_second_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
 
-                        data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
+                        data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
                         # Создаем объединенный файл в формате docx и pdf
                         combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
-
                         # Создаем в цикле документы
                         if len(lst_number_column_name_file) == 1:
                             # если указана только одна колонка
-                            name_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]
+                            name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
                             for idx, row in enumerate(data):
                                 doc = DocxTemplate(name_file_template_doc)
                                 context = row
@@ -389,15 +328,12 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 name_file = name_file[:threshold_name]  # ограничиваем название файла
                                 # Сохраняем файл
                                 save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                            zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
-
+                            zip_folder(finish_path, f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip') # архивируем файлы docx
 
 
                         elif len(lst_number_column_name_file) == 2:
-                            name_main_column = temp_df_third_layer.columns[
-                                lst_number_column_name_file[0]]  # первая колонка
-                            name_second_column = temp_df_third_layer.columns[
-                                lst_number_column_name_file[1]]  # вторая колонка
+                            name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                            name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
                             for idx, row in enumerate(data):
                                 doc = DocxTemplate(name_file_template_doc)
                                 context = row
@@ -411,69 +347,59 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 name_file = name_file[:threshold_name]  # ограничиваем название файла
                                 # Сохраняем файл
                                 save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                            zip_folder(finish_path,
-                                       f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
-        elif len(lst_number_column_folder_structure) == 4:
-            # Если нужно создавать четырех уровневую структуру Например Результат- Число результата--Класс-буква класса
-            # получаем названия колонок для 4 уровней
-            name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
-            name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
-            name_third_layer_column = df.columns[lst_number_column_folder_structure[2]]
-            name_four_layer_column = df.columns[lst_number_column_folder_structure[3]]
-
-            lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
-            for first_name_folder in lst_unique_value_first_layer:
-                clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                 first_name_folder)  # очищаем название от лишних символов
-
-                # получаем отфильтрованный датафрейм по значениям колонки первого уровня
-                temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
-                lst_unique_value_second_layer = temp_df_first_layer[
-                    name_second_layer_column].unique()  # получаем список уникальных значений второго уровня
-                # фильтруем по значениям колонки второго уровня
-                for second_name_folder in lst_unique_value_second_layer:
-                    temp_df_second_layer = temp_df_first_layer[
-                        temp_df_first_layer[name_second_layer_column] == second_name_folder]
-                    clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                      second_name_folder)  # очищаем название от лишних символов
-                    lst_unique_value_third_layer = temp_df_second_layer[
-                        name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
-
-                    for third_name_folder in lst_unique_value_third_layer:
-                        clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                          third_name_folder)  # очищаем название от лишних символов
-                        temp_df_third_layer = temp_df_second_layer[
-                            temp_df_second_layer[name_third_layer_column] == third_name_folder]
-                        lst_unique_value_four_layer = temp_df_third_layer[
-                            name_four_layer_column].unique()  # получаем список уникальных значений четвертого уровня
-
-                        for four_name_folder in lst_unique_value_four_layer:
-                            clean_four_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
-                                                             four_name_folder)  # очищаем название от лишних символов
-                            temp_df_four_layer = temp_df_third_layer[
-                                temp_df_third_layer[name_four_layer_column] == four_name_folder]
+                            zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip')  # архивируем файлы docx
 
 
-                            finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}/{clean_four_name_folder}'
+            elif len(lst_number_column_folder_structure) == 3:
+                # Если нужно создавать трехуровневую структуру Например Школа-Класс-буква класса
+                # получаем названия колонок для трех уровней
+                name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
+                name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
+                name_third_layer_column = df.columns[lst_number_column_folder_structure[2]]
+
+                lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
+                for first_name_folder in lst_unique_value_first_layer:
+                    clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                     first_name_folder)  # очищаем название от лишних символов
+
+                    # получаем отфильтрованный датафрейм по значениям колонки первого уровня
+                    temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
+                    lst_unique_value_second_layer = temp_df_first_layer[
+                        name_second_layer_column].unique()  # получаем список уникальных значений второго уровня
+                    # фильтруем по значениям колонки второго уровня
+                    for second_name_folder in lst_unique_value_second_layer:
+                        temp_df_second_layer = temp_df_first_layer[
+                            temp_df_first_layer[name_second_layer_column] == second_name_folder]
+                        clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                          second_name_folder)  # очищаем название от лишних символов
+                        lst_unique_value_third_layer = temp_df_second_layer[
+                            name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
+                        for third_name_folder in lst_unique_value_third_layer:
+                            clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                              third_name_folder)  # очищаем название от лишних символов
+                            temp_df_third_layer = temp_df_second_layer[
+                                temp_df_second_layer[name_third_layer_column] == third_name_folder]
+
+                            finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}'
                             if not os.path.exists(finish_path):
                                 os.makedirs(finish_path)
                             if len(lst_number_column_name_file) == 1:
                                 # если указана только одна колонка
                                 name_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]
-                                temp_df_four_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                                temp_df_third_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
                             elif len(lst_number_column_name_file) == 2:
-                                name_main_column = temp_df_four_layer.columns[lst_number_column_name_file[0]]  # первая колонка
-                                name_second_column = temp_df_four_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
-                                temp_df_four_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+                                name_main_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                                name_second_column = temp_df_third_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                                temp_df_third_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
 
-                            data = temp_df_four_layer.to_dict('records')  # конвертируем в список словарей
+                            data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
                             # Создаем объединенный файл в формате docx и pdf
                             combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
 
                             # Создаем в цикле документы
                             if len(lst_number_column_name_file) == 1:
                                 # если указана только одна колонка
-                                name_column = temp_df_four_layer.columns[lst_number_column_name_file[0]]
+                                name_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]
                                 for idx, row in enumerate(data):
                                     doc = DocxTemplate(name_file_template_doc)
                                     context = row
@@ -487,14 +413,14 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     name_file = name_file[:threshold_name]  # ограничиваем название файла
                                     # Сохраняем файл
                                     save_result_file(finish_path, name_file, doc, idx, mode_pdf)
-                                zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}_{clean_four_name_folder}.zip')  # архивируем файлы docx
+                                zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
 
 
 
                             elif len(lst_number_column_name_file) == 2:
-                                name_main_column = temp_df_four_layer.columns[
+                                name_main_column = temp_df_third_layer.columns[
                                     lst_number_column_name_file[0]]  # первая колонка
-                                name_second_column = temp_df_four_layer.columns[
+                                name_second_column = temp_df_third_layer.columns[
                                     lst_number_column_name_file[1]]  # вторая колонка
                                 for idx, row in enumerate(data):
                                     doc = DocxTemplate(name_file_template_doc)
@@ -510,7 +436,168 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     # Сохраняем файл
                                     save_result_file(finish_path, name_file, doc, idx, mode_pdf)
                                 zip_folder(finish_path,
-                                           f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}_{clean_four_name_folder}.zip')  # архивируем файлы docx
+                                           f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
+            elif len(lst_number_column_folder_structure) == 4:
+                # Если нужно создавать четырех уровневую структуру Например Результат- Число результата--Класс-буква класса
+                # получаем названия колонок для 4 уровней
+                name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
+                name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
+                name_third_layer_column = df.columns[lst_number_column_folder_structure[2]]
+                name_four_layer_column = df.columns[lst_number_column_folder_structure[3]]
+
+                lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
+                for first_name_folder in lst_unique_value_first_layer:
+                    clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                     first_name_folder)  # очищаем название от лишних символов
+
+                    # получаем отфильтрованный датафрейм по значениям колонки первого уровня
+                    temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
+                    lst_unique_value_second_layer = temp_df_first_layer[
+                        name_second_layer_column].unique()  # получаем список уникальных значений второго уровня
+                    # фильтруем по значениям колонки второго уровня
+                    for second_name_folder in lst_unique_value_second_layer:
+                        temp_df_second_layer = temp_df_first_layer[
+                            temp_df_first_layer[name_second_layer_column] == second_name_folder]
+                        clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                          second_name_folder)  # очищаем название от лишних символов
+                        lst_unique_value_third_layer = temp_df_second_layer[
+                            name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
+
+                        for third_name_folder in lst_unique_value_third_layer:
+                            clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                              third_name_folder)  # очищаем название от лишних символов
+                            temp_df_third_layer = temp_df_second_layer[
+                                temp_df_second_layer[name_third_layer_column] == third_name_folder]
+                            lst_unique_value_four_layer = temp_df_third_layer[
+                                name_four_layer_column].unique()  # получаем список уникальных значений четвертого уровня
+
+                            for four_name_folder in lst_unique_value_four_layer:
+                                clean_four_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                                 four_name_folder)  # очищаем название от лишних символов
+                                temp_df_four_layer = temp_df_third_layer[
+                                    temp_df_third_layer[name_four_layer_column] == four_name_folder]
+
+
+                                finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}/{clean_four_name_folder}'
+                                if not os.path.exists(finish_path):
+                                    os.makedirs(finish_path)
+                                if len(lst_number_column_name_file) == 1:
+                                    # если указана только одна колонка
+                                    name_column = temp_df_third_layer.columns[lst_number_column_name_file[0]]
+                                    temp_df_four_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                                elif len(lst_number_column_name_file) == 2:
+                                    name_main_column = temp_df_four_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                                    name_second_column = temp_df_four_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                                    temp_df_four_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+
+                                data = temp_df_four_layer.to_dict('records')  # конвертируем в список словарей
+                                # Создаем объединенный файл в формате docx и pdf
+                                combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
+
+                                # Создаем в цикле документы
+                                if len(lst_number_column_name_file) == 1:
+                                    # если указана только одна колонка
+                                    name_column = temp_df_four_layer.columns[lst_number_column_name_file[0]]
+                                    for idx, row in enumerate(data):
+                                        doc = DocxTemplate(name_file_template_doc)
+                                        context = row
+                                        doc.render(context)
+                                        # Сохраняем файл
+                                        name_file = f'{name_type_file}_{row[name_column]}'
+                                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                                        threshold_name = 200 - (len(finish_path) + 10)
+                                        if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                            raise OSError
+                                        name_file = name_file[:threshold_name]  # ограничиваем название файла
+                                        # Сохраняем файл
+                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                    zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}_{clean_four_name_folder}.zip')  # архивируем файлы docx
+
+
+
+                                elif len(lst_number_column_name_file) == 2:
+                                    name_main_column = temp_df_four_layer.columns[
+                                        lst_number_column_name_file[0]]  # первая колонка
+                                    name_second_column = temp_df_four_layer.columns[
+                                        lst_number_column_name_file[1]]  # вторая колонка
+                                    for idx, row in enumerate(data):
+                                        doc = DocxTemplate(name_file_template_doc)
+                                        context = row
+                                        doc.render(context)
+                                        # Сохраняем файл
+                                        name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                                        threshold_name = 200 - (len(finish_path) + 10)
+                                        if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                            raise OSError
+                                        name_file = name_file[:threshold_name]  # ограничиваем название файла
+                                        # Сохраняем файл
+                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                    zip_folder(finish_path,
+                                               f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}_{clean_four_name_folder}.zip')  # архивируем файлы docx
+        else:
+            if len(lst_number_column_folder_structure) == 1:
+                # Если нужно создавать одноуровневую структуру
+                # получаем название колонки
+                main_layer_name_column = df.columns[lst_number_column_folder_structure[0]]
+                lst_unique_value = df[main_layer_name_column].unique() # получаем список уникальных значений
+                for name_folder in lst_unique_value:
+                    temp_df = df[df[main_layer_name_column] == name_folder] # фильтруем по названию
+                    # Конвертируем датафрейм в список словарей
+                    clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', name_folder)  # очищаем название от лишних символов
+                    finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
+                    if not os.path.exists(finish_path):
+                        os.makedirs(finish_path)
+
+                    # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
+                    if len(lst_number_column_name_file) == 1:
+                        # если указана только одна колонка
+                        name_column = temp_df.columns[lst_number_column_name_file[0]]
+                        temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
+                    elif len(lst_number_column_name_file) == 2:
+                        name_main_column = temp_df.columns[lst_number_column_name_file[0]] # первая колонка
+                        name_second_column = temp_df.columns[lst_number_column_name_file[1]] # вторая колонка
+                        temp_df.rename(columns={name_main_column: 'Код_1',name_second_column: 'Код_2'}, inplace=True)
+
+                    data = temp_df.to_dict('records')
+                    # В зависимости от состояния чекбоксов обрабатываем файлы
+                    # Создаем в цикле документы
+                    if len(lst_number_column_name_file) == 1:
+                        # если указана только одна колонка
+                        name_column = temp_df.columns[lst_number_column_name_file[0]]
+                        temp_df.rename(columns={name_column: 'Код_1'}, inplace=True)
+
+                        for idx, row in enumerate(data):
+                            doc = DocxTemplate(name_file_template_doc)
+                            context = row
+                            doc.render(context)
+                            name_file = f'{name_type_file}_{row[name_column]}'
+                            name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                            threshold_name = 200 - (len(finish_path) + 10)
+                            if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                raise OSError
+                            name_file = name_file[:threshold_name]  # ограничиваем название файла
+                            # Сохраняем файл
+                            short_version_save_result_file(finish_path, name_file, doc, idx)
+
+
+                    elif len(lst_number_column_name_file) == 2:
+                        name_main_column = temp_df.columns[lst_number_column_name_file[0]]  # первая колонка
+                        name_second_column = temp_df.columns[lst_number_column_name_file[1]]  # вторая колонка
+                        for idx, row in enumerate(data):
+                            doc = DocxTemplate(name_file_template_doc)
+                            context = row
+                            doc.render(context)
+                            # Сохраняем файл
+                            name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                            name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                            threshold_name = 200 - (len(finish_path) + 10)
+                            if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                raise OSError
+                            name_file = name_file[:threshold_name]  # ограничиваем название файла
+                            # Сохраняем файл
+                            short_version_save_result_file(finish_path, name_file, doc, idx)
+
 
 
     except NameError as e:
@@ -550,13 +637,13 @@ if __name__ == '__main__':
     main_name_file_data_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Таблица с обезличенными результатами.xlsx'
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_folder_structure = '3,4,5'
-    main_folder_structure = '3,4'
-    main_name_file = '5,6'
+    main_folder_structure = '3'
+    main_name_file = '5'
     main_name_type_file = 'Результат тестирования'
     main_mode_pdf = 'No'
+    main_mode_full = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
-                         main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf)
+                         main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf,main_mode_full)
 
     print('Lindy Booth')
