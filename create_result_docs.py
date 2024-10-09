@@ -206,6 +206,16 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
             if number_column > df.shape[1]:
                 raise NotNumberColumn
 
+        # Добавляем разрыв в шаблон чтобы объединенный файл был без смешивания
+        # Открываем шаблон
+        doc_page_break = Document(name_file_template_doc)
+        # Добавляем разрыв страницы
+        doc_page_break.add_page_break()
+        template_page_break_path = os.path.dirname(name_file_template_doc)
+        # Сохраняем изменения в новом файле
+        doc_page_break.save(f'{template_page_break_path}/page_break.docx')
+        template_page_break_path_finish = f'{template_page_break_path}/page_break.docx'
+
         if mode_full == 'No':
             if len(lst_number_column_folder_structure) == 1:
                 # Если нужно создавать одноуровневую структуру
@@ -232,7 +242,8 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                     data = temp_df.to_dict('records')
 
-                    combine_all_docx(data,name_file_template_doc,finish_path,mode_pdf)
+
+                    combine_all_docx(data,template_page_break_path_finish,finish_path,mode_pdf)
 
                     # В зависимости от состояния чекбоксов обрабатываем файлы
                     # Создаем в цикле документы
@@ -310,7 +321,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                         data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
                         # Создаем объединенный файл в формате docx и pdf
-                        combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
+                        combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf)
                         # Создаем в цикле документы
                         if len(lst_number_column_name_file) == 1:
                             # если указана только одна колонка
@@ -394,7 +405,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                             data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
                             # Создаем объединенный файл в формате docx и pdf
-                            combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
+                            combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf)
 
                             # Создаем в цикле документы
                             if len(lst_number_column_name_file) == 1:
@@ -492,7 +503,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                                 data = temp_df_four_layer.to_dict('records')  # конвертируем в список словарей
                                 # Создаем объединенный файл в формате docx и pdf
-                                combine_all_docx(data, name_file_template_doc, finish_path, mode_pdf)
+                                combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf)
 
                                 # Создаем в цикле документы
                                 if len(lst_number_column_name_file) == 1:
@@ -597,7 +608,11 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
                             short_version_save_result_file(finish_path, name_file, doc, idx)
-
+        # Удаляем файл с разрывом страницы
+        try:
+            os.remove(template_page_break_path_finish)
+        except OSError as e:
+            print("Ошибка при попытке удаления файла: {}".format(e))
 
 
     except NameError as e:
@@ -641,7 +656,7 @@ if __name__ == '__main__':
     main_name_file = '5'
     main_name_type_file = 'Результат тестирования'
     main_mode_pdf = 'No'
-    main_mode_full = 'Yes'
+    main_mode_full = 'No'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf,main_mode_full)
