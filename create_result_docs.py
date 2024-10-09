@@ -14,6 +14,7 @@ from docx import Document
 from docxtpl import DocxTemplate
 from docx2pdf import convert
 import zipfile
+import platform
 
 class NotNumberColumn(Exception):
     """
@@ -28,7 +29,7 @@ class NoMoreNumberColumn(Exception):
     """
     pass
 
-def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:str):
+def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:str, name_os:str):
     """
     Функция для объединения файлов Word взято отсюда
     https://stackoverflow.com/questions/24872527/combine-word-document-using-python-docx
@@ -36,6 +37,7 @@ def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:st
     :param name_file_template_doc: файл шаблона
     :param finish_path: куда сохранять файл
     :param mode_pdf: создавать ли pdf
+    :param name_os: для контроля операционной системы поскольку создание pdf работает только в Windows
     """
     # Список с созданными файлами
     files_lst = []
@@ -65,10 +67,11 @@ def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:st
         # Сохраняем файл
         composer.save(f"{finish_path}/Объединенный файл.docx")
         if mode_pdf == 'Yes':
-            if not os.path.exists(f'{finish_path}/PDF'):
-                os.makedirs(f'{finish_path}/PDF')
-            convert(f'{finish_path}/Объединенный файл.docx', f'{finish_path}/PDF/Объединенный файл.pdf',
-                    keep_active=True)
+            if name_os == 'Windows':
+                if not os.path.exists(f'{finish_path}/PDF'):
+                    os.makedirs(f'{finish_path}/PDF')
+                convert(f'{finish_path}/Объединенный файл.docx', f'{finish_path}/PDF/Объединенный файл.pdf',
+                        keep_active=True)
 
 
 
@@ -111,7 +114,7 @@ def zip_folder(folder_name, output_filename):
 
 
 
-def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode_pdf:str):
+def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode_pdf:str,name_os:str):
     """
     Функция для сохранения результатов
     :param finish_path: путь к папке сохранения
@@ -119,22 +122,25 @@ def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode
     :param doc: объект DocxTemplate
     :param idx: счетчик
     :param mode_pdf: чекбокс сохранения PDF
+    :param name_os: для контроля операционной системы поскольку создание pdf работает только в Windows
     :return:
     """
     if os.path.exists(f'{finish_path}/{name_file}.docx'):
         doc.save(f'{finish_path}/{name_file}_{idx}.docx')
         if mode_pdf == 'Yes':
-            if not os.path.exists(f'{finish_path}/PDF'):
-                os.makedirs(f'{finish_path}/PDF')
-            convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
-                    keep_active=True)
+            if name_os == 'Windows':
+                if not os.path.exists(f'{finish_path}/PDF'):
+                    os.makedirs(f'{finish_path}/PDF')
+                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
+                        keep_active=True)
     else:
         doc.save(f'{finish_path}/{name_file}.docx')
         if mode_pdf == 'Yes':
-            if not os.path.exists(f'{finish_path}/PDF'):
-                os.makedirs(f'{finish_path}/PDF')
-            convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
-                    keep_active=True)
+            if name_os == 'Windows':
+                if not os.path.exists(f'{finish_path}/PDF'):
+                    os.makedirs(f'{finish_path}/PDF')
+                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
+                        keep_active=True)
 
 def short_version_save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int):
     """
@@ -177,7 +183,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     :return:
     """
     try:
-
+        name_os = platform.system()  # получаем платформу на которой запущена программа
         # Считываем данные
         # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
         df = pd.read_excel(name_file_data_doc, dtype=str)
@@ -243,7 +249,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                     data = temp_df.to_dict('records')
 
 
-                    combine_all_docx(data,template_page_break_path_finish,finish_path,mode_pdf)
+                    combine_all_docx(data,template_page_break_path_finish,finish_path,mode_pdf,name_os)
 
                     # В зависимости от состояния чекбоксов обрабатываем файлы
                     # Создаем в цикле документы
@@ -321,7 +327,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                         data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
                         # Создаем объединенный файл в формате docx и pdf
-                        combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf)
+                        combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf,name_os)
                         # Создаем в цикле документы
                         if len(lst_number_column_name_file) == 1:
                             # если указана только одна колонка
@@ -405,7 +411,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                             data = temp_df_third_layer.to_dict('records')  # конвертируем в список словарей
                             # Создаем объединенный файл в формате docx и pdf
-                            combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf)
+                            combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf,name_os)
 
                             # Создаем в цикле документы
                             if len(lst_number_column_name_file) == 1:
@@ -503,7 +509,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
 
                                 data = temp_df_four_layer.to_dict('records')  # конвертируем в список словарей
                                 # Создаем объединенный файл в формате docx и pdf
-                                combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf)
+                                combine_all_docx(data, template_page_break_path_finish, finish_path, mode_pdf,name_os)
 
                                 # Создаем в цикле документы
                                 if len(lst_number_column_name_file) == 1:
