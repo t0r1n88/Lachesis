@@ -29,6 +29,12 @@ class NoMoreNumberColumn(Exception):
     """
     pass
 
+class PdfLinux(Exception):
+    """
+    Исключение для контроля возможности запуска скрипта с опцией создания PDF в Linux
+    """
+    pass
+
 def combine_all_docx(data:str,name_file_template_doc,finish_path:str,mode_pdf:str, name_os:str):
     """
     Функция для объединения файлов Word взято отсюда
@@ -184,6 +190,8 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
     """
     try:
         name_os = platform.system()  # получаем платформу на которой запущена программа
+        if name_os !='Windows' and mode_pdf =='Yes':
+            raise PdfLinux
         # Считываем данные
         # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
         df = pd.read_excel(name_file_data_doc, dtype=str)
@@ -270,7 +278,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 raise OSError
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
-                            save_result_file(finish_path,name_file,doc,idx,mode_pdf)
+                            save_result_file(finish_path,name_file,doc,idx,mode_pdf,name_os)
                         zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
 
 
@@ -289,7 +297,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 raise OSError
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
-                            save_result_file(finish_path,name_file,doc,idx,mode_pdf)
+                            save_result_file(finish_path,name_file,doc,idx,mode_pdf,name_os)
                         zip_folder(finish_path, f'Результаты тестирования {clean_name_folder}.zip')
 
             elif len(lst_number_column_folder_structure) == 2:
@@ -344,7 +352,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     raise OSError
                                 name_file = name_file[:threshold_name]  # ограничиваем название файла
                                 # Сохраняем файл
-                                save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
                             zip_folder(finish_path, f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip') # архивируем файлы docx
 
 
@@ -363,7 +371,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     raise OSError
                                 name_file = name_file[:threshold_name]  # ограничиваем название файла
                                 # Сохраняем файл
-                                save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
                             zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}.zip')  # архивируем файлы docx
 
 
@@ -429,7 +437,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                         raise OSError
                                     name_file = name_file[:threshold_name]  # ограничиваем название файла
                                     # Сохраняем файл
-                                    save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                    save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
                                 zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
 
 
@@ -451,7 +459,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                         raise OSError
                                     name_file = name_file[:threshold_name]  # ограничиваем название файла
                                     # Сохраняем файл
-                                    save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                    save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
                                 zip_folder(finish_path,
                                            f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}.zip')  # архивируем файлы docx
             elif len(lst_number_column_folder_structure) == 4:
@@ -527,7 +535,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                             raise OSError
                                         name_file = name_file[:threshold_name]  # ограничиваем название файла
                                         # Сохраняем файл
-                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
                                     zip_folder(finish_path,f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}_{clean_four_name_folder}.zip')  # архивируем файлы docx
 
 
@@ -549,7 +557,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                             raise OSError
                                         name_file = name_file[:threshold_name]  # ограничиваем название файла
                                         # Сохраняем файл
-                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf)
+                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
                                     zip_folder(finish_path,
                                                f'Результаты тестирования {clean_first_name_folder}_{clean_second_name_folder}_{clean_third_name_folder}_{clean_four_name_folder}.zip')  # архивируем файлы docx
         else:
@@ -614,6 +622,74 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                             # Сохраняем файл
                             short_version_save_result_file(finish_path, name_file, doc, idx)
+            elif len(lst_number_column_folder_structure) == 2:
+                # Если нужно создавать двухуровневую структуру
+                # получаем название колонки для первого уровня папок
+                name_first_layer_column = df.columns[lst_number_column_folder_structure[0]]
+                name_second_layer_column = df.columns[lst_number_column_folder_structure[1]]
+
+                lst_unique_value_first_layer = df[name_first_layer_column].unique()  # получаем список уникальных значений
+                for first_name_folder in lst_unique_value_first_layer:
+                    clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                     first_name_folder)  # очищаем название от лишних символов
+
+                    # получаем отфильтрованный датафрейм по значениям колонки первого уровня
+                    temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
+                    lst_unique_value_second_layer = temp_df_first_layer[name_second_layer_column].unique()  # получаем список уникальных значений
+                    # фильтруем по значениям колонки второго уровня
+                    for second_name_folder in lst_unique_value_second_layer:
+                        temp_df_second_layer = temp_df_first_layer[temp_df_first_layer[name_second_layer_column] == second_name_folder]
+                        clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_', second_name_folder)  # очищаем название от лишних символов
+
+                        finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
+                        if not os.path.exists(finish_path):
+                            os.makedirs(finish_path)
+
+                        # переименовываем колонки указанные в качестве идентифицирующих для того чтобы они отображалисьвнутри файла
+                        if len(lst_number_column_name_file) == 1:
+                            # если указана только одна колонка
+                            name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
+                            temp_df_second_layer.rename(columns={name_column: 'Код_1'}, inplace=True)
+                        elif len(lst_number_column_name_file) == 2:
+                            name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                            name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                            temp_df_second_layer.rename(columns={name_main_column: 'Код_1', name_second_column: 'Код_2'}, inplace=True)
+
+                        data = temp_df_second_layer.to_dict('records') # конвертируем в список словарей
+                        # Создаем в цикле документы
+                        if len(lst_number_column_name_file) == 1:
+                            # если указана только одна колонка
+                            name_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]
+                            for idx, row in enumerate(data):
+                                doc = DocxTemplate(name_file_template_doc)
+                                context = row
+                                doc.render(context)
+                                # Сохраняем файл
+                                name_file = f'{name_type_file}_{row[name_column]}'
+                                name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                                threshold_name = 200 - (len(finish_path) + 10)
+                                if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                    raise OSError
+                                name_file = name_file[:threshold_name]  # ограничиваем название файла
+                                # Сохраняем файл
+                                short_version_save_result_file(finish_path, name_file, doc, idx)
+
+                        elif len(lst_number_column_name_file) == 2:
+                            name_main_column = temp_df_second_layer.columns[lst_number_column_name_file[0]]  # первая колонка
+                            name_second_column = temp_df_second_layer.columns[lst_number_column_name_file[1]]  # вторая колонка
+                            for idx, row in enumerate(data):
+                                doc = DocxTemplate(name_file_template_doc)
+                                context = row
+                                doc.render(context)
+                                # Сохраняем файл
+                                name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                                threshold_name = 200 - (len(finish_path) + 10)
+                                if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                    raise OSError
+                                name_file = name_file[:threshold_name]  # ограничиваем название файла
+                                # Сохраняем файл
+                                short_version_save_result_file(finish_path, name_file, doc, idx)
         # Удаляем файл с разрывом страницы
         try:
             os.remove(template_page_break_path_finish)
@@ -649,6 +725,10 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                              f'Для шага 4 (названия файлов) не более 2 чисел разделенных запятыми.\n'
                              f'Например 6,7.'
                              )
+    except PdfLinux:
+        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов',
+                             f'Создание PDF файлов возможно только в Windows! Снимите галочки с создания PDF документов И поставьте галочку для включения полного режима'
+                             )
     else:
         messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов',
                             'Создание документов завершено!')
@@ -658,11 +738,11 @@ if __name__ == '__main__':
     main_name_file_data_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Таблица с обезличенными результатами.xlsx'
     main_name_file_template_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Шаблон Отчет о результатах комплексного профориентационного тестирования.docx'
     main_path_to_end_folder_doc = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_folder_structure = '3'
-    main_name_file = '5'
+    main_folder_structure = '3,4'
+    main_name_file = '5,6'
     main_name_type_file = 'Результат тестирования'
     main_mode_pdf = 'No'
-    main_mode_full = 'No'
+    main_mode_full = 'Yes'
 
     generate_result_docs(main_name_file_data_doc,main_name_file_template_doc,main_path_to_end_folder_doc,
                          main_folder_structure,main_name_file,main_name_type_file,main_mode_pdf,main_mode_full)
