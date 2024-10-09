@@ -2288,7 +2288,7 @@ if __name__ == '__main__':
     # Описание поля
     label_folder_structure = Label(frame_data_for_doc,
                                    text='3) Введите через запятую порядковые номера колонок таблице\n по которым будет создаваться структура папок.\n'
-                                        'Например 3,4.5 или 2,3. Может быть указано не более 3 колонок')
+                                        'Например 3,4,5 или 2,3. Может быть указано не более 4 колонок')
     label_folder_structure.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
     entry_folder_structure = Entry(frame_data_for_doc, textvariable=entry_folder_structure, width=30)
@@ -2326,7 +2326,8 @@ if __name__ == '__main__':
     # Создаем чекбокс для выбора режима создания документов
     chbox_full_type = Checkbutton(frame_data_for_doc,
                                  text='Поставьте галочку, если вам нужно  \n'
-                                      'включить полный режим при нем будут создаваться docx документы и объединенные файлы',
+                                      'включить краткий режим при нем будут создаваться только pdf.\n'
+                                      'В полном режиме создаются docx, объединенный файл, файл с архивом ',
                                  variable=mode_full_type,
                                  offvalue='No',
                                  onvalue='Yes')
