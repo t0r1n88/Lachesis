@@ -2160,7 +2160,7 @@ def set_window_size(window):
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов профориентационных тестов ver 6.0')
+    window.title('Лахеcис Обработка результатов профориентационных тестов ver 6.1')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
