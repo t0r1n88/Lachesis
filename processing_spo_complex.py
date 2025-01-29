@@ -128,6 +128,121 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
 
+def calc_level_self_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета самоценочной тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+    value = row[2] # значение которое нужно обработать
+
+    if group == 1:
+        if sex == 'Женский':
+            if 6 <= value <= 19:
+                return 'Нормальный'
+            elif 20 <= value <= 26:
+                return 'Несколько повышенный'
+            elif 27 <= value <= 32:
+                return 'Высокий'
+            elif value > 32:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 1 <= value <= 17:
+                return 'Нормальный'
+            elif 18 <= value <= 26:
+                return 'Несколько повышенный'
+            elif 27 <= value <= 34:
+                return 'Высокий'
+            elif value > 34:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 2:
+        if sex == 'Женский':
+            if 12 <= value <= 23:
+                return 'Нормальный'
+            elif 24 <= value <= 29:
+                return 'Несколько повышенный'
+            elif 30 <= value <= 34:
+                return 'Высокий'
+            elif value > 34:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 8 <= value <= 17:
+                return 'Нормальный'
+            elif 18 <= value <= 22:
+                return 'Несколько повышенный'
+            elif 23 <= value <= 27:
+                return 'Высокий'
+            elif value > 27:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+
+def calc_level_soc_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета межличностной тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+    value = row[2] # значение которое нужно обработать
+
+    if group == 1:
+        if sex == 'Женский':
+            if 4 <= value <= 19:
+                return 'Нормальный'
+            elif 20 <= value <= 26:
+                return 'Несколько повышенный'
+            elif 27 <= value <= 33:
+                return 'Высокий'
+            elif value > 33:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 3 <= value <= 17:
+                return 'Нормальный'
+            elif 18 <= value <= 25:
+                return 'Несколько повышенный'
+            elif 26 <= value <= 32:
+                return 'Высокий'
+            elif value > 32:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 2:
+        if sex == 'Женский':
+            if 5 <= value <= 20:
+                return 'Нормальный'
+            elif 21 <= value <= 28:
+                return 'Несколько повышенный'
+            elif 29 <= value <= 36:
+                return 'Высокий'
+            elif value > 36:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 5 <= value <= 14:
+                return 'Нормальный'
+            elif 15 <= value <= 19:
+                return 'Несколько повышенный'
+            elif 20 <= value <= 23:
+                return 'Высокий'
+            elif value > 23:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+
+
+
+
 
 
 
@@ -212,9 +327,21 @@ def processing_kondash(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: in
 
     # Считаем учебную тревожность в оригинале школьная
     base_df['Значение_учебной_тревожности'] = answers_df[lst_study_anxiety].sum(axis=1)
-    base_df['Уровень_общей_тревожности'] = base_df[
+    base_df['Уровень_учебной_тревожности'] = base_df[
         ['Выберите_свой_курс', 'Выберите_свой_пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,
                                                                                          axis=1)
+
+    # Считаем самооценочную тревожность
+    base_df['Значение_самооценочной_тревожности'] = answers_df[lst_self_anxiety].sum(axis=1)
+    base_df['Уровень_самооценочной_тревожности'] = base_df[
+        ['Выберите_свой_курс', 'Выберите_свой_пол', 'Значение_самооценочной_тревожности']].apply(calc_level_self_condash_anxiety,
+                                                                                         axis=1)
+    # Считаем межличностную тревожность
+    base_df['Значение_межличностной_тревожности'] = answers_df[lst_soc_anxiety].sum(axis=1)
+    base_df['Уровень_межличностной_тревожности'] = base_df[
+        ['Выберите_свой_курс', 'Выберите_свой_пол', 'Значение_межличностной_тревожности']].apply(calc_level_soc_condash_anxiety,
+                                                                                         axis=1)
+
 
     base_df.to_excel('data/dfd.xlsx')
 
