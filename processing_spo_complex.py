@@ -2,12 +2,14 @@
 Скрипт для обработки тестов студентов СПО
 """
 from spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
-
+from lachesis_support_functions import write_df_to_excel, del_sheet # функции для создания итогового файла
 
 import pandas as pd
+pd.options.mode.copy_on_write = True
 import openpyxl
 from tkinter import messagebox
 import re
+import time
 
 
 class NotSameSize(Exception):
@@ -32,6 +34,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
     :param threshold_base: количество колонок с вводными данными
     :return:
     """
+    # генерируем текущее время
+    t = time.localtime()
+    current_time = time.strftime('%H_%M_%S', t)
+
+
     dct_tests = {'ШТК': (processing_kondash_anxiety, 30), 'ШТБ': (processing_bek, 21),
                  }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -80,12 +87,20 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         # получаем колонки относящиеся к тесту
         temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
         # обрабатываем и получаем датафреймы для добавления в основные таблицы
-        temp_full_df, temp_result_df = dct_tests[name_test][0](base_df_for_func, temp_df,
-                                                               dct_tests[name_test][1], name_test)
+        # temp_full_df, temp_result_df = dct_tests[name_test][0](base_df_for_func, temp_df,
+        #                                                        dct_tests[name_test][1], name_test)
+        temp_dct = dct_tests[name_test][0](base_df_for_func, temp_df
+                                                              )
 
-        base_df = pd.concat([base_df, temp_full_df],
+        base_df = pd.concat([base_df, temp_dct['Списочный результат']],
                             axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
-        result_df = pd.concat([result_df, temp_result_df], axis=1)
+        result_df = pd.concat([result_df, temp_dct['Список для проверки']], axis=1)
+        # Сохраняем в удобном виде
+        temp_wb = write_df_to_excel(temp_dct, write_index=False)
+        temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+        temp_wb.save(f'{end_folder}/Результат {name_test}.xlsx')
+
+
         # увеличиваем предел обозначающий количество обработанных колонок
         threshold_finshed += dct_tests[name_test][1]
 
