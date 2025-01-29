@@ -233,12 +233,11 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
                 return 'Чрезмерное спокойствие'
 
 
-
-
-
-
-
-
+def round_mean(value):
+    """
+    Функция для округления до 2 знаков
+    """
+    return round(value.mean(),2)
 
 def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     """
@@ -338,7 +337,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     # Делаем сводную таблицу средних значений.
     svod_all_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
                                  values=['Значение_общей_тревожности','Значение_учебной_тревожности','Значение_самооценочной_тревожности','Значение_межличностной_тревожности'],
-                                 aggfunc=np.mean)
+                                 aggfunc=round_mean)
     svod_all_df.reset_index(inplace=True)
 
     all_result_df = svod_all_df[['Выберите_свой_курс','Выберите_свой_пол']] # выделяем базовые колонки
@@ -367,34 +366,95 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     svod_all_count_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
                                  columns='Уровень_учебной_тревожности',
                                  values='Значение_учебной_тревожности',
-                                 aggfunc='count')
+                                 aggfunc='count',margins=True,margins_name='Итого')
     svod_all_count_df.reset_index(inplace=True)
     svod_all_count_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+    # Добавляем колонки с процентами
+    if 'Нормальный' in svod_all_count_df.columns:
+        svod_all_count_df['% Нормальный от общего'] = round(svod_all_count_df['Нормальный'] / svod_all_count_df['Итого'],2)
+
+    if 'Несколько повышенный' in svod_all_count_df.columns:
+        svod_all_count_df['% Несколько повышенный от общего'] = round(svod_all_count_df['Несколько повышенный'] / svod_all_count_df['Итого'],2)
+    if 'Высокий' in svod_all_count_df.columns:
+        svod_all_count_df['% Высокий от общего'] = round(svod_all_count_df['Высокий'] / svod_all_count_df['Итого'],2)
+    if 'Очень высокий' in svod_all_count_df.columns:
+        svod_all_count_df['% Очень высокий от общего'] = round(svod_all_count_df['Очень высокий'] / svod_all_count_df['Итого'],2)
+    if 'Чрезмерное спокойствие' in svod_all_count_df.columns:
+        svod_all_count_df['% Чрезмерное спокойствие от общего'] = round(svod_all_count_df['Чрезмерное спокойствие'] / svod_all_count_df['Итого'],2)
+
 
     # свод по учебной тревожности
     svod_study_count_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
                                  columns='Уровень_общей_тревожности',
                                  values='Значение_общей_тревожности',
-                                 aggfunc='count')
+                                 aggfunc='count',margins=True,margins_name='Итого')
     svod_study_count_df.reset_index(inplace=True)
     svod_study_count_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+    # Добавляем колонки с процентами
+    if 'Нормальный' in svod_study_count_df.columns:
+        svod_study_count_df['% Нормальный от общего'] = round(svod_study_count_df['Нормальный'] / svod_study_count_df['Итого'],2)
+
+    if 'Несколько повышенный' in svod_study_count_df.columns:
+        svod_study_count_df['% Несколько повышенный от общего'] = round(svod_study_count_df['Несколько повышенный'] / svod_study_count_df['Итого'],2)
+    if 'Высокий' in svod_study_count_df.columns:
+        svod_study_count_df['% Высокий от общего'] = round(svod_study_count_df['Высокий'] / svod_study_count_df['Итого'],2)
+    if 'Очень высокий' in svod_study_count_df.columns:
+        svod_study_count_df['% Очень высокий от общего'] = round(svod_study_count_df['Очень высокий'] / svod_study_count_df['Итого'],2)
+    if 'Чрезмерное спокойствие' in svod_study_count_df.columns:
+        svod_study_count_df['% Чрезмерное спокойствие от общего'] = round(svod_study_count_df['Чрезмерное спокойствие'] / svod_study_count_df['Итого'],2)
+
+
 
     # свод по самооценочной тревожности
     svod_self_count_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
                                  columns='Уровень_самооценочной_тревожности',
                                  values='Значение_самооценочной_тревожности',
-                                 aggfunc='count')
+                                 aggfunc='count',margins=True,margins_name='Итого')
     svod_self_count_df.reset_index(inplace=True)
     svod_self_count_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+    if 'Нормальный' in svod_self_count_df.columns:
+        svod_self_count_df['% Нормальный от общего'] = round(
+            svod_self_count_df['Нормальный'] / svod_self_count_df['Итого'], 2)
+
+    if 'Несколько повышенный' in svod_self_count_df.columns:
+        svod_self_count_df['% Несколько повышенный от общего'] = round(
+            svod_self_count_df['Несколько повышенный'] / svod_self_count_df['Итого'], 2)
+    if 'Высокий' in svod_self_count_df.columns:
+        svod_self_count_df['% Высокий от общего'] = round(svod_self_count_df['Высокий'] / svod_self_count_df['Итого'],
+                                                          2)
+    if 'Очень высокий' in svod_self_count_df.columns:
+        svod_self_count_df['% Очень высокий от общего'] = round(
+            svod_self_count_df['Очень высокий'] / svod_self_count_df['Итого'], 2)
+    if 'Чрезмерное спокойствие' in svod_self_count_df.columns:
+        svod_self_count_df['% Чрезмерное спокойствие от общего'] = round(
+            svod_self_count_df['Чрезмерное спокойствие'] / svod_self_count_df['Итого'], 2)
 
     # свод по межличностной тревожности
     svod_soc_count_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
                                  columns='Уровень_межличностной_тревожности',
                                  values='Значение_межличностной_тревожности',
-                                 aggfunc='count')
+                                 aggfunc='count',margins=True,margins_name='Итого')
     svod_soc_count_df.reset_index(inplace=True)
     svod_soc_count_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
+    if 'Нормальный' in svod_soc_count_df.columns:
+        svod_soc_count_df['% Нормальный от общего'] = round(
+            svod_soc_count_df['Нормальный'] / svod_soc_count_df['Итого'], 2)
+
+    if 'Несколько повышенный' in svod_soc_count_df.columns:
+        svod_soc_count_df['% Несколько повышенный от общего'] = round(
+            svod_soc_count_df['Несколько повышенный'] / svod_soc_count_df['Итого'], 2)
+    if 'Высокий' in svod_soc_count_df.columns:
+        svod_soc_count_df['% Высокий от общего'] = round(svod_soc_count_df['Высокий'] / svod_soc_count_df['Итого'], 2)
+    if 'Очень высокий' in svod_soc_count_df.columns:
+        svod_soc_count_df['% Очень высокий от общего'] = round(
+            svod_soc_count_df['Очень высокий'] / svod_soc_count_df['Итого'], 2)
+    if 'Чрезмерное спокойствие' in svod_soc_count_df.columns:
+        svod_soc_count_df['% Чрезмерное спокойствие от общего'] = round(
+            svod_soc_count_df['Чрезмерное спокойствие'] / svod_soc_count_df['Итого'], 2)
 
     out_answer_df = pd.concat([out_answer_df,answers_df],axis=1)
 
