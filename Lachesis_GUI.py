@@ -3,7 +3,7 @@
 скрипт для обработки произвольных тестов
 """
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов
-
+from processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
 import pandas as pd
 import numpy as np
 import os
@@ -1793,18 +1793,18 @@ def processing_complex():
 
 
     except NameError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
     except KeyError as e:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showerror('Лахеcис',
                              f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
                              f'Проверьте правильность написания по руководству пользователя')
     except FileNotFoundError:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showerror('Лахеcис',
                              f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
                              f'в слишком длинном пути к обрабатываемым файлам')
     except WrongNumberColumn:
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showerror('Лахеcис',
                              f'Неправильное количество колонок в таблице!\n'
                              f'Проверьте количество вопросов в тестах!\n'
                              f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
@@ -1812,7 +1812,7 @@ def processing_complex():
                              f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
                              f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
     else:
-        messagebox.showinfo('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showinfo('Лахеcис',
                             'Данные успешно обработаны')
 
 
@@ -1883,43 +1883,7 @@ def processing_generate_docs():
         messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
 
-def select_file_params_comparsion():
-    """
-    Функция для выбора файла с параметрами колонок т.е. кокие колонки нужно обрабатывать
-    :return:
-    """
-    global file_params
-    file_params = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
 
-
-def select_first_comparison():
-    """
-    Функция для выбора  первого файла с данными которые нужно сравнить
-    :return: Путь к файлу с данными
-    """
-    global name_first_file_comparison
-    # Получаем путь к файлу
-    name_first_file_comparison = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
-
-
-def select_second_comparison():
-    """
-    Функция для выбора  второго файла с данными которые нужно сравнить
-    :return: Путь к файлу с данными
-    """
-    global name_second_file_comparison
-    # Получаем путь к файлу
-    name_second_file_comparison = filedialog.askopenfilename(
-        filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
-
-
-def select_end_folder_comparison():
-    """
-    Функция для выбора папки куда будет генерироваться итоговый файл
-    :return:
-    """
-    global path_to_end_folder_comparison
-    path_to_end_folder_comparison = filedialog.askdirectory()
 
 def convert_columns_to_str(df, number_columns):
     """
@@ -1993,7 +1957,7 @@ def convert_date(cell):
 
     except TypeError:
         print(cell)
-        messagebox.showerror('Лахеcис Обработка результатов профориентационных тестов ver 5.2',
+        messagebox.showerror('Лахеcис',
                              'Проверьте правильность заполнения ячеек с датой!!!')
         logging.exception('AN ERROR HAS OCCURRED')
         quit()
@@ -2066,6 +2030,44 @@ def extract_year(cell):
     """
     return cell.year
 
+
+def select_file_params_spo_anxiety():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_params_spo_anxiety
+    # Получаем путь к файлу
+    file_params_spo_anxiety = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def select_file_data_xlsx_spo_anxiety():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_data_xlsx_spo_anxiety
+    # Получаем путь к файлу
+    file_data_xlsx_spo_anxiety = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def select_end_folder_spo_anxiety():
+    """
+    Функция для выбора конечной папки куда будут складываться итоговые файлы
+    :return:
+    """
+    global path_to_end_folder_spo_anxiety
+    path_to_end_folder_spo_anxiety = filedialog.askdirectory()
+
+
+def processing_spo_anxiety():
+    """
+    Функция для генерации результатов комплексного тестирования на тревожность студентов СПО
+    """
+    try:
+        start_threshold = var_entry_threshold_spo_anxiety.get() # получаем количество колонок
+        generate_result_spo(file_params_spo_anxiety,file_data_xlsx_spo_anxiety,path_to_end_folder_spo_anxiety,start_threshold)
+    except NameError:
+        messagebox.showerror('Лахеcис',
+                             f'Выберите файлы с данными и папку куда будет генерироваться файл')
 
 
 def resource_path(relative_path):
@@ -2160,7 +2162,7 @@ def set_window_size(window):
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов профориентационных тестов ver 6.1')
+    window.title('Лахеcис Обработка результатов психологических тестов ver 7.0')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
@@ -2182,11 +2184,77 @@ if __name__ == '__main__':
     # Создаем ноутбук (вкладки)
     tab_control = ttk.Notebook(canvas)
     """
+    Обработка тестов тревожности СПО
+    """
+    # Создаем вкладку обработки данных spo_anxiety
+    tab_report_spo_anxiety = ttk.Frame(tab_control)
+    tab_control.add(tab_report_spo_anxiety, text='СПО тревожность\nОбработка результатов')
+    tab_control.pack(expand=1, fill='both')
+    # Добавляем виджеты на вкладку
+    # Создаем метку для описания назначения программы
+    lbl_hello_spo_anxiety = Label(tab_report_spo_anxiety,
+                                  text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест \n'
+                                       'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале.'
+                                  )
+    lbl_hello_spo_anxiety.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_to_img_spo_anxiety = resource_path('logo.png')
+
+    img_spo_anxiety = PhotoImage(file=path_to_img_spo_anxiety)
+    Label(tab_report_spo_anxiety,
+          image=img_spo_anxiety
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Создаем кнопку Выбрать файл с параметрами
+    btn_choose_data_spo_anxiety = Button(tab_report_spo_anxiety, text='1) Выберите файл с параметрами',
+                                         font=('Arial Bold', 14),
+                                         command=select_file_params_spo_anxiety
+                                         )
+    btn_choose_data_spo_anxiety.grid(column=0, row=2, padx=10, pady=10)
+
+    # Создаем кнопку Выбрать файл с данными
+    btn_choose_data_spo_anxiety = Button(tab_report_spo_anxiety, text='2) Выберите файл с результатами',
+                                         font=('Arial Bold', 14),
+                                         command=select_file_data_xlsx_spo_anxiety
+                                         )
+    btn_choose_data_spo_anxiety.grid(column=0, row=3, padx=10, pady=10)
+
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    btn_choose_end_folder_spo_anxiety = Button(tab_report_spo_anxiety, text='3) Выберите конечную папку',
+                                               font=('Arial Bold', 14),
+                                               command=select_end_folder_spo_anxiety
+                                               )
+    btn_choose_end_folder_spo_anxiety.grid(column=0, row=4, padx=10, pady=10)
+
+    # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
+    # Определяем переменную
+    var_entry_threshold_spo_anxiety = IntVar()
+    # Описание поля
+    label_name_threshold_spo_anxiety = Label(tab_report_spo_anxiety,
+                                             text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
+    label_name_threshold_spo_anxiety.grid(column=0, row=5, padx=10, pady=5)
+    # поле ввода
+    entry_threshold_spo_anxiety = Entry(tab_report_spo_anxiety, textvariable=var_entry_threshold_spo_anxiety, width=30)
+    entry_threshold_spo_anxiety.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
+
+    # Создаем кнопку обработки данных
+
+    btn_proccessing_data_spo_anxiety = Button(tab_report_spo_anxiety, text='5) Обработать данные',
+                                              font=('Arial Bold', 14),
+                                              command=processing_spo_anxiety
+                                              )
+    btn_proccessing_data_spo_anxiety.grid(column=0, row=7, padx=10, pady=10)
+
+
+
+    """
     Обработка комплексных результатов
     """
     # Создаем вкладку обработки данных complex
     tab_report_complex = ttk.Frame(tab_control)
-    tab_control.add(tab_report_complex, text='Обработка результатов')
+    tab_control.add(tab_report_complex, text='Профориентация школьников\nОбработка результатов')
     tab_control.pack(expand=1, fill='both')
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
@@ -2231,7 +2299,7 @@ if __name__ == '__main__':
     var_entry_threshold_complex = IntVar()
     # Описание поля
     label_name_threshold_complex = Label(tab_report_complex,
-                                         text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста')
+                                         text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
     label_name_threshold_complex.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
     entry_threshold_complex = Entry(tab_report_complex, textvariable=var_entry_threshold_complex, width=30)
@@ -2248,7 +2316,7 @@ if __name__ == '__main__':
     """
 
     tab_create_doc = ttk.Frame(tab_control)
-    tab_control.add(tab_create_doc, text='Генерация результатов тестирования')
+    tab_control.add(tab_create_doc, text='Профориентация школьников\nГенерация результатов тестирования')
     tab_control.pack(expand=1, fill='both')
 
     # Добавляем виджеты на вкладку Создание документов
