@@ -14,6 +14,125 @@ class NotSameSize(Exception):
     pass
 
 
+def calc_level_all_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета уровня тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+    value = row[2] # значение которое нужно обработать
+
+    if group == 1:
+        if sex == 'Женский':
+            if 17 <= value <= 54:
+                return 'Нормальный'
+            elif 55 <= value <= 73:
+                return 'Несколько повышенный'
+            elif 74 <= value <= 90:
+                return 'Высокий'
+            elif value > 90:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 10 <= value <= 48:
+                return 'Нормальный'
+            elif 49 <= value <= 67:
+                return 'Несколько повышенный'
+            elif 68 <= value <= 86:
+                return 'Высокий'
+            elif value > 86:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 2:
+        if sex == 'Женский':
+            if 35 <= value <= 62:
+                return 'Нормальный'
+            elif 63 <= value <= 76:
+                return 'Несколько повышенный'
+            elif 77 <= value <= 90:
+                return 'Высокий'
+            elif value > 90:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 23 <= value <= 47:
+                return 'Нормальный'
+            elif 48 <= value <= 60:
+                return 'Несколько повышенный'
+            elif 61 <= value <= 72:
+                return 'Высокий'
+            elif value > 72:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+
+
+
+def calc_level_study_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета учебной тревожности по шкале Кондаша
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+    value = row[2] # значение которое нужно обработать
+
+    if group == 1:
+        if sex == 'Женский':
+            if 2 <= value <= 14:
+                return 'Нормальный'
+            elif 15 <= value <= 20:
+                return 'Несколько повышенный'
+            elif 21 <= value <= 26:
+                return 'Высокий'
+            elif value > 26:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 1 <= value <= 13:
+                return 'Нормальный'
+            elif 14 <= value <= 19:
+                return 'Несколько повышенный'
+            elif 20 <= value <= 25:
+                return 'Высокий'
+            elif value > 25:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 2:
+        if sex == 'Женский':
+            if 5 <= value <= 17:
+                return 'Нормальный'
+            elif 18 <= value <= 23:
+                return 'Несколько повышенный'
+            elif 24 <= value <= 30:
+                return 'Высокий'
+            elif value > 30:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 5 <= value <= 14:
+                return 'Нормальный'
+            elif 15 <= value <= 19:
+                return 'Несколько повышенный'
+            elif 20 <= value <= 24:
+                return 'Высокий'
+            elif value > 24:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+
+
+
+
+
+
 def processing_kondash(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int, name_test):
     """
     Проверка колонок и значений таблицы
@@ -56,7 +175,7 @@ def processing_kondash(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: in
                 {'Сравниваешь себя с другими': set_variants_shtk},
                 {'Проверяют твои способности': set_variants_shtk},
                 {'На тебя смотрят как на маленького': set_variants_shtk},
-                {'На уроке преподаватель неожиданно задает тебе вопрос': set_variants_shtk},
+                {'На паре преподаватель неожиданно задает тебе вопрос': set_variants_shtk},
                 {'Замолчали, когда ты подошел': set_variants_shtk},
                 {'Оценивается твоя работа': set_variants_shtk},
                 {'Думаешь о своих делах': set_variants_shtk},
@@ -70,7 +189,7 @@ def processing_kondash(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: in
                          'Преподаватель смотрит по журналу, кого бы спросить','Пишешь контрольную работу',
                          'После контрольной учитель называет отметки','Ждешь родителей с родительского собрания',
                          'Сдаешь экзамены в техникуме, колледже','Не понимаешь объяснений преподавателя',
-                         'На уроке преподаватель неожиданно задает тебе вопрос','Не можешь справиться с домашним заданием']
+                         'На паре преподаватель неожиданно задает тебе вопрос','Не можешь справиться с домашним заданием']
 
     # Колонки самооценки
     lst_self_anxiety = ['Участвовать в соревнованиях, конкурсах, в олимпиадах','Думать о своем будущем',
@@ -87,10 +206,17 @@ def processing_kondash(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: in
                        'С тобой не согласны, противоречат тебе',
                        'На тебя смотрят как на маленького','Замолчали, когда ты подошел']
 
-    # Считаем результат
-    base_df['Общая']
+    # Считаем результат общая тревожность
+    base_df['Значение_общей_тревожности'] = answers_df.sum(axis=1)
+    base_df['Уровень_общей_тревожности'] = base_df[['Выберите_свой_курс', 'Выберите_свой_пол', 'Значение_общей_тревожности']].apply(calc_level_all_condash_anxiety,axis=1)
 
+    # Считаем учебную тревожность в оригинале школьная
+    base_df['Значение_учебной_тревожности'] = answers_df[lst_study_anxiety].sum(axis=1)
+    base_df['Уровень_общей_тревожности'] = base_df[
+        ['Выберите_свой_курс', 'Выберите_свой_пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,
+                                                                                         axis=1)
 
+    base_df.to_excel('data/dfd.xlsx')
 
 
 
