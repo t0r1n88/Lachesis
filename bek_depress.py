@@ -169,6 +169,113 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
     out_answer_df = pd.concat([out_answer_df,answers_df],axis=1)
+    out_answer_df.rename(columns={'Выберите_свой_курс':'Курс','Выберите_свой_пол':'Пол'},inplace=True)
+    if 'Введите_свою_группу' in out_answer_df.columns:
+        out_answer_df.rename(columns={'Введите_свою_группу': 'Группа'}, inplace=True)
+
+
+
+    # Проверяем наличие колонки с наименованием группы
+    if 'Введите_свою_группу' not in base_df.columns:
+        # Заменяем
+        base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+        # формируем словарь
+        out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
+            'Средний результат':svod_all_df,'Количество':svod_all_count_df,
+}
+
+        return out_dct
+    else:
+
+
+        # Делаем сводную таблицу средних значений.
+        svod_all_group_df = pd.pivot_table(base_df, index=['Введите_свою_группу', 'Выберите_свой_пол'],
+                                     values=['Значение_уровня_депрессии'],
+                                     aggfunc=round_mean)
+        svod_all_group_df.reset_index(inplace=True)
+        svod_all_group_df['Уровень_депрессии'] = svod_all_group_df['Значение_уровня_депрессии'].apply(
+            calc_level_bek_depress)  # считаем уровень
+        svod_all_group_df.rename(columns={'Введите_свою_группу': 'Группа', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+        # Делаем свод по количеству
+        svod_all_group_count_df = pd.pivot_table(base_df, index=['Введите_свою_группу', 'Выберите_свой_пол'],
+                                                 columns='Уровень_депрессии',
+                                                 values='Значение_уровня_депрессии',
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+        svod_all_group_count_df.reset_index(inplace=True)
+        svod_all_group_count_df.rename(columns={'Введите_свою_группу': 'Группа', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+        # Добавляем колонки с процентами
+        if 'удовлетворительное эмоциональное состояние' in svod_all_group_count_df.columns:
+            svod_all_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+                svod_all_group_count_df['удовлетворительное эмоциональное состояние'] / svod_all_group_count_df[
+                    'Итого'], 2)
+
+        if 'легкая депрессия' in svod_all_group_count_df.columns:
+            svod_all_group_count_df['% легкая депрессия  от общего'] = round(
+                svod_all_group_count_df['легкая депрессия'] / svod_all_group_count_df['Итого'], 2)
+        if 'умеренная депрессия' in svod_all_group_count_df.columns:
+            svod_all_group_count_df['% умеренная депрессия от общего'] = round(
+                svod_all_group_count_df['умеренная депрессия'] / svod_all_group_count_df['Итого'], 2)
+        if 'тяжелая депрессия' in svod_all_group_count_df.columns:
+            svod_all_group_count_df['% тяжелая депрессия от общего'] = round(
+                svod_all_group_count_df['тяжелая депрессия'] / svod_all_group_count_df['Итого'], 2)
+
+        # делаем свод только по группам
+        # Делаем сводную таблицу средних значений.
+        svod_all_only_group_df = pd.pivot_table(base_df, index=['Введите_свою_группу'],
+                                     values=['Значение_уровня_депрессии'],
+                                     aggfunc=round_mean)
+        svod_all_only_group_df.reset_index(inplace=True)
+        svod_all_only_group_df['Уровень_депрессии'] = svod_all_only_group_df['Значение_уровня_депрессии'].apply(
+            calc_level_bek_depress)  # считаем уровень
+        svod_all_only_group_df.rename(columns={'Введите_свою_группу': 'Группа'}, inplace=True)
+
+        # Делаем свод по количеству
+        svod_all_only_group_count_df = pd.pivot_table(base_df, index=['Введите_свою_группу'],
+                                                      columns='Уровень_депрессии',
+                                                      values='Значение_уровня_депрессии',
+                                                      aggfunc='count', margins=True, margins_name='Итого')
+        svod_all_only_group_count_df.reset_index(inplace=True)
+        svod_all_only_group_count_df.rename(columns={'Введите_свою_группу': 'Группа'},
+                                            inplace=True)
+
+        # Добавляем колонки с процентами
+        if 'удовлетворительное эмоциональное состояние' in svod_all_only_group_count_df.columns:
+            svod_all_only_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+                svod_all_only_group_count_df['удовлетворительное эмоциональное состояние'] /
+                svod_all_only_group_count_df[
+                    'Итого'], 2)
+
+        if 'легкая депрессия' in svod_all_only_group_count_df.columns:
+            svod_all_only_group_count_df['% легкая депрессия  от общего'] = round(
+                svod_all_only_group_count_df['легкая депрессия'] / svod_all_only_group_count_df['Итого'], 2)
+        if 'умеренная депрессия' in svod_all_only_group_count_df.columns:
+            svod_all_only_group_count_df['% умеренная депрессия от общего'] = round(
+                svod_all_only_group_count_df['умеренная депрессия'] / svod_all_only_group_count_df['Итого'], 2)
+        if 'тяжелая депрессия' in svod_all_only_group_count_df.columns:
+            svod_all_only_group_count_df['% тяжелая депрессия от общего'] = round(
+                svod_all_only_group_count_df['тяжелая депрессия'] / svod_all_only_group_count_df['Итого'], 2)
+
+
+
+        # Заменяем
+        base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол','Введите_свою_группу':'Группа'}, inplace=True)
+
+        # формируем словарь
+        out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
+            'Средний результат':svod_all_df,'Количество':svod_all_count_df,
+                   'Ср_рез по группам': svod_all_only_group_df, 'Кол по группам': svod_all_only_group_count_df,
+                   'Ср_рез по группам и полам':svod_all_group_df,'Кол по группам и полам':svod_all_group_count_df
+                   }
+
+        return out_dct
+
+
+
+
+
 
 
 

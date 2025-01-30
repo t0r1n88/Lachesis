@@ -466,12 +466,8 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
     # Проверяем наличие колонки с наименованием группы
     if 'Введите_свою_группу' not in base_df.columns:
-
         # Заменяем
         base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
-        if 'Введите_свою_группу' in base_df.columns:
-            base_df.rename(columns={'Введите_свою_группу': 'Группа'}, inplace=True)
-
 
         # формируем словарь
         out_dct = {'Средний результат':all_result_df,'Кол_общая_тревожность':svod_all_count_df,
