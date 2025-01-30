@@ -124,7 +124,7 @@ if __name__ == '__main__':
     main_params_spo = 'data/параметры для СПО.xlsx'
     main_spo_data = 'data/data.xlsx'
     main_end_folder = 'data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
 
     generate_result_spo(main_params_spo, main_spo_data, main_end_folder, main_quantity_descr_cols)
 
