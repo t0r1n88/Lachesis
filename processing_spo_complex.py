@@ -2,6 +2,7 @@
 Скрипт для обработки тестов студентов СПО
 """
 from spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
+from bek_depress import processing_bek_depress # функция для обработки результатов теста тревожности Кондаша
 from lachesis_support_functions import write_df_to_excel, del_sheet # функции для создания итогового файла
 
 import pandas as pd
@@ -21,8 +22,6 @@ class NotSameSize(Exception):
 
 
 
-def processing_bek(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int, name_test):
-    pass
 
 
 def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, threshold_base: int):
@@ -39,7 +38,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        dct_tests = {'ШТК': (processing_kondash_anxiety, 30), 'ШТБ': (processing_bek, 21),
+        dct_tests = {'ШТК': (processing_kondash_anxiety, 30), 'ШДБ': (processing_bek_depress, 52),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
@@ -84,15 +83,15 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             передаем туда датафрейм с анкетными данными, датафрейм с данными теста, количество колонок которое занимает данный тест
             получаем 2 датафрейма с результатами для данного теста которые добавляем в основные датафреймы
             """
+            temp_base_df = base_df.copy()
+
             # получаем колонки относящиеся к тесту
             temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
-            # temp_full_df, temp_result_df = dct_tests[name_test][0](base_df_for_func, temp_df,
-            #                                                        dct_tests[name_test][1], name_test)
-            temp_dct = dct_tests[name_test][0](base_df_for_func, temp_df
+            temp_dct = dct_tests[name_test][0](temp_base_df, temp_df
                                                                   )
 
-            base_df = pd.concat([base_df, temp_dct['Списочный результат']],
+            base_df_for_func = pd.concat([base_df_for_func, temp_dct['Списочный результат']],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
             result_df = pd.concat([result_df, temp_dct['Список для проверки']], axis=1)
             # Сохраняем в удобном виде
@@ -103,6 +102,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
             # увеличиваем предел обозначающий количество обработанных колонок
             threshold_finshed += dct_tests[name_test][1]
+
     except FileNotFoundError:
         messagebox.showerror('Лахеcис',
                                  f'Перенесите файлы которые вы хотите обработать или конечную папку в корень диска. Проблема может быть\n '
