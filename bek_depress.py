@@ -5,6 +5,48 @@ import pandas as pd
 import numpy as np
 
 
+def calc_value_bek_depress(ser:pd.Series):
+    """
+    Функция для подсчета баллов по каждой группе вопросов
+    """
+    lst_values = ser.tolist() # превращаем в список
+    first = lst_values[0] # первое утверждение
+    second = lst_values[1] # второе утверждение
+    third = lst_values[2] # третье утверждение
+    four = lst_values[3] # четвертое утверждение
+
+    # считаем количество ответов в диапазоне
+    count_answer_lst = [value for value in lst_values if pd.notna(value)] # отбрасываем незаполненное
+    if len(count_answer_lst) > 2:
+        # возвращаем либо второй либо третий вариант поскольку всего овтетов 4 то в любом случае какой то из них будет заполнен
+        if pd.notna(second):
+            return second
+        else:
+            return third
+    # возвращаем результат суммирования
+    return sum(count_answer_lst)
+
+
+def calc_level_bek_depress(value):
+    """
+    Функция для подсчета уровня депрессии Бека
+    """
+    if 0 <= value <= 9:
+        return 'удовлетворительное эмоциональное состояние'
+    elif 10 <= value <= 19:
+        return 'легкая депрессия'
+    elif 20 <= value <= 22:
+        return 'умеренная депрессия'
+    else:
+        return 'тяжелая депрессия'
+
+
+
+
+
+
+
+
 def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     """
     Функция для обработки результатов теста
@@ -80,10 +122,17 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                          }
 
     answers_df.replace(dct_replace_value, inplace=True)  # заменяем слова на цифры для подсчетов
-    answers_df.fillna(0, inplace=True)  # заполняем нулями пустые ячейки
 
+    counter = 0 # счетчик обработанных колонок
     for i in range(1,14):
-        temp_lst_cols = [value for value in answers_df.columns if f'руппа утверждений №{i}' in value] # отбираем
-        base_df[f'Группа утверждений №{i}'] = i
+        temp_lst_cols = list(answers_df.columns)[counter:counter+4] # отрезаем 4 колонки
+        base_df[f'Группа утверждений №{i}'] = answers_df[temp_lst_cols].apply(calc_value_bek_depress, axis=1)
+        counter += 4
 
-    print(base_df.columns)
+    lst_sum_cols = [value for value in base_df.columns if 'Группа' in value]
+    base_df['Значение_уровня_депрессии'] = base_df[lst_sum_cols].sum(axis=1) # получаем сумму значений
+    base_df['Уровень_депрессии'] = base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считакем уровень
+
+
+    base_df.to_excel('data/ba.xlsx')
+
