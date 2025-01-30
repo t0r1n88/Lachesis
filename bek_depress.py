@@ -1,6 +1,8 @@
 """
 Скрипт для обработки теста Шкала депрессии Бека
 """
+from lachesis_support_functions import round_mean
+
 import pandas as pd
 import numpy as np
 
@@ -131,8 +133,51 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
     lst_sum_cols = [value for value in base_df.columns if 'Группа' in value]
     base_df['Значение_уровня_депрессии'] = base_df[lst_sum_cols].sum(axis=1) # получаем сумму значений
-    base_df['Уровень_депрессии'] = base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считакем уровень
+    base_df['Уровень_депрессии'] = base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считаем уровень
+    base_df.sort_values(by='Значение_уровня_депрессии',ascending=False,inplace=True) # сортируем
 
 
-    base_df.to_excel('data/ba.xlsx')
+
+    # Делаем сводную таблицу средних значений.
+    svod_all_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
+                                 values=['Значение_уровня_депрессии'],
+                                 aggfunc=round_mean)
+    svod_all_df.reset_index(inplace=True)
+    svod_all_df['Уровень_депрессии'] = svod_all_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считакем уровень
+    svod_all_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+
+    # Делаем свод по количеству
+    svod_all_count_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
+                                 columns='Уровень_депрессии',
+                                 values='Значение_уровня_депрессии',
+                                 aggfunc='count',margins=True,margins_name='Итого')
+    svod_all_count_df.reset_index(inplace=True)
+    svod_all_count_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+
+
+    # Добавляем колонки с процентами
+    if 'удовлетворительное эмоциональное состояние' in svod_all_count_df.columns:
+        svod_all_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(svod_all_count_df['удовлетворительное эмоциональное состояние'] / svod_all_count_df['Итого'],2)
+
+    if 'легкая депрессия' in svod_all_count_df.columns:
+        svod_all_count_df['% легкая депрессия  от общего'] = round(svod_all_count_df['легкая депрессия'] / svod_all_count_df['Итого'],2)
+    if 'умеренная депрессия' in svod_all_count_df.columns:
+        svod_all_count_df['% умеренная депрессия от общего'] = round(svod_all_count_df['умеренная депрессия'] / svod_all_count_df['Итого'],2)
+    if 'тяжелая депрессия' in svod_all_count_df.columns:
+        svod_all_count_df['% тяжелая депрессия от общего'] = round(svod_all_count_df['тяжелая депрессия'] / svod_all_count_df['Итого'],2)
+
+
+    out_answer_df = pd.concat([out_answer_df,answers_df],axis=1)
+
+
+
+
+
+
+
+
+
+
+
 

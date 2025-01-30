@@ -71,6 +71,14 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         # очищаем от всех символов кроме букв цифр
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
+        # если есть колонка с группой
+        if 'Введите_свою_группу' in base_df.columns:
+            base_df['Введите_свою_группу'] = base_df['Введите_свою_группу'].astype(str) # приводим к строковому формату
+            base_df['Введите_свою_группу'] = base_df['Введите_свою_группу'].apply(str.upper) # делаем заглавными
+            # очищаем от лишних пробелов
+            base_df['Введите_свою_группу'] = base_df['Введите_свою_группу'].apply(lambda x:re.sub(r'\s+',' ',x))
+
+
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
         base_df_for_func = base_df.copy()
         # создаем копию для датафрейма с результатами
@@ -116,7 +124,7 @@ if __name__ == '__main__':
     main_params_spo = 'data/параметры для СПО.xlsx'
     main_spo_data = 'data/data.xlsx'
     main_end_folder = 'data/Результат'
-    main_quantity_descr_cols = 2
+    main_quantity_descr_cols = 3
 
     generate_result_spo(main_params_spo, main_spo_data, main_end_folder, main_quantity_descr_cols)
 

@@ -71,3 +71,11 @@ def del_sheet(wb: openpyxl.Workbook, lst_name_sheet: list) -> openpyxl.Workbook:
             del wb[del_sheet]
 
     return wb
+
+
+
+def round_mean(value):
+    """
+    Функция для округления до 2 знаков
+    """
+    return round(value.mean(),2)
