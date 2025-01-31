@@ -492,7 +492,6 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  'Значение_межличностной_тревожности'],
                                          aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
-            svod_all_group_df.to_excel('data/fdsf.xlsx')
             all_result_group_df = svod_all_group_df[['Выберите_свой_курс','Наименование_группы', 'Выберите_свой_пол']]  # выделяем базовые колонки
 
             # Начинаем собирать свод
