@@ -469,11 +469,11 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
         out_answer_df.rename(columns={'Выберите_свой_курс':'Курс','Выберите_свой_пол':'Пол'},inplace=True)
-        if 'Введите_свою_группу' in out_answer_df.columns:
-            out_answer_df.rename(columns={'Введите_свою_группу': 'Группа'}, inplace=True)
+        if 'Наименование_группы' in out_answer_df.columns:
+            out_answer_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
         # Проверяем наличие колонки с наименованием группы
-        if 'Введите_свою_группу' not in base_df.columns:
+        if 'Наименование_группы' not in base_df.columns:
             # Заменяем
             base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
@@ -486,14 +486,14 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         else:
 
             # Делаем сводную таблицу средних значений.
-            svod_all_group_df = pd.pivot_table(base_df, index=['Выберите_свой_курс','Введите_свою_группу', 'Выберите_свой_пол'],
+            svod_all_group_df = pd.pivot_table(base_df, index=['Выберите_свой_курс','Наименование_группы', 'Выберите_свой_пол'],
                                          values=['Значение_общей_тревожности', 'Значение_учебной_тревожности',
                                                  'Значение_самооценочной_тревожности',
                                                  'Значение_межличностной_тревожности'],
                                          aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
             svod_all_group_df.to_excel('data/fdsf.xlsx')
-            all_result_group_df = svod_all_group_df[['Выберите_свой_курс','Введите_свою_группу', 'Выберите_свой_пол']]  # выделяем базовые колонки
+            all_result_group_df = svod_all_group_df[['Выберите_свой_курс','Наименование_группы', 'Выберите_свой_пол']]  # выделяем базовые колонки
 
             # Начинаем собирать свод
             all_result_group_df['Значение_общей_тревожности'] = svod_all_group_df['Значение_общей_тревожности']
@@ -520,18 +520,18 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                 ['Выберите_свой_курс', 'Выберите_свой_пол', 'Значение_межличностной_тревожности']].apply(
                 calc_level_soc_condash_anxiety, axis=1)
 
-            all_result_group_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол','Введите_свою_группу':'Группа'}, inplace=True)
+            all_result_group_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол','Наименование_группы':'Группа'}, inplace=True)
 
 
 
 
             # Делаем свод по количеству
-            svod_all_group_count_df = pd.pivot_table(base_df, index=['Введите_свою_группу', 'Выберите_свой_пол'],
+            svod_all_group_count_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
                                                columns='Уровень_общей_тревожности',
                                                values='Значение_общей_тревожности',
                                                aggfunc='count', margins=True, margins_name='Итого')
             svod_all_group_count_df.reset_index(inplace=True)
-            svod_all_group_count_df.rename(columns={'Выберите_свой_пол': 'Пол','Введите_свою_группу':'Группа'}, inplace=True)
+            svod_all_group_count_df.rename(columns={'Выберите_свой_пол': 'Пол','Наименование_группы':'Группа'}, inplace=True)
 
 
             # Добавляем колонки с процентами
@@ -553,12 +553,12 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_all_group_count_df['Чрезмерное спокойствие'] / svod_all_group_count_df['Итого'], 2)
 
             # свод по учебной тревожности
-            svod_study_group_count_df = pd.pivot_table(base_df, index=['Введите_свою_группу', 'Выберите_свой_пол'],
+            svod_study_group_count_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
                                                        columns='Уровень_учебной_тревожности',
                                                        values='Значение_учебной_тревожности',
                                                        aggfunc='count', margins=True, margins_name='Итого')
             svod_study_group_count_df.reset_index(inplace=True)
-            svod_study_group_count_df.rename(columns={'Введите_свою_группу': 'Группа', 'Выберите_свой_пол': 'Пол'},
+            svod_study_group_count_df.rename(columns={'Наименование_группы': 'Группа', 'Выберите_свой_пол': 'Пол'},
                                              inplace=True)
 
             # Добавляем колонки с процентами
@@ -580,12 +580,12 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_study_group_count_df['Чрезмерное спокойствие'] / svod_study_group_count_df['Итого'], 2)
 
             # свод по самооценочной тревожности
-            svod_self_group_count_df = pd.pivot_table(base_df, index=['Введите_свою_группу', 'Выберите_свой_пол'],
+            svod_self_group_count_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
                                                       columns='Уровень_самооценочной_тревожности',
                                                       values='Значение_самооценочной_тревожности',
                                                       aggfunc='count', margins=True, margins_name='Итого')
             svod_self_group_count_df.reset_index(inplace=True)
-            svod_self_group_count_df.rename(columns={'Введите_свою_группу': 'Группа', 'Выберите_свой_пол': 'Пол'},
+            svod_self_group_count_df.rename(columns={'Наименование_группы': 'Группа', 'Выберите_свой_пол': 'Пол'},
                                             inplace=True)
 
             if 'Нормальный' in svod_self_group_count_df.columns:
@@ -607,12 +607,12 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_self_group_count_df['Чрезмерное спокойствие'] / svod_self_group_count_df['Итого'], 2)
 
             # свод по межличностной тревожности
-            svod_soc_group_count_df = pd.pivot_table(base_df, index=['Введите_свою_группу', 'Выберите_свой_пол'],
+            svod_soc_group_count_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
                                                      columns='Уровень_межличностной_тревожности',
                                                      values='Значение_межличностной_тревожности',
                                                      aggfunc='count', margins=True, margins_name='Итого')
             svod_soc_group_count_df.reset_index(inplace=True)
-            svod_soc_group_count_df.rename(columns={'Введите_свою_группу': 'Группа', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+            svod_soc_group_count_df.rename(columns={'Наименование_группы': 'Группа', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
             if 'Нормальный' in svod_soc_group_count_df.columns:
                 svod_soc_group_count_df['% Нормальный от общего'] = round(
@@ -634,8 +634,8 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
             # Заменяем
             base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
-            if 'Введите_свою_группу' in base_df.columns:
-                base_df.rename(columns={'Введите_свою_группу': 'Группа'}, inplace=True)
+            if 'Наименование_группы' in base_df.columns:
+                base_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
             # формируем словарь
             out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,

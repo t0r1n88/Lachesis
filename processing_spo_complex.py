@@ -41,6 +41,9 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         dct_tests = {'ШТК': (processing_kondash_anxiety, 30), 'ШДБ': (processing_bek_depress, 52),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
+        dct_out_name_tests = {'ШТК': 'Шкала тревожности Кондаша', 'ШДБ':'Шкала депрессии Бека',
+                     }  # словарь с наименованием теста функцией для его обработки и количеством колонок
+
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать
         params_df.dropna(inplace=True)  # удаляем пустые строки
@@ -72,11 +75,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
         # если есть колонка с группой
-        if 'Введите_свою_группу' in base_df.columns:
-            base_df['Введите_свою_группу'] = base_df['Введите_свою_группу'].astype(str) # приводим к строковому формату
-            base_df['Введите_свою_группу'] = base_df['Введите_свою_группу'].apply(str.upper) # делаем заглавными
+        if 'Наименование_группы' in base_df.columns:
+            base_df['Наименование_группы'] = base_df['Наименование_группы'].astype(str) # приводим к строковому формату
+            base_df['Наименование_группы'] = base_df['Наименование_группы'].apply(str.upper) # делаем заглавными
             # очищаем от лишних пробелов
-            base_df['Введите_свою_группу'] = base_df['Введите_свою_группу'].apply(lambda x:re.sub(r'\s+',' ',x))
+            base_df['Наименование_группы'] = base_df['Наименование_группы'].apply(lambda x:re.sub(r'\s+',' ',x))
 
 
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
@@ -105,7 +108,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             # Сохраняем в удобном виде
             temp_wb = write_df_to_excel(temp_dct, write_index=False)
             temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-            temp_wb.save(f'{end_folder}/Результат {name_test}.xlsx')
+            temp_wb.save(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx')
 
 
             # увеличиваем предел обозначающий количество обработанных колонок
