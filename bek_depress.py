@@ -72,7 +72,7 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         if len(answers_df.columns) != 52:
             raise BadCountColumnsBekDepress
 
-
+        count_descr_cols = base_df.shape[1] # получаем количество описательных колонок в начале
 
         # словарь для замены слов на числа
         dct_replace_value = {'Мне не грустно': 0,
@@ -166,9 +166,13 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             counter += 4
 
         lst_sum_cols = [value for value in base_df.columns if 'Группа' in value]
-        base_df['Значение_уровня_депрессии'] = base_df[lst_sum_cols].sum(axis=1) # получаем сумму значений
-        base_df['Уровень_депрессии'] = base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считаем уровень
+        base_df.insert(count_descr_cols,'Значение_уровня_депрессии',base_df[lst_sum_cols].sum(axis=1)) #получаем сумму значений
+        base_df.insert(count_descr_cols + 1,'Уровень_депрессии',base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress)) # считаем уровень
+
         base_df.sort_values(by='Значение_уровня_депрессии',ascending=False,inplace=True) # сортируем
+
+
+
 
         # Делаем сводную таблицу средних значений.
         svod_all_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
