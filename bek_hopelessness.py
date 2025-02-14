@@ -144,8 +144,8 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
 
     base_df['Значение_безнадежности'] = answers_df.apply(calc_value_hopelessness, axis=1)
     base_df['Уровень_безнадежности'] = base_df['Значение_безнадежности'].apply(calc_level_hopelessness)
+    base_df.sort_values(by='Значение_безнадежности', ascending=False, inplace=True)  # сортируем
 
-    print(base_df)
 
 
 
