@@ -3,6 +3,7 @@
 """
 from spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
 from bek_depress import processing_bek_depress # функция для обработки результатов теста тревожности Кондаша
+from bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
 from lachesis_support_functions import write_df_to_excel, del_sheet # функции для создания итогового файла
 
 import pandas as pd
@@ -38,11 +39,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        dct_tests = {'ШТК': (processing_kondash_anxiety, 30), 'ШДБ': (processing_bek_depress, 52),
-                     }  # словарь с наименованием теста функцией для его обработки и количеством колонок
+        dct_tests = {'Шкала тревожности Кондаша': (processing_kondash_anxiety, 30), 'Шкала депрессии Бека': (processing_bek_depress, 52),
+                     'Шкала безнадежности Бека':(processing_bek_hopelessness,20)}  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
-        dct_out_name_tests = {'ШТК': 'Шкала тревожности Кондаша', 'ШДБ':'Шкала депрессии Бека',
-                     }  # словарь с наименованием теста функцией для его обработки и количеством колонок
+        dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
+                     'Шкала безнадежности Бека': 'Шкала безнадежности Бека'}  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать
