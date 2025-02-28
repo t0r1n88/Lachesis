@@ -2,8 +2,10 @@
 Скрипт для обработки тестов студентов СПО
 """
 from spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
-from bek_depress import processing_bek_depress # функция для обработки результатов теста тревожности Кондаша
+from bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
 from bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
+from zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
+
 from lachesis_support_functions import write_df_to_excel, del_sheet # функции для создания итогового файла
 
 import pandas as pd
@@ -40,10 +42,12 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         current_time = time.strftime('%H_%M_%S', t)
 
         dct_tests = {'Шкала тревожности Кондаша': (processing_kondash_anxiety, 30), 'Шкала депрессии Бека': (processing_bek_depress, 52),
-                     'Шкала безнадежности Бека':(processing_bek_hopelessness,20)}  # словарь с наименованием теста функцией для его обработки и количеством колонок
+                     'Шкала безнадежности Бека':(processing_bek_hopelessness,20),
+                     'Шкала депрессии Цунга':(processing_zung_depress,20)}  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
-                     'Шкала безнадежности Бека': 'Шкала безнадежности Бека'}  # словарь с наименованием теста функцией для его обработки и количеством колонок
+                     'Шкала безнадежности Бека': 'Шкала безнадежности Бека',
+                              'Шкала депрессии Цунга': 'Шкала депрессии Цунга'}  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать
@@ -100,8 +104,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             # получаем колонки относящиеся к тесту
             temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
-            temp_dct = dct_tests[name_test][0](temp_base_df, temp_df
-                                                                  )
+            temp_dct = dct_tests[name_test][0](temp_base_df, temp_df)
 
             base_df_for_func = pd.concat([base_df_for_func, temp_dct['Списочный результат']],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами

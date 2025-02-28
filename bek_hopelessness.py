@@ -107,7 +107,7 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
         raise BadCountColumnsBekHopelessness
 
 
-    # Словарь с проверочными данными
+    # Словарь для проверки вопросов
     lst_check_cols = ['Я жду будущего с надеждой и энтузиазмом',
                       'Мне пора сдаться, т.к. я ничего не могу изменить к лучшему',
                       'Когда дела идут плохо, мне помогает мысль, что так не может продолжаться всегда',

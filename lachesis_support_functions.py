@@ -78,4 +78,4 @@ def round_mean(value):
     """
     Функция для округления до 2 знаков
     """
-    return round(value.mean(),2)
+    return round(value.mean(),0)
