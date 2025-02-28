@@ -165,8 +165,8 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             base_df[f'Группа утверждений №{i}'] = answers_df[temp_lst_cols].apply(calc_value_bek_depress, axis=1)
             counter += 4
 
-        lst_sum_cols = [value for value in base_df.columns if 'Группа' in value]
-        base_df.insert(count_descr_cols,'Значение_уровня_депрессии',base_df[lst_sum_cols].sum(axis=1)) #получаем сумму значений
+        lst_sum_cols = [value for value in base_df.columns if 'Группа утверждений' in value]
+        base_df.insert(count_descr_cols,'Значение_уровня_депрессии',base_df[lst_sum_cols].sum(axis=1,numeric_only=True)) #получаем сумму значений
         base_df.insert(count_descr_cols + 1,'Уровень_депрессии',base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress)) # считаем уровень
 
         # Создаем датафрейм для создания части в общий датафрейм
@@ -181,20 +181,18 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
         # Делаем сводную таблицу средних значений.
-        svod_all_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
+        svod_all_df = pd.pivot_table(base_df,index=['Курс','Пол'],
                                      values=['Значение_уровня_депрессии'],
                                      aggfunc=round_mean)
         svod_all_df.reset_index(inplace=True)
-        svod_all_df['Уровень_депрессии'] = svod_all_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считакем уровень
-        svod_all_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
+        svod_all_df['Уровень_депрессии'] = svod_all_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress) # считаем уровень
 
         # Делаем свод по количеству
-        svod_all_count_df = pd.pivot_table(base_df,index=['Выберите_свой_курс','Выберите_свой_пол'],
+        svod_all_count_df = pd.pivot_table(base_df,index=['Курс','Пол'],
                                      columns='Уровень_депрессии',
                                      values='Значение_уровня_депрессии',
                                      aggfunc='count',margins=True,margins_name='Итого')
         svod_all_count_df.reset_index(inplace=True)
-        svod_all_count_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
         # Добавляем колонки с процентами
         if 'удовлетворительное эмоциональное состояние' in svod_all_count_df.columns:
@@ -208,15 +206,9 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_all_count_df['% тяжелая депрессия от общего'] = round(svod_all_count_df['тяжелая депрессия'] / svod_all_count_df['Итого'],2)
 
         out_answer_df = pd.concat([out_answer_df,answers_df],axis=1)
-        out_answer_df.rename(columns={'Выберите_свой_курс':'Курс','Выберите_свой_пол':'Пол'},inplace=True)
-        if 'Наименование_группы' in out_answer_df.columns:
-            out_answer_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
         # Проверяем наличие колонки с наименованием группы
-        if 'Наименование_группы' not in base_df.columns:
-            # Заменяем
-            base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
-
+        if 'Группа' not in base_df.columns:
             # формируем словарь
             out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
                 'Средний результат':svod_all_df,'Количество':svod_all_count_df,
@@ -227,21 +219,19 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
             # Делаем сводную таблицу средних значений.
-            svod_all_group_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
+            svod_all_group_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
                                                values=['Значение_уровня_депрессии'],
                                                aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
             svod_all_group_df['Уровень_депрессии'] = svod_all_group_df['Значение_уровня_депрессии'].apply(
                 calc_level_bek_depress)  # считаем уровень
-            svod_all_group_df.rename(columns={'Наименование_группы': 'Группа', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
             # Делаем свод по количеству
-            svod_all_group_count_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
+            svod_all_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
                                                      columns='Уровень_депрессии',
                                                      values='Значение_уровня_депрессии',
                                                      aggfunc='count', margins=True, margins_name='Итого')
             svod_all_group_count_df.reset_index(inplace=True)
-            svod_all_group_count_df.rename(columns={'Наименование_группы': 'Группа', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
             # Добавляем колонки с процентами
             if 'удовлетворительное эмоциональное состояние' in svod_all_group_count_df.columns:
@@ -261,22 +251,19 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
             # делаем свод только по группам
             # Делаем сводную таблицу средних значений.
-            svod_all_only_group_df = pd.pivot_table(base_df, index=['Наименование_группы'],
+            svod_all_only_group_df = pd.pivot_table(base_df, index=['Группа'],
                                          values=['Значение_уровня_депрессии'],
                                          aggfunc=round_mean)
             svod_all_only_group_df.reset_index(inplace=True)
             svod_all_only_group_df['Уровень_депрессии'] = svod_all_only_group_df['Значение_уровня_депрессии'].apply(
                 calc_level_bek_depress)  # считаем уровень
-            svod_all_only_group_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
             # Делаем свод по количеству
-            svod_all_only_group_count_df = pd.pivot_table(base_df, index=['Наименование_группы'],
+            svod_all_only_group_count_df = pd.pivot_table(base_df, index=['Группа'],
                                                           columns='Уровень_депрессии',
                                                           values='Значение_уровня_депрессии',
                                                           aggfunc='count', margins=True, margins_name='Итого')
             svod_all_only_group_count_df.reset_index(inplace=True)
-            svod_all_only_group_count_df.rename(columns={'Наименование_группы': 'Группа'},
-                                                inplace=True)
 
             # Добавляем колонки с процентами
             if 'удовлетворительное эмоциональное состояние' in svod_all_only_group_count_df.columns:
@@ -294,11 +281,6 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             if 'тяжелая депрессия' in svod_all_only_group_count_df.columns:
                 svod_all_only_group_count_df['% тяжелая депрессия от общего'] = round(
                     svod_all_only_group_count_df['тяжелая депрессия'] / svod_all_only_group_count_df['Итого'], 2)
-
-
-
-            # Заменяем
-            base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол','Наименование_группы':'Группа'}, inplace=True)
 
             # формируем словарь
             out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,

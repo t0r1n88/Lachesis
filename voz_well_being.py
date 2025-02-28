@@ -105,31 +105,23 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         base_df.sort_values(by='Значение_общего_самочувствия', ascending=False, inplace=True)  # сортируем
 
         # Делаем сводную таблицу по курсу
-        svod_all_course_df = pd.pivot_table(base_df, index=['Выберите_свой_курс'],
+        svod_all_course_df = pd.pivot_table(base_df, index=['Курс'],
                                             values=['Значение_общего_самочувствия'],
                                             aggfunc=round_mean)
         svod_all_course_df.reset_index(inplace=True)
-        svod_all_course_df.rename(columns={'Выберите_свой_курс': 'Курс'}, inplace=True)
 
         # Делаем сводную таблицу средних значений для курса и пола.
-        svod_all_course_sex_df = pd.pivot_table(base_df, index=['Выберите_свой_курс', 'Выберите_свой_пол'],
+        svod_all_course_sex_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
                                                 values=['Значение_общего_самочувствия'],
                                                 aggfunc=round_mean)
         svod_all_course_sex_df.reset_index(inplace=True)
-        svod_all_course_sex_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
 
         # Датафрейм для проверки
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
-        out_answer_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
-        if 'Наименование_группы' in out_answer_df.columns:
-            out_answer_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
         # Проверяем наличие колонки с наименованием группы
-        if 'Наименование_группы' not in base_df.columns:
-            # Заменяем
-            base_df.rename(columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол'}, inplace=True)
-
+        if 'Группа' not in base_df.columns:
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                        'Среднее по курсу': svod_all_course_df,'Среднее по курсу и полу': svod_all_course_sex_df,
@@ -137,23 +129,16 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
             return out_dct,part_df
         else:
-            svod_all_group_df = pd.pivot_table(base_df, index=['Наименование_группы'],
+            svod_all_group_df = pd.pivot_table(base_df, index=['Группа'],
                                                values=['Значение_общего_самочувствия'],
                                                aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
-            svod_all_group_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
             # Делаем сводную таблицу средних значений для группы и пола.
-            svod_all_group_sex_df = pd.pivot_table(base_df, index=['Наименование_группы', 'Выберите_свой_пол'],
+            svod_all_group_sex_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
                                                    values=['Значение_общего_самочувствия'],
                                                    aggfunc=round_mean)
             svod_all_group_sex_df.reset_index(inplace=True)
-            svod_all_group_sex_df.rename(columns={'Наименование_группы': 'Группа', 'Выберите_свой_пол': 'Пол'},
-                                         inplace=True)
-
-            base_df.rename(
-                columns={'Выберите_свой_курс': 'Курс', 'Выберите_свой_пол': 'Пол', 'Наименование_группы': 'Группа'},
-                inplace=True)
 
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,

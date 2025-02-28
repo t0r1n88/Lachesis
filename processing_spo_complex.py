@@ -83,11 +83,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
         # если есть колонка с группой
-        if 'Наименование_группы' in base_df.columns:
-            base_df['Наименование_группы'] = base_df['Наименование_группы'].astype(str) # приводим к строковому формату
-            base_df['Наименование_группы'] = base_df['Наименование_группы'].apply(str.upper) # делаем заглавными
+        if 'Группа' in base_df.columns:
+            base_df['Группа'] = base_df['Группа'].astype(str) # приводим к строковому формату
+            base_df['Группа'] = base_df['Группа'].apply(str.upper) # делаем заглавными
             # очищаем от лишних пробелов
-            base_df['Наименование_группы'] = base_df['Наименование_группы'].apply(lambda x:re.sub(r'\s+',' ',x))
+            base_df['Группа'] = base_df['Группа'].apply(lambda x:re.sub(r'\s+',' ',x))
 
 
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
