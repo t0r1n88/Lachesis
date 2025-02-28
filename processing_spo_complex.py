@@ -5,6 +5,7 @@ from spo_kondash_anxiety import processing_kondash_anxiety # функция дл
 from bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
 from bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
 from zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
+from voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
 
 from lachesis_support_functions import write_df_to_excel, del_sheet # функции для создания итогового файла
 
@@ -43,11 +44,13 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
         dct_tests = {'Шкала тревожности Кондаша': (processing_kondash_anxiety, 30), 'Шкала депрессии Бека': (processing_bek_depress, 52),
                      'Шкала безнадежности Бека':(processing_bek_hopelessness,20),
-                     'Шкала депрессии Цунга':(processing_zung_depress,20)}  # словарь с наименованием теста функцией для его обработки и количеством колонок
+                     'Шкала депрессии Цунга':(processing_zung_depress,20),
+                     'Индекс общего самочувствия ВОЗ 1999':(processing_voz_well_being,5)}  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
                      'Шкала безнадежности Бека': 'Шкала безнадежности Бека',
-                              'Шкала депрессии Цунга': 'Шкала депрессии Цунга'}  # словарь с наименованием теста функцией для его обработки и количеством колонок
+                              'Шкала депрессии Цунга': 'Шкала депрессии Цунга',
+                              'Индекс общего самочувствия ВОЗ 1999':'Индекс общего самочувствия ВОЗ 1999'}  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать

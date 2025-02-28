@@ -248,7 +248,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             calc_level_zung_depress)  # считаем уровень
         svod_all_group_df.rename(columns={'Наименование_группы': 'Группа'}, inplace=True)
 
-        # делаем сводную по курсу
+        # делаем сводную
         svod_all_count_group_df = pd.pivot_table(base_df, index=['Наименование_группы'],
                                                  columns='Уровень_депрессии',
                                                  values='Значение_депрессии',
