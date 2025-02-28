@@ -92,6 +92,9 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
         base_df_for_func = base_df.copy()
+        # Создаем копию анкетных данных для создания свода по всем тестам
+        main_itog_df = base_df.copy()
+
         # создаем копию для датафрейма с результатами
         result_df = base_df.copy()
 
@@ -107,11 +110,16 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             # получаем колонки относящиеся к тесту
             temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
-            temp_dct = dct_tests[name_test][0](temp_base_df, temp_df)
+            temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df)
 
             base_df_for_func = pd.concat([base_df_for_func, temp_dct['Списочный результат']],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
             result_df = pd.concat([result_df, temp_dct['Список для проверки']], axis=1)
+
+            # Добавляем в итоговый свод
+            main_itog_df = pd.concat([main_itog_df,temp_itog_df],axis=1)
+
+
             # Сохраняем в удобном виде
             temp_wb = write_df_to_excel(temp_dct, write_index=False)
             temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
@@ -121,10 +129,19 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             # увеличиваем предел обозначающий количество обработанных колонок
             threshold_finshed += dct_tests[name_test][1]
 
+        # Сохраняем в удобном виде
+        temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df}, write_index=False)
+        temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+        temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+
     except FileNotFoundError:
         messagebox.showerror('Лахеcис',
                                  f'Перенесите файлы которые вы хотите обработать или конечную папку в корень диска. Проблема может быть\n '
                                  f'в слишком длинном пути к обрабатываемым файлам')
+    except PermissionError:
+        messagebox.showerror('Лахеcис',
+                                 f'Закройте все файлы созданные программой Лахесис и запустите повторно обработку'
+                                 )
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')

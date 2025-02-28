@@ -97,6 +97,11 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         # Проводим подсчет
         base_df['Значение_общего_самочувствия'] = answers_df.apply(calc_value_voz_well_being, axis=1)
+        # Создаем датафрейм для создания части в общий датафрейм
+        part_df = pd.DataFrame(columns=['Индекс общего самочувствия ВОЗ 1999'])
+        part_df['Индекс общего самочувствия ВОЗ 1999'] = base_df['Значение_общего_самочувствия']
+
+
         base_df.sort_values(by='Значение_общего_самочувствия', ascending=False, inplace=True)  # сортируем
 
         # Делаем сводную таблицу по курсу
@@ -130,7 +135,7 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                        'Среднее по курсу': svod_all_course_df,'Среднее по курсу и полу': svod_all_course_sex_df,
                       }
 
-            return out_dct
+            return out_dct,part_df
         else:
             svod_all_group_df = pd.pivot_table(base_df, index=['Наименование_группы'],
                                                values=['Значение_общего_самочувствия'],
@@ -156,7 +161,7 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                        'Среднее по группам': svod_all_group_df,'Среднее по группам и полам': svod_all_group_sex_df,
                       }
 
-            return out_dct
+            return out_dct,part_df
     except BadOrderVozWellBeing:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Индекс общего самочувствия ВОЗ 1999 обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'

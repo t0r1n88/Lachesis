@@ -147,6 +147,13 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         # Проводим подсчет
         base_df['Значение_депрессии'] = answers_df.apply(calc_value_zung_depress, axis=1)
         base_df['Уровень_депрессии'] = base_df['Значение_депрессии'].apply(calc_level_zung_depress)
+
+        # Создаем датафрейм для создания части в общий датафрейм
+        part_df = pd.DataFrame(columns=['Значение_депрессии_Цунг','Уровень_депрессии_Цунг'])
+        part_df['Значение_депрессии_Цунг'] = base_df['Значение_депрессии']
+        part_df['Уровень_депрессии_Цунг'] = base_df['Уровень_депрессии']
+
+
         base_df.sort_values(by='Значение_депрессии', ascending=False, inplace=True)  # сортируем
 
         # Делаем сводную таблицу по курсу
@@ -232,7 +239,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                        'Среднее по курсу и полу': svod_all_course_sex_df,
                        'Количество по курсу и полу': svod_all_count_course_sex_df}
 
-            return out_dct
+            return out_dct, part_df
 
         else:
 
@@ -316,7 +323,8 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                        'Среднее по группам и полам': svod_all_group_sex_df,
                        'Количество по группам и полам': svod_all_count_group_sex_df}
 
-            return out_dct
+            return out_dct, part_df
+
     except BadOrderZungDepress:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала депрессии Цунга обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'

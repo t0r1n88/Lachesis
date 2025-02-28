@@ -169,6 +169,12 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         base_df.insert(count_descr_cols,'Значение_уровня_депрессии',base_df[lst_sum_cols].sum(axis=1)) #получаем сумму значений
         base_df.insert(count_descr_cols + 1,'Уровень_депрессии',base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress)) # считаем уровень
 
+        # Создаем датафрейм для создания части в общий датафрейм
+        part_df = pd.DataFrame(columns=['Значение_уровня_депрессии_Бек','Уровень_депрессии_Бек'])
+        part_df['Значение_уровня_депрессии_Бек'] = base_df['Значение_уровня_депрессии']
+        part_df['Уровень_депрессии_Бек'] = base_df['Уровень_депрессии']
+
+
         base_df.sort_values(by='Значение_уровня_депрессии',ascending=False,inplace=True) # сортируем
 
 
@@ -216,7 +222,7 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                 'Средний результат':svod_all_df,'Количество':svod_all_count_df,
     }
 
-            return out_dct
+            return out_dct, part_df
         else:
 
 
@@ -301,7 +307,7 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                        'Ср_рез по группам и полам':svod_all_group_df,'Кол по группам и полам':svod_all_group_count_df
                        }
 
-            return out_dct
+            return out_dct, part_df
 
     except BadValueBekDepress:
         messagebox.showerror('Лахеcис',

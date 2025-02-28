@@ -159,6 +159,14 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
 
         base_df['Значение_безнадежности'] = answers_df.apply(calc_value_hopelessness, axis=1)
         base_df['Уровень_безнадежности'] = base_df['Значение_безнадежности'].apply(calc_level_hopelessness)
+
+        # Создаем датафрейм для создания части в общий датафрейм
+        part_df = pd.DataFrame(columns=['Значение_безнадежности_Бек','Уровень_безнадежности_Бек'])
+        part_df['Значение_безнадежности_Бек'] = base_df['Значение_безнадежности']
+        part_df['Уровень_безнадежности_Бек'] = base_df['Уровень_безнадежности']
+
+
+
         base_df.sort_values(by='Значение_безнадежности', ascending=False, inplace=True)  # сортируем
 
 
@@ -252,7 +260,7 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
                        'Среднее по курсу': svod_all_course_df, 'Количество по курсу': svod_all_count_course_df,
                        'Среднее по курсу и полу': svod_all_course_sex_df, 'Количество по курсу и полу': svod_all_count_course_sex_df}
 
-            return out_dct
+            return out_dct, part_df
 
         else:
 
@@ -337,7 +345,8 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
                        'Среднее по группам': svod_all_group_df, 'Количество по группам': svod_all_count_group_df,
                        'Среднее по группам и полам': svod_all_group_sex_df, 'Количество по группам и полам': svod_all_count_group_sex_df}
 
-            return out_dct
+            return out_dct, part_df
+
     except BadOrderBekHopelessness:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала безнадежности Бека обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
