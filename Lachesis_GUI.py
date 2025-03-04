@@ -5,6 +5,7 @@
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов по профориентации
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
 from processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
+from processing_school_complex import generate_result_school_anxiety
 import pandas as pd
 import numpy as np
 import os
@@ -2070,6 +2071,47 @@ def processing_spo_anxiety():
         messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
 
+
+# Функции для тестов тревожности школ
+
+def select_file_params_school_anxiety():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_params_school_anxiety
+    # Получаем путь к файлу
+    file_params_school_anxiety = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def select_file_data_xlsx_school_anxiety():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_data_xlsx_school_anxiety
+    # Получаем путь к файлу
+    file_data_xlsx_school_anxiety = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def select_end_folder_school_anxiety():
+    """
+    Функция для выбора конечной папки куда будут складываться итоговые файлы
+    :return:
+    """
+    global path_to_end_folder_school_anxiety
+    path_to_end_folder_school_anxiety = filedialog.askdirectory()
+
+
+def processing_school_anxiety():
+    """
+    Функция для генерации результатов комплексного тестирования на тревожность школьников
+    """
+    try:
+        start_threshold = var_entry_threshold_school_anxiety.get() # получаем количество колонок
+        generate_result_school_anxiety(file_params_school_anxiety,file_data_xlsx_school_anxiety,path_to_end_folder_school_anxiety,start_threshold)
+    except NameError:
+        messagebox.showerror('Лахеcис',
+                             f'Выберите файлы с данными и папку куда будет генерироваться файл')
+
 """
 Функции для создания остальных документов 
 """
@@ -2320,6 +2362,71 @@ if __name__ == '__main__':
                                               command=processing_spo_anxiety
                                               )
     btn_proccessing_data_spo_anxiety.grid(column=0, row=7, padx=10, pady=10)
+
+    """
+    Обработка результатов тестов тревожности для школ
+    """
+    # Создаем вкладку обработки данных
+    tab_report_school_anxiety = ttk.Frame(tab_control)
+    tab_control.add(tab_report_school_anxiety, text='Школа тревожность\nОбработка результатов')
+    tab_control.pack(expand=1, fill='both')
+    # Добавляем виджеты на вкладку
+    # Создаем метку для описания назначения программы
+    lbl_hello_school_anxiety = Label(tab_report_school_anxiety,
+                                     text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест \n'
+                                          'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале.'
+                                     )
+    lbl_hello_school_anxiety.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_to_img_school_anxiety = resource_path('logo.png')
+
+    img_school_anxiety = PhotoImage(file=path_to_img_school_anxiety)
+    Label(tab_report_school_anxiety,
+          image=img_school_anxiety
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Создаем кнопку Выбрать файл с параметрами
+    btn_choose_data_school_anxiety = Button(tab_report_school_anxiety, text='1) Выберите файл с параметрами',
+                                            font=('Arial Bold', 14),
+                                            command=select_file_params_school_anxiety
+                                            )
+    btn_choose_data_school_anxiety.grid(column=0, row=2, padx=10, pady=10)
+
+    # Создаем кнопку Выбрать файл с данными
+    btn_choose_data_school_anxiety = Button(tab_report_school_anxiety, text='2) Выберите файл с результатами',
+                                            font=('Arial Bold', 14),
+                                            command=select_file_data_xlsx_school_anxiety
+                                            )
+    btn_choose_data_school_anxiety.grid(column=0, row=3, padx=10, pady=10)
+
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    btn_choose_end_folder_school_anxiety = Button(tab_report_school_anxiety, text='3) Выберите конечную папку',
+                                                  font=('Arial Bold', 14),
+                                                  command=select_end_folder_school_anxiety
+                                                  )
+    btn_choose_end_folder_school_anxiety.grid(column=0, row=4, padx=10, pady=10)
+
+    # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
+    # Определяем переменную
+    var_entry_threshold_school_anxiety = IntVar()
+    # Описание поля
+    label_name_threshold_school_anxiety = Label(tab_report_school_anxiety,
+                                                text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
+    label_name_threshold_school_anxiety.grid(column=0, row=5, padx=10, pady=5)
+    # поле ввода
+    entry_threshold_school_anxiety = Entry(tab_report_school_anxiety, textvariable=var_entry_threshold_school_anxiety,
+                                           width=30)
+    entry_threshold_school_anxiety.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
+
+    # Создаем кнопку обработки данных
+
+    btn_proccessing_data_school_anxiety = Button(tab_report_school_anxiety, text='5) Обработать данные',
+                                                 font=('Arial Bold', 14),
+                                                 command=processing_school_anxiety
+                                                 )
+    btn_proccessing_data_school_anxiety.grid(column=0, row=7, padx=10, pady=10)
 
     """
      Создаем вкладку создания документов

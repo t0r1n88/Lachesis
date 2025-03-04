@@ -34,7 +34,7 @@ class NotRequiredColumns(Exception):
 
 
 
-def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, threshold_base: int):
+def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: str, threshold_base: int):
     """
     Функция для генерации результатов комплексного теста на оценку состояния тревожности
     :param params_spo: какие тесты используются и в каком порядке
@@ -171,6 +171,6 @@ if __name__ == '__main__':
     main_end_folder = 'data/Результат'
     main_quantity_descr_cols = 4
 
-    generate_result_spo(main_params_spo, main_spo_data, main_end_folder, main_quantity_descr_cols)
+    generate_result_school_anxiety(main_params_spo, main_spo_data, main_end_folder, main_quantity_descr_cols)
 
     print('Lindy Booth')

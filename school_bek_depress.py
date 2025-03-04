@@ -162,7 +162,7 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         counter = 0 # счетчик обработанных колонок
         for i in range(1,14):
             temp_lst_cols = list(answers_df.columns)[counter:counter+4] # отрезаем 4 колонки
-            base_df[f'Класс утверждений №{i}'] = answers_df[temp_lst_cols].apply(calc_value_bek_depress, axis=1)
+            base_df[f'Группа утверждений №{i}'] = answers_df[temp_lst_cols].apply(calc_value_bek_depress, axis=1)
             counter += 4
 
         lst_sum_cols = [value for value in base_df.columns if 'Группа утверждений' in value]
