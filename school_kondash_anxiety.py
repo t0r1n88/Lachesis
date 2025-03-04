@@ -29,8 +29,30 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
     group = int(row[0]) # Номер_класса
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
-
-    if group == 1:
+    if group  == 9:
+        if sex == 'Женский':
+            if 30 <= value <= 62:
+                return 'Нормальный'
+            elif 63 <= value <= 78:
+                return 'Несколько повышенный'
+            elif 79 <= value <= 94:
+                return 'Высокий'
+            elif value > 94:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 17 <= value <= 54:
+                return 'Нормальный'
+            elif 55 <= value <= 73:
+                return 'Несколько повышенный'
+            elif 74 <= value <= 91:
+                return 'Высокий'
+            elif value > 91:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 10:
         if sex == 'Женский':
             if 17 <= value <= 54:
                 return 'Нормальный'
@@ -53,7 +75,7 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 11:
         if sex == 'Женский':
             if 35 <= value <= 62:
                 return 'Нормальный'
@@ -90,7 +112,30 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
-    if group == 1:
+    if group == 9:
+        if sex == 'Женский':
+            if 7 <= value <= 19:
+                return 'Нормальный'
+            elif 20 <= value <= 25:
+                return 'Несколько повышенный'
+            elif 26 <= value <= 31:
+                return 'Высокий'
+            elif value > 31:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 4 <= value <= 17:
+                return 'Нормальный'
+            elif 18 <= value <= 23:
+                return 'Несколько повышенный'
+            elif 24 <= value <= 30:
+                return 'Высокий'
+            elif value > 30:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 10:
         if sex == 'Женский':
             if 2 <= value <= 14:
                 return 'Нормальный'
@@ -113,7 +158,7 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 11:
         if sex == 'Женский':
             if 5 <= value <= 17:
                 return 'Нормальный'
@@ -148,7 +193,30 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
-    if group == 1:
+    if group == 9:
+        if sex == 'Женский':
+            if 11 <= value <= 21:
+                return 'Нормальный'
+            elif 22 <= value <= 26:
+                return 'Несколько повышенный'
+            elif 27 <= value <= 31:
+                return 'Высокий'
+            elif value > 31:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 4 <= value <= 18:
+                return 'Нормальный'
+            elif 19 <= value <= 25:
+                return 'Несколько повышенный'
+            elif 26 <= value <= 32:
+                return 'Высокий'
+            elif value > 32:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 10:
         if sex == 'Женский':
             if 6 <= value <= 19:
                 return 'Нормальный'
@@ -171,7 +239,7 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 11:
         if sex == 'Женский':
             if 12 <= value <= 23:
                 return 'Нормальный'
@@ -206,7 +274,30 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
-    if group == 1:
+    if group == 9:
+        if sex == 'Женский':
+            if 7 <= value <= 20:
+                return 'Нормальный'
+            elif 21 <= value <= 27:
+                return 'Несколько повышенный'
+            elif 28 <= value <= 33:
+                return 'Высокий'
+            elif value > 33:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+        else:
+            if 5 <= value <= 17:
+                return 'Нормальный'
+            elif 18 <= value <= 24:
+                return 'Несколько повышенный'
+            elif 25 <= value <= 30:
+                return 'Высокий'
+            elif value > 30:
+                return 'Очень высокий'
+            else:
+                return 'Чрезмерное спокойствие'
+    elif group == 10:
         if sex == 'Женский':
             if 4 <= value <= 19:
                 return 'Нормальный'
@@ -229,7 +320,7 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 11:
         if sex == 'Женский':
             if 5 <= value <= 20:
                 return 'Нормальный'
