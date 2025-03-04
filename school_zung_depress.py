@@ -225,8 +225,8 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                        'Среднее по Номер_класса': svod_all_course_df, 'Количество по Номер_класса': svod_all_count_course_df,
-                       'Среднее по Номер_класса и полу': svod_all_course_sex_df,
-                       'Количество по Номер_класса и полу': svod_all_count_course_sex_df}
+                       'Среднее Номер_класса Пол': svod_all_course_sex_df,
+                       'Количество Номер_класса Пол': svod_all_count_course_sex_df}
 
             return out_dct, part_df
 
@@ -298,11 +298,11 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                        'Среднее по Номер_класса': svod_all_course_df, 'Количество по Номер_класса': svod_all_count_course_df,
-                       'Среднее по Номер_класса и полу': svod_all_course_sex_df,
-                       'Количество по Номер_класса и полу': svod_all_count_course_sex_df,
+                       'Среднее Номер_класса Пол': svod_all_course_sex_df,
+                       'Кол по Номер_класса и полу': svod_all_count_course_sex_df,
                        'Среднее по Классам': svod_all_group_df, 'Количество по Классам': svod_all_count_group_df,
-                       'Среднее по Классам и полам': svod_all_group_sex_df,
-                       'Количество по Классам и полам': svod_all_count_group_sex_df}
+                       'Среднее Класс Пол': svod_all_group_sex_df,
+                       'Количество Класс Пол': svod_all_count_group_sex_df}
 
             return out_dct, part_df
 
