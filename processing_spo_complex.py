@@ -7,7 +7,7 @@ from bek_hopelessness import processing_bek_hopelessness # функция для
 from zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
 from voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
 
-from lachesis_support_functions import write_df_to_excel, del_sheet # функции для создания итогового файла
+from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int # функции для создания итогового файла
 
 import pandas as pd
 pd.options.mode.copy_on_write = True
@@ -20,6 +20,12 @@ import time
 class NotSameSize(Exception):
     """
     Исключение для проверки совпадают ли размеры таблицы с количеством колонок требуемых для выполнения тестов указанных в параметрах
+    """
+    pass
+
+class NotRequiredColumns(Exception):
+    """
+    Исключение для проверки есть ли колонки Курс, Группа, Пол в файле с ответами
     """
     pass
 
@@ -76,6 +82,14 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         # делаем строковыми названия колонок
         base_df.columns = list(map(str, base_df.columns))
 
+        # Проверяем наличие колонок Курс, Пол, Группа
+        check_cols_set = {'Курс','Пол','Группа'} # Множество для проверки
+        diff_cols = check_cols_set.difference(set(base_df.columns))
+        if len(diff_cols) !=0 :
+            raise NotRequiredColumns
+
+
+
         # заменяем пробелы на нижнее подчеркивание и очищаем от пробельных символов в начале и конце
         base_df.columns = [column.strip().replace(' ', '_') for column in base_df.columns]
 
@@ -88,6 +102,8 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             base_df['Группа'] = base_df['Группа'].apply(str.upper) # делаем заглавными
             # очищаем от лишних пробелов
             base_df['Группа'] = base_df['Группа'].apply(lambda x:re.sub(r'\s+',' ',x))
+
+        base_df['Курс'] = base_df['Курс'].apply(convert_to_int) # приводим курс к инту
 
 
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
@@ -142,6 +158,13 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         messagebox.showerror('Лахеcис',
                                  f'Закройте все файлы созданные программой Лахесис и запустите повторно обработку'
                                  )
+    except NotRequiredColumns:
+        messagebox.showerror('Лахеcис',
+                                 f'Проверьте наличие колонок с названием: Курс, Пол, Группа. В файле с ответами не хватает колонок: {diff_cols}'
+                                 )
+    except NotSameSize:
+        messagebox.showerror('Лахеcис',
+                                 f'Не совпадает количество колонок с ответами на тесты с эталонным количеством. В файле {df.shape[1]} колонок а должно быть {check_size_df+threshold_base}.')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')

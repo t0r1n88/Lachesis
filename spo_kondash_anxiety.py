@@ -76,6 +76,8 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
+    else:
+        return 'Для данного курса нет методики подсчета'
 
 
 
@@ -134,6 +136,8 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
+    else:
+        return 'Для данного курса нет методики подсчета'
 
 def calc_level_self_condash_anxiety(ser:pd.Series):
     """
@@ -190,6 +194,8 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
+    else:
+        return 'Для данного курса нет методики подсчета'
 
 def calc_level_soc_condash_anxiety(ser:pd.Series):
     """
@@ -246,6 +252,8 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
+    else:
+        return 'Для данного курса нет методики подсчета'
 
 
 

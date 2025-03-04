@@ -16,6 +16,18 @@ class ExceedingQuantity(Exception):
 
 
 
+def convert_to_int(value):
+    """
+    Функция для конвертации в инт
+    """
+    try:
+        return int(value)
+    except:
+        return 0
+
+
+
+
 def write_df_to_excel(dct_df: dict, write_index: bool) -> openpyxl.Workbook:
     """
     Функция для записи датафрейма в файл Excel
