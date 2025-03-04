@@ -1,5 +1,5 @@
 """
-Скрипт для обработки результатов теста тревожности Кондаша
+Скрипт для обработки результатов теста тревожности Кондаша для школьников
 """
 from lachesis_support_functions import round_mean
 import pandas as pd
@@ -26,7 +26,7 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
     Функция для подсчета уровня тревожности
     """
     row = ser.tolist() # превращаем в список
-    group = int(row[0]) # курс
+    group = int(row[0]) # Номер_класса
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
@@ -77,7 +77,8 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
+        return 'Для данного Номера класса нет методики подсчета. Обрабатываются только 9,10,11 классы'
+
 
 
 def calc_level_study_condash_anxiety(ser:pd.Series):
@@ -85,7 +86,7 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
     Функция для подсчета учебной тревожности по шкале Кондаша
     """
     row = ser.tolist() # превращаем в список
-    group = int(row[0]) # курс
+    group = int(row[0]) # Номер_класса
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
@@ -136,15 +137,14 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
-
+        return 'Для данного Номера класса нет методики подсчета. Обрабатываются только 9,10,11 классы'
 
 def calc_level_self_condash_anxiety(ser:pd.Series):
     """
     Функция для подсчета самоценочной тревожности
     """
     row = ser.tolist() # превращаем в список
-    group = int(row[0]) # курс
+    group = int(row[0]) # Номер_класса
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
@@ -195,15 +195,14 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
-
+        return 'Для данного Номера класса нет методики подсчета. Обрабатываются только 9,10,11 классы'
 
 def calc_level_soc_condash_anxiety(ser:pd.Series):
     """
     Функция для подсчета межличностной тревожности
     """
     row = ser.tolist() # превращаем в список
-    group = int(row[0]) # курс
+    group = int(row[0]) # Номер_класса
     sex = row[1] # пол
     value = row[2] # значение которое нужно обработать
 
@@ -254,10 +253,12 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
+        return 'Для данного Номера класса нет методики подсчета. Обрабатываются только 9,10,11 классы'
 
 
-def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
+
+
+def processing_school_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     """
     Проверка колонок и значений таблицы
     """
@@ -273,7 +274,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         # Словарь с проверочными данными
         lst_check_cols =['Отвечать у доски','Пойти в дом к незнакомым людям','Участвовать в соревнованиях, конкурсах, в олимпиадах',
-                         'Разговаривать с директором техникума, колледжа','Думать о своем будущем','Преподаватель смотрит по журналу, кого бы спросить',
+                         'Разговаривать с директором школы','Думать о своем будущем','Учитель смотрит по журналу, кого бы спросить',
                          'Тебя критикуют, в чем- то обвиняют','На тебя смотрят, когда ты что-нибудь делаешь (наблюдают за тобой во время работы, решения задачи)','Пишешь контрольную работу',
                          'После контрольной учитель называет отметки','На тебя не обращают внимания','У тебя что-то не получается',
                          'Ждешь родителей с родительского собрания','Тебе грозит неуспех, провал','Слышишь за своей спиной смех',
@@ -284,6 +285,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                          'Думаешь о своих делах','Тебе надо принять для себя решение','Не можешь справиться с домашним заданием']
 
         # Проверяем порядок колонок
+        print(answers_df.columns)
         order_main_columns = lst_check_cols  # порядок колонок и названий как должно быть
         order_temp_df_columns = list(answers_df.columns)  # порядок колонок проверяемого файла
         error_order_lst = []  # список для несовпадающих пар
@@ -320,7 +322,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                              'На паре преподаватель неожиданно задает тебе вопрос','Не можешь справиться с домашним заданием']
 
         # Колонки самооценки
-        lst_self_anxiety = ['Участвовать в соревнованиях, конкурсах, в олимпиадах','Думать о своем будущем',
+        lst_self_anxiety = ['Участвовать в соревнованиях, конНомер_классаах, в олимпиадах','Думать о своем будущем',
                             'У тебя что-то не получается','Тебе грозит неуспех, провал',
                             'Предстоит важное, решающее дело','Сравниваешь себя с другими',
                             'Проверяют твои способности','Оценивается твоя работа',
@@ -335,23 +337,23 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         # Считаем результат общая тревожность
         base_df['Значение_общей_тревожности'] = answers_df.sum(axis=1)
-        base_df['Уровень_общей_тревожности'] = base_df[['Курс', 'Пол', 'Значение_общей_тревожности']].apply(calc_level_all_condash_anxiety,axis=1)
+        base_df['Уровень_общей_тревожности'] = base_df[['Номер_класса', 'Пол', 'Значение_общей_тревожности']].apply(calc_level_all_condash_anxiety,axis=1)
 
         # Считаем учебную тревожность в оригинале школьная
         base_df['Значение_учебной_тревожности'] = answers_df[lst_study_anxiety].sum(axis=1)
         base_df['Уровень_учебной_тревожности'] = base_df[
-            ['Курс', 'Пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,
+            ['Номер_класса', 'Пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,
                                                                                              axis=1)
 
         # Считаем самооценочную тревожность
         base_df['Значение_самооценочной_тревожности'] = answers_df[lst_self_anxiety].sum(axis=1)
         base_df['Уровень_самооценочной_тревожности'] = base_df[
-            ['Курс', 'Пол', 'Значение_самооценочной_тревожности']].apply(calc_level_self_condash_anxiety,
+            ['Номер_класса', 'Пол', 'Значение_самооценочной_тревожности']].apply(calc_level_self_condash_anxiety,
                                                                                              axis=1)
         # Считаем межличностную тревожность
         base_df['Значение_межличностной_тревожности'] = answers_df[lst_soc_anxiety].sum(axis=1)
         base_df['Уровень_межличностной_тревожности'] = base_df[
-            ['Курс', 'Пол', 'Значение_межличностной_тревожности']].apply(calc_level_soc_condash_anxiety,
+            ['Номер_класса', 'Пол', 'Значение_межличностной_тревожности']].apply(calc_level_soc_condash_anxiety,
                                                                                              axis=1)
         # Создаем датафрейм для создания части в общий датафрейм
         part_df = pd.DataFrame(columns=['Значение_общей_тревожности_Кондаш','Уровень_общей_тревожности_Кондаш',
@@ -374,33 +376,33 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         base_df.sort_values(by='Значение_общей_тревожности',ascending=False,inplace=True) # сортируем
 
         # Делаем сводную таблицу средних значений.
-        svod_all_df = pd.pivot_table(base_df,index=['Курс','Пол'],
+        svod_all_df = pd.pivot_table(base_df,index=['Номер_класса','Пол'],
                                      values=['Значение_общей_тревожности','Значение_учебной_тревожности','Значение_самооценочной_тревожности','Значение_межличностной_тревожности'],
                                      aggfunc=round_mean)
         svod_all_df.reset_index(inplace=True)
 
-        all_result_df = svod_all_df[['Курс','Пол']] # выделяем базовые колонки
+        all_result_df = svod_all_df[['Номер_класса','Пол']] # выделяем базовые колонки
 
         # Начинаем собирать свод
         all_result_df['Значение_общей_тревожности'] = svod_all_df['Значение_общей_тревожности']
-        all_result_df['Уровень_общей_тревожности'] = all_result_df[['Курс', 'Пол', 'Значение_общей_тревожности']].apply(calc_level_all_condash_anxiety,axis=1)
+        all_result_df['Уровень_общей_тревожности'] = all_result_df[['Номер_класса', 'Пол', 'Значение_общей_тревожности']].apply(calc_level_all_condash_anxiety,axis=1)
 
         all_result_df['Значение_учебной_тревожности'] = svod_all_df['Значение_учебной_тревожности']
-        all_result_df['Уровень_учебной_тревожности'] = all_result_df[['Курс', 'Пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,axis=1)
+        all_result_df['Уровень_учебной_тревожности'] = all_result_df[['Номер_класса', 'Пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,axis=1)
 
         all_result_df['Значение_самооценочной_тревожности'] = svod_all_df['Значение_самооценочной_тревожности']
         all_result_df['Уровень_самооценочной_тревожности'] = all_result_df[
-            ['Курс', 'Пол', 'Значение_самооценочной_тревожности']].apply(
+            ['Номер_класса', 'Пол', 'Значение_самооценочной_тревожности']].apply(
             calc_level_self_condash_anxiety, axis=1)
 
         all_result_df['Значение_межличностной_тревожности'] = svod_all_df['Значение_межличностной_тревожности']
         all_result_df['Уровень_межличностной_тревожности'] = all_result_df[
-            ['Курс', 'Пол', 'Значение_межличностной_тревожности']].apply(
+            ['Номер_класса', 'Пол', 'Значение_межличностной_тревожности']].apply(
             calc_level_soc_condash_anxiety, axis=1)
 
 
         # Делаем свод по количеству
-        svod_all_count_df = pd.pivot_table(base_df,index=['Курс','Пол'],
+        svod_all_count_df = pd.pivot_table(base_df,index=['Номер_класса','Пол'],
                                      columns='Уровень_общей_тревожности',
                                      values='Значение_общей_тревожности',
                                      aggfunc='count',margins=True,margins_name='Итого')
@@ -420,7 +422,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_all_count_df['% Чрезмерное спокойствие от общего'] = round(svod_all_count_df['Чрезмерное спокойствие'] / svod_all_count_df['Итого'],2)
 
         # свод по учебной тревожности
-        svod_study_count_df = pd.pivot_table(base_df,index=['Курс','Пол'],
+        svod_study_count_df = pd.pivot_table(base_df,index=['Номер_класса','Пол'],
                                      columns='Уровень_учебной_тревожности',
                                      values='Значение_учебной_тревожности',
                                      aggfunc='count',margins=True,margins_name='Итого')
@@ -440,7 +442,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_study_count_df['% Чрезмерное спокойствие от общего'] = round(svod_study_count_df['Чрезмерное спокойствие'] / svod_study_count_df['Итого'],2)
 
         # свод по самооценочной тревожности
-        svod_self_count_df = pd.pivot_table(base_df,index=['Курс','Пол'],
+        svod_self_count_df = pd.pivot_table(base_df,index=['Номер_класса','Пол'],
                                      columns='Уровень_самооценочной_тревожности',
                                      values='Значение_самооценочной_тревожности',
                                      aggfunc='count',margins=True,margins_name='Итого')
@@ -464,7 +466,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                 svod_self_count_df['Чрезмерное спокойствие'] / svod_self_count_df['Итого'], 2)
 
         # свод по межличностной тревожности
-        svod_soc_count_df = pd.pivot_table(base_df,index=['Курс','Пол'],
+        svod_soc_count_df = pd.pivot_table(base_df,index=['Номер_класса','Пол'],
                                      columns='Уровень_межличностной_тревожности',
                                      values='Значение_межличностной_тревожности',
                                      aggfunc='count',margins=True,margins_name='Итого')
@@ -489,7 +491,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
         # Проверяем наличие колонки с наименованием группы
-        if 'Группа' not in base_df.columns:
+        if 'Класс' not in base_df.columns:
 
             # формируем словарь
             out_dct = {'Средний результат':all_result_df,'Кол_общая_тревожность':svod_all_count_df,
@@ -500,41 +502,41 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         else:
 
             # Делаем сводную таблицу средних значений.
-            svod_all_group_df = pd.pivot_table(base_df, index=['Курс','Группа', 'Пол'],
+            svod_all_group_df = pd.pivot_table(base_df, index=['Номер_класса','Класс', 'Пол'],
                                          values=['Значение_общей_тревожности', 'Значение_учебной_тревожности',
                                                  'Значение_самооценочной_тревожности',
                                                  'Значение_межличностной_тревожности'],
                                          aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
-            all_result_group_df = svod_all_group_df[['Курс','Группа', 'Пол']]  # выделяем базовые колонки
+            all_result_group_df = svod_all_group_df[['Номер_класса','Класс', 'Пол']]  # выделяем базовые колонки
 
             # Начинаем собирать свод
             all_result_group_df['Значение_общей_тревожности'] = svod_all_group_df['Значение_общей_тревожности']
             all_result_group_df['Уровень_общей_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_общей_тревожности']].apply(
+                ['Номер_класса', 'Пол', 'Значение_общей_тревожности']].apply(
                 calc_level_all_condash_anxiety,
                 axis=1)
 
             all_result_group_df['Значение_учебной_тревожности'] = svod_all_group_df['Значение_учебной_тревожности']
             all_result_group_df['Уровень_учебной_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_учебной_тревожности']].apply(
+                ['Номер_класса', 'Пол', 'Значение_учебной_тревожности']].apply(
                 calc_level_study_condash_anxiety,
                 axis=1)
 
             all_result_group_df['Значение_самооценочной_тревожности'] = svod_all_group_df[
                 'Значение_самооценочной_тревожности']
             all_result_group_df['Уровень_самооценочной_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_самооценочной_тревожности']].apply(
+                ['Номер_класса', 'Пол', 'Значение_самооценочной_тревожности']].apply(
                 calc_level_self_condash_anxiety, axis=1)
 
             all_result_group_df['Значение_межличностной_тревожности'] = svod_all_group_df[
                 'Значение_межличностной_тревожности']
             all_result_group_df['Уровень_межличностной_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_межличностной_тревожности']].apply(
+                ['Номер_класса', 'Пол', 'Значение_межличностной_тревожности']].apply(
                 calc_level_soc_condash_anxiety, axis=1)
 
             # Делаем свод по количеству
-            svod_all_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+            svod_all_group_count_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                columns='Уровень_общей_тревожности',
                                                values='Значение_общей_тревожности',
                                                aggfunc='count', margins=True, margins_name='Итого')
@@ -560,7 +562,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_all_group_count_df['Чрезмерное спокойствие'] / svod_all_group_count_df['Итого'], 2)
 
             # свод по учебной тревожности
-            svod_study_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+            svod_study_group_count_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                        columns='Уровень_учебной_тревожности',
                                                        values='Значение_учебной_тревожности',
                                                        aggfunc='count', margins=True, margins_name='Итого')
@@ -585,7 +587,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_study_group_count_df['Чрезмерное спокойствие'] / svod_study_group_count_df['Итого'], 2)
 
             # свод по самооценочной тревожности
-            svod_self_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+            svod_self_group_count_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                       columns='Уровень_самооценочной_тревожности',
                                                       values='Значение_самооценочной_тревожности',
                                                       aggfunc='count', margins=True, margins_name='Итого')
@@ -610,7 +612,7 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_self_group_count_df['Чрезмерное спокойствие'] / svod_self_group_count_df['Итого'], 2)
 
             # свод по межличностной тревожности
-            svod_soc_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+            svod_soc_group_count_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                      columns='Уровень_межличностной_тревожности',
                                                      values='Значение_межличностной_тревожности',
                                                      aggfunc='count', margins=True, margins_name='Итого')
@@ -639,11 +641,11 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                        'Средний результат':all_result_df,'Кол_общая_тревожность':svod_all_count_df,
                        'Кол_учеб_тревожность':svod_study_count_df,'Кол_самооц_тревожность':svod_self_count_df,
                        'Кол_межлич_тревожность':svod_soc_count_df,
-                       'Групп_Ср_рез':all_result_group_df,
-                       'Групп_Кол_общ_трев':svod_all_group_count_df,
-                       'Групп_Кол_учеб_трев':svod_study_group_count_df,
-                       'Групп_Кол_сам_трев':svod_self_group_count_df,
-                       'Групп_Кол_меж_трев':svod_soc_group_count_df,
+                       'Класс_Ср_рез':all_result_group_df,
+                       'Класс_Кол_общ_трев':svod_all_group_count_df,
+                       'Класс_Кол_учеб_трев':svod_study_group_count_df,
+                       'Класс_Кол_сам_трев':svod_self_group_count_df,
+                       'Класс_Кол_меж_трев':svod_soc_group_count_df,
                        }
 
             return out_dct, part_df

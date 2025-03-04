@@ -1,5 +1,5 @@
 """
-Скрипт для обработки результатов теста Шкала депрессии Цунга
+Скрипт для обработки результатов теста Шкала депрессии Цунга для школьников
 """
 import numpy as np
 
@@ -156,16 +156,16 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         base_df.sort_values(by='Значение_депрессии', ascending=False, inplace=True)  # сортируем
 
-        # Делаем сводную таблицу по курсу
-        svod_all_course_df = pd.pivot_table(base_df, index=['Курс'],
+        # Делаем сводную таблицу по Номер_классау
+        svod_all_course_df = pd.pivot_table(base_df, index=['Номер_класса'],
                                             values=['Значение_депрессии'],
                                             aggfunc=round_mean)
         svod_all_course_df.reset_index(inplace=True)
         svod_all_course_df['Уровень_депрессии'] = svod_all_course_df['Значение_депрессии'].apply(
             calc_level_zung_depress)  # считаем уровень
 
-        # делаем сводную по курсу
-        svod_all_count_course_df = pd.pivot_table(base_df, index=['Курс'],
+        # делаем сводную по Номер_классау
+        svod_all_count_course_df = pd.pivot_table(base_df, index=['Номер_класса'],
                                                   columns='Уровень_депрессии',
                                                   values='Значение_депрессии',
                                                   aggfunc='count', margins=True, margins_name='Итого')
@@ -186,8 +186,8 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_all_count_course_df['% истинное депрессивное состояние от общего'] = round(
                 svod_all_count_course_df['истинное депрессивное состояние'] / svod_all_count_course_df['Итого'], 2)
 
-        # Делаем сводную таблицу средних значений для курса и пола.
-        svod_all_course_sex_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
+        # Делаем сводную таблицу средних значений для Номер_классаа и пола.
+        svod_all_course_sex_df = pd.pivot_table(base_df, index=['Номер_класса', 'Пол'],
                                                 values=['Значение_депрессии'],
                                                 aggfunc=round_mean)
         svod_all_course_sex_df.reset_index(inplace=True)
@@ -195,7 +195,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             calc_level_zung_depress)  # считаем уровень
 
         # Делаем свод по количеству
-        svod_all_count_course_sex_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
+        svod_all_count_course_sex_df = pd.pivot_table(base_df, index=['Номер_класса', 'Пол'],
                                                       columns='Уровень_депрессии',
                                                       values='Значение_депрессии',
                                                       aggfunc='count', margins=True, margins_name='Итого')
@@ -221,19 +221,19 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
         # Проверяем наличие колонки с наименованием группы
-        if 'Группа' not in base_df.columns:
+        if 'Класс' not in base_df.columns:
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по курсу': svod_all_course_df, 'Количество по курсу': svod_all_count_course_df,
-                       'Среднее по курсу и полу': svod_all_course_sex_df,
-                       'Количество по курсу и полу': svod_all_count_course_sex_df}
+                       'Среднее по Номер_класса': svod_all_course_df, 'Количество по Номер_класса': svod_all_count_course_df,
+                       'Среднее по Номер_класса и полу': svod_all_course_sex_df,
+                       'Количество по Номер_класса и полу': svod_all_count_course_sex_df}
 
             return out_dct, part_df
 
         else:
 
-            # Делаем сводную таблицу по группам
-            svod_all_group_df = pd.pivot_table(base_df, index=['Группа'],
+            # Делаем сводную таблицу по Классм
+            svod_all_group_df = pd.pivot_table(base_df, index=['Класс'],
                                                values=['Значение_депрессии'],
                                                aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
@@ -241,7 +241,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                 calc_level_zung_depress)  # считаем уровень
 
             # делаем сводную
-            svod_all_count_group_df = pd.pivot_table(base_df, index=['Группа'],
+            svod_all_count_group_df = pd.pivot_table(base_df, index=['Класс'],
                                                      columns='Уровень_депрессии',
                                                      values='Значение_депрессии',
                                                      aggfunc='count', margins=True, margins_name='Итого')
@@ -263,17 +263,17 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                     svod_all_count_group_df['истинное депрессивное состояние'] / svod_all_count_group_df['Итого'], 2)
 
             # Делаем сводную таблицу средних значений для группы и пола.
-            svod_all_group_sex_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+            svod_all_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                    values=['Значение_депрессии'],
                                                    aggfunc=round_mean)
             svod_all_group_sex_df.reset_index(inplace=True)
             svod_all_group_sex_df['Уровень_депрессии'] = svod_all_group_sex_df['Значение_депрессии'].apply(
                 calc_level_zung_depress)  # считаем уровень
-            svod_all_group_sex_df.rename(columns={'Группа': 'Группа', 'Пол': 'Пол'},
+            svod_all_group_sex_df.rename(columns={'Класс': 'Класс', 'Пол': 'Пол'},
                                          inplace=True)
 
             # Делаем свод по количеству для группы и пола
-            svod_all_count_group_sex_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+            svod_all_count_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                          columns='Уровень_депрессии',
                                                          values='Значение_депрессии',
                                                          aggfunc='count', margins=True, margins_name='Итого')
@@ -297,12 +297,12 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по курсу': svod_all_course_df, 'Количество по курсу': svod_all_count_course_df,
-                       'Среднее по курсу и полу': svod_all_course_sex_df,
-                       'Количество по курсу и полу': svod_all_count_course_sex_df,
-                       'Среднее по группам': svod_all_group_df, 'Количество по группам': svod_all_count_group_df,
-                       'Среднее по группам и полам': svod_all_group_sex_df,
-                       'Количество по группам и полам': svod_all_count_group_sex_df}
+                       'Среднее по Номер_класса': svod_all_course_df, 'Количество по Номер_класса': svod_all_count_course_df,
+                       'Среднее по Номер_класса и полу': svod_all_course_sex_df,
+                       'Количество по Номер_класса и полу': svod_all_count_course_sex_df,
+                       'Среднее по Классам': svod_all_group_df, 'Количество по Классам': svod_all_count_group_df,
+                       'Среднее по Классам и полам': svod_all_group_sex_df,
+                       'Количество по Классам и полам': svod_all_count_group_sex_df}
 
             return out_dct, part_df
 
