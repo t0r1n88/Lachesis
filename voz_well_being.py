@@ -98,8 +98,8 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         # Проводим подсчет
         base_df['Значение_общего_самочувствия'] = answers_df.apply(calc_value_voz_well_being, axis=1)
         # Создаем датафрейм для создания части в общий датафрейм
-        part_df = pd.DataFrame(columns=['Индекс общего самочувствия ВОЗ 1999'])
-        part_df['Индекс общего самочувствия ВОЗ 1999'] = base_df['Значение_общего_самочувствия']
+        part_df = pd.DataFrame(columns=['Индекс_общего_самочувствия_ВОЗ'])
+        part_df['Индекс_общего_самочувствия_ВОЗ'] = base_df['Значение_общего_самочувствия']
 
 
         base_df.sort_values(by='Значение_общего_самочувствия', ascending=False, inplace=True)  # сортируем
