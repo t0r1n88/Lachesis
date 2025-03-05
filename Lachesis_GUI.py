@@ -1865,7 +1865,7 @@ def create_doc_convert_date(cell):
 
 def processing_generate_docs():
     """
-    Функция для создания документов из произвольных таблиц(т.е. отличающихся от структуры базы данных Веста Обработка таблиц и создание документов ver 1.29)
+    Функция для создания документов из произвольных таблиц
     :return:
     """
     try:
@@ -1898,7 +1898,7 @@ def convert_columns_to_str(df, number_columns):
             # Очищаем колонку от пробельных символов с начала и конца
             df.iloc[:, column] = df.iloc[:, column].apply(lambda x: x.strip())
         except IndexError:
-            messagebox.showerror('Веста Обработка таблиц и создание документов ver 1.29',
+            messagebox.showerror('Лахесис',
                                  'Проверьте порядковые номера колонок которые вы хотите обработать.')
 
 
@@ -2146,7 +2146,7 @@ def select_end_folder_other_doc():
 
 def generate_other_docs():
     """
-    Функция для создания документов из произвольных таблиц(т.е. отличающихся от структуры базы данных Веста Обработка таблиц и создание документов ver 1.35)
+    Функция для создания документов из произвольных таблиц
     :return:
     """
     try:
@@ -2170,7 +2170,7 @@ def generate_other_docs():
                                     mode_combine, mode_group,mode_structure_folder,number_structure_folder,mode_full)
 
     except NameError as e:
-        messagebox.showerror('Веста Обработка таблиц и создание документов',
+        messagebox.showerror('Лахесис',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
 
@@ -2272,13 +2272,72 @@ def set_window_size(window):
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 
+"""
+Создание нового окна
+"""
+def open_list_changes():
+    # Создание нового окна
+    new_window = Toplevel(window)
 
+    # Настройка нового окна
+    new_window.title("Список изменений")
+    text_area = Text(new_window, width=90, height=50)
+
+    with open(list_changes_path, 'r', encoding='utf-8') as file:
+        text = file.read()
+        text_area.insert(END, text)
+    text_area.configure(state='normal')
+    text_area.pack(side=LEFT)
+
+    scroll = Scrollbar(new_window, command=text_area.yview)
+    scroll.pack(side=LEFT, fill=Y)
+
+    text_area.config(yscrollcommand=scroll.set)
+
+def open_license():
+    # Создание нового окна
+    new_window = Toplevel(window)
+
+    # Настройка нового окна
+    new_window.title("Лицензия")
+    text_area = Text(new_window, width=90, height=50)
+
+    with open(license_path, 'r', encoding='utf-8') as file:
+        text = file.read()
+        text_area.insert(END, text)
+    text_area.configure(state='normal')
+    text_area.pack(side=LEFT)
+
+    scroll = Scrollbar(new_window, command=text_area.yview)
+    scroll.pack(side=LEFT, fill=Y)
+
+    text_area.config(yscrollcommand=scroll.set)
+
+
+def open_libraries():
+    # Создание нового окна
+    new_window = Toplevel(window)
+
+    # Настройка нового окна
+    new_window.title("Дополнительные библиотеки Python")
+    text_area = Text(new_window, width=90, height=50)
+
+    with open(license_library, 'r', encoding='utf-8') as file:
+        text = file.read()
+        text_area.insert(END, text)
+    text_area.configure(state='normal')
+    text_area.pack(side=LEFT)
+
+    scroll = Scrollbar(new_window, command=text_area.yview)
+    scroll.pack(side=LEFT, fill=Y)
+
+    text_area.config(yscrollcommand=scroll.set)
 
 
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов психологических тестов ver 7.0')
+    window.title('Лахеcис Обработка результатов психологических тестов ver 2.0')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
@@ -2428,188 +2487,6 @@ if __name__ == '__main__':
                                                  )
     btn_proccessing_data_school_anxiety.grid(column=0, row=7, padx=10, pady=10)
 
-    """
-     Создаем вкладку создания документов
-     """
-    tab_create_other_doc = Frame(tab_control)
-    tab_control.add(tab_create_other_doc, text='Создание\nдокументов')
-
-    create_other_doc_frame_description = LabelFrame(tab_create_other_doc)
-    create_other_doc_frame_description.pack()
-
-    lbl_hello = Label(create_other_doc_frame_description,
-                      text='Генерация документов по шаблону\n'
-                           'ПРИМЕЧАНИЯ\n'
-                           'Данные обрабатываются С ПЕРВОГО ЛИСТА В ФАЙЛЕ !!!\n'
-                           'Заголовок таблицы должен занимать только первую строку!\n'
-                           'Для корректной работы программы уберите из таблицы\nобъединенные ячейки'
-                      , width=60)
-    lbl_hello.pack(side=LEFT, anchor=N, ipadx=25, ipady=10)
-    # #
-    # #
-    # Картинка
-    path_to_img_other_doc = resource_path('logo.png')
-    img_other_doc = PhotoImage(file=path_to_img_other_doc)
-    Label(create_other_doc_frame_description,
-          image=img_other_doc, padx=10, pady=10
-          ).pack(side=LEFT, anchor=E, ipadx=5, ipady=5)
-
-    # Создаем фрейм для действий
-    create_other_doc_frame_action = LabelFrame(tab_create_other_doc, text='Подготовка')
-    create_other_doc_frame_action.pack()
-
-    # Создаем кнопку Выбрать шаблон
-    btn_template_other_doc = Button(create_other_doc_frame_action, text='1) Выберите шаблон документа',
-                              font=('Arial Bold', 14),
-                              command=select_file_template_other_doc
-                              )
-    btn_template_other_doc.pack(padx=10, pady=10)
-
-    btn_data_other_doc = Button(create_other_doc_frame_action, text='2) Выберите файл с данными', font=('Arial Bold', 14),
-                          command=select_file_data_other_doc
-                          )
-    btn_data_other_doc.pack(padx=10, pady=10)
-    #
-    # Создаем кнопку для выбора папки куда будут генерироваться файлы
-
-    # Определяем текстовую переменную
-    entry_name_column_data_other_doc = StringVar()
-    # Описание поля
-    label_name_column_data_other_doc = Label(create_other_doc_frame_action,
-                                   text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
-    label_name_column_data_other_doc.pack(padx=10, pady=10)
-    # поле ввода
-    data_column_entry_other_doc = Entry(create_other_doc_frame_action, textvariable=entry_name_column_data_other_doc, width=30)
-    data_column_entry_other_doc.pack(ipady=5)
-
-    # Поле для ввода названия генериуемых документов
-    # Определяем текстовую переменную
-    entry_type_file_other_doc = StringVar()
-    # Описание поля
-    label_name_column_type_file_other_doc = Label(create_other_doc_frame_action,
-                                        text='4) Введите название создаваемых документов')
-    label_name_column_type_file_other_doc.pack(padx=10, pady=10)
-    # поле ввода
-    type_file_column_entry_other_doc = Entry(create_other_doc_frame_action, textvariable=entry_type_file_other_doc, width=30)
-    type_file_column_entry_other_doc.pack(ipady=5)
-
-    btn_choose_end_folder_other_doc = Button(create_other_doc_frame_action, text='5) Выберите конечную папку',
-                                       font=('Arial Bold', 14),
-                                       command=select_end_folder_other_doc
-                                       )
-    btn_choose_end_folder_other_doc.pack(padx=10, pady=10)
-
-    # Создаем область для того чтобы поместить туда опции
-    frame_data_for_options_other_doc = LabelFrame(tab_create_other_doc, text='Дополнительные опции')
-    frame_data_for_options_other_doc.pack(padx=10, pady=10)
-
-    # Создаем переменную для хранения переключателя сложного сохранения
-    mode_structure_folder_value_other_doc = StringVar()
-    mode_structure_folder_value_other_doc.set('No')  # по умолчанию сложная структура создаваться не будет
-    chbox_mode_structure_folder_other_doc = Checkbutton(frame_data_for_options_other_doc,
-                                                        text='Поставьте галочку, если вам нужно чтобы файлы были сохранены по дополнительным папкам',
-                                                        variable=mode_structure_folder_value_other_doc,
-                                                        offvalue='No',
-                                                        onvalue='Yes')
-    chbox_mode_structure_folder_other_doc.pack()
-    # Создаем поле для ввода
-    # Определяем текстовую переменную
-    entry_structure_folder_value_other_doc = StringVar()
-    # Описание поля
-    label_number_column_other_doc = Label(frame_data_for_options_other_doc,
-                                          text='Введите через запятую не более 3 порядковых номеров колонок по которым будет создаваться структура папок.\n'
-                                               'Например: 4,15,8')
-    label_number_column_other_doc.pack()
-    # поле ввода
-    entry_value_number_column_other_doc = Entry(frame_data_for_options_other_doc,
-                                                textvariable=entry_structure_folder_value_other_doc, width=30)
-    entry_value_number_column_other_doc.pack(ipady=5)
-
-    # Переключатель краткой версии или полной версии
-    mode_full_value_other_doc = StringVar()
-
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
-    mode_full_value_other_doc.set('No')
-    # Создаем чекбокс для выбора режима подсчета
-
-    chbox_mode_full_other_doc = Checkbutton(frame_data_for_options_other_doc,
-                                            text='Поставьте галочку, если вам нужно чтобы создавались ТОЛЬКО pdf файлы. Работает только в Windows!',
-                                            variable=mode_full_value_other_doc,
-                                            offvalue='No',
-                                            onvalue='Yes')
-    chbox_mode_full_other_doc.pack()
-
-    # Создаем переменную для хранения результа переключения чекбокса
-    mode_combine_value_other_doc = StringVar()
-
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
-    mode_combine_value_other_doc.set('No')
-    # Создаем чекбокс для выбора режима подсчета
-
-    chbox_mode_calculate_other_doc = Checkbutton(frame_data_for_options_other_doc,
-                                                 text='Поставьте галочку, если вам нужно чтобы все файлы были объединены в один',
-                                                 variable=mode_combine_value_other_doc,
-                                                 offvalue='No',
-                                                 onvalue='Yes')
-    chbox_mode_calculate_other_doc.pack()
-
-    # Создаем чекбокс для режима создания pdf
-    # Создаем переменную для хранения результа переключения чекбокса
-    mode_pdf_value_other_doc = StringVar()
-
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
-    mode_pdf_value_other_doc.set('No')
-    # Создаем чекбокс для выбора режима подсчета
-
-    chbox_mode_pdf_other_doc = Checkbutton(frame_data_for_options_other_doc,
-                                           text='Поставьте галочку, если вам нужно чтобы \n'
-                                                'дополнительно создавались pdf версии документов',
-                                           variable=mode_pdf_value_other_doc,
-                                           offvalue='No',
-                                           onvalue='Yes')
-    chbox_mode_pdf_other_doc.pack()
-
-    # создаем чекбокс для единичного документа
-
-    # Создаем переменную для хранения результа переключения чекбокса
-    mode_group_doc_value_other_doc = StringVar()
-
-    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
-    mode_group_doc_value_other_doc.set('No')
-    # Создаем чекбокс для выбора режима подсчета
-    chbox_mode_group_other_doc = Checkbutton(frame_data_for_options_other_doc,
-                                             text='Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)',
-                                             variable=mode_group_doc_value_other_doc,
-                                             offvalue='No',
-                                             onvalue='Yes')
-    chbox_mode_group_other_doc.pack(padx=10, pady=10)
-    # Создаем поле для ввода значения по которому будет создаваться единичный документ
-    # Определяем текстовую переменную
-    entry_value_column_single_other_doc = StringVar()
-    # Описание поля
-    label_name_column_group_other_doc = Label(frame_data_for_options_other_doc,
-                                              text='Введите значение из колонки\nуказанной на шаге 3 для которого нужно создать один документ,\nнапример конкретное ФИО')
-    label_name_column_group_other_doc.pack()
-    # поле ввода
-    type_file_group_entry_other_doc = Entry(frame_data_for_options_other_doc,
-                                            textvariable=entry_value_column_single_other_doc, width=30)
-    type_file_group_entry_other_doc.pack(ipady=5)
-
-    # Создаем кнопку для создания документов из таблиц с произвольной структурой
-    btn_create_files_other_doc = Button(tab_create_other_doc, text='6) Создать документ(ы)',
-                                        font=('Arial Bold', 20),
-                                        command=generate_other_docs
-                                        )
-    btn_create_files_other_doc.pack(padx=10, pady=10)
-
-
-
-
-
-
-
-
-
 
 
     """
@@ -2674,12 +2551,14 @@ if __name__ == '__main__':
                                           command=processing_complex
                                           )
     btn_proccessing_data_complex.grid(column=0, row=7, padx=10, pady=10)
+
+
     """
     Создание отчетов
     """
 
     tab_create_doc = ttk.Frame(tab_control)
-    tab_control.add(tab_create_doc, text='Профориентация школьников\nГенерация результатов тестирования')
+    tab_control.add(tab_create_doc, text='Генерация документов\nпо результатам тестирования')
     tab_control.pack(expand=1, fill='both')
 
     # Добавляем виджеты на вкладку Создание документов
@@ -2789,6 +2668,249 @@ if __name__ == '__main__':
                                     command=processing_generate_docs
                                     )
     btn_create_files_other.grid(column=0, row=14, padx=10, pady=10)
+
+    """
+      Создаем вкладку создания документов
+      """
+    tab_create_other_doc = Frame(tab_control)
+    tab_control.add(tab_create_other_doc, text='Создание\nдокументов')
+
+    create_other_doc_frame_description = LabelFrame(tab_create_other_doc)
+    create_other_doc_frame_description.pack()
+
+    lbl_hello = Label(create_other_doc_frame_description,
+                      text='Генерация документов по шаблону\n'
+                           'ПРИМЕЧАНИЯ\n'
+                           'Данные обрабатываются С ПЕРВОГО ЛИСТА В ФАЙЛЕ !!!\n'
+                           'Заголовок таблицы должен занимать только первую строку!\n'
+                           'Для корректной работы программы уберите из таблицы\nобъединенные ячейки'
+                      , width=60)
+    lbl_hello.pack(side=LEFT, anchor=N, ipadx=25, ipady=10)
+    # #
+    # #
+    # Картинка
+    path_to_img_other_doc = resource_path('logo.png')
+    img_other_doc = PhotoImage(file=path_to_img_other_doc)
+    Label(create_other_doc_frame_description,
+          image=img_other_doc, padx=10, pady=10
+          ).pack(side=LEFT, anchor=E, ipadx=5, ipady=5)
+
+    # Создаем фрейм для действий
+    create_other_doc_frame_action = LabelFrame(tab_create_other_doc, text='Подготовка')
+    create_other_doc_frame_action.pack()
+
+    # Создаем кнопку Выбрать шаблон
+    btn_template_other_doc = Button(create_other_doc_frame_action, text='1) Выберите шаблон документа',
+                                    font=('Arial Bold', 14),
+                                    command=select_file_template_other_doc
+                                    )
+    btn_template_other_doc.pack(padx=10, pady=10)
+
+    btn_data_other_doc = Button(create_other_doc_frame_action, text='2) Выберите файл с данными',
+                                font=('Arial Bold', 14),
+                                command=select_file_data_other_doc
+                                )
+    btn_data_other_doc.pack(padx=10, pady=10)
+    #
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    # Определяем текстовую переменную
+    entry_name_column_data_other_doc = StringVar()
+    # Описание поля
+    label_name_column_data_other_doc = Label(create_other_doc_frame_action,
+                                             text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
+    label_name_column_data_other_doc.pack(padx=10, pady=10)
+    # поле ввода
+    data_column_entry_other_doc = Entry(create_other_doc_frame_action, textvariable=entry_name_column_data_other_doc,
+                                        width=30)
+    data_column_entry_other_doc.pack(ipady=5)
+
+    # Поле для ввода названия генериуемых документов
+    # Определяем текстовую переменную
+    entry_type_file_other_doc = StringVar()
+    # Описание поля
+    label_name_column_type_file_other_doc = Label(create_other_doc_frame_action,
+                                                  text='4) Введите название создаваемых документов')
+    label_name_column_type_file_other_doc.pack(padx=10, pady=10)
+    # поле ввода
+    type_file_column_entry_other_doc = Entry(create_other_doc_frame_action, textvariable=entry_type_file_other_doc,
+                                             width=30)
+    type_file_column_entry_other_doc.pack(ipady=5)
+
+    btn_choose_end_folder_other_doc = Button(create_other_doc_frame_action, text='5) Выберите конечную папку',
+                                             font=('Arial Bold', 14),
+                                             command=select_end_folder_other_doc
+                                             )
+    btn_choose_end_folder_other_doc.pack(padx=10, pady=10)
+
+    # Создаем область для того чтобы поместить туда опции
+    frame_data_for_options_other_doc = LabelFrame(tab_create_other_doc, text='Дополнительные опции')
+    frame_data_for_options_other_doc.pack(padx=10, pady=10)
+
+    # Создаем переменную для хранения переключателя сложного сохранения
+    mode_structure_folder_value_other_doc = StringVar()
+    mode_structure_folder_value_other_doc.set('No')  # по умолчанию сложная структура создаваться не будет
+    chbox_mode_structure_folder_other_doc = Checkbutton(frame_data_for_options_other_doc,
+                                                        text='Поставьте галочку, если вам нужно чтобы файлы были сохранены по дополнительным папкам',
+                                                        variable=mode_structure_folder_value_other_doc,
+                                                        offvalue='No',
+                                                        onvalue='Yes')
+    chbox_mode_structure_folder_other_doc.pack()
+    # Создаем поле для ввода
+    # Определяем текстовую переменную
+    entry_structure_folder_value_other_doc = StringVar()
+    # Описание поля
+    label_number_column_other_doc = Label(frame_data_for_options_other_doc,
+                                          text='Введите через запятую не более 3 порядковых номеров колонок по которым будет создаваться структура папок.\n'
+                                               'Например: 4,15,8')
+    label_number_column_other_doc.pack()
+    # поле ввода
+    entry_value_number_column_other_doc = Entry(frame_data_for_options_other_doc,
+                                                textvariable=entry_structure_folder_value_other_doc, width=30)
+    entry_value_number_column_other_doc.pack(ipady=5)
+
+    # Переключатель краткой версии или полной версии
+    mode_full_value_other_doc = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_full_value_other_doc.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+
+    chbox_mode_full_other_doc = Checkbutton(frame_data_for_options_other_doc,
+                                            text='Поставьте галочку, если вам нужно чтобы создавались ТОЛЬКО pdf файлы. Работает только в Windows!',
+                                            variable=mode_full_value_other_doc,
+                                            offvalue='No',
+                                            onvalue='Yes')
+    chbox_mode_full_other_doc.pack()
+
+    # Создаем переменную для хранения результа переключения чекбокса
+    mode_combine_value_other_doc = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_combine_value_other_doc.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+
+    chbox_mode_calculate_other_doc = Checkbutton(frame_data_for_options_other_doc,
+                                                 text='Поставьте галочку, если вам нужно чтобы все файлы были объединены в один',
+                                                 variable=mode_combine_value_other_doc,
+                                                 offvalue='No',
+                                                 onvalue='Yes')
+    chbox_mode_calculate_other_doc.pack()
+
+    # Создаем чекбокс для режима создания pdf
+    # Создаем переменную для хранения результа переключения чекбокса
+    mode_pdf_value_other_doc = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_pdf_value_other_doc.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+
+    chbox_mode_pdf_other_doc = Checkbutton(frame_data_for_options_other_doc,
+                                           text='Поставьте галочку, если вам нужно чтобы \n'
+                                                'дополнительно создавались pdf версии документов',
+                                           variable=mode_pdf_value_other_doc,
+                                           offvalue='No',
+                                           onvalue='Yes')
+    chbox_mode_pdf_other_doc.pack()
+
+    # создаем чекбокс для единичного документа
+
+    # Создаем переменную для хранения результа переключения чекбокса
+    mode_group_doc_value_other_doc = StringVar()
+
+    # Устанавливаем значение по умолчанию для этой переменной. По умолчанию будет вестись подсчет числовых данных
+    mode_group_doc_value_other_doc.set('No')
+    # Создаем чекбокс для выбора режима подсчета
+    chbox_mode_group_other_doc = Checkbutton(frame_data_for_options_other_doc,
+                                             text='Поставьте галочку, если вам нужно создать один документ\nдля конкретного значения (например для определенного ФИО)',
+                                             variable=mode_group_doc_value_other_doc,
+                                             offvalue='No',
+                                             onvalue='Yes')
+    chbox_mode_group_other_doc.pack(padx=10, pady=10)
+    # Создаем поле для ввода значения по которому будет создаваться единичный документ
+    # Определяем текстовую переменную
+    entry_value_column_single_other_doc = StringVar()
+    # Описание поля
+    label_name_column_group_other_doc = Label(frame_data_for_options_other_doc,
+                                              text='Введите значение из колонки\nуказанной на шаге 3 для которого нужно создать один документ,\nнапример конкретное ФИО')
+    label_name_column_group_other_doc.pack()
+    # поле ввода
+    type_file_group_entry_other_doc = Entry(frame_data_for_options_other_doc,
+                                            textvariable=entry_value_column_single_other_doc, width=30)
+    type_file_group_entry_other_doc.pack(ipady=5)
+
+    # Создаем кнопку для создания документов из таблиц с произвольной структурой
+    btn_create_files_other_doc = Button(tab_create_other_doc, text='6) Создать документ(ы)',
+                                        font=('Arial Bold', 20),
+                                        command=generate_other_docs
+                                        )
+    btn_create_files_other_doc.pack(padx=10, pady=10)
+
+    """
+       Создаем вкладку для размещения описания программы, руководства пользователя,лицензии.
+       """
+
+    tab_about = ttk.Frame(tab_control)
+    tab_control.add(tab_about, text='О ПРОГРАММЕ')
+
+    about_frame_description = LabelFrame(tab_about, text='О программе')
+    about_frame_description.pack()
+
+    lbl_about = Label(about_frame_description,
+                      text="""Лахесис Обработка результатов психологических тестов.
+                              Версия 2.0
+                              Язык программирования - Python 3\n
+                              Используемая лицензия BSD-2-Clause\n
+                              Copyright (c) <2025> <Будаев Олег Тимурович>
+                              Адрес сайта программы: https://itdarhan.ru/lahesis.html\n
+                              Чтобы скопировать ссылку или текст переключитесь на \n
+                              английскую раскладку.
+                              """, width=60)
+
+    lbl_about.pack(side=LEFT, anchor=N, ipadx=25, ipady=10)
+    # Картинка
+    path_to_img_about = resource_path('logo.png')
+    img_about = PhotoImage(file=path_to_img_about)
+    Label(about_frame_description,
+          image=img_about, padx=10, pady=10
+          ).pack(side=LEFT, anchor=E, ipadx=5, ipady=5)
+
+    # Создаем поле для лицензий библиотек
+    guide_frame_description = LabelFrame(tab_about, text='Ссылки для скачивания и обучающие материалы')
+    guide_frame_description.pack()
+
+    text_area_url = Text(guide_frame_description, width=84, height=20)
+    list_url_path = resource_path('Ссылки.txt')  # путь к файлу лицензии
+    with open(list_url_path, 'r', encoding='utf-8') as file:
+        text = file.read()
+        text_area_url.insert(END, text)
+    text_area_url.configure(state='normal')
+    text_area_url.pack(side=LEFT)
+
+    scroll = Scrollbar(guide_frame_description, command=text_area_url.yview)
+    scroll.pack(side=LEFT, fill=Y)
+
+    text_area_url.config(yscrollcommand=scroll.set)
+
+    text_area_url.configure(state='normal')
+    text_area_url.pack(side=LEFT)
+
+    # Кнопка, для демонстрации в отдельном окне списка изменений
+    list_changes_path = resource_path('Список изменений.txt')  # путь к файлу лицензии
+    button_list_changes = Button(tab_about, text="Список изменений", command=open_list_changes)
+    button_list_changes.pack(padx=10, pady=10)
+
+    # Кнопка, для демонстрации в отдельном окне лицензии
+    license_path = resource_path('License.txt')  # путь к файлу лицензии
+    button_lic = Button(tab_about, text="Лицензия", command=open_license)
+    button_lic.pack(padx=10, pady=10)
+
+    # Кнопка, для демонстрации в отдельном окне используемых библиотек
+    license_library = resource_path('LibraryLicense.txt')  # путь к файлу с библиотеками
+    button_lib = Button(tab_about, text="Дополнительные библиотеки Python", command=open_libraries)
+    button_lib.pack(padx=10, pady=10)
+
+
 
 
 
