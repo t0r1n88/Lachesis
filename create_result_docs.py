@@ -271,7 +271,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             doc = DocxTemplate(name_file_template_doc)
                             context = row
                             doc.render(context)
-                            name_file = f'{name_type_file}_{row[name_column]}'
+                            name_file = f'{name_type_file} {row[name_column]}'
                             name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                             threshold_name = 200 - (len(finish_path) + 10)
                             if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -290,7 +290,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             context = row
                             doc.render(context)
                             # Сохраняем файл
-                            name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                            name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                             name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                             threshold_name = 200 - (len(finish_path) + 10)
                             if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -345,7 +345,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 context = row
                                 doc.render(context)
                                 # Сохраняем файл
-                                name_file = f'{name_type_file}_{row[name_column]}'
+                                name_file = f'{name_type_file} {row[name_column]}'
                                 name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                 threshold_name = 200 - (len(finish_path) + 10)
                                 if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -364,7 +364,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 context = row
                                 doc.render(context)
                                 # Сохраняем файл
-                                name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                                 name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                 threshold_name = 200 - (len(finish_path) + 10)
                                 if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -430,7 +430,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     context = row
                                     doc.render(context)
                                     # Сохраняем файл
-                                    name_file = f'{name_type_file}_{row[name_column]}'
+                                    name_file = f'{name_type_file} {row[name_column]}'
                                     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                     threshold_name = 200 - (len(finish_path) + 10)
                                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -452,7 +452,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     context = row
                                     doc.render(context)
                                     # Сохраняем файл
-                                    name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                    name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                                     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                     threshold_name = 200 - (len(finish_path) + 10)
                                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -528,7 +528,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                         context = row
                                         doc.render(context)
                                         # Сохраняем файл
-                                        name_file = f'{name_type_file}_{row[name_column]}'
+                                        name_file = f'{name_type_file} {row[name_column]}'
                                         name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                         threshold_name = 200 - (len(finish_path) + 10)
                                         if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -550,7 +550,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                         context = row
                                         doc.render(context)
                                         # Сохраняем файл
-                                        name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                        name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                                         name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                         threshold_name = 200 - (len(finish_path) + 10)
                                         if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -596,7 +596,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             doc = DocxTemplate(name_file_template_doc)
                             context = row
                             doc.render(context)
-                            name_file = f'{name_type_file}_{row[name_column]}'
+                            name_file = f'{name_type_file} {row[name_column]}'
                             name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                             threshold_name = 200 - (len(finish_path) + 10)
                             if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -614,7 +614,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                             context = row
                             doc.render(context)
                             # Сохраняем файл
-                            name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                            name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                             name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                             threshold_name = 200 - (len(finish_path) + 10)
                             if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -665,7 +665,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 context = row
                                 doc.render(context)
                                 # Сохраняем файл
-                                name_file = f'{name_type_file}_{row[name_column]}'
+                                name_file = f'{name_type_file} {row[name_column]}'
                                 name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                 threshold_name = 200 - (len(finish_path) + 10)
                                 if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -682,7 +682,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                 context = row
                                 doc.render(context)
                                 # Сохраняем файл
-                                name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                                 name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                 threshold_name = 200 - (len(finish_path) + 10)
                                 if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -743,7 +743,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     context = row
                                     doc.render(context)
                                     # Сохраняем файл
-                                    name_file = f'{name_type_file}_{row[name_column]}'
+                                    name_file = f'{name_type_file} {row[name_column]}'
                                     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                     threshold_name = 200 - (len(finish_path) + 10)
                                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -762,7 +762,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                     context = row
                                     doc.render(context)
                                     # Сохраняем файл
-                                    name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                    name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                                     name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                     threshold_name = 200 - (len(finish_path) + 10)
                                     if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -834,7 +834,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                         context = row
                                         doc.render(context)
                                         # Сохраняем файл
-                                        name_file = f'{name_type_file}_{row[name_column]}'
+                                        name_file = f'{name_type_file} {row[name_column]}'
                                         name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                         threshold_name = 200 - (len(finish_path) + 10)
                                         if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
@@ -852,7 +852,7 @@ def generate_result_docs(name_file_data_doc:str,name_file_template_doc:str,path_
                                         context = row
                                         doc.render(context)
                                         # Сохраняем файл
-                                        name_file = f'{name_type_file}_{row[name_main_column]}_{row[name_second_column]}'
+                                        name_file = f'{name_type_file} {row[name_main_column]} {row[name_second_column]}'
                                         name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
                                         threshold_name = 200 - (len(finish_path) + 10)
                                         if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
