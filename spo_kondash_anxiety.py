@@ -53,7 +53,7 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 2 or group == 3:
         if sex == 'Женский':
             if 35 <= value <= 62:
                 return 'Нормальный'
@@ -77,7 +77,7 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
 
 def calc_level_study_condash_anxiety(ser:pd.Series):
@@ -112,7 +112,7 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 2 or group == 3:
         if sex == 'Женский':
             if 5 <= value <= 17:
                 return 'Нормальный'
@@ -136,7 +136,7 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
 
 def calc_level_self_condash_anxiety(ser:pd.Series):
@@ -171,7 +171,7 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 2 or group == 3:
         if sex == 'Женский':
             if 12 <= value <= 23:
                 return 'Нормальный'
@@ -195,7 +195,7 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
 
 def calc_level_soc_condash_anxiety(ser:pd.Series):
@@ -230,7 +230,7 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
-    elif group == 2:
+    elif group == 2 or group == 3:
         if sex == 'Женский':
             if 5 <= value <= 20:
                 return 'Нормальный'
@@ -254,7 +254,7 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
             else:
                 return 'Чрезмерное спокойствие'
     else:
-        return 'Для данного курса нет методики подсчета. Обрабатываются только 1 и 2 курсы.'
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
 
 def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
