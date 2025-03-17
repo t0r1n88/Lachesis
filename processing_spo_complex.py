@@ -7,7 +7,7 @@ from bek_hopelessness import processing_bek_hopelessness # функция для
 from zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
 from voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
 
-from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int # функции для создания итогового файла
+from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention # функции для создания итогового файла
 
 import pandas as pd
 pd.options.mode.copy_on_write = True
@@ -28,10 +28,6 @@ class NotRequiredColumns(Exception):
     Исключение для проверки есть ли колонки Курс, Группа, Пол в файле с ответами
     """
     pass
-
-
-
-
 
 
 def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, threshold_base: int):
@@ -147,11 +143,33 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
         # Сохраняем в удобном виде
         main_itog_df.sort_values(by='Группа',inplace=True) # сортируем
+        # Отбираем тех кто требует внимания.
+        set_alert_value = {'тяжелая депрессия','безнадежность тяжёлая','Очень высокий','истинное депрессивное состояние'} # особое внимание
+        set_attention_value = {'умеренная депрессия','безнадежность умеренная','Высокий','субдепрессивное состояние или маскированная депрессия'} # обратить внимание
+
+        alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
+        attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
+
+
+
+        attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
+
+
+
+
+
+
+
+
+
+
+
+
         # Создаем сводную таблицу по группам
         svod_group_df = main_itog_df.groupby(by='Группа').agg({'ФИО':'count'}).rename(columns={'ФИО':'Количество прошедших'})
         svod_group_df = svod_group_df.reset_index()
 
-        temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Свод по группам':svod_group_df}, write_index=False)
+        temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df,'Свод по группам':svod_group_df}, write_index=False)
         temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
         temp_wb.save(f'{end_folder}/Общий результат.xlsx')
 

@@ -91,3 +91,20 @@ def round_mean(value):
     Функция для округления до 2 знаков
     """
     return round(value.mean(),0)
+
+
+def count_attention(row,set_value):
+    """
+    Функция для подсчета количества
+    :param row:строка с данными
+    :param set_value:значения которые нужно считать
+    """
+    count_val = 0
+    for value in row:
+        if value in set_value:
+            count_val += 1
+    if count_val >=2:
+        return True
+    else:
+        return False
+
