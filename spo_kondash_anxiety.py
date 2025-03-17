@@ -79,6 +79,33 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
     else:
         return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
+def calc_norm_all_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета уровня тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+
+    if group == 1:
+        if sex == 'Женский':
+            return '17-73 баллов'
+
+        else:
+            return '10-67 баллов'
+
+    elif group == 2 or group == 3:
+        if sex == 'Женский':
+            return '35-76 баллов'
+
+        else:
+            return '23-60 баллов'
+    else:
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
+
+
+
+
 
 def calc_level_study_condash_anxiety(ser:pd.Series):
     """
@@ -135,6 +162,29 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
                 return 'Очень высокий'
             else:
                 return 'Чрезмерное спокойствие'
+    else:
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
+
+
+def calc_norm_study_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета уровня тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+
+    if group == 1:
+        if sex == 'Женский':
+            return '2-20 баллов'
+        else:
+            return '1-19 баллов'
+
+    elif group == 2 or group == 3:
+        if sex == 'Женский':
+            return '5-23 баллов'
+        else:
+            return '5-19 баллов'
     else:
         return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
@@ -197,6 +247,28 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
     else:
         return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
 
+def calc_norm_self_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета уровня тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+
+    if group == 1:
+        if sex == 'Женский':
+            return '6-26 баллов'
+        else:
+            return '1-26 баллов'
+
+    elif group == 2 or group == 3:
+        if sex == 'Женский':
+            return '12-29 баллов'
+        else:
+            return '8-22 баллов'
+    else:
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
+
 
 def calc_level_soc_condash_anxiety(ser:pd.Series):
     """
@@ -255,6 +327,30 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
                 return 'Чрезмерное спокойствие'
     else:
         return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
+
+def calc_norm_soc_condash_anxiety(ser:pd.Series):
+    """
+    Функция для подсчета уровня тревожности
+    """
+    row = ser.tolist() # превращаем в список
+    group = int(row[0]) # курс
+    sex = row[1] # пол
+
+    if group == 1:
+        if sex == 'Женский':
+            return '4-26 баллов'
+        else:
+            return '3-25 баллов'
+
+    elif group == 2 or group == 3:
+        if sex == 'Женский':
+            return '5-28 баллов'
+        else:
+            return '5-19 баллов'
+    else:
+        return 'Для данного курса нет методики подсчета. Обрабатываются только 1,2,3 курсы.'
+
+
 
 
 def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
@@ -335,21 +431,28 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         # Считаем результат общая тревожность
         base_df['Значение_общей_тревожности'] = answers_df.sum(axis=1)
+        base_df['Норма_общей_тревожности'] = base_df[['Курс', 'Пол']].apply(calc_norm_all_condash_anxiety,axis=1)
         base_df['Уровень_общей_тревожности'] = base_df[['Курс', 'Пол', 'Значение_общей_тревожности']].apply(calc_level_all_condash_anxiety,axis=1)
 
         # Считаем учебную тревожность в оригинале школьная
         base_df['Значение_учебной_тревожности'] = answers_df[lst_study_anxiety].sum(axis=1)
+        base_df['Норма_учебной_тревожности'] = base_df[['Курс', 'Пол']].apply(calc_norm_study_condash_anxiety,axis=1)
+
         base_df['Уровень_учебной_тревожности'] = base_df[
             ['Курс', 'Пол', 'Значение_учебной_тревожности']].apply(calc_level_study_condash_anxiety,
                                                                                              axis=1)
 
         # Считаем самооценочную тревожность
         base_df['Значение_самооценочной_тревожности'] = answers_df[lst_self_anxiety].sum(axis=1)
+        base_df['Норма_самоценочной_тревожности'] = base_df[['Курс', 'Пол']].apply(calc_norm_self_condash_anxiety,axis=1)
+
         base_df['Уровень_самооценочной_тревожности'] = base_df[
             ['Курс', 'Пол', 'Значение_самооценочной_тревожности']].apply(calc_level_self_condash_anxiety,
                                                                                              axis=1)
         # Считаем межличностную тревожность
         base_df['Значение_межличностной_тревожности'] = answers_df[lst_soc_anxiety].sum(axis=1)
+        base_df['Норма_межличностной_тревожности'] = base_df[['Курс', 'Пол']].apply(calc_norm_soc_condash_anxiety,axis=1)
+
         base_df['Уровень_межличностной_тревожности'] = base_df[
             ['Курс', 'Пол', 'Значение_межличностной_тревожности']].apply(calc_level_soc_condash_anxiety,
                                                                                              axis=1)
