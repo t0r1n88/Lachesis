@@ -149,21 +149,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
         alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
         attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
-
-
-
         attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
-
-
-
-
-
-
-
-
-
-
-
 
         # Создаем сводную таблицу по группам
         svod_group_df = main_itog_df.groupby(by='Группа').agg({'ФИО':'count'}).rename(columns={'ФИО':'Количество прошедших'})

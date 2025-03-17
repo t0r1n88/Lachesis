@@ -158,6 +158,7 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
             raise BadValueBekHopelessness
 
         base_df['Значение_безнадежности'] = answers_df.apply(calc_value_hopelessness, axis=1)
+        base_df['Значение_нормы'] = '0-8 баллов'
         base_df['Уровень_безнадежности'] = base_df['Значение_безнадежности'].apply(calc_level_hopelessness)
 
         # Создаем датафрейм для создания части в общий датафрейм

@@ -146,6 +146,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         # Проводим подсчет
         base_df['Значение_депрессии'] = answers_df.apply(calc_value_zung_depress, axis=1)
+        base_df['Значение_нормы'] = '0-50 баллов'
         base_df['Уровень_депрессии'] = base_df['Значение_депрессии'].apply(calc_level_zung_depress)
 
         # Создаем датафрейм для создания части в общий датафрейм
