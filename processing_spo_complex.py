@@ -146,7 +146,12 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             threshold_finshed += dct_tests[name_test][1]
 
         # Сохраняем в удобном виде
-        temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df}, write_index=False)
+        main_itog_df.sort_values(by='Группа',inplace=True) # сортируем
+        # Создаем сводную таблицу по группам
+        svod_group_df = main_itog_df.groupby(by='Группа').agg({'ФИО':'count'}).rename(columns={'ФИО':'Количество прошедших'})
+        svod_group_df = svod_group_df.reset_index()
+
+        temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Свод по группам':svod_group_df}, write_index=False)
         temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
         temp_wb.save(f'{end_folder}/Общий результат.xlsx')
 
