@@ -1,17 +1,16 @@
 """
 Скрипт для обработки тестов студентов СПО
 """
-from spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
-from bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
-from bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
-from zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
-from voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
+from spo_depres.spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
+from spo_depres.bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
+from spo_depres.bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
+from spo_depres.zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
+from spo_depres.voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention # функции для создания итогового файла
 
 import pandas as pd
 pd.options.mode.copy_on_write = True
-import openpyxl
 from tkinter import messagebox
 import re
 import time
