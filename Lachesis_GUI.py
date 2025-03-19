@@ -5,7 +5,10 @@
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов по профориентации
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
 from processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
-from processing_school_complex import generate_result_school_anxiety
+from processing_school_complex import generate_result_school_anxiety # функция для обработки тестов тревожности школ
+# from career_guidance.processing_career_complex import generate_result_career_guidance # функция для обработки профориентационных тестов
+from career_guidance.processing_career_complex import generate_result_career_guidance # функция для обработки профориентационных тестов
+
 import pandas as pd
 import numpy as np
 import os
@@ -1717,12 +1720,46 @@ def select_file_data_xlsx_complex():
 
 def select_file_params_complex():
     """
-    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    Функция для выбора файла с со списком тестов на основе которых будут генерироваться результаты
     :return: Путь к файлу с данными
     """
     global file_params_complex
     # Получаем путь к файлу
     file_params_complex = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def processing_career_guidance():
+    """
+    Точка входа для обработки профориентационных тестов
+    :return:
+    """
+    try:
+        threshold_base = var_entry_threshold_complex.get()
+
+        generate_result_career_guidance(file_params_complex, file_data_xlsx_complex, path_to_end_folder_complex, threshold_base)
+    except NameError:
+        messagebox.showerror('Лахеcис',
+                             f'Выберите файлы с данными и папку куда будет генерироваться файл')
+    except KeyError as e:
+        messagebox.showerror('Лахеcис',
+                             f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
+                             f'Проверьте правильность написания по руководству пользователя')
+    except FileNotFoundError:
+        messagebox.showerror('Лахеcис',
+                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам')
+    except WrongNumberColumn:
+        messagebox.showerror('Лахеcис',
+                             f'Неправильное количество колонок в таблице!\n'
+                             f'Проверьте количество вопросов в тестах!\n'
+                             f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
+                             f'ОПТЛ - 30 колонок т.е. 30 тестовых вопросов\n'
+                             f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
+                             f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
+    else:
+        messagebox.showinfo('Лахеcис',
+                            'Данные успешно обработаны')
+
 
 
 def processing_complex():
@@ -2548,7 +2585,7 @@ if __name__ == '__main__':
     # Создаем кнопку обработки данных
 
     btn_proccessing_data_complex = Button(tab_report_complex, text='5) Обработать данные', font=('Arial Bold', 14),
-                                          command=processing_complex
+                                          command=processing_career_guidance
                                           )
     btn_proccessing_data_complex.grid(column=0, row=7, padx=10, pady=10)
 
