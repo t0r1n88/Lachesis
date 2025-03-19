@@ -84,8 +84,6 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         if len(diff_cols) !=0 :
             raise NotRequiredColumns
 
-
-
         # заменяем пробелы на нижнее подчеркивание и очищаем от пробельных символов в начале и конце
         base_df.columns = [column.strip().replace(' ', '_') for column in base_df.columns]
 
