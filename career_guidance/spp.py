@@ -428,8 +428,6 @@ def processing_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame, size: int,na
     if not os.path.exists(finish_path):
         os.makedirs(finish_path)
 
-
-
     df.to_excel(f'{finish_path}/Полная таблица {name_test}.xlsx',
                 index=False,
                 engine='xlsxwriter')

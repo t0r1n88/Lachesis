@@ -103,9 +103,11 @@ def generate_result_career_guidance(params_career:str,career_data:str,end_folder
 
 if __name__ == '__main__':
     main_params_career = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры  СППУ ДДО.xlsx'
+    main_params_career = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры ДЦОК ОПТЛ СППУ ДДО.xlsx'
     main_career_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data career.xlsx'
+    main_career_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Яндекс Форма с ответами школьников.xlsx'
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 2
+    main_quantity_descr_cols = 6
 
     generate_result_career_guidance(main_params_career, main_career_data, main_end_folder, main_quantity_descr_cols)
 
