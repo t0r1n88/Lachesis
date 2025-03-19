@@ -63,7 +63,39 @@ def generate_result_career_guidance(params_career:str,career_data:str,end_folder
     # очищаем от всех символов кроме букв цифр
     base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
+    # Создаем копию датафрейма с анкетными данными для передачи в функцию
+    base_df_for_func = base_df.copy()
+    # создаем копию для датафрейма с результатами
+    result_df = base_df.copy()
 
+    # Перебираем полученные названия тестов
+    for name_test in lst_used_test:
+        """
+        запускаем функцию хранящуюся в словаре
+        передаем туда датафрейм с анкетными данными, датафрейм с данными теста, количество колонок которое занимает данный тест
+        получаем 2 датафрейма с результатами для данного теста которые добавляем в основные датафреймы
+        """
+        # получаем колонки относящиеся к тесту
+        temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
+        # обрабатываем и получаем датафреймы для добавления в основные таблицы
+        temp_full_df, temp_result_df = dct_tests[name_test][0](base_df_for_func, temp_df,
+                                                                       dct_tests[name_test][1], name_test,threshold_base,end_folder)
+        base_df = pd.concat([base_df, temp_full_df],
+                            axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
+        result_df = pd.concat([result_df, temp_result_df], axis=1)
+        # увеличиваем предел обозначающий количество обработанных колонок
+        threshold_finshed += dct_tests[name_test][1]
+
+    # Сохраняем результаты
+    base_df.to_excel(
+        f'{end_folder}/Полная таблица.xlsx',
+        index=False,
+        engine='xlsxwriter')
+
+    result_df.to_excel(
+        f'{end_folder}/Краткая таблица.xlsx',
+        index=False,
+        engine='xlsxwriter')
 
 
 
