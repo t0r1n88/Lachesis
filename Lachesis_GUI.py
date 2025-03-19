@@ -94,11 +94,15 @@ def processing_career_guidance():
     """
     try:
         threshold_base = var_entry_threshold_complex.get()
+        threshold_base = int(threshold_base)
 
         generate_result_career_guidance(file_params_complex, file_data_xlsx_complex, path_to_end_folder_complex, threshold_base)
     except NameError:
         messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
+    except ValueError:
+        messagebox.showerror('Лахеcис',
+                             f'Введите целое число начиная с 1 !!!')
     except KeyError as e:
         messagebox.showerror('Лахеcис',
                              f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
@@ -371,7 +375,11 @@ def processing_spo_anxiety():
     """
     try:
         start_threshold = var_entry_threshold_spo_anxiety.get() # получаем количество колонок
+        start_threshold = int(start_threshold)
         generate_result_spo(file_params_spo_anxiety,file_data_xlsx_spo_anxiety,path_to_end_folder_spo_anxiety,start_threshold)
+    except ValueError:
+        messagebox.showerror('Лахеcис',
+                             f'Введите целое число начиная с 1 !!!')
     except NameError:
         messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
@@ -412,7 +420,11 @@ def processing_school_anxiety():
     """
     try:
         start_threshold = var_entry_threshold_school_anxiety.get() # получаем количество колонок
+        start_threshold = int(start_threshold)
         generate_result_school_anxiety(file_params_school_anxiety,file_data_xlsx_school_anxiety,path_to_end_folder_school_anxiety,start_threshold)
+    except ValueError:
+        messagebox.showerror('Лахеcис',
+                             f'Введите целое число начиная с 1 !!!')
     except NameError:
         messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
@@ -478,17 +490,6 @@ def generate_other_docs():
         messagebox.showerror('Лахесис',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
-
-
-
-
-
-
-
-
-
-
-
 
 
 def resource_path(relative_path):
@@ -710,7 +711,7 @@ if __name__ == '__main__':
 
     # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
     # Определяем переменную
-    var_entry_threshold_spo_anxiety = IntVar()
+    var_entry_threshold_spo_anxiety = StringVar()
     # Описание поля
     label_name_threshold_spo_anxiety = Label(tab_report_spo_anxiety,
                                              text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
@@ -774,7 +775,7 @@ if __name__ == '__main__':
 
     # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
     # Определяем переменную
-    var_entry_threshold_school_anxiety = IntVar()
+    var_entry_threshold_school_anxiety = StringVar()
     # Описание поля
     label_name_threshold_school_anxiety = Label(tab_report_school_anxiety,
                                                 text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
@@ -841,7 +842,7 @@ if __name__ == '__main__':
 
     # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
     # Определяем переменную
-    var_entry_threshold_complex = IntVar()
+    var_entry_threshold_complex = StringVar()
     # Описание поля
     label_name_threshold_complex = Label(tab_report_complex,
                                          text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
