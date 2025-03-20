@@ -1,11 +1,19 @@
 """
 Скрипт для обработки тестов студентов СПО
 """
-from spo_depres.spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
-from spo_depres.bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
-from spo_depres.bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
-from spo_depres.zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
-from spo_depres.voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
+# Тесты тревожность и безнадежность
+from spo.spo_kondash_anxiety import processing_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша
+from spo.bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
+from spo.bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
+from spo.zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
+from spo.voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
+
+# Лидерство, самооценка, эмоциональный интеллект
+from leadership.ei import processing_ei # эмоциональный интеллект
+from leadership.kos import processing_kos # коммуникативные и организаторские способности Федоришин
+from leadership.usk import processing_usk # уровень самооценки Ковалев
+
+
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention # функции для создания итогового файла
 
@@ -46,12 +54,20 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         dct_tests = {'Шкала тревожности Кондаша': (processing_kondash_anxiety, 30), 'Шкала депрессии Бека': (processing_bek_depress, 52),
                      'Шкала безнадежности Бека':(processing_bek_hopelessness,20),
                      'Шкала депрессии Цунга':(processing_zung_depress,20),
-                     'Индекс общего самочувствия ВОЗ 1999':(processing_voz_well_being,5)}  # словарь с наименованием теста функцией для его обработки и количеством колонок
+                     'Индекс общего самочувствия ВОЗ 1999':(processing_voz_well_being,5),
+                     'Эмоциональный интеллект':(processing_ei,46),
+                     'КОС':(processing_kos,40),
+                     'Уровень самооценки Ковалев':(processing_usk,32)
+                     }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
                      'Шкала безнадежности Бека': 'Шкала безнадежности Бека',
                               'Шкала депрессии Цунга': 'Шкала депрессии Цунга',
-                              'Индекс общего самочувствия ВОЗ 1999':'Индекс общего самочувствия ВОЗ 1999'}  # словарь с наименованием теста функцией для его обработки и количеством колонок
+                              'Индекс общего самочувствия ВОЗ 1999':'Индекс общего самочувствия ВОЗ 1999',
+                              'Эмоциональный интеллект':'Эмоциональный интеллект',
+                              'КОС':'Оценка коммуникативных и организаторских способностей',
+                              'Уровень самооценки Ковалев':'Уровень самооценки Ковалев'
+                              }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать

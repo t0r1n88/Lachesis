@@ -1,11 +1,11 @@
 """
 Скрипт для обработки тестов трвеожности школьников
 """
-from school_depres.school_kondash_anxiety import processing_school_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша для школьников
-from school_depres.school_bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
-from school_depres.school_bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
-from school_depres.school_zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
-from school_depres.school_voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
+from school.school_kondash_anxiety import processing_school_kondash_anxiety # функция для обработки результатов теста тревожности Кондаша для школьников
+from school.school_bek_depress import processing_bek_depress # функция для обработки результатов теста депрессии Бека
+from school.school_bek_hopelessness import processing_bek_hopelessness # функция для обработки результатов теста безнадежности Бека
+from school.school_zung_depress import processing_zung_depress # функция для обработки результатов теста депрессии Цунга
+from school.school_voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int, count_attention # функции для создания итогового файла
 

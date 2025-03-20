@@ -4,8 +4,8 @@
 """
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов по профориентации
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
-from spo_depres.processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
-from school_depres.processing_school_complex import generate_result_school_anxiety # функция для обработки тестов тревожности школ
+from spo.processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
+from school.processing_school_complex import generate_result_school_anxiety # функция для обработки тестов тревожности школ
 from career_guidance.processing_career_complex import generate_result_career_guidance # функция для обработки профориентационных тестов
 
 import pandas as pd
