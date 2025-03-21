@@ -24,6 +24,56 @@ class BadCountColumnsEI(Exception):
     pass
 
 
+def calc_union_value_ei(row):
+    """
+    Функция для подсчета значения Общий уровень эмоционального интеллекта
+    :param row: строка с ответами
+    :return: число
+    """
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1, 3, 4, 7, 9, 11, 13, 14, 15, 17, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 34, 36, 37]  # список ответов которые нужно считать простым сложением
+    lst_reverse = [2, 5, 6, 8, 10, 12, 16, 18, 22, 30, 31, 33, 35, 38, 39, 40, 41, 42, 43, 44, 45, 46] # обратный подсчет
+
+    for idx, value in enumerate(row):
+        if idx + 1 in lst_forward:
+            # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+            value_forward += value
+        elif idx +1 in lst_reverse:
+            # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+            if value == 0:
+                value_reverse += 3
+            elif value == 1:
+                value_reverse += 2
+            elif value == 2:
+                value_reverse += 1
+            elif value == 3:
+                value_reverse += 0
+
+    return value_forward + value_reverse
+
+
+
+def calc_level_union_ei(value):
+    """
+    Функция для подсчета уровня общего эмоционального интеллекта
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 71:
+        return 'Очень низкое значение'
+    elif 72 <= value <= 78:
+        return 'Низкое значение'
+    elif 79 <= value <= 92:
+        return 'Среднее значение'
+    elif 93 <= value <= 104:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+
+
 
 
 
@@ -89,4 +139,42 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                       'У меня бывают чувства, которые я не могу точно определить',
                       'Я не понимаю, почему некоторые люди на меня обижаются',
                       ]
-    print(len(lst_check_cols))
+    # Проверяем порядок колонок
+    order_main_columns = lst_check_cols  # порядок колонок и названий как должно быть
+    order_temp_df_columns = list(answers_df.columns)  # порядок колонок проверяемого файла
+    error_order_lst = []  # список для несовпадающих пар
+    # Сравниваем попарно колонки
+    for main, temp in zip(order_main_columns, order_temp_df_columns):
+        if main != temp:
+            error_order_lst.append(f'На месте колонки {main} находится колонка {temp}')
+            error_order_message = ';'.join(error_order_lst)
+    if len(error_order_lst) != 0:
+        raise BadOrderEI
+
+    # словарь для замены слов на числа
+    dct_replace_value = {'совсем не согласен': 0,
+                         'скорее не согласен': 1,
+                         'скорее согласен': 2,
+                         'полностью согласен': 3}
+
+    valid_values = [0, 1, 2, 3]
+    answers_df.replace(dct_replace_value, inplace=True)  # заменяем слова на цифры для подсчетов
+
+    # Проверяем, есть ли значения, отличающиеся от указанных в списке
+    mask = ~answers_df.isin(valid_values)
+
+    # Получаем строки с отличающимися значениями
+    result_check = answers_df[mask.any(axis=1)]
+    if len(result_check) != 0:
+        error_row = list(map(lambda x: x + 2, result_check.index))
+        error_row = list(map(str, error_row))
+        error_message = ';'.join(error_row)
+        raise BadValueEI
+
+    # Проводим подсчет
+    base_df['Значение_общего_ЭИ'] = answers_df.apply(calc_union_value_ei, axis=1)
+    base_df['Значение_нормы'] = '72-104 баллов'
+    base_df['Уровень_общего_ЭИ'] = base_df['Значение_общего_ЭИ'].apply(calc_level_union_ei)
+    answers_df.to_excel('ans.xlsx')
+    base_df.to_excel('dffds.xlsx')
+    raise ZeroDivisionError
