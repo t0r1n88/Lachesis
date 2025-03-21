@@ -219,6 +219,53 @@ def calc_level_sub_vp(value):
     else:
         return 'Очень высокое значение'
 
+def calc_sub_value_vu(row):
+    """
+    Функция для подсчета значения субшкалы ВУ
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_check = [4, 25, 28, 37,12, 33, 43]
+
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1, 3, 4, 7, 9, 11, 13, 14, 15, 17, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 34, 36, 37]  # список ответов которые нужно считать простым сложением
+    lst_reverse = [2, 5, 6, 8, 10, 12, 16, 18, 22, 30, 31, 33, 35, 38, 39, 40, 41, 42, 43, 44, 45, 46] # обратный подсчет
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_check:
+            if idx + 1 in lst_forward:
+                # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+                value_forward += value
+            elif idx +1 in lst_reverse:
+                # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+                if value == 0:
+                    value_reverse += 3
+                elif value == 1:
+                    value_reverse += 2
+                elif value == 2:
+                    value_reverse += 1
+                elif value == 3:
+                    value_reverse += 0
+
+    return value_forward + value_reverse
+
+def calc_level_sub_vu(value):
+    """
+    Функция для подсчета уровня субшкалы ВУ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 9:
+        return 'Очень низкое значение'
+    elif 10 <= value <= 12:
+        return 'Низкое значение'
+    elif 13 <= value <= 15:
+        return 'Среднее значение'
+    elif 16 <= value <= 17:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
 
 
 
@@ -341,6 +388,11 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     base_df['Значение_субшкалы_ВП'] = answers_df.apply(calc_sub_value_vp, axis=1)
     base_df['Значение_нормы_ВП'] = '14-25 баллов'
     base_df['Уровень_субшкалы_ВП'] = base_df['Значение_субшкалы_ВП'].apply(calc_level_sub_vp)
+
+    # Субшкала ВУ Управление своими эмоциями
+    base_df['Значение_субшкалы_ВУ'] = answers_df.apply(calc_sub_value_vu, axis=1)
+    base_df['Значение_нормы_ВУ'] = '10-17 баллов'
+    base_df['Уровень_субшкалы_ВУ'] = base_df['Значение_субшкалы_ВУ'].apply(calc_level_sub_vu)
 
 
 
