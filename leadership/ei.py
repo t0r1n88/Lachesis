@@ -268,6 +268,226 @@ def calc_level_sub_vu(value):
         return 'Очень высокое значение'
 
 
+def calc_sub_value_va(row):
+    """
+    Функция для подсчета значения субшкалы ВЭ
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_check = [19, 21, 23, 6, 10, 16, 39]
+
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1, 3, 4, 7, 9, 11, 13, 14, 15, 17, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 34, 36, 37]  # список ответов которые нужно считать простым сложением
+    lst_reverse = [2, 5, 6, 8, 10, 12, 16, 18, 22, 30, 31, 33, 35, 38, 39, 40, 41, 42, 43, 44, 45, 46] # обратный подсчет
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_check:
+            if idx + 1 in lst_forward:
+                # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+                value_forward += value
+            elif idx +1 in lst_reverse:
+                # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+                if value == 0:
+                    value_reverse += 3
+                elif value == 1:
+                    value_reverse += 2
+                elif value == 2:
+                    value_reverse += 1
+                elif value == 3:
+                    value_reverse += 0
+
+    return value_forward + value_reverse
+
+def calc_level_sub_va(value):
+    """
+    Функция для подсчета уровня субшкалы ВЭ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 6:
+        return 'Очень низкое значение'
+    elif 7 <= value <= 9:
+        return 'Низкое значение'
+    elif 10 <= value <= 12:
+        return 'Среднее значение'
+    elif 13 <= value <= 15:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+def calc_level_mei(value):
+    """
+    Функция для подсчета уровня шкалы МЭИ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 34:
+        return 'Очень низкое значение'
+    elif 35 <= value <= 39:
+        return 'Низкое значение'
+    elif 40 <= value <= 46:
+        return 'Среднее значение'
+    elif 47 <= value <= 52:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+def calc_level_vei(value):
+    """
+    Функция для подсчета уровня шкалы ВЭИ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 33:
+        return 'Очень низкое значение'
+    elif 34 <= value <= 38:
+        return 'Низкое значение'
+    elif 39 <= value <= 47:
+        return 'Среднее значение'
+    elif 48 <= value <= 53:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+def calc_level_pa(value):
+    """
+    Функция для подсчета уровня шкалы ПЭ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 34:
+        return 'Очень низкое значение'
+    elif 35 <= value <= 39:
+        return 'Низкое значение'
+    elif 40 <= value <= 47:
+        return 'Среднее значение'
+    elif 48 <= value <= 53:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+def calc_level_ua(value):
+    """
+    Функция для подсчета уровня шкалы УЭ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 33:
+        return 'Очень низкое значение'
+    elif 34 <= value <= 39:
+        return 'Низкое значение'
+    elif 40 <= value <= 47:
+        return 'Среднее значение'
+    elif 48 <= value <= 53:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+def calc_stenain_mei(value):
+    """
+    Функция для подсчета стенайна шкаллы МЭИ
+    :return:
+    """
+    if value <= 31:
+        return 1
+    elif 32 <= value <= 34:
+        return 2
+    elif 35 <= value <= 37:
+        return 3
+    elif 38 <= value <= 40:
+        return 4
+    elif 41 <= value <= 44:
+        return 5
+    elif 45 <= value <= 47:
+        return 6
+    elif 48 <= value <= 51:
+        return 7
+    elif 52 <= value <= 55:
+        return 8
+    else:
+        return 9
+
+
+def calc_stenain_vei(value):
+    """
+    Функция для подсчета стенайна шкаллы ВЭИ
+    :param value:
+    :return:
+    """
+    if value <= 28:
+        return 1
+    elif 29 <= value <= 32:
+        return 2
+    elif 33 <= value <= 36:
+        return 3
+    elif 37 <= value <= 40:
+        return 4
+    elif 41 <= value <= 44:
+        return 5
+    elif 45 <= value <= 48:
+        return 6
+    elif 49 <= value <= 53:
+        return 7
+    elif 54 <= value <= 57:
+        return 8
+    else:
+        return 9
+
+
+def calc_stenain_pa(value):
+    """
+    Функция для подсчета стенайна шкаллы ПЭ
+    :param value:
+    :return:
+    """
+    if value <= 31:
+        return 1
+    elif 32 <= value <= 34:
+        return 2
+    elif 35 <= value <= 37:
+        return 3
+    elif 38 <= value <= 40:
+        return 4
+    elif 41 <= value <= 44:
+        return 5
+    elif 45 <= value <= 47:
+        return 6
+    elif 48 <= value <= 51:
+        return 7
+    elif 52 <= value <= 56:
+        return 8
+    else:
+        return 9
+
+def calc_stenain_ua(value):
+    """
+    Функция для подсчета стенайна шкаллы ПЭ
+    :param value:
+    :return:
+    """
+    if value <= 29:
+        return 1
+    elif 30 <= value <= 32:
+        return 2
+    elif 33 <= value <= 36:
+        return 3
+    elif 37 <= value <= 40:
+        return 4
+    elif 41 <= value <= 44:
+        return 5
+    elif 45 <= value <= 47:
+        return 6
+    elif 48 <= value <= 51:
+        return 7
+    elif 52 <= value <= 56:
+        return 8
+    else:
+        return 9
 
 
 
@@ -393,6 +613,38 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     base_df['Значение_субшкалы_ВУ'] = answers_df.apply(calc_sub_value_vu, axis=1)
     base_df['Значение_нормы_ВУ'] = '10-17 баллов'
     base_df['Уровень_субшкалы_ВУ'] = base_df['Значение_субшкалы_ВУ'].apply(calc_level_sub_vu)
+
+    # Субшкала ВЭ Контроль экспрессии
+    base_df['Значение_субшкалы_ВЭ'] = answers_df.apply(calc_sub_value_va, axis=1)
+    base_df['Значение_нормы_ВЭ'] = '7-15 баллов'
+    base_df['Уровень_субшкалы_ВЭ'] = base_df['Значение_субшкалы_ВЭ'].apply(calc_level_sub_va)
+
+    # Шкала МЭИ Межличностный эмоциональный интеллект
+    base_df['Значение_шкалы_МЭИ'] = base_df['Значение_субшкалы_МП'] + base_df['Значение_субшкалы_МУ']
+    base_df['Значение_нормы_МЭИ'] = '35-52 баллов'
+    base_df['Уровень_шкалы_МЭИ'] = base_df['Значение_шкалы_МЭИ'].apply(calc_level_mei)
+    base_df['Стенайн_шкалы_МЭИ'] = base_df['Значение_шкалы_МЭИ'].apply(calc_stenain_mei)
+
+
+    # Шкала ВЭИ Внутриличностный эмоциональный интеллект
+    base_df['Значение_шкалы_ВЭИ'] = base_df['Значение_субшкалы_ВП'] + base_df['Значение_субшкалы_ВУ'] + base_df['Значение_субшкалы_ВЭ']
+    base_df['Значение_нормы_ВЭИ'] = '34-54 баллов'
+    base_df['Уровень_шкалы_ВЭИ'] = base_df['Значение_шкалы_ВЭИ'].apply(calc_level_vei)
+    base_df['Стенайн_шкалы_ВЭИ'] = base_df['Значение_шкалы_ВЭИ'].apply(calc_stenain_vei)
+
+    # Шкала ПЭ Понимание эмоций
+    base_df['Значение_шкалы_ПЭ'] = base_df['Значение_субшкалы_МП'] + base_df['Значение_субшкалы_ВП']
+    base_df['Значение_нормы_ПЭ'] = '34-54 баллов'
+    base_df['Уровень_шкалы_ПЭ'] = base_df['Значение_шкалы_ПЭ'].apply(calc_level_pa)
+    base_df['Стенайн_шкалы_ПЭ'] = base_df['Значение_шкалы_ПЭ'].apply(calc_stenain_pa)
+
+    # Шкала УЭ Управление эмоциями
+    base_df['Значение_шкалы_УЭ'] =  base_df['Значение_субшкалы_МУ'] + base_df['Значение_субшкалы_ВУ'] + base_df['Значение_субшкалы_ВЭ']
+    base_df['Значение_нормы_УЭ'] = '34-53 баллов'
+    base_df['Уровень_шкалы_УЭ'] = base_df['Значение_шкалы_УЭ'].apply(calc_level_ua)
+    base_df['Стенайн_шкалы_УЭ'] = base_df['Значение_шкалы_ПЭ'].apply(calc_stenain_ua)
+
+
 
 
 
