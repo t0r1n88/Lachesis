@@ -73,6 +73,156 @@ def calc_level_union_ei(value):
 
 
 
+def calc_sub_value_mp(row):
+    """
+    Функция для подсчета значения субшкалы МП
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_mp = [1, 3, 11, 13, 20, 27, 29, 32, 34,38, 42, 46]
+
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1, 3, 4, 7, 9, 11, 13, 14, 15, 17, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 34, 36, 37]  # список ответов которые нужно считать простым сложением
+    lst_reverse = [2, 5, 6, 8, 10, 12, 16, 18, 22, 30, 31, 33, 35, 38, 39, 40, 41, 42, 43, 44, 45, 46] # обратный подсчет
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_mp:
+            if idx + 1 in lst_forward:
+                # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+                value_forward += value
+            elif idx +1 in lst_reverse:
+                # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+                if value == 0:
+                    value_reverse += 3
+                elif value == 1:
+                    value_reverse += 2
+                elif value == 2:
+                    value_reverse += 1
+                elif value == 3:
+                    value_reverse += 0
+
+    return value_forward + value_reverse
+
+def calc_level_sub_mp(value):
+    """
+    Функция для подсчета уровня субшкалы МП
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 19:
+        return 'Очень низкое значение'
+    elif 20 <= value <= 22:
+        return 'Низкое значение'
+    elif 23 <= value <= 26:
+        return 'Среднее значение'
+    elif 27 <= value <= 30:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+def calc_sub_value_mu(row):
+    """
+    Функция для подсчета значения субшкалы МУ
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_check = [9, 15, 17, 24, 36, 2, 5, 30, 40, 44]
+
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1, 3, 4, 7, 9, 11, 13, 14, 15, 17, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 34, 36, 37]  # список ответов которые нужно считать простым сложением
+    lst_reverse = [2, 5, 6, 8, 10, 12, 16, 18, 22, 30, 31, 33, 35, 38, 39, 40, 41, 42, 43, 44, 45, 46] # обратный подсчет
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_check:
+            if idx + 1 in lst_forward:
+                # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+                value_forward += value
+            elif idx +1 in lst_reverse:
+                # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+                if value == 0:
+                    value_reverse += 3
+                elif value == 1:
+                    value_reverse += 2
+                elif value == 2:
+                    value_reverse += 1
+                elif value == 3:
+                    value_reverse += 0
+
+    return value_forward + value_reverse
+
+def calc_level_sub_mu(value):
+    """
+    Функция для подсчета уровня субшкалы МУ
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 14:
+        return 'Очень низкое значение'
+    elif 15 <= value <= 17:
+        return 'Низкое значение'
+    elif 18 <= value <= 21:
+        return 'Среднее значение'
+    elif 22 <= value <= 24:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+def calc_sub_value_vp(row):
+    """
+    Функция для подсчета значения субшкалы ВП
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_check = [7, 14, 26, 8, 18, 22, 31, 35, 41, 45]
+
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1, 3, 4, 7, 9, 11, 13, 14, 15, 17, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 32, 34, 36, 37]  # список ответов которые нужно считать простым сложением
+    lst_reverse = [2, 5, 6, 8, 10, 12, 16, 18, 22, 30, 31, 33, 35, 38, 39, 40, 41, 42, 43, 44, 45, 46] # обратный подсчет
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_check:
+            if idx + 1 in lst_forward:
+                # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+                value_forward += value
+            elif idx +1 in lst_reverse:
+                # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+                if value == 0:
+                    value_reverse += 3
+                elif value == 1:
+                    value_reverse += 2
+                elif value == 2:
+                    value_reverse += 1
+                elif value == 3:
+                    value_reverse += 0
+
+    return value_forward + value_reverse
+
+def calc_level_sub_vp(value):
+    """
+    Функция для подсчета уровня субшкалы ВП
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 13:
+        return 'Очень низкое значение'
+    elif 14 <= value <= 16:
+        return 'Низкое значение'
+    elif 17 <= value <= 21:
+        return 'Среднее значение'
+    elif 22 <= value <= 25:
+        return 'Высокое значение'
+    else:
+        return 'Очень высокое значение'
+
+
+
+
+
 
 
 
@@ -172,9 +322,32 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         raise BadValueEI
 
     # Проводим подсчет
+    # Общий уровень эмоционального интеллекта ОЭИ
     base_df['Значение_общего_ЭИ'] = answers_df.apply(calc_union_value_ei, axis=1)
-    base_df['Значение_нормы'] = '72-104 баллов'
+    base_df['Значение_нормы_общего_ЭИ'] = '72-104 баллов'
     base_df['Уровень_общего_ЭИ'] = base_df['Значение_общего_ЭИ'].apply(calc_level_union_ei)
-    answers_df.to_excel('ans.xlsx')
+
+    # Субшкала МП Понимание чужих эмоций
+    base_df['Значение_субшкалы_МП'] = answers_df.apply(calc_sub_value_mp, axis=1)
+    base_df['Значение_нормы_МП'] = '20-30 баллов'
+    base_df['Уровень_субшкалы_МП'] = base_df['Значение_субшкалы_МП'].apply(calc_level_sub_mp)
+
+    # Субшкала МУ Управление чужими эмоциями
+    base_df['Значение_субшкалы_МУ'] = answers_df.apply(calc_sub_value_mu, axis=1)
+    base_df['Значение_нормы_МУ'] = '15-24 баллов'
+    base_df['Уровень_субшкалы_МУ'] = base_df['Значение_субшкалы_МУ'].apply(calc_level_sub_mu)
+
+    # Субшкала ВП Понимание своих эмоций
+    base_df['Значение_субшкалы_ВП'] = answers_df.apply(calc_sub_value_vp, axis=1)
+    base_df['Значение_нормы_ВП'] = '14-25 баллов'
+    base_df['Уровень_субшкалы_ВП'] = base_df['Значение_субшкалы_ВП'].apply(calc_level_sub_vp)
+
+
+
+
+
+
+
+
     base_df.to_excel('dffds.xlsx')
     raise ZeroDivisionError
