@@ -178,9 +178,9 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
 
 
 if __name__ == '__main__':
-    main_params_spo = 'data/параметры для СПО.xlsx'
-    main_spo_data = 'data/data.xlsx'
-    main_end_folder = 'data/Результат'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data.xlsx'
+    main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
 
     generate_result_school_anxiety(main_params_spo, main_spo_data, main_end_folder, main_quantity_descr_cols)

@@ -190,20 +190,20 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
         if 'удовлетворительное эмоциональное состояние' in svod_all_count_course_df.columns:
             svod_all_count_course_df['% удовлетворительное эмоциональное состояние от общего'] = round(
                 svod_all_count_course_df['удовлетворительное эмоциональное состояние'] / svod_all_count_course_df[
-                    'Итого'], 2)
+                    'Итого'], 2)*100
 
         if 'безнадёжность не выявлена' in svod_all_count_course_df.columns:
             svod_all_count_course_df['% безнадёжность не выявлена  от общего'] = round(
-                svod_all_count_course_df['безнадёжность не выявлена'] / svod_all_count_course_df['Итого'], 2)
+                svod_all_count_course_df['безнадёжность не выявлена'] / svod_all_count_course_df['Итого'], 2)*100
         if 'безнадежность лёгкая' in svod_all_count_course_df.columns:
             svod_all_count_course_df['% безнадежность лёгкая от общего'] = round(
-                svod_all_count_course_df['безнадежность лёгкая'] / svod_all_count_course_df['Итого'], 2)
+                svod_all_count_course_df['безнадежность лёгкая'] / svod_all_count_course_df['Итого'], 2)*100
         if 'безнадежность умеренная' in svod_all_count_course_df.columns:
             svod_all_count_course_df['% безнадежность умеренная от общего'] = round(
-                svod_all_count_course_df['безнадежность умеренная'] / svod_all_count_course_df['Итого'], 2)
+                svod_all_count_course_df['безнадежность умеренная'] / svod_all_count_course_df['Итого'], 2)*100
         if 'безнадежность тяжёлая' in svod_all_count_course_df.columns:
             svod_all_count_course_df['% безнадежность тяжёлая от общего'] = round(
-                svod_all_count_course_df['безнадежность тяжёлая'] / svod_all_count_course_df['Итого'], 2)
+                svod_all_count_course_df['безнадежность тяжёлая'] / svod_all_count_course_df['Итого'], 2)*100
 
 
         # Делаем сводную таблицу средних значений для Номер_классаа и пола.
@@ -226,20 +226,20 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
         svod_all_count_course_sex_df.rename(columns={'Номер_класса': 'Номер_класса', 'Пол': 'Пол'}, inplace=True)
         if 'удовлетворительное эмоциональное состояние' in svod_all_count_course_sex_df.columns:
             svod_all_count_course_sex_df['% удовлетворительное эмоциональное состояние от общего'] = round(
-                svod_all_count_course_sex_df['удовлетворительное эмоциональное состояние'] / svod_all_count_course_sex_df['Итого'], 2)
+                svod_all_count_course_sex_df['удовлетворительное эмоциональное состояние'] / svod_all_count_course_sex_df['Итого'], 2)*100
 
         if 'безнадёжность не выявлена' in svod_all_count_course_sex_df.columns:
             svod_all_count_course_sex_df['% безнадёжность не выявлена  от общего'] = round(
-                svod_all_count_course_sex_df['безнадёжность не выявлена'] / svod_all_count_course_sex_df['Итого'], 2)
+                svod_all_count_course_sex_df['безнадёжность не выявлена'] / svod_all_count_course_sex_df['Итого'], 2)*100
         if 'безнадежность лёгкая' in svod_all_count_course_sex_df.columns:
             svod_all_count_course_sex_df['% безнадежность лёгкая от общего'] = round(
-                svod_all_count_course_sex_df['безнадежность лёгкая'] / svod_all_count_course_sex_df['Итого'], 2)
+                svod_all_count_course_sex_df['безнадежность лёгкая'] / svod_all_count_course_sex_df['Итого'], 2)*100
         if 'безнадежность умеренная' in svod_all_count_course_sex_df.columns:
             svod_all_count_course_sex_df['% безнадежность умеренная от общего'] = round(
-                svod_all_count_course_sex_df['безнадежность умеренная'] / svod_all_count_course_sex_df['Итого'], 2)
+                svod_all_count_course_sex_df['безнадежность умеренная'] / svod_all_count_course_sex_df['Итого'], 2)*100
         if 'безнадежность тяжёлая' in svod_all_count_course_sex_df.columns:
             svod_all_count_course_sex_df['% безнадежность тяжёлая от общего'] = round(
-                svod_all_count_course_sex_df['безнадежность тяжёлая'] / svod_all_count_course_sex_df['Итого'], 2)
+                svod_all_count_course_sex_df['безнадежность тяжёлая'] / svod_all_count_course_sex_df['Итого'], 2)*100
 
         # Датафрейм для проверки
 
@@ -276,20 +276,20 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
             if 'удовлетворительное эмоциональное состояние' in svod_all_count_group_df.columns:
                 svod_all_count_group_df['% удовлетворительное эмоциональное состояние от общего'] = round(
                     svod_all_count_group_df['удовлетворительное эмоциональное состояние'] / svod_all_count_group_df[
-                        'Итого'], 2)
+                        'Итого'], 2)*100
 
             if 'безнадёжность не выявлена' in svod_all_count_group_df.columns:
                 svod_all_count_group_df['% безнадёжность не выявлена  от общего'] = round(
-                    svod_all_count_group_df['безнадёжность не выявлена'] / svod_all_count_group_df['Итого'], 2)
+                    svod_all_count_group_df['безнадёжность не выявлена'] / svod_all_count_group_df['Итого'], 2)*100
             if 'безнадежность лёгкая' in svod_all_count_group_df.columns:
                 svod_all_count_group_df['% безнадежность лёгкая от общего'] = round(
-                    svod_all_count_group_df['безнадежность лёгкая'] / svod_all_count_group_df['Итого'], 2)
+                    svod_all_count_group_df['безнадежность лёгкая'] / svod_all_count_group_df['Итого'], 2)*100
             if 'безнадежность умеренная' in svod_all_count_group_df.columns:
                 svod_all_count_group_df['% безнадежность умеренная от общего'] = round(
-                    svod_all_count_group_df['безнадежность умеренная'] / svod_all_count_group_df['Итого'], 2)
+                    svod_all_count_group_df['безнадежность умеренная'] / svod_all_count_group_df['Итого'], 2)*100
             if 'безнадежность тяжёлая' in svod_all_count_group_df.columns:
                 svod_all_count_group_df['% безнадежность тяжёлая от общего'] = round(
-                    svod_all_count_group_df['безнадежность тяжёлая'] / svod_all_count_group_df['Итого'], 2)
+                    svod_all_count_group_df['безнадежность тяжёлая'] / svod_all_count_group_df['Итого'], 2)*100
 
             # Делаем сводную таблицу средних значений для группы и пола.
             svod_all_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
@@ -309,20 +309,20 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
             if 'удовлетворительное эмоциональное состояние' in svod_all_count_group_sex_df.columns:
                 svod_all_count_group_sex_df['% удовлетворительное эмоциональное состояние от общего'] = round(
                     svod_all_count_group_sex_df['удовлетворительное эмоциональное состояние'] /
-                    svod_all_count_group_sex_df['Итого'], 2)
+                    svod_all_count_group_sex_df['Итого'], 2)*100
 
             if 'безнадёжность не выявлена' in svod_all_count_group_sex_df.columns:
                 svod_all_count_group_sex_df['% безнадёжность не выявлена  от общего'] = round(
-                    svod_all_count_group_sex_df['безнадёжность не выявлена'] / svod_all_count_group_sex_df['Итого'], 2)
+                    svod_all_count_group_sex_df['безнадёжность не выявлена'] / svod_all_count_group_sex_df['Итого'], 2)*100
             if 'безнадежность лёгкая' in svod_all_count_group_sex_df.columns:
                 svod_all_count_group_sex_df['% безнадежность лёгкая от общего'] = round(
-                    svod_all_count_group_sex_df['безнадежность лёгкая'] / svod_all_count_group_sex_df['Итого'], 2)
+                    svod_all_count_group_sex_df['безнадежность лёгкая'] / svod_all_count_group_sex_df['Итого'], 2)*100
             if 'безнадежность умеренная' in svod_all_count_group_sex_df.columns:
                 svod_all_count_group_sex_df['% безнадежность умеренная от общего'] = round(
-                    svod_all_count_group_sex_df['безнадежность умеренная'] / svod_all_count_group_sex_df['Итого'], 2)
+                    svod_all_count_group_sex_df['безнадежность умеренная'] / svod_all_count_group_sex_df['Итого'], 2)*100
             if 'безнадежность тяжёлая' in svod_all_count_group_sex_df.columns:
                 svod_all_count_group_sex_df['% безнадежность тяжёлая от общего'] = round(
-                    svod_all_count_group_sex_df['безнадежность тяжёлая'] / svod_all_count_group_sex_df['Итого'], 2)
+                    svod_all_count_group_sex_df['безнадежность тяжёлая'] / svod_all_count_group_sex_df['Итого'], 2)*100
 
 
 
