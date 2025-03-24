@@ -92,6 +92,13 @@ def round_mean(value):
     """
     return round(value.mean(),0)
 
+def round_mean_two(value):
+    """
+    Функция для округления до 2 знаков
+    """
+    return round(value.mean(),2)
+
+
 
 def count_attention(row,set_value):
     """
