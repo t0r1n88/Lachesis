@@ -505,7 +505,7 @@ if __name__ == '__main__':
     """
     # Создаем вкладку обработки данных spo_anxiety
     tab_report_spo_anxiety = ttk.Frame(tab_control)
-    tab_control.add(tab_report_spo_anxiety, text='СПО тревожность\nОбработка результатов')
+    tab_control.add(tab_report_spo_anxiety, text='СПО\nОбработка результатов')
     tab_control.pack(expand=1, fill='both')
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
@@ -569,7 +569,7 @@ if __name__ == '__main__':
     """
     # Создаем вкладку обработки данных
     tab_report_school_anxiety = ttk.Frame(tab_control)
-    tab_control.add(tab_report_school_anxiety, text='Школа тревожность\nОбработка результатов')
+    tab_control.add(tab_report_school_anxiety, text='Школа\nОбработка результатов')
     tab_control.pack(expand=1, fill='both')
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
