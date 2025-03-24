@@ -499,10 +499,6 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
     :param answers_df: часть датафрейма с ответами
-    :param size: количество колонок которое должно быть в answers_df
-    :param name_test: название теста
-    :param threshold_base: количество колонок
-    :param end_folder: конечная папка для сохранения
     """
     out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
     if len(answers_df.columns) != 46:  # проверяем количество колонок с вопросами
