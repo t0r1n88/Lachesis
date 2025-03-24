@@ -25,6 +25,68 @@ class BadCountColumnsKOSOne(Exception):
     pass
 
 
+def calc_value_com_cos_one(row):
+    """
+    Функция для подсчета значения коммуникативных навыков КОС-1
+    :param row: строка с ответами
+    :return: число
+    """
+    value_forward = 0 # счетчик депрессии прямых ответов
+    value_reverse = 0 # счетчик депрессии обратных ответов
+    lst_forward = [1,5,9,13,17,21,25,29,33,37]  #  подсчет если значение Да
+    lst_reverse = [3,7,11,15,19,23,27,31,35,39] # подсчет если значение Нет
+    for idx, value in enumerate(row):
+        if idx + 1 in lst_forward:
+            # print(f'Прямой подсчет {idx +1}') # Для проверки корректности
+            if value == 'Да':
+                value_forward += 1
+        elif idx +1 in lst_reverse:
+            if value == 'Нет':
+                value_reverse += 1
+            # print(f'Обратный подсчет {idx +1}')# Для проверки корректности
+
+
+    return (value_forward + value_reverse) * 0.05
+
+def calc_est_com_cos_one(value):
+    """
+    Функция для подсчета оценки коммуникативных способностей КОС-1
+    :param value:
+    :return:
+    """
+    if 0.10 <= value <= 0.45:
+        return 1
+    elif 0.46 <= value <= 0.55:
+        return 2
+    elif 0.56 <= value <= 0.65:
+        return 3
+    elif 0.66 <= value <= 0.75:
+        return 4
+    elif 0.76 <= value <= 1:
+        return 5
+
+
+
+def calc_level_com_cos_one(value):
+    """
+    Функция для подсчета уровня коммуникативных способностей КОС-1
+    :param value:
+    :return:
+    """
+    if value == 1:
+        return 'низкий'
+    elif value == 2:
+        return 'ниже среднего'
+    elif value == 3:
+        return 'средний'
+    elif value == 4:
+        return 'высокий'
+    elif value == 5:
+        return 'очень высокий'
+
+
+
+
 
 
 def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
@@ -105,6 +167,14 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
             error_row = list(map(str, error_row))
             error_message = ';'.join(error_row)
             raise BadValueKOSOne
+
+        base_df['Значение_ком_навыков'] = answers_df.apply(calc_value_com_cos_one, axis=1)
+        base_df['Норма_ком_навыков'] = '0,45-0,75'
+        base_df['Оценка_ком_навыков'] = base_df['Значение_ком_навыков'].apply(calc_est_com_cos_one)
+        base_df['Уровень_ком_навыков'] = base_df['Оценка_ком_навыков'].apply(calc_level_com_cos_one)
+
+        base_df.to_excel('dada.xlsx')
+
 
 
     except BadOrderKOSOne:
