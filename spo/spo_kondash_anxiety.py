@@ -33,47 +33,47 @@ def calc_level_all_condash_anxiety(ser:pd.Series):
     if group == 1:
         if sex == 'Женский':
             if 17 <= value <= 54:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 55 <= value <= 73:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 74 <= value <= 90:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 90:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 10 <= value <= 48:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 49 <= value <= 67:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 68 <= value <= 86:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 86:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     elif group == 2 or group == 3:
         if sex == 'Женский':
             if 35 <= value <= 62:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 63 <= value <= 76:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 77 <= value <= 90:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 90:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 23 <= value <= 47:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 48 <= value <= 60:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 61 <= value <= 72:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 72:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     else:
@@ -119,47 +119,47 @@ def calc_level_study_condash_anxiety(ser:pd.Series):
     if group == 1:
         if sex == 'Женский':
             if 2 <= value <= 14:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 15 <= value <= 20:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 21 <= value <= 26:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 26:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 1 <= value <= 13:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 14 <= value <= 19:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 20 <= value <= 25:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 25:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     elif group == 2 or group == 3:
         if sex == 'Женский':
             if 5 <= value <= 17:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 18 <= value <= 23:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 24 <= value <= 30:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 30:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 5 <= value <= 14:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 15 <= value <= 19:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 20 <= value <= 24:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 24:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     else:
@@ -201,47 +201,47 @@ def calc_level_self_condash_anxiety(ser:pd.Series):
     if group == 1:
         if sex == 'Женский':
             if 6 <= value <= 19:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 20 <= value <= 26:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 27 <= value <= 32:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 32:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 1 <= value <= 17:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 18 <= value <= 26:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 27 <= value <= 34:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 34:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     elif group == 2 or group == 3:
         if sex == 'Женский':
             if 12 <= value <= 23:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 24 <= value <= 29:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 30 <= value <= 34:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 34:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 8 <= value <= 17:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 18 <= value <= 22:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 23 <= value <= 27:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 27:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     else:
@@ -282,47 +282,47 @@ def calc_level_soc_condash_anxiety(ser:pd.Series):
     if group == 1:
         if sex == 'Женский':
             if 4 <= value <= 19:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 20 <= value <= 26:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 27 <= value <= 33:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 33:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 3 <= value <= 17:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 18 <= value <= 25:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 26 <= value <= 32:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 32:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     elif group == 2 or group == 3:
         if sex == 'Женский':
             if 5 <= value <= 20:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 21 <= value <= 28:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 29 <= value <= 36:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 36:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
         else:
             if 5 <= value <= 14:
-                return 'Нормальный'
+                return 'Нормальный уровень тревожности'
             elif 15 <= value <= 19:
-                return 'Несколько повышенный'
+                return 'Несколько повышенный уровень тревожности'
             elif 20 <= value <= 23:
-                return 'Высокий'
+                return 'Высокий уровень тревожности'
             elif value > 23:
-                return 'Очень высокий'
+                return 'Очень высокий уровень тревожности'
             else:
                 return 'Чрезмерное спокойствие'
     else:
@@ -510,18 +510,18 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_all_count_df.reset_index(inplace=True)
 
         # Добавляем колонки с процентами
-        if 'Нормальный' in svod_all_count_df.columns:
-            svod_all_count_df['% Нормальный от общего'] = round(svod_all_count_df['Нормальный'] / svod_all_count_df['Итого'],2)*100
+        if 'Нормальный уровень тревожности' in svod_all_count_df.columns:
+            svod_all_count_df['% Нормальный уровень тревожности от общего'] = round(svod_all_count_df['Нормальный уровень тревожности'] / svod_all_count_df['Итого'],2)*100
 
 
-        if 'Несколько повышенный' in svod_all_count_df.columns:
-            svod_all_count_df['% Несколько повышенный от общего'] = round(svod_all_count_df['Несколько повышенный'] / svod_all_count_df['Итого'],2)*100
+        if 'Несколько повышенный уровень тревожности' in svod_all_count_df.columns:
+            svod_all_count_df['% Несколько повышенный уровень тревожности от общего'] = round(svod_all_count_df['Несколько повышенный уровень тревожности'] / svod_all_count_df['Итого'],2)*100
 
-        if 'Высокий' in svod_all_count_df.columns:
-            svod_all_count_df['% Высокий от общего'] = round(svod_all_count_df['Высокий'] / svod_all_count_df['Итого'],2)*100
+        if 'Высокий уровень тревожности' in svod_all_count_df.columns:
+            svod_all_count_df['% Высокий уровень тревожности от общего'] = round(svod_all_count_df['Высокий уровень тревожности'] / svod_all_count_df['Итого'],2)*100
 
-        if 'Очень высокий' in svod_all_count_df.columns:
-            svod_all_count_df['% Очень высокий от общего'] = round(svod_all_count_df['Очень высокий'] / svod_all_count_df['Итого'],2)*100
+        if 'Очень высокий уровень тревожности' in svod_all_count_df.columns:
+            svod_all_count_df['% Очень высокий уровень тревожности от общего'] = round(svod_all_count_df['Очень высокий уровень тревожности'] / svod_all_count_df['Итого'],2)*100
 
         if 'Чрезмерное спокойствие' in svod_all_count_df.columns:
             svod_all_count_df['% Чрезмерное спокойствие от общего'] = round(svod_all_count_df['Чрезмерное спокойствие'] / svod_all_count_df['Итого'],2)*100
@@ -535,17 +535,17 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_study_count_df.reset_index(inplace=True)
 
         # Добавляем колонки с процентами
-        if 'Нормальный' in svod_study_count_df.columns:
-            svod_study_count_df['% Нормальный от общего'] = round(svod_study_count_df['Нормальный'] / svod_study_count_df['Итого'],2)
+        if 'Нормальный уровень тревожности' in svod_study_count_df.columns:
+            svod_study_count_df['% Нормальный уровень тревожности от общего'] = round(svod_study_count_df['Нормальный уровень тревожности'] / svod_study_count_df['Итого'],2)
 
-        if 'Несколько повышенный' in svod_study_count_df.columns:
-            svod_study_count_df['% Несколько повышенный от общего'] = round(svod_study_count_df['Несколько повышенный'] / svod_study_count_df['Итого'],2)*100
+        if 'Несколько повышенный уровень тревожности' in svod_study_count_df.columns:
+            svod_study_count_df['% Несколько повышенный уровень тревожности от общего'] = round(svod_study_count_df['Несколько повышенный уровень тревожности'] / svod_study_count_df['Итого'],2)*100
 
-        if 'Высокий' in svod_study_count_df.columns:
-            svod_study_count_df['% Высокий от общего'] = round(svod_study_count_df['Высокий'] / svod_study_count_df['Итого'],2)*100
+        if 'Высокий уровень тревожности' in svod_study_count_df.columns:
+            svod_study_count_df['% Высокий уровень тревожности от общего'] = round(svod_study_count_df['Высокий уровень тревожности'] / svod_study_count_df['Итого'],2)*100
 
-        if 'Очень высокий' in svod_study_count_df.columns:
-            svod_study_count_df['% Очень высокий от общего'] = round(svod_study_count_df['Очень высокий'] / svod_study_count_df['Итого'],2)*100
+        if 'Очень высокий уровень тревожности' in svod_study_count_df.columns:
+            svod_study_count_df['% Очень высокий уровень тревожности от общего'] = round(svod_study_count_df['Очень высокий уровень тревожности'] / svod_study_count_df['Итого'],2)*100
 
         if 'Чрезмерное спокойствие' in svod_study_count_df.columns:
             svod_study_count_df['% Чрезмерное спокойствие от общего'] = round(svod_study_count_df['Чрезмерное спокойствие'] / svod_study_count_df['Итого'],2)*100
@@ -558,22 +558,22 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                      aggfunc='count',margins=True,margins_name='Итого')
         svod_self_count_df.reset_index(inplace=True)
 
-        if 'Нормальный' in svod_self_count_df.columns:
-            svod_self_count_df['% Нормальный от общего'] = round(
-                svod_self_count_df['Нормальный'] / svod_self_count_df['Итого'], 2)*100
+        if 'Нормальный уровень тревожности' in svod_self_count_df.columns:
+            svod_self_count_df['% Нормальный уровень тревожности от общего'] = round(
+                svod_self_count_df['Нормальный уровень тревожности'] / svod_self_count_df['Итого'], 2)*100
 
 
-        if 'Несколько повышенный' in svod_self_count_df.columns:
-            svod_self_count_df['% Несколько повышенный от общего'] = round(
-                svod_self_count_df['Несколько повышенный'] / svod_self_count_df['Итого'], 2)*100
+        if 'Несколько повышенный уровень тревожности' in svod_self_count_df.columns:
+            svod_self_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+                svod_self_count_df['Несколько повышенный уровень тревожности'] / svod_self_count_df['Итого'], 2)*100
 
-        if 'Высокий' in svod_self_count_df.columns:
-            svod_self_count_df['% Высокий от общего'] = round(svod_self_count_df['Высокий'] / svod_self_count_df['Итого'],
+        if 'Высокий уровень тревожности' in svod_self_count_df.columns:
+            svod_self_count_df['% Высокий уровень тревожности от общего'] = round(svod_self_count_df['Высокий уровень тревожности'] / svod_self_count_df['Итого'],
                                                               2)*100
 
-        if 'Очень высокий' in svod_self_count_df.columns:
-            svod_self_count_df['% Очень высокий от общего'] = round(
-                svod_self_count_df['Очень высокий'] / svod_self_count_df['Итого'], 2)*100
+        if 'Очень высокий уровень тревожности' in svod_self_count_df.columns:
+            svod_self_count_df['% Очень высокий уровень тревожности от общего'] = round(
+                svod_self_count_df['Очень высокий уровень тревожности'] / svod_self_count_df['Итого'], 2)*100
 
         if 'Чрезмерное спокойствие' in svod_self_count_df.columns:
             svod_self_count_df['% Чрезмерное спокойствие от общего'] = round(
@@ -587,21 +587,21 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                      aggfunc='count',margins=True,margins_name='Итого')
         svod_soc_count_df.reset_index(inplace=True)
 
-        if 'Нормальный' in svod_soc_count_df.columns:
-            svod_soc_count_df['% Нормальный от общего'] = round(
-                svod_soc_count_df['Нормальный'] / svod_soc_count_df['Итого'], 2)*100
+        if 'Нормальный уровень тревожности' in svod_soc_count_df.columns:
+            svod_soc_count_df['% Нормальный уровень тревожности от общего'] = round(
+                svod_soc_count_df['Нормальный уровень тревожности'] / svod_soc_count_df['Итого'], 2)*100
 
 
-        if 'Несколько повышенный' in svod_soc_count_df.columns:
-            svod_soc_count_df['% Несколько повышенный от общего'] = round(
-                svod_soc_count_df['Несколько повышенный'] / svod_soc_count_df['Итого'], 2)*100
+        if 'Несколько повышенный уровень тревожности' in svod_soc_count_df.columns:
+            svod_soc_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+                svod_soc_count_df['Несколько повышенный уровень тревожности'] / svod_soc_count_df['Итого'], 2)*100
 
-        if 'Высокий' in svod_soc_count_df.columns:
-            svod_soc_count_df['% Высокий от общего'] = round(svod_soc_count_df['Высокий'] / svod_soc_count_df['Итого'], 2)*100
+        if 'Высокий уровень тревожности' in svod_soc_count_df.columns:
+            svod_soc_count_df['% Высокий уровень тревожности от общего'] = round(svod_soc_count_df['Высокий уровень тревожности'] / svod_soc_count_df['Итого'], 2)*100
 
-        if 'Очень высокий' in svod_soc_count_df.columns:
-            svod_soc_count_df['% Очень высокий от общего'] = round(
-                svod_soc_count_df['Очень высокий'] / svod_soc_count_df['Итого'], 2)*100
+        if 'Очень высокий уровень тревожности' in svod_soc_count_df.columns:
+            svod_soc_count_df['% Очень высокий уровень тревожности от общего'] = round(
+                svod_soc_count_df['Очень высокий уровень тревожности'] / svod_soc_count_df['Итого'], 2)*100
 
         if 'Чрезмерное спокойствие' in svod_soc_count_df.columns:
             svod_soc_count_df['% Чрезмерное спокойствие от общего'] = round(
@@ -664,22 +664,22 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
             # Добавляем колонки с процентами
-            if 'Нормальный' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% Нормальный от общего'] = round(
-                    svod_all_group_count_df['Нормальный'] / svod_all_group_count_df['Итого'], 2)*100
+            if 'Нормальный уровень тревожности' in svod_all_group_count_df.columns:
+                svod_all_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+                    svod_all_group_count_df['Нормальный уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
 
 
-            if 'Несколько повышенный' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% Несколько повышенный от общего'] = round(
-                    svod_all_group_count_df['Несколько повышенный'] / svod_all_group_count_df['Итого'], 2)*100
+            if 'Несколько повышенный уровень тревожности' in svod_all_group_count_df.columns:
+                svod_all_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+                    svod_all_group_count_df['Несколько повышенный уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
 
-            if 'Высокий' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% Высокий от общего'] = round(svod_all_group_count_df['Высокий'] / svod_all_group_count_df['Итого'],
+            if 'Высокий уровень тревожности' in svod_all_group_count_df.columns:
+                svod_all_group_count_df['% Высокий уровень тревожности от общего'] = round(svod_all_group_count_df['Высокий уровень тревожности'] / svod_all_group_count_df['Итого'],
                                                                  2)*100
 
-            if 'Очень высокий' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% Очень высокий от общего'] = round(
-                    svod_all_group_count_df['Очень высокий'] / svod_all_group_count_df['Итого'], 2)*100
+            if 'Очень высокий уровень тревожности' in svod_all_group_count_df.columns:
+                svod_all_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+                    svod_all_group_count_df['Очень высокий уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
 
             if 'Чрезмерное спокойствие' in svod_all_group_count_df.columns:
                 svod_all_group_count_df['% Чрезмерное спокойствие от общего'] = round(
@@ -694,22 +694,22 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_study_group_count_df.reset_index(inplace=True)
 
             # Добавляем колонки с процентами
-            if 'Нормальный' in svod_study_group_count_df.columns:
-                svod_study_group_count_df['% Нормальный от общего'] = round(
-                    svod_study_group_count_df['Нормальный'] / svod_study_group_count_df['Итого'], 2)*100
+            if 'Нормальный уровень тревожности' in svod_study_group_count_df.columns:
+                svod_study_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+                    svod_study_group_count_df['Нормальный уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
 
-            if 'Несколько повышенный' in svod_study_group_count_df.columns:
-                svod_study_group_count_df['% Несколько повышенный от общего'] = round(
-                    svod_study_group_count_df['Несколько повышенный'] / svod_study_group_count_df['Итого'], 2)*100
+            if 'Несколько повышенный уровень тревожности' in svod_study_group_count_df.columns:
+                svod_study_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+                    svod_study_group_count_df['Несколько повышенный уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
-            if 'Высокий' in svod_study_group_count_df.columns:
-                svod_study_group_count_df['% Высокий от общего'] = round(
-                    svod_study_group_count_df['Высокий'] / svod_study_group_count_df['Итого'], 2)*100
+            if 'Высокий уровень тревожности' in svod_study_group_count_df.columns:
+                svod_study_group_count_df['% Высокий уровень тревожности от общего'] = round(
+                    svod_study_group_count_df['Высокий уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
-            if 'Очень высокий' in svod_study_group_count_df.columns:
-                svod_study_group_count_df['% Очень высокий от общего'] = round(
-                    svod_study_group_count_df['Очень высокий'] / svod_study_group_count_df['Итого'], 2)*100
+            if 'Очень высокий уровень тревожности' in svod_study_group_count_df.columns:
+                svod_study_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+                    svod_study_group_count_df['Очень высокий уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
             if 'Чрезмерное спокойствие' in svod_study_group_count_df.columns:
                 svod_study_group_count_df['% Чрезмерное спокойствие от общего'] = round(
@@ -723,23 +723,23 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                       aggfunc='count', margins=True, margins_name='Итого')
             svod_self_group_count_df.reset_index(inplace=True)
 
-            if 'Нормальный' in svod_self_group_count_df.columns:
-                svod_self_group_count_df['% Нормальный от общего'] = round(
-                    svod_self_group_count_df['Нормальный'] / svod_self_group_count_df['Итого'], 2)*100
+            if 'Нормальный уровень тревожности' in svod_self_group_count_df.columns:
+                svod_self_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+                    svod_self_group_count_df['Нормальный уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
 
 
-            if 'Несколько повышенный' in svod_self_group_count_df.columns:
-                svod_self_group_count_df['% Несколько повышенный от общего'] = round(
-                    svod_self_group_count_df['Несколько повышенный'] / svod_self_group_count_df['Итого'], 2)*100
+            if 'Несколько повышенный уровень тревожности' in svod_self_group_count_df.columns:
+                svod_self_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+                    svod_self_group_count_df['Несколько повышенный уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
 
-            if 'Высокий' in svod_self_group_count_df.columns:
-                svod_self_group_count_df['% Высокий от общего'] = round(
-                    svod_self_group_count_df['Высокий'] / svod_self_group_count_df['Итого'],
+            if 'Высокий уровень тревожности' in svod_self_group_count_df.columns:
+                svod_self_group_count_df['% Высокий уровень тревожности от общего'] = round(
+                    svod_self_group_count_df['Высокий уровень тревожности'] / svod_self_group_count_df['Итого'],
                     2)*100
 
-            if 'Очень высокий' in svod_self_group_count_df.columns:
-                svod_self_group_count_df['% Очень высокий от общего'] = round(
-                    svod_self_group_count_df['Очень высокий'] / svod_self_group_count_df['Итого'], 2)*100
+            if 'Очень высокий уровень тревожности' in svod_self_group_count_df.columns:
+                svod_self_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+                    svod_self_group_count_df['Очень высокий уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
 
             if 'Чрезмерное спокойствие' in svod_self_group_count_df.columns:
                 svod_self_group_count_df['% Чрезмерное спокойствие от общего'] = round(
@@ -753,23 +753,23 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                      aggfunc='count', margins=True, margins_name='Итого')
             svod_soc_group_count_df.reset_index(inplace=True)
 
-            if 'Нормальный' in svod_soc_group_count_df.columns:
-                svod_soc_group_count_df['% Нормальный от общего'] = round(
-                    svod_soc_group_count_df['Нормальный'] / svod_soc_group_count_df['Итого'], 2)*100
+            if 'Нормальный уровень тревожности' in svod_soc_group_count_df.columns:
+                svod_soc_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+                    svod_soc_group_count_df['Нормальный уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
 
 
-            if 'Несколько повышенный' in svod_soc_group_count_df.columns:
-                svod_soc_group_count_df['% Несколько повышенный от общего'] = round(
-                    svod_soc_group_count_df['Несколько повышенный'] / svod_soc_group_count_df['Итого'], 2)*100
+            if 'Несколько повышенный уровень тревожности' in svod_soc_group_count_df.columns:
+                svod_soc_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+                    svod_soc_group_count_df['Несколько повышенный уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
 
-            if 'Высокий' in svod_soc_group_count_df.columns:
-                svod_soc_group_count_df['% Высокий от общего'] = round(
-                    svod_soc_group_count_df['Высокий'] / svod_soc_group_count_df['Итого'],
+            if 'Высокий уровень тревожности' in svod_soc_group_count_df.columns:
+                svod_soc_group_count_df['% Высокий уровень тревожности от общего'] = round(
+                    svod_soc_group_count_df['Высокий уровень тревожности'] / svod_soc_group_count_df['Итого'],
                     2)*100
 
-            if 'Очень высокий' in svod_soc_group_count_df.columns:
-                svod_soc_group_count_df['% Очень высокий от общего'] = round(
-                    svod_soc_group_count_df['Очень высокий'] / svod_soc_group_count_df['Итого'], 2)*100
+            if 'Очень высокий уровень тревожности' in svod_soc_group_count_df.columns:
+                svod_soc_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+                    svod_soc_group_count_df['Очень высокий уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
 
             if 'Чрезмерное спокойствие' in svod_soc_group_count_df.columns:
                 svod_soc_group_count_df['% Чрезмерное спокойствие от общего'] = round(
@@ -799,7 +799,6 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                  f'При обработке вопросов теста Шкалы тревожности Кондаша обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
                                  f'{error_message}\n'
                                  f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
-
 
 
 

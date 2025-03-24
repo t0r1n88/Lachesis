@@ -248,13 +248,6 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         part_df['Значение_орг_навыков_КОС_один'] = base_df['Значение_орг_навыков']
         part_df['Уровень_орг_навыков_КОС_один'] = base_df['Уровень_орг_навыков']
 
-        # # словарь для замены слов на числа
-        # dct_replace_for_main = {'Высокий': 'Высокий КОС-1',
-        #                      'Очень высокий': 'Очень высокий КОС-1'}
-        # part_df.replace(dct_replace_for_main, inplace=True)  # заменяем слова на цифры для подсчетов
-        #
-        #
-
 
         base_df.sort_values(by='Значение_ком_навыков', ascending=False, inplace=True)  # сортируем
 
