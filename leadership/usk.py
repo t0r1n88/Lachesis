@@ -153,7 +153,7 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     base_df.sort_values(by='Значение_уровня_самооценки', ascending=False, inplace=True)  # сортируем
 
 
-    # Делаем сводную таблицу по курсу
+    # Среднее Курс
     mean_course_usk_df = pd.pivot_table(base_df, index=['Курс'],
                                         values=['Значение_уровня_самооценки'],
                                         aggfunc=round_mean)
@@ -161,7 +161,7 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     mean_course_usk_df['Уровень_самооценки'] = mean_course_usk_df['Значение_уровня_самооценки'].apply(
         calc_level_usk)  # считаем уровень
 
-    # делаем сводную по курсу и уровню
+    # Количество Курс
     count_course_usk_df = pd.pivot_table(base_df, index=['Курс'],
                                          columns='Уровень_самооценки',
                                          values='Значение_уровня_самооценки',
@@ -184,4 +184,110 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
 
+    # Средняя Курс и Пол
+
+    mean_course_sex_usk_df = pd.pivot_table(base_df, index=['Курс','Пол'],
+                                        values=['Значение_уровня_самооценки'],
+                                        aggfunc=round_mean)
+    mean_course_sex_usk_df.reset_index(inplace=True)
+    mean_course_sex_usk_df['Уровень_самооценки'] = mean_course_sex_usk_df['Значение_уровня_самооценки'].apply(
+        calc_level_usk)  # считаем уровень
+
+    # Количество Курс и Пол
+    count_course_sex_usk_df = pd.pivot_table(base_df, index=['Курс','Пол'],
+                                         columns='Уровень_самооценки',
+                                         values='Значение_уровня_самооценки',
+                                         aggfunc='count', margins=True, margins_name='Итого')
+    count_course_sex_usk_df.reset_index(inplace=True)
+
+    if 'Низкий уровень самооценки' in count_course_sex_usk_df.columns:
+        count_course_sex_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_course_sex_usk_df['Низкий уровень самооценки'] / count_course_sex_usk_df['Итого'], 2) * 100
+
+    if 'Средний уровень самооценки' in count_course_sex_usk_df.columns:
+        count_course_sex_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_course_sex_usk_df['Средний уровень самооценки'] /
+            count_course_sex_usk_df['Итого'], 2) * 100
+
+    if 'Высокий уровень самооценки' in count_course_sex_usk_df.columns:
+        count_course_sex_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_course_sex_usk_df['Высокий уровень самооценки'] /
+            count_course_sex_usk_df['Итого'], 2) * 100
+
+    """
+    Обработка групп
+    """
+    # Средняя Группа
+    mean_group_usk_df = pd.pivot_table(base_df, index=['Группа'],
+                                        values=['Значение_уровня_самооценки'],
+                                        aggfunc=round_mean)
+    mean_group_usk_df.reset_index(inplace=True)
+    mean_group_usk_df['Уровень_самооценки'] = mean_group_usk_df['Значение_уровня_самооценки'].apply(
+        calc_level_usk)  # считаем уровень
+
+    # Количество Группа и Пол
+    count_group_usk_df = pd.pivot_table(base_df, index=['Группа'],
+                                         columns='Уровень_самооценки',
+                                         values='Значение_уровня_самооценки',
+                                         aggfunc='count', margins=True, margins_name='Итого')
+    count_group_usk_df.reset_index(inplace=True)
+
+    if 'Низкий уровень самооценки' in count_group_usk_df.columns:
+        count_group_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_group_usk_df['Низкий уровень самооценки'] / count_group_usk_df['Итого'], 2) * 100
+
+    if 'Средний уровень самооценки' in count_group_usk_df.columns:
+        count_group_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_group_usk_df['Средний уровень самооценки'] /
+            count_group_usk_df['Итого'], 2) * 100
+
+    if 'Высокий уровень самооценки' in count_group_usk_df.columns:
+        count_group_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_group_usk_df['Высокий уровень самооценки'] /
+            count_group_usk_df['Итого'], 2) * 100
+
+
+
+    # Средняя Группа и Пол
+
+    mean_group_sex_usk_df = pd.pivot_table(base_df, index=['Группа','Пол'],
+                                        values=['Значение_уровня_самооценки'],
+                                        aggfunc=round_mean)
+    mean_group_sex_usk_df.reset_index(inplace=True)
+    mean_group_sex_usk_df['Уровень_самооценки'] = mean_group_sex_usk_df['Значение_уровня_самооценки'].apply(
+        calc_level_usk)  # считаем уровень
+
+    # Количество Группа и Пол
+    count_group_sex_usk_df = pd.pivot_table(base_df, index=['Группа','Пол'],
+                                         columns='Уровень_самооценки',
+                                         values='Значение_уровня_самооценки',
+                                         aggfunc='count', margins=True, margins_name='Итого')
+    count_group_sex_usk_df.reset_index(inplace=True)
+
+    if 'Низкий уровень самооценки' in count_group_sex_usk_df.columns:
+        count_group_sex_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_group_sex_usk_df['Низкий уровень самооценки'] / count_group_sex_usk_df['Итого'], 2) * 100
+
+    if 'Средний уровень самооценки' in count_group_sex_usk_df.columns:
+        count_group_sex_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_group_sex_usk_df['Средний уровень самооценки'] /
+            count_group_sex_usk_df['Итого'], 2) * 100
+
+    if 'Высокий уровень самооценки' in count_group_sex_usk_df.columns:
+        count_group_sex_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_group_sex_usk_df['Высокий уровень самооценки'] /
+            count_group_sex_usk_df['Итого'], 2) * 100
+
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
+
+    # формируем словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               'Среднее Группа': mean_group_usk_df, 'Количество Группа': count_group_usk_df,
+               'Среднее Группа Пол': mean_group_sex_usk_df, 'Количество Группа Пол': count_group_sex_usk_df,
+               'Среднее Курс': mean_course_usk_df, 'Количество Курс': count_course_usk_df,
+               'Среднее Курс Пол': mean_course_sex_usk_df, 'Количество Курс Пол': count_course_sex_usk_df,
+
+               }
+
+    return out_dct, part_df
 
