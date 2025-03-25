@@ -9,9 +9,9 @@ from spo.zung_depress import processing_zung_depress # функция для о�
 from spo.voz_well_being import processing_voz_well_being # функция для обработки результатов теста общего самочувствия ВОЗ 1999
 
 # Лидерство, самооценка, эмоциональный интеллект
-from leadership.ei import processing_ei # эмоциональный интеллект
-from leadership.kos_one import processing_kos # коммуникативные и организаторские способности Федоришин
-from leadership.usk import processing_usk # уровень самооценки Ковалев
+from spo_leadership.ei import processing_ei # эмоциональный интеллект
+from spo_leadership.kos_one import processing_kos # коммуникативные и организаторские способности Федоришин
+from spo_leadership.usk import processing_usk # уровень самооценки Ковалев
 
 
 
