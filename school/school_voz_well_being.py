@@ -141,8 +141,9 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по Номер_класса': svod_all_course_df,'Среднее Номер_класса Пол': svod_all_course_sex_df,
-                       'Среднее по Классам': svod_all_group_df,'Среднее Класс Пол': svod_all_group_sex_df,
+                       'Среднее по Классам': svod_all_group_df, 'Среднее Класс Пол': svod_all_group_sex_df,
+                       'Среднее по Номер_класса': svod_all_course_df,'Среднее Номер_класса Пол': svod_all_course_sex_df
+
                       }
 
             return out_dct,part_df

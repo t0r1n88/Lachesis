@@ -179,6 +179,42 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         base_df.sort_values(by='Значение_уровня_депрессии',ascending=False,inplace=True) # сортируем
 
 
+        svod_course_df = pd.pivot_table(base_df, index=['Курс'],
+                                     values=['Значение_уровня_депрессии'],
+                                     aggfunc=round_mean)
+        svod_course_df.reset_index(inplace=True)
+        svod_course_df['Уровень_депрессии'] = svod_course_df['Значение_уровня_депрессии'].apply(
+            calc_level_bek_depress)  # считаем уровень
+
+        # Делаем свод по количеству
+        svod_course_count_df = pd.pivot_table(base_df, index=['Курс'],
+                                           columns='Уровень_депрессии',
+                                           values='Значение_уровня_депрессии',
+                                           aggfunc='count', margins=True, margins_name='Итого')
+        svod_course_count_df.reset_index(inplace=True)
+
+        # Добавляем колонки с процентами
+        if 'удовлетворительное эмоциональное состояние' in svod_course_count_df.columns:
+            svod_course_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+                svod_course_count_df['удовлетворительное эмоциональное состояние'] / svod_course_count_df['Итого'], 2) * 100
+
+        if 'легкая депрессия' in svod_course_count_df.columns:
+            svod_course_count_df['% легкая депрессия  от общего'] = round(
+                svod_course_count_df['легкая депрессия'] / svod_course_count_df['Итого'], 2) * 100
+        if 'умеренная депрессия' in svod_course_count_df.columns:
+            svod_course_count_df['% умеренная депрессия от общего'] = round(
+                svod_course_count_df['умеренная депрессия'] / svod_course_count_df['Итого'], 2) * 100
+        if 'тяжелая депрессия' in svod_course_count_df.columns:
+            svod_course_count_df['% тяжелая депрессия от общего'] = round(
+                svod_course_count_df['тяжелая депрессия'] / svod_course_count_df['Итого'], 2) * 100
+
+
+
+
+
+
+
+
 
 
         # Делаем сводную таблицу средних значений.
@@ -285,9 +321,11 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
             # формируем словарь
             out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
-                'Средний результат':svod_all_df,'Количество':svod_all_count_df,
-                       'Ср_рез по группам': svod_all_only_group_df, 'Кол по группам': svod_all_only_group_count_df,
-                       'Ср_рез по группам и полам':svod_all_group_df,'Кол по группам и полам':svod_all_group_count_df
+                       'Среднее по группам': svod_all_only_group_df, 'Количество по группам': svod_all_only_group_count_df,
+                       'Среднее по группам и полам': svod_all_group_df, 'Количество по группам и полам': svod_all_group_count_df,
+                       'Среднее по курсу': svod_course_df, 'Количество по курсу': svod_course_count_df,
+                'Среднее по курсу и полу':svod_all_df,'Количество по курсу и полу':svod_all_count_df
+
                        }
 
             return out_dct, part_df

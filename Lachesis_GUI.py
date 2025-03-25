@@ -476,6 +476,71 @@ def open_libraries():
     text_area.config(yscrollcommand=scroll.set)
 
 
+def open_list_pioneers():
+    """
+    Функция для демонстрации списка людей, что участвовали во внедрении
+    :return:
+    """
+    # Создание нового окна
+    new_window = Toplevel(window)
+    # Устанавливаем размер окна на весь экран
+    screen_width = new_window.winfo_screenwidth()
+    screen_height = new_window.winfo_screenheight()
+    new_window.geometry(f"{screen_width}x{screen_height}+0+0")
+
+
+    # Настройка нового окна
+    new_window.title("Пионеры проекта")
+
+    text_widget = Text(new_window, wrap=WORD, font=("Arial", 12), bg="white", fg="black")
+    text_widget.pack(padx=10, pady=10, fill=BOTH, expand=True)
+
+    # Настройка тегов для форматирования
+    text_widget.tag_config("header", font=("Arial", 16, "bold"), foreground="blue")
+    text_widget.tag_config("person", font=("Arial", 14))
+
+    # Заголовок
+    text_widget.insert(END, "Организаторы\n\n", "header")
+
+    # Список людей
+    orgs = [
+        "Белькова Мария Родионовна",
+    ]
+
+    # Добавляем организаторов в текстовый виджет
+    for person in orgs:
+        text_widget.insert(END, f"- {person}\n", "person")
+
+
+    workers = [
+        'Демина Татьяна Николаевна',
+        'Казарина Мария Александровна',
+    ]
+    text_widget.insert(END,"\n\nПедагоги-психологи внесшие особый вклад\n\n", "header")
+    # Добавляем учителей в текстовый виджет
+    for worker in workers:
+        text_widget.insert(END, f"- {worker}\n", "person")
+
+
+    text_widget.insert(END,"\n\nПедагоги-психологи участники пилотного внедрения\n\n", "header")
+
+
+
+    # Добавляем участников
+    teachers  = [
+        'Абрамов Константин Александрович ',
+
+    ]
+    # Добавляем учителей в текстовый виджет
+    for teach in teachers:
+        text_widget.insert(END, f"- {teach}\n", "person")
+
+
+
+    # Отключаем редактирование текста
+    text_widget.config(state=DISABLED)
+
+
 
 if __name__ == '__main__':
     window = Tk()
@@ -510,8 +575,9 @@ if __name__ == '__main__':
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
     lbl_hello_spo_anxiety = Label(tab_report_spo_anxiety,
-                                  text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест \n'
-                                       'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале.'
+                                  text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест студентов СПО \n'
+                                       'В начале таблицы должны ОБЯЗАТЕЛЬНО быть колонки\n'
+                                       'с названиями Курс, Группа, Пол.'
                                   )
     lbl_hello_spo_anxiety.grid(column=0, row=0, padx=10, pady=25)
 
@@ -550,7 +616,7 @@ if __name__ == '__main__':
     var_entry_threshold_spo_anxiety = StringVar()
     # Описание поля
     label_name_threshold_spo_anxiety = Label(tab_report_spo_anxiety,
-                                             text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
+                                             text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 4')
     label_name_threshold_spo_anxiety.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
     entry_threshold_spo_anxiety = Entry(tab_report_spo_anxiety, textvariable=var_entry_threshold_spo_anxiety, width=30)
@@ -574,8 +640,9 @@ if __name__ == '__main__':
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
     lbl_hello_school_anxiety = Label(tab_report_school_anxiety,
-                                     text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест \n'
-                                          'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале.'
+                                     text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест старшеклассников \n'
+                                       'В начале таблицы должны ОБЯЗАТЕЛЬНО быть колонки\n'
+                                       'с названиями Номер класса, Буква класса, Пол.'
                                      )
     lbl_hello_school_anxiety.grid(column=0, row=0, padx=10, pady=25)
 
@@ -614,7 +681,7 @@ if __name__ == '__main__':
     var_entry_threshold_school_anxiety = StringVar()
     # Описание поля
     label_name_threshold_school_anxiety = Label(tab_report_school_anxiety,
-                                                text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
+                                                text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 4')
     label_name_threshold_school_anxiety.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
     entry_threshold_school_anxiety = Entry(tab_report_school_anxiety, textvariable=var_entry_threshold_school_anxiety,
@@ -1038,6 +1105,11 @@ if __name__ == '__main__':
 
     text_area_url.configure(state='normal')
     text_area_url.pack(side=LEFT)
+
+    # Кнопка для демонстрации ФИО первопроходцев
+    button_pioneers = Button(tab_about, text="Пионеры", command=open_list_pioneers)
+    button_pioneers.pack(padx=10, pady=10)
+
 
     # Кнопка, для демонстрации в отдельном окне списка изменений
     list_changes_path = resource_path('Список изменений.txt')  # путь к файлу лицензии
