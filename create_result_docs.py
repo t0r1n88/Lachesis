@@ -3,7 +3,6 @@
 Скрипт для генерации документов по результатам тестирования
 """
 import pandas as pd
-pd.options.mode.copy_on_write = True
 import os
 import re
 import time

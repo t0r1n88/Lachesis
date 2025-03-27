@@ -18,7 +18,6 @@ from school_leadership.sсhool_usk import processing_usk # уровень сам
 from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int, count_attention # функции для создания итогового файла
 
 import pandas as pd
-pd.options.mode.copy_on_write = True
 from tkinter import messagebox
 import re
 import time
