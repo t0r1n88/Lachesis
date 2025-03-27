@@ -18,6 +18,7 @@ from school_leadership.sсhool_usk import processing_usk # уровень сам
 from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int, count_attention # функции для создания итогового файла
 
 import pandas as pd
+pd.options.mode.chained_assignment = None
 from tkinter import messagebox
 import re
 import time
@@ -157,8 +158,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
         # Сохраняем в удобном виде
         main_itog_df.sort_values(by='Класс',inplace=True) # сортируем
         # Отбираем тех кто требует внимания.
-        set_alert_value = {'тяжелая депрессия','безнадежность тяжёлая','Очень высокий','истинное депрессивное состояние'} # особое внимание
-        set_attention_value = {'умеренная депрессия','безнадежность умеренная','Высокий','субдепрессивное состояние или маскированная депрессия'} # обратить внимание
+        set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние'] # особое внимание
+        set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия'] # обратить внимание
 
         alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
         attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
