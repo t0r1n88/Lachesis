@@ -196,6 +196,7 @@ if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство СПО.xlsx'
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
 

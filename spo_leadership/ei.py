@@ -3,7 +3,7 @@
 """
 import pandas as pd
 from tkinter import messagebox
-from lachesis_support_functions import round_mean
+from lachesis_support_functions import round_mean,sort_name_class
 class BadOrderEI(Exception):
     """
     Исключение для обработки случая когда колонки не совпадают
@@ -664,6 +664,7 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         base_df.sort_values(by='Значение_общего_ЭИ', ascending=False, inplace=True)  # сортируем
 
+
         # Делаем сводную таблицу по курсу
         mean_course_oei_df = pd.pivot_table(base_df, index=['Курс'],
                                             values=['Значение_общего_ЭИ'],
@@ -678,28 +679,26 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_общего_ЭИ',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         count_course_oei_df.reset_index(inplace=True)
+        count_course_oei_df = count_course_oei_df.reindex(
+            columns=['Курс', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_oei_df.columns:
-            count_course_oei_df['% Очень низкое значение от общего'] = round(
-                count_course_oei_df['Очень низкое значение'] / count_course_oei_df['Итого'], 2) * 100
+        count_course_oei_df['% Очень низкое значение от общего'] = round(
+            count_course_oei_df['Очень низкое значение'] / count_course_oei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_oei_df.columns:
-            count_course_oei_df['% Низкое значение от общего'] = round(
-                count_course_oei_df['Низкое значение'] /
-                count_course_oei_df['Итого'], 2) * 100
+        count_course_oei_df['% Низкое значение от общего'] = round(
+            count_course_oei_df['Низкое значение'] /
+            count_course_oei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_oei_df.columns:
-            count_course_oei_df['% Среднее значение от общего'] = round(
-                count_course_oei_df['Среднее значение'] /
-                count_course_oei_df['Итого'], 2) * 100
+        count_course_oei_df['% Среднее значение от общего'] = round(
+            count_course_oei_df['Среднее значение'] /
+            count_course_oei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_oei_df.columns:
-            count_course_oei_df['% Высокое значение от общего'] = round(
-                count_course_oei_df['Высокое значение'] / count_course_oei_df['Итого'], 2) * 100
+        count_course_oei_df['% Высокое значение от общего'] = round(
+            count_course_oei_df['Высокое значение'] / count_course_oei_df['Итого'], 2) * 100
 
-        if 'Очень высокое значение' in count_course_oei_df.columns:
-            count_course_oei_df['% Очень высокое значение от общего'] = round(
-                count_course_oei_df['Очень высокое значение'] / count_course_oei_df['Итого'], 2) * 100
+        count_course_oei_df['% Очень высокое значение от общего'] = round(
+            count_course_oei_df['Очень высокое значение'] / count_course_oei_df['Итого'], 2) * 100
 
 
 
@@ -717,27 +716,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_шкалы_МЭИ',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         count_course_mei_df.reset_index(inplace=True)
+        count_course_mei_df = count_course_mei_df.reindex(
+            columns=['Курс', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_mei_df.columns:
-            count_course_mei_df['% Очень низкое значение  от общего'] = round(
-                count_course_mei_df['Очень низкое значение'] / count_course_mei_df['Итого'], 2) * 100
+        count_course_mei_df['% Очень низкое значение  от общего'] = round(
+            count_course_mei_df['Очень низкое значение'] / count_course_mei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_mei_df.columns:
-            count_course_mei_df['% Низкое значение от общего'] = round(
-                count_course_mei_df['Низкое значение'] /
-                count_course_mei_df['Итого'], 2) * 100
+        count_course_mei_df['% Низкое значение от общего'] = round(
+            count_course_mei_df['Низкое значение'] /
+            count_course_mei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_mei_df.columns:
-            count_course_mei_df['% Среднее значение от общего'] = round(
-                count_course_mei_df['Среднее значение'] /
-                count_course_mei_df['Итого'], 2) * 100
+        count_course_mei_df['% Среднее значение от общего'] = round(
+            count_course_mei_df['Среднее значение'] /
+            count_course_mei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_mei_df.columns:
-            count_course_mei_df['% Высокое значение от общего'] = round(
-                count_course_mei_df['Высокое значение'] / count_course_mei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_mei_df.columns:
-            count_course_mei_df['% Очень высокое значение от общего'] = round(
-                count_course_mei_df['Очень высокое значение'] / count_course_mei_df['Итого'], 2) * 100
+        count_course_mei_df['% Высокое значение от общего'] = round(
+            count_course_mei_df['Высокое значение'] / count_course_mei_df['Итого'], 2) * 100
+        count_course_mei_df['% Очень высокое значение от общего'] = round(
+            count_course_mei_df['Очень высокое значение'] / count_course_mei_df['Итого'], 2) * 100
 
 
         # ВЭИ
@@ -754,27 +751,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_шкалы_ВЭИ',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         count_course_vei_df.reset_index(inplace=True)
+        count_course_vei_df = count_course_vei_df.reindex(
+            columns=['Курс', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_vei_df.columns:
-            count_course_vei_df['% Очень низкое значение  от общего'] = round(
-                count_course_vei_df['Очень низкое значение'] / count_course_vei_df['Итого'], 2) * 100
+        count_course_vei_df['% Очень низкое значение  от общего'] = round(
+            count_course_vei_df['Очень низкое значение'] / count_course_vei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_vei_df.columns:
-            count_course_vei_df['% Низкое значение от общего'] = round(
-                count_course_vei_df['Низкое значение'] /
-                count_course_vei_df['Итого'], 2) * 100
+        count_course_vei_df['% Низкое значение от общего'] = round(
+            count_course_vei_df['Низкое значение'] /
+            count_course_vei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_vei_df.columns:
-            count_course_vei_df['% Среднее значение от общего'] = round(
-                count_course_vei_df['Среднее значение'] /
-                count_course_vei_df['Итого'], 2) * 100
+        count_course_vei_df['% Среднее значение от общего'] = round(
+            count_course_vei_df['Среднее значение'] /
+            count_course_vei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_vei_df.columns:
-            count_course_vei_df['% Высокое значение от общего'] = round(
-                count_course_vei_df['Высокое значение'] / count_course_vei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_vei_df.columns:
-            count_course_vei_df['% Очень высокое значение от общего'] = round(
-                count_course_vei_df['Очень высокое значение'] / count_course_vei_df['Итого'], 2) * 100
+        count_course_vei_df['% Высокое значение от общего'] = round(
+            count_course_vei_df['Высокое значение'] / count_course_vei_df['Итого'], 2) * 100
+        count_course_vei_df['% Очень высокое значение от общего'] = round(
+            count_course_vei_df['Очень высокое значение'] / count_course_vei_df['Итого'], 2) * 100
 
 
 
@@ -792,27 +787,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                             values='Значение_шкалы_ПЭ',
                                             aggfunc='count', margins=True, margins_name='Итого')
         count_course_pa_df.reset_index(inplace=True)
+        count_course_pa_df = count_course_pa_df.reindex(
+            columns=['Курс', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_pa_df.columns:
-            count_course_pa_df['% Очень низкое значение  от общего'] = round(
-                count_course_pa_df['Очень низкое значение'] / count_course_pa_df['Итого'], 2) * 100
+        count_course_pa_df['% Очень низкое значение  от общего'] = round(
+            count_course_pa_df['Очень низкое значение'] / count_course_pa_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_pa_df.columns:
-            count_course_pa_df['% Низкое значение от общего'] = round(
-                count_course_pa_df['Низкое значение'] /
-                count_course_pa_df['Итого'], 2) * 100
+        count_course_pa_df['% Низкое значение от общего'] = round(
+            count_course_pa_df['Низкое значение'] /
+            count_course_pa_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_pa_df.columns:
-            count_course_pa_df['% Среднее значение от общего'] = round(
-                count_course_pa_df['Среднее значение'] /
-                count_course_pa_df['Итого'], 2) * 100
+        count_course_pa_df['% Среднее значение от общего'] = round(
+            count_course_pa_df['Среднее значение'] /
+            count_course_pa_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_pa_df.columns:
-            count_course_pa_df['% Высокое значение от общего'] = round(
-                count_course_pa_df['Высокое значение'] / count_course_pa_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_pa_df.columns:
-            count_course_pa_df['% Очень высокое значение от общего'] = round(
-                count_course_pa_df['Очень высокое значение'] / count_course_pa_df['Итого'], 2) * 100
+        count_course_pa_df['% Высокое значение от общего'] = round(
+            count_course_pa_df['Высокое значение'] / count_course_pa_df['Итого'], 2) * 100
+        count_course_pa_df['% Очень высокое значение от общего'] = round(
+            count_course_pa_df['Очень высокое значение'] / count_course_pa_df['Итого'], 2) * 100
 
 
 
@@ -831,27 +824,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                             values='Значение_шкалы_УЭ',
                                             aggfunc='count', margins=True, margins_name='Итого')
         count_course_ua_df.reset_index(inplace=True)
+        count_course_ua_df = count_course_ua_df.reindex(
+            columns=['Курс', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_ua_df.columns:
-            count_course_ua_df['% Очень низкое значение  от общего'] = round(
-                count_course_ua_df['Очень низкое значение'] / count_course_ua_df['Итого'], 2) * 100
+        count_course_ua_df['% Очень низкое значение  от общего'] = round(
+            count_course_ua_df['Очень низкое значение'] / count_course_ua_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_ua_df.columns:
-            count_course_ua_df['% Низкое значение от общего'] = round(
-                count_course_ua_df['Низкое значение'] /
-                count_course_ua_df['Итого'], 2) * 100
+        count_course_ua_df['% Низкое значение от общего'] = round(
+            count_course_ua_df['Низкое значение'] /
+            count_course_ua_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_ua_df.columns:
-            count_course_ua_df['% Среднее значение от общего'] = round(
-                count_course_ua_df['Среднее значение'] /
-                count_course_ua_df['Итого'], 2) * 100
+        count_course_ua_df['% Среднее значение от общего'] = round(
+            count_course_ua_df['Среднее значение'] /
+            count_course_ua_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_ua_df.columns:
-            count_course_ua_df['% Высокое значение от общего'] = round(
-                count_course_ua_df['Высокое значение'] / count_course_ua_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_ua_df.columns:
-            count_course_ua_df['% Очень высокое значение от общего'] = round(
-                count_course_ua_df['Очень высокое значение'] / count_course_ua_df['Итого'], 2) * 100
+        count_course_ua_df['% Высокое значение от общего'] = round(
+            count_course_ua_df['Высокое значение'] / count_course_ua_df['Итого'], 2) * 100
+        count_course_ua_df['% Очень высокое значение от общего'] = round(
+            count_course_ua_df['Очень высокое значение'] / count_course_ua_df['Итого'], 2) * 100
 
         """
         Своды  по курсу и полу
@@ -870,27 +861,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_общего_ЭИ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_oei_df.reset_index(inplace=True)
+        count_course_sex_oei_df = count_course_sex_oei_df.reindex(
+            columns=['Курс', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_sex_oei_df.columns:
-            count_course_sex_oei_df['% Очень низкое значение  от общего'] = round(
-                count_course_sex_oei_df['Очень низкое значение'] / count_course_sex_oei_df['Итого'], 2) * 100
+        count_course_sex_oei_df['% Очень низкое значение  от общего'] = round(
+            count_course_sex_oei_df['Очень низкое значение'] / count_course_sex_oei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_sex_oei_df.columns:
-            count_course_sex_oei_df['% Низкое значение от общего'] = round(
-                count_course_sex_oei_df['Низкое значение'] /
-                count_course_sex_oei_df['Итого'], 2) * 100
+        count_course_sex_oei_df['% Низкое значение от общего'] = round(
+            count_course_sex_oei_df['Низкое значение'] /
+            count_course_sex_oei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_sex_oei_df.columns:
-            count_course_sex_oei_df['% Среднее значение от общего'] = round(
-                count_course_sex_oei_df['Среднее значение'] /
-                count_course_sex_oei_df['Итого'], 2) * 100
+        count_course_sex_oei_df['% Среднее значение от общего'] = round(
+            count_course_sex_oei_df['Среднее значение'] /
+            count_course_sex_oei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_sex_oei_df.columns:
-            count_course_sex_oei_df['% Высокое значение от общего'] = round(
-                count_course_sex_oei_df['Высокое значение'] / count_course_sex_oei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_sex_oei_df.columns:
-            count_course_sex_oei_df['% Очень высокое значение от общего'] = round(
-                count_course_sex_oei_df['Очень высокое значение'] / count_course_sex_oei_df['Итого'], 2) * 100
+        count_course_sex_oei_df['% Высокое значение от общего'] = round(
+            count_course_sex_oei_df['Высокое значение'] / count_course_sex_oei_df['Итого'], 2) * 100
+        count_course_sex_oei_df['% Очень высокое значение от общего'] = round(
+            count_course_sex_oei_df['Очень высокое значение'] / count_course_sex_oei_df['Итого'], 2) * 100
 
         # МЭИ
         mean_course_sex_mei_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
@@ -906,27 +895,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_МЭИ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_mei_df.reset_index(inplace=True)
+        count_course_sex_mei_df = count_course_sex_mei_df.reindex(
+            columns=['Курс', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_sex_mei_df.columns:
-            count_course_sex_mei_df['% Очень низкое значение  от общего'] = round(
-                count_course_sex_mei_df['Очень низкое значение'] / count_course_sex_mei_df['Итого'], 2) * 100
+        count_course_sex_mei_df['% Очень низкое значение  от общего'] = round(
+            count_course_sex_mei_df['Очень низкое значение'] / count_course_sex_mei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_sex_mei_df.columns:
-            count_course_sex_mei_df['% Низкое значение от общего'] = round(
-                count_course_sex_mei_df['Низкое значение'] /
-                count_course_sex_mei_df['Итого'], 2) * 100
+        count_course_sex_mei_df['% Низкое значение от общего'] = round(
+            count_course_sex_mei_df['Низкое значение'] /
+            count_course_sex_mei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_sex_mei_df.columns:
-            count_course_sex_mei_df['% Среднее значение от общего'] = round(
-                count_course_sex_mei_df['Среднее значение'] /
-                count_course_sex_mei_df['Итого'], 2) * 100
+        count_course_sex_mei_df['% Среднее значение от общего'] = round(
+            count_course_sex_mei_df['Среднее значение'] /
+            count_course_sex_mei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_sex_mei_df.columns:
-            count_course_sex_mei_df['% Высокое значение от общего'] = round(
-                count_course_sex_mei_df['Высокое значение'] / count_course_sex_mei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_sex_mei_df.columns:
-            count_course_sex_mei_df['% Очень высокое значение от общего'] = round(
-                count_course_sex_mei_df['Очень высокое значение'] / count_course_sex_mei_df['Итого'], 2) * 100
+        count_course_sex_mei_df['% Высокое значение от общего'] = round(
+            count_course_sex_mei_df['Высокое значение'] / count_course_sex_mei_df['Итого'], 2) * 100
+        count_course_sex_mei_df['% Очень высокое значение от общего'] = round(
+            count_course_sex_mei_df['Очень высокое значение'] / count_course_sex_mei_df['Итого'], 2) * 100
 
         # ВЭИ
         mean_course_sex_vei_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
@@ -942,27 +929,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_ВЭИ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_vei_df.reset_index(inplace=True)
+        count_course_sex_vei_df = count_course_sex_vei_df.reindex(
+            columns=['Курс', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_sex_vei_df.columns:
-            count_course_sex_vei_df['% Очень низкое значение  от общего'] = round(
-                count_course_sex_vei_df['Очень низкое значение'] / count_course_sex_vei_df['Итого'], 2) * 100
+        count_course_sex_vei_df['% Очень низкое значение  от общего'] = round(
+            count_course_sex_vei_df['Очень низкое значение'] / count_course_sex_vei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_sex_vei_df.columns:
-            count_course_sex_vei_df['% Низкое значение от общего'] = round(
-                count_course_sex_vei_df['Низкое значение'] /
-                count_course_sex_vei_df['Итого'], 2) * 100
+        count_course_sex_vei_df['% Низкое значение от общего'] = round(
+            count_course_sex_vei_df['Низкое значение'] /
+            count_course_sex_vei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_sex_vei_df.columns:
-            count_course_sex_vei_df['% Среднее значение от общего'] = round(
-                count_course_sex_vei_df['Среднее значение'] /
-                count_course_sex_vei_df['Итого'], 2) * 100
+        count_course_sex_vei_df['% Среднее значение от общего'] = round(
+            count_course_sex_vei_df['Среднее значение'] /
+            count_course_sex_vei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_sex_vei_df.columns:
-            count_course_sex_vei_df['% Высокое значение от общего'] = round(
-                count_course_sex_vei_df['Высокое значение'] / count_course_sex_vei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_sex_vei_df.columns:
-            count_course_sex_vei_df['% Очень высокое значение от общего'] = round(
-                count_course_sex_vei_df['Очень высокое значение'] / count_course_sex_vei_df['Итого'], 2) * 100
+        count_course_sex_vei_df['% Высокое значение от общего'] = round(
+            count_course_sex_vei_df['Высокое значение'] / count_course_sex_vei_df['Итого'], 2) * 100
+        count_course_sex_vei_df['% Очень высокое значение от общего'] = round(
+            count_course_sex_vei_df['Очень высокое значение'] / count_course_sex_vei_df['Итого'], 2) * 100
 
 
         # ПЭ
@@ -979,27 +964,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_ПЭ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_pa_df.reset_index(inplace=True)
+        count_course_sex_pa_df = count_course_sex_pa_df.reindex(
+            columns=['Курс', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_sex_pa_df.columns:
-            count_course_sex_pa_df['% Очень низкое значение  от общего'] = round(
-                count_course_sex_pa_df['Очень низкое значение'] / count_course_sex_pa_df['Итого'], 2) * 100
+        count_course_sex_pa_df['% Очень низкое значение  от общего'] = round(
+            count_course_sex_pa_df['Очень низкое значение'] / count_course_sex_pa_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_sex_pa_df.columns:
-            count_course_sex_pa_df['% Низкое значение от общего'] = round(
-                count_course_sex_pa_df['Низкое значение'] /
-                count_course_sex_pa_df['Итого'], 2) * 100
+        count_course_sex_pa_df['% Низкое значение от общего'] = round(
+            count_course_sex_pa_df['Низкое значение'] /
+            count_course_sex_pa_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_sex_pa_df.columns:
-            count_course_sex_pa_df['% Среднее значение от общего'] = round(
-                count_course_sex_pa_df['Среднее значение'] /
-                count_course_sex_pa_df['Итого'], 2) * 100
+        count_course_sex_pa_df['% Среднее значение от общего'] = round(
+            count_course_sex_pa_df['Среднее значение'] /
+            count_course_sex_pa_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_sex_pa_df.columns:
-            count_course_sex_pa_df['% Высокое значение от общего'] = round(
-                count_course_sex_pa_df['Высокое значение'] / count_course_sex_pa_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_sex_pa_df.columns:
-            count_course_sex_pa_df['% Очень высокое значение от общего'] = round(
-                count_course_sex_pa_df['Очень высокое значение'] / count_course_sex_pa_df['Итого'], 2) * 100
+        count_course_sex_pa_df['% Высокое значение от общего'] = round(
+            count_course_sex_pa_df['Высокое значение'] / count_course_sex_pa_df['Итого'], 2) * 100
+        count_course_sex_pa_df['% Очень высокое значение от общего'] = round(
+            count_course_sex_pa_df['Очень высокое значение'] / count_course_sex_pa_df['Итого'], 2) * 100
 
         # УЭ
         mean_course_sex_ua_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
@@ -1015,27 +998,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_УЭ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_ua_df.reset_index(inplace=True)
+        count_course_sex_ua_df = count_course_sex_ua_df.reindex(
+            columns=['Курс', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_course_sex_ua_df.columns:
-            count_course_sex_ua_df['% Очень низкое значение  от общего'] = round(
-                count_course_sex_ua_df['Очень низкое значение'] / count_course_sex_ua_df['Итого'], 2) * 100
+        count_course_sex_ua_df['% Очень низкое значение  от общего'] = round(
+            count_course_sex_ua_df['Очень низкое значение'] / count_course_sex_ua_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_course_sex_ua_df.columns:
-            count_course_sex_ua_df['% Низкое значение от общего'] = round(
-                count_course_sex_ua_df['Низкое значение'] /
-                count_course_sex_ua_df['Итого'], 2) * 100
+        count_course_sex_ua_df['% Низкое значение от общего'] = round(
+            count_course_sex_ua_df['Низкое значение'] /
+            count_course_sex_ua_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_course_sex_ua_df.columns:
-            count_course_sex_ua_df['% Среднее значение от общего'] = round(
-                count_course_sex_ua_df['Среднее значение'] /
-                count_course_sex_ua_df['Итого'], 2) * 100
+        count_course_sex_ua_df['% Среднее значение от общего'] = round(
+            count_course_sex_ua_df['Среднее значение'] /
+            count_course_sex_ua_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_course_sex_ua_df.columns:
-            count_course_sex_ua_df['% Высокое значение от общего'] = round(
-                count_course_sex_ua_df['Высокое значение'] / count_course_sex_ua_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_course_sex_ua_df.columns:
-            count_course_sex_ua_df['% Очень высокое значение от общего'] = round(
-                count_course_sex_ua_df['Очень высокое значение'] / count_course_sex_ua_df['Итого'], 2) * 100
+        count_course_sex_ua_df['% Высокое значение от общего'] = round(
+            count_course_sex_ua_df['Высокое значение'] / count_course_sex_ua_df['Итого'], 2) * 100
+        count_course_sex_ua_df['% Очень высокое значение от общего'] = round(
+            count_course_sex_ua_df['Очень высокое значение'] / count_course_sex_ua_df['Итого'], 2) * 100
 
         """
         Делаем своды по группам
@@ -1054,29 +1035,26 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_общего_ЭИ',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         count_group_oei_df.reset_index(inplace=True)
+        count_group_oei_df = count_group_oei_df.reindex(
+            columns=['Группа', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_oei_df.columns:
-            count_group_oei_df['% Очень низкое значение от общего'] = round(
-                count_group_oei_df['Очень низкое значение'] / count_group_oei_df['Итого'], 2) * 100
+        count_group_oei_df['% Очень низкое значение от общего'] = round(
+            count_group_oei_df['Очень низкое значение'] / count_group_oei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_oei_df.columns:
-            count_group_oei_df['% Низкое значение от общего'] = round(
-                count_group_oei_df['Низкое значение'] /
-                count_group_oei_df['Итого'], 2) * 100
+        count_group_oei_df['% Низкое значение от общего'] = round(
+            count_group_oei_df['Низкое значение'] /
+            count_group_oei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_oei_df.columns:
-            count_group_oei_df['% Среднее значение от общего'] = round(
-                count_group_oei_df['Среднее значение'] /
-                count_group_oei_df['Итого'], 2) * 100
+        count_group_oei_df['% Среднее значение от общего'] = round(
+            count_group_oei_df['Среднее значение'] /
+            count_group_oei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_oei_df.columns:
-            count_group_oei_df['% Высокое значение от общего'] = round(
-                count_group_oei_df['Высокое значение'] / count_group_oei_df['Итого'], 2) * 100
+        count_group_oei_df['% Высокое значение от общего'] = round(
+            count_group_oei_df['Высокое значение'] / count_group_oei_df['Итого'], 2) * 100
 
-        if 'Очень высокое значение' in count_group_oei_df.columns:
-            count_group_oei_df['% Очень высокое значение от общего'] = round(
-                count_group_oei_df['Очень высокое значение'] / count_group_oei_df['Итого'], 2) * 100
-
+        count_group_oei_df['% Очень высокое значение от общего'] = round(
+            count_group_oei_df['Очень высокое значение'] / count_group_oei_df['Итого'], 2) * 100
 
 
         # Делаем сводную таблицу по Группау МЭИ
@@ -1093,27 +1071,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_шкалы_МЭИ',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         count_group_mei_df.reset_index(inplace=True)
+        count_group_mei_df = count_group_mei_df.reindex(
+            columns=['Группа', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_mei_df.columns:
-            count_group_mei_df['% Очень низкое значение  от общего'] = round(
-                count_group_mei_df['Очень низкое значение'] / count_group_mei_df['Итого'], 2) * 100
+        count_group_mei_df['% Очень низкое значение  от общего'] = round(
+            count_group_mei_df['Очень низкое значение'] / count_group_mei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_mei_df.columns:
-            count_group_mei_df['% Низкое значение от общего'] = round(
-                count_group_mei_df['Низкое значение'] /
-                count_group_mei_df['Итого'], 2) * 100
+        count_group_mei_df['% Низкое значение от общего'] = round(
+            count_group_mei_df['Низкое значение'] /
+            count_group_mei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_mei_df.columns:
-            count_group_mei_df['% Среднее значение от общего'] = round(
-                count_group_mei_df['Среднее значение'] /
-                count_group_mei_df['Итого'], 2) * 100
+        count_group_mei_df['% Среднее значение от общего'] = round(
+            count_group_mei_df['Среднее значение'] /
+            count_group_mei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_mei_df.columns:
-            count_group_mei_df['% Высокое значение от общего'] = round(
-                count_group_mei_df['Высокое значение'] / count_group_mei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_mei_df.columns:
-            count_group_mei_df['% Очень высокое значение от общего'] = round(
-                count_group_mei_df['Очень высокое значение'] / count_group_mei_df['Итого'], 2) * 100
+        count_group_mei_df['% Высокое значение от общего'] = round(
+            count_group_mei_df['Высокое значение'] / count_group_mei_df['Итого'], 2) * 100
+        count_group_mei_df['% Очень высокое значение от общего'] = round(
+            count_group_mei_df['Очень высокое значение'] / count_group_mei_df['Итого'], 2) * 100
 
 
         # ВЭИ
@@ -1130,28 +1106,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_шкалы_ВЭИ',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         count_group_vei_df.reset_index(inplace=True)
+        count_group_vei_df = count_group_vei_df.reindex(
+            columns=['Группа', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_vei_df.columns:
-            count_group_vei_df['% Очень низкое значение  от общего'] = round(
-                count_group_vei_df['Очень низкое значение'] / count_group_vei_df['Итого'], 2) * 100
+        count_group_vei_df['% Очень низкое значение  от общего'] = round(
+            count_group_vei_df['Очень низкое значение'] / count_group_vei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_vei_df.columns:
-            count_group_vei_df['% Низкое значение от общего'] = round(
-                count_group_vei_df['Низкое значение'] /
-                count_group_vei_df['Итого'], 2) * 100
+        count_group_vei_df['% Низкое значение от общего'] = round(
+            count_group_vei_df['Низкое значение'] /
+            count_group_vei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_vei_df.columns:
-            count_group_vei_df['% Среднее значение от общего'] = round(
-                count_group_vei_df['Среднее значение'] /
-                count_group_vei_df['Итого'], 2) * 100
+        count_group_vei_df['% Среднее значение от общего'] = round(
+            count_group_vei_df['Среднее значение'] /
+            count_group_vei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_vei_df.columns:
-            count_group_vei_df['% Высокое значение от общего'] = round(
-                count_group_vei_df['Высокое значение'] / count_group_vei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_vei_df.columns:
-            count_group_vei_df['% Очень высокое значение от общего'] = round(
-                count_group_vei_df['Очень высокое значение'] / count_group_vei_df['Итого'], 2) * 100
-
+        count_group_vei_df['% Высокое значение от общего'] = round(
+            count_group_vei_df['Высокое значение'] / count_group_vei_df['Итого'], 2) * 100
+        count_group_vei_df['% Очень высокое значение от общего'] = round(
+            count_group_vei_df['Очень высокое значение'] / count_group_vei_df['Итого'], 2) * 100
 
 
         # Делаем сводную таблицу по Группе среднее ПЭ
@@ -1168,29 +1141,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                             values='Значение_шкалы_ПЭ',
                                             aggfunc='count', margins=True, margins_name='Итого')
         count_group_pa_df.reset_index(inplace=True)
+        count_group_pa_df = count_group_pa_df.reindex(
+            columns=['Группа', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_pa_df.columns:
-            count_group_pa_df['% Очень низкое значение  от общего'] = round(
-                count_group_pa_df['Очень низкое значение'] / count_group_pa_df['Итого'], 2) * 100
+        count_group_pa_df['% Очень низкое значение  от общего'] = round(
+            count_group_pa_df['Очень низкое значение'] / count_group_pa_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_pa_df.columns:
-            count_group_pa_df['% Низкое значение от общего'] = round(
-                count_group_pa_df['Низкое значение'] /
-                count_group_pa_df['Итого'], 2) * 100
+        count_group_pa_df['% Низкое значение от общего'] = round(
+            count_group_pa_df['Низкое значение'] /
+            count_group_pa_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_pa_df.columns:
-            count_group_pa_df['% Среднее значение от общего'] = round(
-                count_group_pa_df['Среднее значение'] /
-                count_group_pa_df['Итого'], 2) * 100
+        count_group_pa_df['% Среднее значение от общего'] = round(
+            count_group_pa_df['Среднее значение'] /
+            count_group_pa_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_pa_df.columns:
-            count_group_pa_df['% Высокое значение от общего'] = round(
-                count_group_pa_df['Высокое значение'] / count_group_pa_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_pa_df.columns:
-            count_group_pa_df['% Очень высокое значение от общего'] = round(
-                count_group_pa_df['Очень высокое значение'] / count_group_pa_df['Итого'], 2) * 100
-
-
+        count_group_pa_df['% Высокое значение от общего'] = round(
+            count_group_pa_df['Высокое значение'] / count_group_pa_df['Итого'], 2) * 100
+        count_group_pa_df['% Очень высокое значение от общего'] = round(
+            count_group_pa_df['Очень высокое значение'] / count_group_pa_df['Итого'], 2) * 100
 
 
         # Делаем сводную таблицу по Группе среднее УЭ
@@ -1207,27 +1176,26 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                             values='Значение_шкалы_УЭ',
                                             aggfunc='count', margins=True, margins_name='Итого')
         count_group_ua_df.reset_index(inplace=True)
+        count_group_ua_df = count_group_ua_df.reindex(
+            columns=['Группа', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_ua_df.columns:
-            count_group_ua_df['% Очень низкое значение  от общего'] = round(
-                count_group_ua_df['Очень низкое значение'] / count_group_ua_df['Итого'], 2) * 100
+        count_group_ua_df['% Очень низкое значение  от общего'] = round(
+            count_group_ua_df['Очень низкое значение'] / count_group_ua_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_ua_df.columns:
-            count_group_ua_df['% Низкое значение от общего'] = round(
-                count_group_ua_df['Низкое значение'] /
-                count_group_ua_df['Итого'], 2) * 100
+        count_group_ua_df['% Низкое значение от общего'] = round(
+            count_group_ua_df['Низкое значение'] /
+            count_group_ua_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_ua_df.columns:
-            count_group_ua_df['% Среднее значение от общего'] = round(
-                count_group_ua_df['Среднее значение'] /
-                count_group_ua_df['Итого'], 2) * 100
+        count_group_ua_df['% Среднее значение от общего'] = round(
+            count_group_ua_df['Среднее значение'] /
+            count_group_ua_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_ua_df.columns:
-            count_group_ua_df['% Высокое значение от общего'] = round(
-                count_group_ua_df['Высокое значение'] / count_group_ua_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_ua_df.columns:
-            count_group_ua_df['% Очень высокое значение от общего'] = round(
-                count_group_ua_df['Очень высокое значение'] / count_group_ua_df['Итого'], 2) * 100
+        count_group_ua_df['% Высокое значение от общего'] = round(
+            count_group_ua_df['Высокое значение'] / count_group_ua_df['Итого'], 2) * 100
+        count_group_ua_df['% Очень высокое значение от общего'] = round(
+            count_group_ua_df['Очень высокое значение'] / count_group_ua_df['Итого'], 2) * 100
+
 
         """
         Своды  по Группе и полу
@@ -1246,27 +1214,26 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_общего_ЭИ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_oei_df.reset_index(inplace=True)
+        count_group_sex_oei_df = count_group_sex_oei_df.reindex(
+            columns=['Группа', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_sex_oei_df.columns:
-            count_group_sex_oei_df['% Очень низкое значение  от общего'] = round(
-                count_group_sex_oei_df['Очень низкое значение'] / count_group_sex_oei_df['Итого'], 2) * 100
+        count_group_sex_oei_df['% Очень низкое значение  от общего'] = round(
+            count_group_sex_oei_df['Очень низкое значение'] / count_group_sex_oei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_sex_oei_df.columns:
-            count_group_sex_oei_df['% Низкое значение от общего'] = round(
-                count_group_sex_oei_df['Низкое значение'] /
-                count_group_sex_oei_df['Итого'], 2) * 100
+        count_group_sex_oei_df['% Низкое значение от общего'] = round(
+            count_group_sex_oei_df['Низкое значение'] /
+            count_group_sex_oei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_sex_oei_df.columns:
-            count_group_sex_oei_df['% Среднее значение от общего'] = round(
-                count_group_sex_oei_df['Среднее значение'] /
-                count_group_sex_oei_df['Итого'], 2) * 100
+        count_group_sex_oei_df['% Среднее значение от общего'] = round(
+            count_group_sex_oei_df['Среднее значение'] /
+            count_group_sex_oei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_sex_oei_df.columns:
-            count_group_sex_oei_df['% Высокое значение от общего'] = round(
-                count_group_sex_oei_df['Высокое значение'] / count_group_sex_oei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_sex_oei_df.columns:
-            count_group_sex_oei_df['% Очень высокое значение от общего'] = round(
-                count_group_sex_oei_df['Очень высокое значение'] / count_group_sex_oei_df['Итого'], 2) * 100
+        count_group_sex_oei_df['% Высокое значение от общего'] = round(
+            count_group_sex_oei_df['Высокое значение'] / count_group_sex_oei_df['Итого'], 2) * 100
+        count_group_sex_oei_df['% Очень высокое значение от общего'] = round(
+            count_group_sex_oei_df['Очень высокое значение'] / count_group_sex_oei_df['Итого'], 2) * 100
+
 
         # МЭИ
         mean_group_sex_mei_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
@@ -1276,33 +1243,32 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         mean_group_sex_mei_df['Уровень_шкалы_МЭИ'] = mean_group_sex_mei_df['Значение_шкалы_МЭИ'].apply(
             calc_level_union_ei)  # считаем уровень
 
+
         # делаем сводную по Группе и количеству ПЭ
         count_group_sex_mei_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
                                                  columns='Уровень_шкалы_МЭИ',
                                                  values='Значение_шкалы_МЭИ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_mei_df.reset_index(inplace=True)
+        count_group_sex_mei_df = count_group_sex_mei_df.reindex(
+            columns=['Группа', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_sex_mei_df.columns:
-            count_group_sex_mei_df['% Очень низкое значение  от общего'] = round(
-                count_group_sex_mei_df['Очень низкое значение'] / count_group_sex_mei_df['Итого'], 2) * 100
+        count_group_sex_mei_df['% Очень низкое значение  от общего'] = round(
+            count_group_sex_mei_df['Очень низкое значение'] / count_group_sex_mei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_sex_mei_df.columns:
-            count_group_sex_mei_df['% Низкое значение от общего'] = round(
-                count_group_sex_mei_df['Низкое значение'] /
-                count_group_sex_mei_df['Итого'], 2) * 100
+        count_group_sex_mei_df['% Низкое значение от общего'] = round(
+            count_group_sex_mei_df['Низкое значение'] /
+            count_group_sex_mei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_sex_mei_df.columns:
-            count_group_sex_mei_df['% Среднее значение от общего'] = round(
-                count_group_sex_mei_df['Среднее значение'] /
-                count_group_sex_mei_df['Итого'], 2) * 100
+        count_group_sex_mei_df['% Среднее значение от общего'] = round(
+            count_group_sex_mei_df['Среднее значение'] /
+            count_group_sex_mei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_sex_mei_df.columns:
-            count_group_sex_mei_df['% Высокое значение от общего'] = round(
-                count_group_sex_mei_df['Высокое значение'] / count_group_sex_mei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_sex_mei_df.columns:
-            count_group_sex_mei_df['% Очень высокое значение от общего'] = round(
-                count_group_sex_mei_df['Очень высокое значение'] / count_group_sex_mei_df['Итого'], 2) * 100
+        count_group_sex_mei_df['% Высокое значение от общего'] = round(
+            count_group_sex_mei_df['Высокое значение'] / count_group_sex_mei_df['Итого'], 2) * 100
+        count_group_sex_mei_df['% Очень высокое значение от общего'] = round(
+            count_group_sex_mei_df['Очень высокое значение'] / count_group_sex_mei_df['Итого'], 2) * 100
 
         # ВЭИ
         mean_group_sex_vei_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
@@ -1318,27 +1284,26 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_ВЭИ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_vei_df.reset_index(inplace=True)
+        count_group_sex_vei_df = count_group_sex_vei_df.reindex(
+            columns=['Группа', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_sex_vei_df.columns:
-            count_group_sex_vei_df['% Очень низкое значение  от общего'] = round(
-                count_group_sex_vei_df['Очень низкое значение'] / count_group_sex_vei_df['Итого'], 2) * 100
+        count_group_sex_vei_df['% Очень низкое значение  от общего'] = round(
+            count_group_sex_vei_df['Очень низкое значение'] / count_group_sex_vei_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_sex_vei_df.columns:
-            count_group_sex_vei_df['% Низкое значение от общего'] = round(
-                count_group_sex_vei_df['Низкое значение'] /
-                count_group_sex_vei_df['Итого'], 2) * 100
+        count_group_sex_vei_df['% Низкое значение от общего'] = round(
+            count_group_sex_vei_df['Низкое значение'] /
+            count_group_sex_vei_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_sex_vei_df.columns:
-            count_group_sex_vei_df['% Среднее значение от общего'] = round(
-                count_group_sex_vei_df['Среднее значение'] /
-                count_group_sex_vei_df['Итого'], 2) * 100
+        count_group_sex_vei_df['% Среднее значение от общего'] = round(
+            count_group_sex_vei_df['Среднее значение'] /
+            count_group_sex_vei_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_sex_vei_df.columns:
-            count_group_sex_vei_df['% Высокое значение от общего'] = round(
-                count_group_sex_vei_df['Высокое значение'] / count_group_sex_vei_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_sex_vei_df.columns:
-            count_group_sex_vei_df['% Очень высокое значение от общего'] = round(
-                count_group_sex_vei_df['Очень высокое значение'] / count_group_sex_vei_df['Итого'], 2) * 100
+        count_group_sex_vei_df['% Высокое значение от общего'] = round(
+            count_group_sex_vei_df['Высокое значение'] / count_group_sex_vei_df['Итого'], 2) * 100
+        count_group_sex_vei_df['% Очень высокое значение от общего'] = round(
+            count_group_sex_vei_df['Очень высокое значение'] / count_group_sex_vei_df['Итого'], 2) * 100
+
 
 
         # ПЭ
@@ -1355,27 +1320,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_ПЭ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_pa_df.reset_index(inplace=True)
+        count_group_sex_pa_df = count_group_sex_pa_df.reindex(
+            columns=['Группа', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_sex_pa_df.columns:
-            count_group_sex_pa_df['% Очень низкое значение  от общего'] = round(
-                count_group_sex_pa_df['Очень низкое значение'] / count_group_sex_pa_df['Итого'], 2) * 100
+        count_group_sex_pa_df['% Очень низкое значение  от общего'] = round(
+            count_group_sex_pa_df['Очень низкое значение'] / count_group_sex_pa_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_sex_pa_df.columns:
-            count_group_sex_pa_df['% Низкое значение от общего'] = round(
-                count_group_sex_pa_df['Низкое значение'] /
-                count_group_sex_pa_df['Итого'], 2) * 100
+        count_group_sex_pa_df['% Низкое значение от общего'] = round(
+            count_group_sex_pa_df['Низкое значение'] /
+            count_group_sex_pa_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_sex_pa_df.columns:
-            count_group_sex_pa_df['% Среднее значение от общего'] = round(
-                count_group_sex_pa_df['Среднее значение'] /
-                count_group_sex_pa_df['Итого'], 2) * 100
+        count_group_sex_pa_df['% Среднее значение от общего'] = round(
+            count_group_sex_pa_df['Среднее значение'] /
+            count_group_sex_pa_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_sex_pa_df.columns:
-            count_group_sex_pa_df['% Высокое значение от общего'] = round(
-                count_group_sex_pa_df['Высокое значение'] / count_group_sex_pa_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_sex_pa_df.columns:
-            count_group_sex_pa_df['% Очень высокое значение от общего'] = round(
-                count_group_sex_pa_df['Очень высокое значение'] / count_group_sex_pa_df['Итого'], 2) * 100
+        count_group_sex_pa_df['% Высокое значение от общего'] = round(
+            count_group_sex_pa_df['Высокое значение'] / count_group_sex_pa_df['Итого'], 2) * 100
+        count_group_sex_pa_df['% Очень высокое значение от общего'] = round(
+            count_group_sex_pa_df['Очень высокое значение'] / count_group_sex_pa_df['Итого'], 2) * 100
 
         # УЭ
         mean_group_sex_ua_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
@@ -1391,27 +1354,25 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                  values='Значение_шкалы_УЭ',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_ua_df.reset_index(inplace=True)
+        count_group_sex_ua_df = count_group_sex_ua_df.reindex(
+            columns=['Группа', 'Пол', 'Очень низкое значение', 'Низкое значение', 'Среднее значение',
+                     'Высокое значение', 'Очень высокое значение', 'Итого'])
 
-        if 'Очень низкое значение' in count_group_sex_ua_df.columns:
-            count_group_sex_ua_df['% Очень низкое значение  от общего'] = round(
-                count_group_sex_ua_df['Очень низкое значение'] / count_group_sex_ua_df['Итого'], 2) * 100
+        count_group_sex_ua_df['% Очень низкое значение  от общего'] = round(
+            count_group_sex_ua_df['Очень низкое значение'] / count_group_sex_ua_df['Итого'], 2) * 100
 
-        if 'Низкое значение' in count_group_sex_ua_df.columns:
-            count_group_sex_ua_df['% Низкое значение от общего'] = round(
-                count_group_sex_ua_df['Низкое значение'] /
-                count_group_sex_ua_df['Итого'], 2) * 100
+        count_group_sex_ua_df['% Низкое значение от общего'] = round(
+            count_group_sex_ua_df['Низкое значение'] /
+            count_group_sex_ua_df['Итого'], 2) * 100
 
-        if 'Среднее значение' in count_group_sex_ua_df.columns:
-            count_group_sex_ua_df['% Среднее значение от общего'] = round(
-                count_group_sex_ua_df['Среднее значение'] /
-                count_group_sex_ua_df['Итого'], 2) * 100
+        count_group_sex_ua_df['% Среднее значение от общего'] = round(
+            count_group_sex_ua_df['Среднее значение'] /
+            count_group_sex_ua_df['Итого'], 2) * 100
 
-        if 'Высокое значение' in count_group_sex_ua_df.columns:
-            count_group_sex_ua_df['% Высокое значение от общего'] = round(
-                count_group_sex_ua_df['Высокое значение'] / count_group_sex_ua_df['Итого'], 2) * 100
-        if 'Очень высокое значение' in count_group_sex_ua_df.columns:
-            count_group_sex_ua_df['% Очень высокое значение от общего'] = round(
-                count_group_sex_ua_df['Очень высокое значение'] / count_group_sex_ua_df['Итого'], 2) * 100
+        count_group_sex_ua_df['% Высокое значение от общего'] = round(
+            count_group_sex_ua_df['Высокое значение'] / count_group_sex_ua_df['Итого'], 2) * 100
+        count_group_sex_ua_df['% Очень высокое значение от общего'] = round(
+            count_group_sex_ua_df['Очень высокое значение'] / count_group_sex_ua_df['Итого'], 2) * 100
 
 
 

@@ -5,7 +5,7 @@
 
 import pandas as pd
 from tkinter import messagebox
-from lachesis_support_functions import round_mean
+from lachesis_support_functions import round_mean, sort_name_class
 
 
 class BadOrderUSK(Exception):
@@ -165,20 +165,21 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                              values='Значение_уровня_самооценки',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_course_usk_df.reset_index(inplace=True)
+        count_course_usk_df = count_course_usk_df.reindex(
+            columns=['Курс', 'Низкий уровень самооценки', 'Средний уровень самооценки',
+                     'Высокий уровень самооценки', 'Итого'])
 
-        if 'Низкий уровень самооценки' in count_course_usk_df.columns:
-            count_course_usk_df['% Низкий уровень самооценки от общего'] = round(
-                count_course_usk_df['Низкий уровень самооценки'] / count_course_usk_df['Итого'], 2) * 100
 
-        if 'Средний уровень самооценки' in count_course_usk_df.columns:
-            count_course_usk_df['% Средний уровень самооценки от общего'] = round(
-                count_course_usk_df['Средний уровень самооценки'] /
-                count_course_usk_df['Итого'], 2) * 100
+        count_course_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_course_usk_df['Низкий уровень самооценки'] / count_course_usk_df['Итого'], 2) * 100
 
-        if 'Высокий уровень самооценки' in count_course_usk_df.columns:
-            count_course_usk_df['% Высокий уровень самооценки от общего'] = round(
-                count_course_usk_df['Высокий уровень самооценки'] /
-                count_course_usk_df['Итого'], 2) * 100
+        count_course_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_course_usk_df['Средний уровень самооценки'] /
+            count_course_usk_df['Итого'], 2) * 100
+
+        count_course_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_course_usk_df['Высокий уровень самооценки'] /
+            count_course_usk_df['Итого'], 2) * 100
 
 
 
@@ -197,20 +198,20 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                              values='Значение_уровня_самооценки',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_usk_df.reset_index(inplace=True)
+        count_course_sex_usk_df = count_course_sex_usk_df.reindex(
+            columns=['Курс','Пол', 'Низкий уровень самооценки', 'Средний уровень самооценки',
+                     'Высокий уровень самооценки', 'Итого'])
 
-        if 'Низкий уровень самооценки' in count_course_sex_usk_df.columns:
-            count_course_sex_usk_df['% Низкий уровень самооценки от общего'] = round(
-                count_course_sex_usk_df['Низкий уровень самооценки'] / count_course_sex_usk_df['Итого'], 2) * 100
+        count_course_sex_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_course_sex_usk_df['Низкий уровень самооценки'] / count_course_sex_usk_df['Итого'], 2) * 100
 
-        if 'Средний уровень самооценки' in count_course_sex_usk_df.columns:
-            count_course_sex_usk_df['% Средний уровень самооценки от общего'] = round(
-                count_course_sex_usk_df['Средний уровень самооценки'] /
-                count_course_sex_usk_df['Итого'], 2) * 100
+        count_course_sex_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_course_sex_usk_df['Средний уровень самооценки'] /
+            count_course_sex_usk_df['Итого'], 2) * 100
 
-        if 'Высокий уровень самооценки' in count_course_sex_usk_df.columns:
-            count_course_sex_usk_df['% Высокий уровень самооценки от общего'] = round(
-                count_course_sex_usk_df['Высокий уровень самооценки'] /
-                count_course_sex_usk_df['Итого'], 2) * 100
+        count_course_sex_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_course_sex_usk_df['Высокий уровень самооценки'] /
+            count_course_sex_usk_df['Итого'], 2) * 100
 
         """
         Обработка групп
@@ -229,21 +230,21 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                              values='Значение_уровня_самооценки',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_group_usk_df.reset_index(inplace=True)
+        count_group_usk_df = count_group_usk_df.reindex(
+            columns=['Группа', 'Низкий уровень самооценки', 'Средний уровень самооценки',
+                     'Высокий уровень самооценки', 'Итого'])
 
-        if 'Низкий уровень самооценки' in count_group_usk_df.columns:
-            count_group_usk_df['% Низкий уровень самооценки от общего'] = round(
-                count_group_usk_df['Низкий уровень самооценки'] / count_group_usk_df['Итого'], 2) * 100
 
-        if 'Средний уровень самооценки' in count_group_usk_df.columns:
-            count_group_usk_df['% Средний уровень самооценки от общего'] = round(
-                count_group_usk_df['Средний уровень самооценки'] /
-                count_group_usk_df['Итого'], 2) * 100
+        count_group_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_group_usk_df['Низкий уровень самооценки'] / count_group_usk_df['Итого'], 2) * 100
 
-        if 'Высокий уровень самооценки' in count_group_usk_df.columns:
-            count_group_usk_df['% Высокий уровень самооценки от общего'] = round(
-                count_group_usk_df['Высокий уровень самооценки'] /
-                count_group_usk_df['Итого'], 2) * 100
+        count_group_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_group_usk_df['Средний уровень самооценки'] /
+            count_group_usk_df['Итого'], 2) * 100
 
+        count_group_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_group_usk_df['Высокий уровень самооценки'] /
+            count_group_usk_df['Итого'], 2) * 100
 
 
         # Средняя Группа и Пол
@@ -261,20 +262,21 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                              values='Значение_уровня_самооценки',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_usk_df.reset_index(inplace=True)
+        count_group_sex_usk_df = count_group_sex_usk_df.reindex(
+            columns=['Группа','Пол', 'Низкий уровень самооценки', 'Средний уровень самооценки',
+                     'Высокий уровень самооценки', 'Итого'])
 
-        if 'Низкий уровень самооценки' in count_group_sex_usk_df.columns:
-            count_group_sex_usk_df['% Низкий уровень самооценки от общего'] = round(
-                count_group_sex_usk_df['Низкий уровень самооценки'] / count_group_sex_usk_df['Итого'], 2) * 100
+        count_group_sex_usk_df['% Низкий уровень самооценки от общего'] = round(
+            count_group_sex_usk_df['Низкий уровень самооценки'] / count_group_sex_usk_df['Итого'], 2) * 100
 
-        if 'Средний уровень самооценки' in count_group_sex_usk_df.columns:
-            count_group_sex_usk_df['% Средний уровень самооценки от общего'] = round(
-                count_group_sex_usk_df['Средний уровень самооценки'] /
-                count_group_sex_usk_df['Итого'], 2) * 100
+        count_group_sex_usk_df['% Средний уровень самооценки от общего'] = round(
+            count_group_sex_usk_df['Средний уровень самооценки'] /
+            count_group_sex_usk_df['Итого'], 2) * 100
 
-        if 'Высокий уровень самооценки' in count_group_sex_usk_df.columns:
-            count_group_sex_usk_df['% Высокий уровень самооценки от общего'] = round(
-                count_group_sex_usk_df['Высокий уровень самооценки'] /
-                count_group_sex_usk_df['Итого'], 2) * 100
+        count_group_sex_usk_df['% Высокий уровень самооценки от общего'] = round(
+            count_group_sex_usk_df['Высокий уровень самооценки'] /
+            count_group_sex_usk_df['Итого'], 2) * 100
+
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
