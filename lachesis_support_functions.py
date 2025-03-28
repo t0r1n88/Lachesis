@@ -115,3 +115,17 @@ def count_attention(row,set_value):
     else:
         return False
 
+
+
+def sort_name_class(value):
+    """
+    Функция для сортировки классов вида 1А, 11Б, 2А
+    :param value:
+    :return:
+    """
+    # Разделяем строку на числовую и буквенную часть
+    number_part = int(''.join(filter(str.isdigit, value)))
+    letter_part = ''.join(filter(str.isalpha, value))
+    return (number_part, letter_part)
+
+

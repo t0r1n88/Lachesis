@@ -15,7 +15,7 @@ from school_leadership.sсhool_usk import processing_usk # уровень сам
 
 
 
-from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int, count_attention # функции для создания итогового файла
+from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int, count_attention,sort_name_class # функции для создания итогового файла
 
 import pandas as pd
 pd.options.mode.chained_assignment = None
@@ -114,7 +114,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
 
         base_df['Номер_класса'] = base_df['Номер_класса'].apply(convert_to_int) # приводим номер класса к инту
         base_df['Буква_класса'] = base_df['Буква_класса'].fillna('не заполнено') # заполняем пропуски
-        base_df.insert(2,'Класс',base_df['Номер_класса'].astype(str) +  base_df['Буква_класса']) # добавляем колонку с классам
+        base_df.insert(2,'Класс',base_df['Номер_класса'].astype(str) +  base_df['Буква_класса'].astype(str)) # добавляем колонку с классам
 
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
         base_df_for_func = base_df.copy()
@@ -156,7 +156,11 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             threshold_finshed += dct_tests[name_test][1]
 
         # Сохраняем в удобном виде
-        main_itog_df.sort_values(by='Класс',inplace=True) # сортируем
+
+
+
+        # main_itog_df.sort_values(by='Класс',inplace=True) # сортируем
+        main_itog_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class),inplace=True) # сортируем
         # Отбираем тех кто требует внимания.
         set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние'] # особое внимание
         set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия'] # обратить внимание
@@ -168,6 +172,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
         # Создаем сводную таблицу по группам
         svod_group_df = main_itog_df.groupby(by='Класс').agg({'ФИО':'count'}).rename(columns={'ФИО':'Количество прошедших'})
         svod_group_df = svod_group_df.reset_index()
+        svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class),inplace=True) # сортируем
 
         temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df,'Свод по классам':svod_group_df}, write_index=False)
         temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
