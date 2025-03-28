@@ -3,7 +3,7 @@
 """
 import pandas as pd
 from tkinter import messagebox
-from lachesis_support_functions import round_mean_two
+from lachesis_support_functions import round_mean_two, sort_name_class
 
 class BadOrderKOSOne(Exception):
     """
@@ -269,28 +269,26 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                              values='Значение_ком_навыков',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_course_com_cos_one_df.reset_index(inplace=True)
+        count_course_com_cos_one_df = count_course_com_cos_one_df.reindex(
+            columns=['Номер_класса', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_course_com_cos_one_df.columns:
-            count_course_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_course_com_cos_one_df['Низкий'] / count_course_com_cos_one_df['Итого'], 2) * 100
+        count_course_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
+            count_course_com_cos_one_df['Низкий'] / count_course_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_course_com_cos_one_df.columns:
-            count_course_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_course_com_cos_one_df['Ниже среднего'] / count_course_com_cos_one_df['Итого'], 2) * 100
+        count_course_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
+            count_course_com_cos_one_df['Ниже среднего'] / count_course_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_course_com_cos_one_df.columns:
-            count_course_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_course_com_cos_one_df['Средний'] /
-                count_course_com_cos_one_df['Итого'], 2) * 100
+        count_course_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
+            count_course_com_cos_one_df['Средний'] /
+            count_course_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_course_com_cos_one_df.columns:
-            count_course_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_course_com_cos_one_df['Высокий'] /
-                count_course_com_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_course_com_cos_one_df.columns:
-            count_course_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_course_com_cos_one_df['Очень высокий'] /
-                count_course_com_cos_one_df['Итого'], 2) * 100
+        count_course_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
+            count_course_com_cos_one_df['Высокий'] /
+            count_course_com_cos_one_df['Итого'], 2) * 100
+        count_course_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
+            count_course_com_cos_one_df['Очень высокий'] /
+            count_course_com_cos_one_df['Итого'], 2) * 100
 
 
         # Средняя Номер_класса и Пол
@@ -308,28 +306,26 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                              values='Значение_ком_навыков',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_com_cos_one_df.reset_index(inplace=True)
+        count_course_sex_com_cos_one_df = count_course_sex_com_cos_one_df.reindex(
+            columns=['Номер_класса','Пол', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_course_sex_com_cos_one_df.columns:
-            count_course_sex_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_course_sex_com_cos_one_df['Низкий'] / count_course_sex_com_cos_one_df['Итого'], 2) * 100
+        count_course_sex_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
+            count_course_sex_com_cos_one_df['Низкий'] / count_course_sex_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_course_sex_com_cos_one_df.columns:
-            count_course_sex_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_course_sex_com_cos_one_df['Ниже среднего'] / count_course_sex_com_cos_one_df['Итого'], 2) * 100
+        count_course_sex_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
+            count_course_sex_com_cos_one_df['Ниже среднего'] / count_course_sex_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_course_sex_com_cos_one_df.columns:
-            count_course_sex_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_course_sex_com_cos_one_df['Средний'] /
-                count_course_sex_com_cos_one_df['Итого'], 2) * 100
+        count_course_sex_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
+            count_course_sex_com_cos_one_df['Средний'] /
+            count_course_sex_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_course_sex_com_cos_one_df.columns:
-            count_course_sex_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_course_sex_com_cos_one_df['Высокий'] /
-                count_course_sex_com_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_course_sex_com_cos_one_df.columns:
-            count_course_sex_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_course_sex_com_cos_one_df['Очень высокий'] /
-                count_course_sex_com_cos_one_df['Итого'], 2) * 100
+        count_course_sex_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
+            count_course_sex_com_cos_one_df['Высокий'] /
+            count_course_sex_com_cos_one_df['Итого'], 2) * 100
+        count_course_sex_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
+            count_course_sex_com_cos_one_df['Очень высокий'] /
+            count_course_sex_com_cos_one_df['Итого'], 2) * 100
 
 
         # Организационные навыки
@@ -347,28 +343,26 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                                      values='Значение_орг_навыков',
                                                      aggfunc='count', margins=True, margins_name='Итого')
         count_course_org_cos_one_df.reset_index(inplace=True)
+        count_course_org_cos_one_df = count_course_org_cos_one_df.reindex(
+            columns=['Номер_класса', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_course_org_cos_one_df.columns:
-            count_course_org_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_course_org_cos_one_df['Низкий'] / count_course_org_cos_one_df['Итого'], 2) * 100
+        count_course_org_cos_one_df['% Низкий уровень орг.навыков от общего'] = round(
+            count_course_org_cos_one_df['Низкий'] / count_course_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_course_org_cos_one_df.columns:
-            count_course_org_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_course_org_cos_one_df['Ниже среднего'] / count_course_org_cos_one_df['Итого'], 2) * 100
+        count_course_org_cos_one_df['% Ниже среднего уровень орг.навыков от общего'] = round(
+            count_course_org_cos_one_df['Ниже среднего'] / count_course_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_course_org_cos_one_df.columns:
-            count_course_org_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_course_org_cos_one_df['Средний'] /
-                count_course_org_cos_one_df['Итого'], 2) * 100
+        count_course_org_cos_one_df['% Средний уровень орг.навыков от общего'] = round(
+            count_course_org_cos_one_df['Средний'] /
+            count_course_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_course_org_cos_one_df.columns:
-            count_course_org_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_course_org_cos_one_df['Высокий'] /
-                count_course_org_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_course_org_cos_one_df.columns:
-            count_course_org_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_course_org_cos_one_df['Очень высокий'] /
-                count_course_org_cos_one_df['Итого'], 2) * 100
+        count_course_org_cos_one_df['% Высокий уровень орг.навыков от общего'] = round(
+            count_course_org_cos_one_df['Высокий'] /
+            count_course_org_cos_one_df['Итого'], 2) * 100
+        count_course_org_cos_one_df['% Очень высокий орг.навыков от общего'] = round(
+            count_course_org_cos_one_df['Очень высокий'] /
+            count_course_org_cos_one_df['Итого'], 2) * 100
 
         # Средняя Номер_класса и Пол
 
@@ -386,28 +380,26 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                                          values='Значение_орг_навыков',
                                                          aggfunc='count', margins=True, margins_name='Итого')
         count_course_sex_org_cos_one_df.reset_index(inplace=True)
+        count_course_sex_org_cos_one_df = count_course_sex_org_cos_one_df.reindex(
+            columns=['Номер_класса', 'Пол', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_course_sex_org_cos_one_df.columns:
-            count_course_sex_org_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_course_sex_org_cos_one_df['Низкий'] / count_course_sex_org_cos_one_df['Итого'], 2) * 100
+        count_course_sex_org_cos_one_df['% Низкий уровень орг.навыков от общего'] = round(
+            count_course_sex_org_cos_one_df['Низкий'] / count_course_sex_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_course_sex_org_cos_one_df.columns:
-            count_course_sex_org_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_course_sex_org_cos_one_df['Ниже среднего'] / count_course_sex_org_cos_one_df['Итого'], 2) * 100
+        count_course_sex_org_cos_one_df['% Ниже среднего уровень орг.навыков от общего'] = round(
+            count_course_sex_org_cos_one_df['Ниже среднего'] / count_course_sex_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_course_sex_org_cos_one_df.columns:
-            count_course_sex_org_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_course_sex_org_cos_one_df['Средний'] /
-                count_course_sex_org_cos_one_df['Итого'], 2) * 100
+        count_course_sex_org_cos_one_df['% Средний уровень орг.навыков от общего'] = round(
+            count_course_sex_org_cos_one_df['Средний'] /
+            count_course_sex_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_course_sex_org_cos_one_df.columns:
-            count_course_sex_org_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_course_sex_org_cos_one_df['Высокий'] /
-                count_course_sex_org_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_course_sex_org_cos_one_df.columns:
-            count_course_sex_org_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_course_sex_org_cos_one_df['Очень высокий'] /
-                count_course_sex_org_cos_one_df['Итого'], 2) * 100
+        count_course_sex_org_cos_one_df['% Высокий уровень орг.навыков от общего'] = round(
+            count_course_sex_org_cos_one_df['Высокий'] /
+            count_course_sex_org_cos_one_df['Итого'], 2) * 100
+        count_course_sex_org_cos_one_df['% Очень высокий орг.навыков от общего'] = round(
+            count_course_sex_org_cos_one_df['Очень высокий'] /
+            count_course_sex_org_cos_one_df['Итого'], 2) * 100
 
 
         """
@@ -421,6 +413,7 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         mean_group_com_cos_one_df.reset_index(inplace=True)
         mean_group_com_cos_one_df['Уровень_ком_навыков'] = mean_group_com_cos_one_df['Значение_ком_навыков'].apply(
             calc_level_com_cos_one)  # считаем уровень
+        mean_group_com_cos_one_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
         # Количество Класс
         count_group_com_cos_one_df = pd.pivot_table(base_df, index=['Класс'],
@@ -428,28 +421,31 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                              values='Значение_ком_навыков',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_group_com_cos_one_df.reset_index(inplace=True)
+        count_group_com_cos_one_df = count_group_com_cos_one_df.reindex(
+            columns=['Класс', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_group_com_cos_one_df.columns:
-            count_group_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_group_com_cos_one_df['Низкий'] / count_group_com_cos_one_df['Итого'], 2) * 100
+        count_group_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
+            count_group_com_cos_one_df['Низкий'] / count_group_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_group_com_cos_one_df.columns:
-            count_group_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_group_com_cos_one_df['Ниже среднего'] / count_group_com_cos_one_df['Итого'], 2) * 100
+        count_group_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
+            count_group_com_cos_one_df['Ниже среднего'] / count_group_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_group_com_cos_one_df.columns:
-            count_group_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_group_com_cos_one_df['Средний'] /
-                count_group_com_cos_one_df['Итого'], 2) * 100
+        count_group_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
+            count_group_com_cos_one_df['Средний'] /
+            count_group_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_group_com_cos_one_df.columns:
-            count_group_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_group_com_cos_one_df['Высокий'] /
-                count_group_com_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_group_com_cos_one_df.columns:
-            count_group_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_group_com_cos_one_df['Очень высокий'] /
-                count_group_com_cos_one_df['Итого'], 2) * 100
+        count_group_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
+            count_group_com_cos_one_df['Высокий'] /
+            count_group_com_cos_one_df['Итого'], 2) * 100
+        count_group_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
+            count_group_com_cos_one_df['Очень высокий'] /
+            count_group_com_cos_one_df['Итого'], 2) * 100
+
+        part_svod_df = count_group_com_cos_one_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_group_com_cos_one_df.iloc[-1:]
+        count_group_com_cos_one_df = pd.concat([part_svod_df, itog_svod_df])
 
 
         # Средняя Класс и Пол
@@ -460,6 +456,7 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         mean_group_sex_com_cos_one_df.reset_index(inplace=True)
         mean_group_sex_com_cos_one_df['Уровень_ком_навыков'] = mean_group_sex_com_cos_one_df['Значение_ком_навыков'].apply(
             calc_level_com_cos_one)  # считаем уровень
+        mean_group_sex_com_cos_one_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
         # Количество Класс и Пол
         count_group_sex_com_cos_one_df = pd.pivot_table(base_df, index=['Класс','Пол'],
@@ -467,28 +464,31 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                              values='Значение_ком_навыков',
                                              aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_com_cos_one_df.reset_index(inplace=True)
+        count_group_sex_com_cos_one_df = count_group_sex_com_cos_one_df.reindex(
+            columns=['Класс','Пол', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_group_sex_com_cos_one_df.columns:
-            count_group_sex_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_group_sex_com_cos_one_df['Низкий'] / count_group_sex_com_cos_one_df['Итого'], 2) * 100
+        count_group_sex_com_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
+            count_group_sex_com_cos_one_df['Низкий'] / count_group_sex_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_group_sex_com_cos_one_df.columns:
-            count_group_sex_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_group_sex_com_cos_one_df['Ниже среднего'] / count_group_sex_com_cos_one_df['Итого'], 2) * 100
+        count_group_sex_com_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
+            count_group_sex_com_cos_one_df['Ниже среднего'] / count_group_sex_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_group_sex_com_cos_one_df.columns:
-            count_group_sex_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_group_sex_com_cos_one_df['Средний'] /
-                count_group_sex_com_cos_one_df['Итого'], 2) * 100
+        count_group_sex_com_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
+            count_group_sex_com_cos_one_df['Средний'] /
+            count_group_sex_com_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_group_sex_com_cos_one_df.columns:
-            count_group_sex_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_group_sex_com_cos_one_df['Высокий'] /
-                count_group_sex_com_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_group_sex_com_cos_one_df.columns:
-            count_group_sex_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_group_sex_com_cos_one_df['Очень высокий'] /
-                count_group_sex_com_cos_one_df['Итого'], 2) * 100
+        count_group_sex_com_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
+            count_group_sex_com_cos_one_df['Высокий'] /
+            count_group_sex_com_cos_one_df['Итого'], 2) * 100
+        count_group_sex_com_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
+            count_group_sex_com_cos_one_df['Очень высокий'] /
+            count_group_sex_com_cos_one_df['Итого'], 2) * 100
+
+        part_svod_df = count_group_sex_com_cos_one_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_group_sex_com_cos_one_df.iloc[-1:]
+        count_group_sex_com_cos_one_df = pd.concat([part_svod_df, itog_svod_df])
 
 
         # Организационные навыки
@@ -500,34 +500,34 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         mean_group_org_cos_one_df['Уровень_орг_навыков'] = mean_group_org_cos_one_df['Значение_орг_навыков'].apply(
             calc_level_org_cos_one)  # считаем уровень
 
+        mean_group_org_cos_one_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+
         # Количество Класс
         count_group_org_cos_one_df = pd.pivot_table(base_df, index=['Класс'],
                                                      columns='Уровень_орг_навыков',
                                                      values='Значение_орг_навыков',
                                                      aggfunc='count', margins=True, margins_name='Итого')
         count_group_org_cos_one_df.reset_index(inplace=True)
+        count_group_org_cos_one_df = count_group_org_cos_one_df.reindex(
+            columns=['Класс', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_group_org_cos_one_df.columns:
-            count_group_org_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_group_org_cos_one_df['Низкий'] / count_group_org_cos_one_df['Итого'], 2) * 100
+        count_group_org_cos_one_df['% Низкий уровень орг.навыков от общего'] = round(
+            count_group_org_cos_one_df['Низкий'] / count_group_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_group_org_cos_one_df.columns:
-            count_group_org_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_group_org_cos_one_df['Ниже среднего'] / count_group_org_cos_one_df['Итого'], 2) * 100
+        count_group_org_cos_one_df['% Ниже среднего уровень орг.навыков от общего'] = round(
+            count_group_org_cos_one_df['Ниже среднего'] / count_group_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_group_org_cos_one_df.columns:
-            count_group_org_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_group_org_cos_one_df['Средний'] /
-                count_group_org_cos_one_df['Итого'], 2) * 100
+        count_group_org_cos_one_df['% Средний уровень орг.навыков от общего'] = round(
+            count_group_org_cos_one_df['Средний'] /
+            count_group_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_group_org_cos_one_df.columns:
-            count_group_org_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_group_org_cos_one_df['Высокий'] /
-                count_group_org_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_group_org_cos_one_df.columns:
-            count_group_org_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_group_org_cos_one_df['Очень высокий'] /
-                count_group_org_cos_one_df['Итого'], 2) * 100
+        count_group_org_cos_one_df['% Высокий уровень орг.навыков от общего'] = round(
+            count_group_org_cos_one_df['Высокий'] /
+            count_group_org_cos_one_df['Итого'], 2) * 100
+        count_group_org_cos_one_df['% Очень высокий орг.навыков от общего'] = round(
+            count_group_org_cos_one_df['Очень высокий'] /
+            count_group_org_cos_one_df['Итого'], 2) * 100
 
         # Средняя Класс и Пол
 
@@ -538,6 +538,7 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         mean_group_sex_org_cos_one_df['Уровень_орг_навыков'] = mean_group_sex_org_cos_one_df[
             'Значение_орг_навыков'].apply(
             calc_level_org_cos_one)  # считаем уровень
+        mean_group_sex_org_cos_one_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
         # Количество Класс и Пол
         count_group_sex_org_cos_one_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
@@ -545,29 +546,31 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
                                                          values='Значение_орг_навыков',
                                                          aggfunc='count', margins=True, margins_name='Итого')
         count_group_sex_org_cos_one_df.reset_index(inplace=True)
+        count_group_sex_org_cos_one_df = count_group_sex_org_cos_one_df.reindex(
+            columns=['Класс', 'Пол', 'Низкий', 'Ниже среднего', 'Средний',
+                     'Высокий', 'Очень высокий', 'Итого'])
 
-        if 'Низкий' in count_group_sex_org_cos_one_df.columns:
-            count_group_sex_org_cos_one_df['% Низкий уровень ком.навыков от общего'] = round(
-                count_group_sex_org_cos_one_df['Низкий'] / count_group_sex_org_cos_one_df['Итого'], 2) * 100
+        count_group_sex_org_cos_one_df['% Низкий уровень орг.навыков от общего'] = round(
+            count_group_sex_org_cos_one_df['Низкий'] / count_group_sex_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Ниже среднего' in count_group_sex_org_cos_one_df.columns:
-            count_group_sex_org_cos_one_df['% Ниже среднего уровень ком.навыков от общего'] = round(
-                count_group_sex_org_cos_one_df['Ниже среднего'] / count_group_sex_org_cos_one_df['Итого'], 2) * 100
+        count_group_sex_org_cos_one_df['% Ниже среднего уровень орг.навыков от общего'] = round(
+            count_group_sex_org_cos_one_df['Ниже среднего'] / count_group_sex_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Средний' in count_group_sex_org_cos_one_df.columns:
-            count_group_sex_org_cos_one_df['% Средний уровень ком.навыков от общего'] = round(
-                count_group_sex_org_cos_one_df['Средний'] /
-                count_group_sex_org_cos_one_df['Итого'], 2) * 100
+        count_group_sex_org_cos_one_df['% Средний уровень орг.навыков от общего'] = round(
+            count_group_sex_org_cos_one_df['Средний'] /
+            count_group_sex_org_cos_one_df['Итого'], 2) * 100
 
-        if 'Высокий' in count_group_sex_org_cos_one_df.columns:
-            count_group_sex_org_cos_one_df['% Высокий уровень ком.навыков от общего'] = round(
-                count_group_sex_org_cos_one_df['Высокий'] /
-                count_group_sex_org_cos_one_df['Итого'], 2) * 100
-        if 'Очень высокий' in count_group_sex_org_cos_one_df.columns:
-            count_group_sex_org_cos_one_df['% Очень высокий ком.навыков от общего'] = round(
-                count_group_sex_org_cos_one_df['Очень высокий'] /
-                count_group_sex_org_cos_one_df['Итого'], 2) * 100
+        count_group_sex_org_cos_one_df['% Высокий уровень орг.навыков от общего'] = round(
+            count_group_sex_org_cos_one_df['Высокий'] /
+            count_group_sex_org_cos_one_df['Итого'], 2) * 100
+        count_group_sex_org_cos_one_df['% Очень высокий орг.навыков от общего'] = round(
+            count_group_sex_org_cos_one_df['Очень высокий'] /
+            count_group_sex_org_cos_one_df['Итого'], 2) * 100
 
+        part_svod_df = count_group_sex_org_cos_one_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_group_sex_org_cos_one_df.iloc[-1:]
+        count_group_sex_org_cos_one_df = pd.concat([part_svod_df, itog_svod_df])
 
 
 
@@ -577,14 +580,14 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                    'Среднее Класс Ком': mean_group_com_cos_one_df, 'Количество Класс Ком': count_group_com_cos_one_df,
                    'Среднее Класс Орг': mean_group_org_cos_one_df, 'Количество Класс Орг': count_group_org_cos_one_df,
-                   'Среднее Класс Пол Ком': mean_group_sex_com_cos_one_df, 'Количество Класс Пол': mean_group_sex_org_cos_one_df,
+                   'Среднее Класс Пол Ком': mean_group_sex_com_cos_one_df, 'Количество Класс Пол Ком': count_group_sex_com_cos_one_df,
+                   'Среднее Класс Пол Орг': mean_group_sex_org_cos_one_df, 'Количество Класс Пол Орг': count_group_sex_org_cos_one_df,
                    'Среднее Номер_класса Ком': mean_course_com_cos_one_df, 'Количество Номер_класса Ком': count_course_com_cos_one_df,
                    'Среднее Номер_класса Орг': mean_course_org_cos_one_df, 'Количество Номер_класса Орг': count_course_org_cos_one_df,
                    'Среднее Номер_класса Пол Ком': mean_course_sex_com_cos_one_df, 'Количество Номер_класса Пол Ком': count_course_sex_com_cos_one_df,
                    'Среднее Номер_класса Пол Орг': mean_course_sex_org_cos_one_df, 'Количество Номер_класса Пол Орг': count_course_sex_org_cos_one_df
 
                    }
-
         return out_dct, part_df
 
 
