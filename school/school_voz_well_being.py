@@ -1,7 +1,7 @@
 """
 Скрипт для обработки результатов теста общего самочувствия ВОЗ 1999 для школьников
 """
-from lachesis_support_functions import round_mean
+from lachesis_support_functions import round_mean, sort_name_class
 import pandas as pd
 from tkinter import messagebox
 
@@ -132,12 +132,14 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                values=['Значение_общего_самочувствия'],
                                                aggfunc=round_mean)
             svod_all_group_df.reset_index(inplace=True)
+            svod_all_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
             # Делаем сводную таблицу средних значений для группы и пола.
             svod_all_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                    values=['Значение_общего_самочувствия'],
                                                    aggfunc=round_mean)
             svod_all_group_sex_df.reset_index(inplace=True)
+            svod_all_group_sex_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
             # формируем словарь
             out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
