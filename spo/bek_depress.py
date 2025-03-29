@@ -192,29 +192,21 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                            values='Значение_уровня_депрессии',
                                            aggfunc='count', margins=True, margins_name='Итого')
         svod_course_count_df.reset_index(inplace=True)
+        svod_course_count_df = svod_course_count_df.reindex(
+            columns=['Курс','удовлетворительное эмоциональное состояние', 'легкая депрессия',
+                     'умеренная депрессия', 'тяжелая депрессия',
+                     'Итого'])
 
         # Добавляем колонки с процентами
-        if 'удовлетворительное эмоциональное состояние' in svod_course_count_df.columns:
-            svod_course_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
-                svod_course_count_df['удовлетворительное эмоциональное состояние'] / svod_course_count_df['Итого'], 2) * 100
+        svod_course_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+            svod_course_count_df['удовлетворительное эмоциональное состояние'] / svod_course_count_df['Итого'], 2) * 100
 
-        if 'легкая депрессия' in svod_course_count_df.columns:
-            svod_course_count_df['% легкая депрессия  от общего'] = round(
-                svod_course_count_df['легкая депрессия'] / svod_course_count_df['Итого'], 2) * 100
-        if 'умеренная депрессия' in svod_course_count_df.columns:
-            svod_course_count_df['% умеренная депрессия от общего'] = round(
-                svod_course_count_df['умеренная депрессия'] / svod_course_count_df['Итого'], 2) * 100
-        if 'тяжелая депрессия' in svod_course_count_df.columns:
-            svod_course_count_df['% тяжелая депрессия от общего'] = round(
-                svod_course_count_df['тяжелая депрессия'] / svod_course_count_df['Итого'], 2) * 100
-
-
-
-
-
-
-
-
+        svod_course_count_df['% легкая депрессия  от общего'] = round(
+            svod_course_count_df['легкая депрессия'] / svod_course_count_df['Итого'], 2) * 100
+        svod_course_count_df['% умеренная депрессия от общего'] = round(
+            svod_course_count_df['умеренная депрессия'] / svod_course_count_df['Итого'], 2) * 100
+        svod_course_count_df['% тяжелая депрессия от общего'] = round(
+            svod_course_count_df['тяжелая депрессия'] / svod_course_count_df['Итого'], 2) * 100
 
 
         # Делаем сводную таблицу средних значений.
@@ -230,17 +222,17 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                      values='Значение_уровня_депрессии',
                                      aggfunc='count',margins=True,margins_name='Итого')
         svod_all_count_df.reset_index(inplace=True)
+        svod_all_count_df = svod_all_count_df.reindex(
+            columns=['Курс', 'Пол', 'удовлетворительное эмоциональное состояние', 'легкая депрессия',
+                     'умеренная депрессия', 'тяжелая депрессия',
+                     'Итого'])
 
         # Добавляем колонки с процентами
-        if 'удовлетворительное эмоциональное состояние' in svod_all_count_df.columns:
-            svod_all_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(svod_all_count_df['удовлетворительное эмоциональное состояние'] / svod_all_count_df['Итого'],2)*100
+        svod_all_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(svod_all_count_df['удовлетворительное эмоциональное состояние'] / svod_all_count_df['Итого'],2)*100
 
-        if 'легкая депрессия' in svod_all_count_df.columns:
-            svod_all_count_df['% легкая депрессия  от общего'] = round(svod_all_count_df['легкая депрессия'] / svod_all_count_df['Итого'],2)*100
-        if 'умеренная депрессия' in svod_all_count_df.columns:
-            svod_all_count_df['% умеренная депрессия от общего'] = round(svod_all_count_df['умеренная депрессия'] / svod_all_count_df['Итого'],2)*100
-        if 'тяжелая депрессия' in svod_all_count_df.columns:
-            svod_all_count_df['% тяжелая депрессия от общего'] = round(svod_all_count_df['тяжелая депрессия'] / svod_all_count_df['Итого'],2)*100
+        svod_all_count_df['% легкая депрессия  от общего'] = round(svod_all_count_df['легкая депрессия'] / svod_all_count_df['Итого'],2)*100
+        svod_all_count_df['% умеренная депрессия от общего'] = round(svod_all_count_df['умеренная депрессия'] / svod_all_count_df['Итого'],2)*100
+        svod_all_count_df['% тяжелая депрессия от общего'] = round(svod_all_count_df['тяжелая депрессия'] / svod_all_count_df['Итого'],2)*100
 
         out_answer_df = pd.concat([out_answer_df,answers_df],axis=1)
 
@@ -269,22 +261,22 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                      values='Значение_уровня_депрессии',
                                                      aggfunc='count', margins=True, margins_name='Итого')
             svod_all_group_count_df.reset_index(inplace=True)
+            svod_all_group_count_df = svod_all_group_count_df.reindex(
+                columns=['Группа', 'Пол', 'удовлетворительное эмоциональное состояние', 'легкая депрессия',
+                         'умеренная депрессия', 'тяжелая депрессия',
+                         'Итого'])
 
             # Добавляем колонки с процентами
-            if 'удовлетворительное эмоциональное состояние' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
-                    svod_all_group_count_df['удовлетворительное эмоциональное состояние'] / svod_all_group_count_df[
-                        'Итого'], 2)*100
+            svod_all_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+                svod_all_group_count_df['удовлетворительное эмоциональное состояние'] / svod_all_group_count_df[
+                    'Итого'], 2)*100
 
-            if 'легкая депрессия' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% легкая депрессия  от общего'] = round(
-                    svod_all_group_count_df['легкая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
-            if 'умеренная депрессия' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% умеренная депрессия от общего'] = round(
-                    svod_all_group_count_df['умеренная депрессия'] / svod_all_group_count_df['Итого'], 2)*100
-            if 'тяжелая депрессия' in svod_all_group_count_df.columns:
-                svod_all_group_count_df['% тяжелая депрессия от общего'] = round(
-                    svod_all_group_count_df['тяжелая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
+            svod_all_group_count_df['% легкая депрессия  от общего'] = round(
+                svod_all_group_count_df['легкая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
+            svod_all_group_count_df['% умеренная депрессия от общего'] = round(
+                svod_all_group_count_df['умеренная депрессия'] / svod_all_group_count_df['Итого'], 2)*100
+            svod_all_group_count_df['% тяжелая депрессия от общего'] = round(
+                svod_all_group_count_df['тяжелая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
 
             # делаем свод только по группам
             # Делаем сводную таблицу средних значений.
@@ -301,23 +293,23 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                           values='Значение_уровня_депрессии',
                                                           aggfunc='count', margins=True, margins_name='Итого')
             svod_all_only_group_count_df.reset_index(inplace=True)
+            svod_all_only_group_count_df = svod_all_only_group_count_df.reindex(
+                columns=['Группа', 'удовлетворительное эмоциональное состояние', 'легкая депрессия',
+                         'умеренная депрессия', 'тяжелая депрессия',
+                         'Итого'])
 
             # Добавляем колонки с процентами
-            if 'удовлетворительное эмоциональное состояние' in svod_all_only_group_count_df.columns:
-                svod_all_only_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
-                    svod_all_only_group_count_df['удовлетворительное эмоциональное состояние'] /
-                    svod_all_only_group_count_df[
-                        'Итого'], 2)*100
+            svod_all_only_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+                svod_all_only_group_count_df['удовлетворительное эмоциональное состояние'] /
+                svod_all_only_group_count_df[
+                    'Итого'], 2)*100
 
-            if 'легкая депрессия' in svod_all_only_group_count_df.columns:
-                svod_all_only_group_count_df['% легкая депрессия  от общего'] = round(
-                    svod_all_only_group_count_df['легкая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
-            if 'умеренная депрессия' in svod_all_only_group_count_df.columns:
-                svod_all_only_group_count_df['% умеренная депрессия от общего'] = round(
-                    svod_all_only_group_count_df['умеренная депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
-            if 'тяжелая депрессия' in svod_all_only_group_count_df.columns:
-                svod_all_only_group_count_df['% тяжелая депрессия от общего'] = round(
-                    svod_all_only_group_count_df['тяжелая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
+            svod_all_only_group_count_df['% легкая депрессия  от общего'] = round(
+                svod_all_only_group_count_df['легкая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
+            svod_all_only_group_count_df['% умеренная депрессия от общего'] = round(
+                svod_all_only_group_count_df['умеренная депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
+            svod_all_only_group_count_df['% тяжелая депрессия от общего'] = round(
+                svod_all_only_group_count_df['тяжелая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
 
             # формируем словарь
             out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
@@ -342,22 +334,5 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                              f'Проверьте количество колонок с ответами на тест Шкала депрессии Бека\n'
                              f'Должно быть 52 колонки с ответами, то есть  13 вопросов по 4 колонки'
                             )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

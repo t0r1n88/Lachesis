@@ -171,24 +171,24 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                   values='Значение_депрессии',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         svod_all_count_course_df.reset_index(inplace=True)
+        svod_all_count_course_df = svod_all_count_course_df.reindex(
+            columns=['Курс', 'депрессия не выявлена', 'легкая депрессия ситуативного или невротического генеза',
+                     'субдепрессивное состояние или маскированная депрессия', 'истинное депрессивное состояние',
+                     'Итого'])
 
-        if 'депрессия не выявлена' in svod_all_count_course_df.columns:
-            svod_all_count_course_df['% депрессия не выявлена  от общего'] = round(
-                svod_all_count_course_df['депрессия не выявлена'] / svod_all_count_course_df['Итого'], 2)*100
+        svod_all_count_course_df['% депрессия не выявлена  от общего'] = round(
+            svod_all_count_course_df['депрессия не выявлена'] / svod_all_count_course_df['Итого'], 2)*100
 
-        if 'легкая депрессия ситуативного или невротического генеза' in svod_all_count_course_df.columns:
-            svod_all_count_course_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
-                svod_all_count_course_df['легкая депрессия ситуативного или невротического генеза'] /
-                svod_all_count_course_df['Итого'], 2)*100
+        svod_all_count_course_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
+            svod_all_count_course_df['легкая депрессия ситуативного или невротического генеза'] /
+            svod_all_count_course_df['Итого'], 2)*100
 
-        if 'субдепрессивное состояние или маскированная депрессия' in svod_all_count_course_df.columns:
-            svod_all_count_course_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
-                svod_all_count_course_df['субдепрессивное состояние или маскированная депрессия'] /
-                svod_all_count_course_df['Итого'], 2)*100
+        svod_all_count_course_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
+            svod_all_count_course_df['субдепрессивное состояние или маскированная депрессия'] /
+            svod_all_count_course_df['Итого'], 2)*100
 
-        if 'истинное депрессивное состояние' in svod_all_count_course_df.columns:
-            svod_all_count_course_df['% истинное депрессивное состояние от общего'] = round(
-                svod_all_count_course_df['истинное депрессивное состояние'] / svod_all_count_course_df['Итого'], 2)*100
+        svod_all_count_course_df['% истинное депрессивное состояние от общего'] = round(
+            svod_all_count_course_df['истинное депрессивное состояние'] / svod_all_count_course_df['Итого'], 2)*100
 
 
         # Делаем сводную таблицу средних значений для курса и пола.
@@ -205,24 +205,24 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                       values='Значение_депрессии',
                                                       aggfunc='count', margins=True, margins_name='Итого')
         svod_all_count_course_sex_df.reset_index(inplace=True)
+        svod_all_count_course_sex_df = svod_all_count_course_sex_df.reindex(
+            columns=['Группа', 'депрессия не выявлена', 'легкая депрессия ситуативного или невротического генеза',
+                     'субдепрессивное состояние или маскированная депрессия', 'истинное депрессивное состояние',
+                     'Итого'])
 
-        if 'депрессия не выявлена' in svod_all_count_course_sex_df.columns:
-            svod_all_count_course_sex_df['% депрессия не выявлена  от общего'] = round(
-                svod_all_count_course_sex_df['депрессия не выявлена'] / svod_all_count_course_sex_df['Итого'], 2)*100
+        svod_all_count_course_sex_df['% депрессия не выявлена  от общего'] = round(
+            svod_all_count_course_sex_df['депрессия не выявлена'] / svod_all_count_course_sex_df['Итого'], 2)*100
 
-        if 'легкая депрессия ситуативного или невротического генеза' in svod_all_count_course_sex_df.columns:
-            svod_all_count_course_sex_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
-                svod_all_count_course_sex_df['легкая депрессия ситуативного или невротического генеза'] /
-                svod_all_count_course_sex_df['Итого'], 2)*100
+        svod_all_count_course_sex_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
+            svod_all_count_course_sex_df['легкая депрессия ситуативного или невротического генеза'] /
+            svod_all_count_course_sex_df['Итого'], 2)*100
 
-        if 'субдепрессивное состояние или маскированная депрессия' in svod_all_count_course_sex_df.columns:
-            svod_all_count_course_sex_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
-                svod_all_count_course_sex_df['субдепрессивное состояние или маскированная депрессия'] /
-                svod_all_count_course_sex_df['Итого'], 2)*100
+        svod_all_count_course_sex_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
+            svod_all_count_course_sex_df['субдепрессивное состояние или маскированная депрессия'] /
+            svod_all_count_course_sex_df['Итого'], 2)*100
 
-        if 'истинное депрессивное состояние' in svod_all_count_course_sex_df.columns:
-            svod_all_count_course_sex_df['% истинное депрессивное состояние от общего'] = round(
-                svod_all_count_course_sex_df['истинное депрессивное состояние'] / svod_all_count_course_sex_df['Итого'], 2)*100
+        svod_all_count_course_sex_df['% истинное депрессивное состояние от общего'] = round(
+            svod_all_count_course_sex_df['истинное депрессивное состояние'] / svod_all_count_course_sex_df['Итого'], 2)*100
 
 
         # Датафрейм для проверки
@@ -256,23 +256,24 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                      aggfunc='count', margins=True, margins_name='Итого')
             svod_all_count_group_df.reset_index(inplace=True)
 
-            if 'депрессия не выявлена' in svod_all_count_group_df.columns:
-                svod_all_count_group_df['% депрессия не выявлена  от общего'] = round(
-                    svod_all_count_group_df['депрессия не выявлена'] / svod_all_count_group_df['Итого'], 2)*100
+            svod_all_count_group_df = svod_all_count_group_df.reindex(
+                columns=['Группа', 'депрессия не выявлена', 'легкая депрессия ситуативного или невротического генеза',
+                         'субдепрессивное состояние или маскированная депрессия', 'истинное депрессивное состояние',
+                         'Итого'])
 
-            if 'легкая депрессия ситуативного или невротического генеза' in svod_all_count_group_df.columns:
-                svod_all_count_group_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
-                    svod_all_count_group_df['легкая депрессия ситуативного или невротического генеза'] /
-                    svod_all_count_group_df['Итого'], 2)*100
+            svod_all_count_group_df['% депрессия не выявлена  от общего'] = round(
+                svod_all_count_group_df['депрессия не выявлена'] / svod_all_count_group_df['Итого'], 2)*100
 
-            if 'субдепрессивное состояние или маскированная депрессия' in svod_all_count_group_df.columns:
-                svod_all_count_group_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
-                    svod_all_count_group_df['субдепрессивное состояние или маскированная депрессия'] /
-                    svod_all_count_group_df['Итого'], 2)*100
+            svod_all_count_group_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
+                svod_all_count_group_df['легкая депрессия ситуативного или невротического генеза'] /
+                svod_all_count_group_df['Итого'], 2)*100
 
-            if 'истинное депрессивное состояние' in svod_all_count_group_df.columns:
-                svod_all_count_group_df['% истинное депрессивное состояние от общего'] = round(
-                    svod_all_count_group_df['истинное депрессивное состояние'] / svod_all_count_group_df['Итого'], 2)*100
+            svod_all_count_group_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
+                svod_all_count_group_df['субдепрессивное состояние или маскированная депрессия'] /
+                svod_all_count_group_df['Итого'], 2)*100
+
+            svod_all_count_group_df['% истинное депрессивное состояние от общего'] = round(
+                svod_all_count_group_df['истинное депрессивное состояние'] / svod_all_count_group_df['Итого'], 2)*100
 
 
             # Делаем сводную таблицу средних значений для группы и пола.
@@ -282,8 +283,6 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_all_group_sex_df.reset_index(inplace=True)
             svod_all_group_sex_df['Уровень_депрессии'] = svod_all_group_sex_df['Значение_депрессии'].apply(
                 calc_level_zung_depress)  # считаем уровень
-            svod_all_group_sex_df.rename(columns={'Группа': 'Группа', 'Пол': 'Пол'},
-                                         inplace=True)
 
             # Делаем свод по количеству для группы и пола
             svod_all_count_group_sex_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
@@ -291,25 +290,26 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                          values='Значение_депрессии',
                                                          aggfunc='count', margins=True, margins_name='Итого')
             svod_all_count_group_sex_df.reset_index(inplace=True)
+            svod_all_count_group_sex_df = svod_all_count_group_sex_df.reindex(
+                columns=['Группа', 'Пол', 'депрессия не выявлена', 'легкая депрессия ситуативного или невротического генеза',
+                         'субдепрессивное состояние или маскированная депрессия', 'истинное депрессивное состояние',
+                         'Итого'])
 
-            if 'депрессия не выявлена' in svod_all_count_group_sex_df.columns:
-                svod_all_count_group_sex_df['% депрессия не выявлена  от общего'] = round(
-                    svod_all_count_group_sex_df['депрессия не выявлена'] / svod_all_count_group_sex_df['Итого'], 2)*100
 
-            if 'легкая депрессия ситуативного или невротического генеза' in svod_all_count_group_sex_df.columns:
-                svod_all_count_group_sex_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
-                    svod_all_count_group_sex_df['легкая депрессия ситуативного или невротического генеза'] /
-                    svod_all_count_group_sex_df['Итого'], 2)*100
+            svod_all_count_group_sex_df['% депрессия не выявлена  от общего'] = round(
+                svod_all_count_group_sex_df['депрессия не выявлена'] / svod_all_count_group_sex_df['Итого'], 2)*100
 
-            if 'субдепрессивное состояние или маскированная депрессия' in svod_all_count_group_sex_df.columns:
-                svod_all_count_group_sex_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
-                    svod_all_count_group_sex_df['субдепрессивное состояние или маскированная депрессия'] /
-                    svod_all_count_group_sex_df['Итого'], 2)*100
+            svod_all_count_group_sex_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
+                svod_all_count_group_sex_df['легкая депрессия ситуативного или невротического генеза'] /
+                svod_all_count_group_sex_df['Итого'], 2)*100
 
-            if 'истинное депрессивное состояние' in svod_all_count_group_sex_df.columns:
-                svod_all_count_group_sex_df['% истинное депрессивное состояние от общего'] = round(
-                    svod_all_count_group_sex_df['истинное депрессивное состояние'] / svod_all_count_group_sex_df['Итого'],
-                    2)*100
+            svod_all_count_group_sex_df['% субдепрессивное состояние или маскированная депрессия от общего'] = round(
+                svod_all_count_group_sex_df['субдепрессивное состояние или маскированная депрессия'] /
+                svod_all_count_group_sex_df['Итого'], 2)*100
+
+            svod_all_count_group_sex_df['% истинное депрессивное состояние от общего'] = round(
+                svod_all_count_group_sex_df['истинное депрессивное состояние'] / svod_all_count_group_sex_df['Итого'],
+                2)*100
 
 
             # формируем словарь
