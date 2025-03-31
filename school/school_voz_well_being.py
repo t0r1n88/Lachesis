@@ -118,37 +118,27 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         # Датафрейм для проверки
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
+        svod_all_group_df = pd.pivot_table(base_df, index=['Класс'],
+                                           values=['Значение_общего_самочувствия'],
+                                           aggfunc=round_mean)
+        svod_all_group_df.reset_index(inplace=True)
+        svod_all_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
-        # Проверяем наличие колонки с наименованием группы
-        if 'Класс' not in base_df.columns:
-            # формируем словарь
-            out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по Номер_класса': svod_all_course_df,'Среднее Номер_класса Пол': svod_all_course_sex_df,
-                      }
-
-            return out_dct,part_df
-        else:
-            svod_all_group_df = pd.pivot_table(base_df, index=['Класс'],
+        # Делаем сводную таблицу средних значений для группы и пола.
+        svod_all_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
                                                values=['Значение_общего_самочувствия'],
                                                aggfunc=round_mean)
-            svod_all_group_df.reset_index(inplace=True)
-            svod_all_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        svod_all_group_sex_df.reset_index(inplace=True)
+        svod_all_group_sex_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
-            # Делаем сводную таблицу средних значений для группы и пола.
-            svod_all_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
-                                                   values=['Значение_общего_самочувствия'],
-                                                   aggfunc=round_mean)
-            svod_all_group_sex_df.reset_index(inplace=True)
-            svod_all_group_sex_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        # формируем словарь
+        out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Среднее по Классам': svod_all_group_df, 'Среднее Класс Пол': svod_all_group_sex_df,
+                   'Среднее по Номер_класса': svod_all_course_df,'Среднее Номер_класса Пол': svod_all_course_sex_df
 
-            # формируем словарь
-            out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по Классам': svod_all_group_df, 'Среднее Класс Пол': svod_all_group_sex_df,
-                       'Среднее по Номер_класса': svod_all_course_df,'Среднее Номер_класса Пол': svod_all_course_sex_df
+                  }
 
-                      }
-
-            return out_dct,part_df
+        return out_dct,part_df
     except BadOrderVozWellBeing:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Индекс общего самочувствия ВОЗ 1999 обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'

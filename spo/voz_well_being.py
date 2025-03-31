@@ -120,33 +120,24 @@ def processing_voz_well_being(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
-        # Проверяем наличие колонки с наименованием группы
-        if 'Группа' not in base_df.columns:
-            # формируем словарь
-            out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по курсу': svod_all_course_df,'Среднее по курсу и полу': svod_all_course_sex_df,
-                      }
+        svod_all_group_df = pd.pivot_table(base_df, index=['Группа'],
+                                           values=['Значение_общего_самочувствия'],
+                                           aggfunc=round_mean)
+        svod_all_group_df.reset_index(inplace=True)
 
-            return out_dct,part_df
-        else:
-            svod_all_group_df = pd.pivot_table(base_df, index=['Группа'],
+        # Делаем сводную таблицу средних значений для группы и пола.
+        svod_all_group_sex_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
                                                values=['Значение_общего_самочувствия'],
                                                aggfunc=round_mean)
-            svod_all_group_df.reset_index(inplace=True)
+        svod_all_group_sex_df.reset_index(inplace=True)
 
-            # Делаем сводную таблицу средних значений для группы и пола.
-            svod_all_group_sex_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
-                                                   values=['Значение_общего_самочувствия'],
-                                                   aggfunc=round_mean)
-            svod_all_group_sex_df.reset_index(inplace=True)
+        # формируем словарь
+        out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Среднее по группам': svod_all_group_df, 'Среднее по группам и полам': svod_all_group_sex_df,
+                   'Среднее по курсу': svod_all_course_df,'Среднее по курсу и полу': svod_all_course_sex_df
+                  }
 
-            # формируем словарь
-            out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                       'Среднее по группам': svod_all_group_df, 'Среднее по группам и полам': svod_all_group_sex_df,
-                       'Среднее по курсу': svod_all_course_df,'Среднее по курсу и полу': svod_all_course_sex_df
-                      }
-
-            return out_dct,part_df
+        return out_dct,part_df
     except BadOrderVozWellBeing:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Индекс общего самочувствия ВОЗ 1999 обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'

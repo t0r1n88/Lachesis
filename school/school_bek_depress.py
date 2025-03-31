@@ -205,104 +205,95 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         out_answer_df = pd.concat([out_answer_df,answers_df],axis=1)
 
-        # Проверяем наличие колонки с наименованием группы
-        if 'Класс' not in base_df.columns:
-            # формируем словарь
-            out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
-                'Средний результат':svod_all_df,'Количество':svod_all_count_df,
-    }
-
-            return out_dct, part_df
-        else:
 
 
-            # Делаем сводную таблицу средних значений.
-            svod_all_group_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
-                                               values=['Значение_уровня_депрессии'],
-                                               aggfunc=round_mean)
-            svod_all_group_df.reset_index(inplace=True)
-            svod_all_group_df['Уровень_депрессии'] = svod_all_group_df['Значение_уровня_депрессии'].apply(
-                calc_level_bek_depress)  # считаем уровень
-            svod_all_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        # Делаем сводную таблицу средних значений.
+        svod_all_group_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
+                                           values=['Значение_уровня_депрессии'],
+                                           aggfunc=round_mean)
+        svod_all_group_df.reset_index(inplace=True)
+        svod_all_group_df['Уровень_депрессии'] = svod_all_group_df['Значение_уровня_депрессии'].apply(
+            calc_level_bek_depress)  # считаем уровень
+        svod_all_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
 
-            # Делаем свод по количеству
-            svod_all_group_count_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
-                                                     columns='Уровень_депрессии',
-                                                     values='Значение_уровня_депрессии',
-                                                     aggfunc='count', margins=True, margins_name='Итого')
-            svod_all_group_count_df.reset_index(inplace=True)
-            svod_all_group_count_df = svod_all_group_count_df.reindex(
-                columns=['Класс','Пол', 'удовлетворительное эмоциональное состояние', 'легкая депрессия',
-                         'умеренная депрессия', 'тяжелая депрессия', 'Итого'])
+        # Делаем свод по количеству
+        svod_all_group_count_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
+                                                 columns='Уровень_депрессии',
+                                                 values='Значение_уровня_депрессии',
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+        svod_all_group_count_df.reset_index(inplace=True)
+        svod_all_group_count_df = svod_all_group_count_df.reindex(
+            columns=['Класс','Пол', 'удовлетворительное эмоциональное состояние', 'легкая депрессия',
+                     'умеренная депрессия', 'тяжелая депрессия', 'Итого'])
 
-            # Добавляем колонки с процентами
-            svod_all_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
-                svod_all_group_count_df['удовлетворительное эмоциональное состояние'] / svod_all_group_count_df[
-                    'Итого'], 2)*100
+        # Добавляем колонки с процентами
+        svod_all_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+            svod_all_group_count_df['удовлетворительное эмоциональное состояние'] / svod_all_group_count_df[
+                'Итого'], 2)*100
 
-            svod_all_group_count_df['% легкая депрессия  от общего'] = round(
-                svod_all_group_count_df['легкая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
-            svod_all_group_count_df['% умеренная депрессия от общего'] = round(
-                svod_all_group_count_df['умеренная депрессия'] / svod_all_group_count_df['Итого'], 2)*100
-            svod_all_group_count_df['% тяжелая депрессия от общего'] = round(
-                svod_all_group_count_df['тяжелая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
+        svod_all_group_count_df['% легкая депрессия  от общего'] = round(
+            svod_all_group_count_df['легкая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
+        svod_all_group_count_df['% умеренная депрессия от общего'] = round(
+            svod_all_group_count_df['умеренная депрессия'] / svod_all_group_count_df['Итого'], 2)*100
+        svod_all_group_count_df['% тяжелая депрессия от общего'] = round(
+            svod_all_group_count_df['тяжелая депрессия'] / svod_all_group_count_df['Итого'], 2)*100
 
-            part_svod_df = svod_all_group_count_df.iloc[:-1:]
-            part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-            itog_svod_df = svod_all_group_count_df.iloc[-1:]
-            svod_all_group_count_df = pd.concat([part_svod_df,itog_svod_df])
+        part_svod_df = svod_all_group_count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = svod_all_group_count_df.iloc[-1:]
+        svod_all_group_count_df = pd.concat([part_svod_df,itog_svod_df])
 
 
-            # делаем свод только по Классам
-            # Делаем сводную таблицу средних значений.
-            svod_all_only_group_df = pd.pivot_table(base_df, index=['Класс'],
-                                         values=['Значение_уровня_депрессии'],
-                                         aggfunc=round_mean)
-            svod_all_only_group_df.reset_index(inplace=True)
-            svod_all_only_group_df['Уровень_депрессии'] = svod_all_only_group_df['Значение_уровня_депрессии'].apply(
-                calc_level_bek_depress)  # считаем уровень
-            svod_all_only_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        # делаем свод только по Классам
+        # Делаем сводную таблицу средних значений.
+        svod_all_only_group_df = pd.pivot_table(base_df, index=['Класс'],
+                                     values=['Значение_уровня_депрессии'],
+                                     aggfunc=round_mean)
+        svod_all_only_group_df.reset_index(inplace=True)
+        svod_all_only_group_df['Уровень_депрессии'] = svod_all_only_group_df['Значение_уровня_депрессии'].apply(
+            calc_level_bek_depress)  # считаем уровень
+        svod_all_only_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
-            # Делаем свод по количеству
-            svod_all_only_group_count_df = pd.pivot_table(base_df, index=['Класс'],
-                                                          columns='Уровень_депрессии',
-                                                          values='Значение_уровня_депрессии',
-                                                          aggfunc='count', margins=True, margins_name='Итого')
-            svod_all_only_group_count_df.reset_index(inplace=True)
+        # Делаем свод по количеству
+        svod_all_only_group_count_df = pd.pivot_table(base_df, index=['Класс'],
+                                                      columns='Уровень_депрессии',
+                                                      values='Значение_уровня_депрессии',
+                                                      aggfunc='count', margins=True, margins_name='Итого')
+        svod_all_only_group_count_df.reset_index(inplace=True)
 
-            svod_all_only_group_count_df = svod_all_only_group_count_df.reindex(columns=['Класс','удовлетворительное эмоциональное состояние','легкая депрессия','умеренная депрессия','тяжелая депрессия','Итого'])
+        svod_all_only_group_count_df = svod_all_only_group_count_df.reindex(columns=['Класс','удовлетворительное эмоциональное состояние','легкая депрессия','умеренная депрессия','тяжелая депрессия','Итого'])
 
-            # Добавляем колонки с процентами
-            svod_all_only_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
-                svod_all_only_group_count_df['удовлетворительное эмоциональное состояние'] /
-                svod_all_only_group_count_df[
-                    'Итого'], 2)*100
+        # Добавляем колонки с процентами
+        svod_all_only_group_count_df['% удовлетворительное эмоциональное состояние от общего'] = round(
+            svod_all_only_group_count_df['удовлетворительное эмоциональное состояние'] /
+            svod_all_only_group_count_df[
+                'Итого'], 2)*100
 
-            svod_all_only_group_count_df['% легкая депрессия  от общего'] = round(
-                svod_all_only_group_count_df['легкая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
-            svod_all_only_group_count_df['% умеренная депрессия от общего'] = round(
-                svod_all_only_group_count_df['умеренная депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
-            svod_all_only_group_count_df['% тяжелая депрессия от общего'] = round(
-                svod_all_only_group_count_df['тяжелая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
+        svod_all_only_group_count_df['% легкая депрессия  от общего'] = round(
+            svod_all_only_group_count_df['легкая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
+        svod_all_only_group_count_df['% умеренная депрессия от общего'] = round(
+            svod_all_only_group_count_df['умеренная депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
+        svod_all_only_group_count_df['% тяжелая депрессия от общего'] = round(
+            svod_all_only_group_count_df['тяжелая депрессия'] / svod_all_only_group_count_df['Итого'], 2)*100
 
-            part_svod_all_only_group_count_df = svod_all_only_group_count_df.iloc[:-1:]
-            part_svod_all_only_group_count_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-            itog_svod_all_only_group_count_df = svod_all_only_group_count_df.iloc[-1:]
-            svod_all_only_group_count_df = pd.concat([part_svod_all_only_group_count_df,itog_svod_all_only_group_count_df])
+        part_svod_all_only_group_count_df = svod_all_only_group_count_df.iloc[:-1:]
+        part_svod_all_only_group_count_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_all_only_group_count_df = svod_all_only_group_count_df.iloc[-1:]
+        svod_all_only_group_count_df = pd.concat([part_svod_all_only_group_count_df,itog_svod_all_only_group_count_df])
 
 
 
 
 
-            # формируем словарь
-            out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
-                'Средний результат':svod_all_df,'Количество':svod_all_count_df,
-                       'Ср_рез по Классам': svod_all_only_group_df, 'Кол по Классам': svod_all_only_group_count_df,
-                       'Ср_рез по Классам и полам':svod_all_group_df,'Кол по Классам и полам':svod_all_group_count_df
-                       }
+        # формируем словарь
+        out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
+            'Средний результат':svod_all_df,'Количество':svod_all_count_df,
+                   'Ср_рез по Классам': svod_all_only_group_df, 'Кол по Классам': svod_all_only_group_count_df,
+                   'Ср_рез по Классам и полам':svod_all_group_df,'Кол по Классам и полам':svod_all_group_count_df
+                   }
 
-            return out_dct, part_df
+        return out_dct, part_df
 
     except BadValueBekDepress:
         messagebox.showerror('Лахеcис',
