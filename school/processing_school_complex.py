@@ -12,6 +12,10 @@ from school_leadership.school_ei import processing_ei # эмоциональны
 from school_leadership.school_kos_one import processing_kos # коммуникативные и организаторские способности Федоришин
 from school_leadership.sсhool_usk import processing_usk # уровень самооценки Ковалев
 
+# Профориентация
+from career_guidance.cok import processing_cok
+
+
 
 
 
@@ -61,7 +65,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                      'Индекс общего самочувствия ВОЗ 1999':(processing_voz_well_being,5),
                      'Эмоциональный интеллект Люсин': (processing_ei, 46),
                      'КОС-1': (processing_kos, 40),
-                     'Уровень самооценки Ковалев': (processing_usk, 32)
+                     'Уровень самооценки Ковалев': (processing_usk, 32),
+                     'ЦОК': (processing_cok, 41)
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
@@ -70,7 +75,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                               'Индекс общего самочувствия ВОЗ 1999':'Индекс общего самочувствия ВОЗ 1999',
                               'Эмоциональный интеллект Люсин': 'Эмоциональный интеллект Люсин',
                               'КОС-1': 'КОС-1 Оценка коммуникативных и организаторских способностей',
-                              'Уровень самооценки Ковалев': 'Уровень самооценки Ковалев'
+                              'Уровень самооценки Ковалев': 'Уровень самооценки Ковалев',
+                              'ЦОК':'Ценностные ориентации в карьере Шейн'
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
@@ -200,9 +206,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
 
 if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство школа.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация комплекс.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Комплекс профориентация.xlsx'
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
 

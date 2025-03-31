@@ -64,6 +64,9 @@ def write_df_to_excel(dct_df: dict, write_index: bool) -> openpyxl.Workbook:
                 except:
                     pass
             adjusted_width = (max_length + 2)
+            # для слишком длинных результатов
+            if adjusted_width > 60:
+                adjusted_width = 60
             wb[name_sheet].column_dimensions[column_name].width = adjusted_width
         count_index += 1
 
