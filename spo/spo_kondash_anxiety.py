@@ -606,181 +606,171 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
-        # Проверяем наличие колонки с наименованием группы
-        if 'Группа' not in base_df.columns:
 
-            # формируем словарь
-            out_dct = {'Средний результат':all_result_df,'Кол_общая_тревожность':svod_all_count_df,
-                       'Кол_учеб_тревожность':svod_study_count_df,'Кол_самооц_тревожность':svod_self_count_df,
-                       'Кол_межлич_тревожность':svod_soc_count_df,'Списочный результат':base_df,'Список для проверки':out_answer_df}
+        # Делаем сводную таблицу средних значений.
+        svod_all_group_df = pd.pivot_table(base_df, index=['Курс','Группа', 'Пол'],
+                                     values=['Значение_общей_тревожности', 'Значение_учебной_тревожности',
+                                             'Значение_самооценочной_тревожности',
+                                             'Значение_межличностной_тревожности'],
+                                     aggfunc=round_mean)
+        svod_all_group_df.reset_index(inplace=True)
+        all_result_group_df = svod_all_group_df[['Курс','Группа', 'Пол']]  # выделяем базовые колонки
 
-            return out_dct, part_df
-        else:
+        # Начинаем собирать свод
+        all_result_group_df['Значение_общей_тревожности'] = svod_all_group_df['Значение_общей_тревожности']
+        all_result_group_df['Уровень_общей_тревожности'] = all_result_group_df[
+            ['Курс', 'Пол', 'Значение_общей_тревожности']].apply(
+            calc_level_all_condash_anxiety,
+            axis=1)
 
-            # Делаем сводную таблицу средних значений.
-            svod_all_group_df = pd.pivot_table(base_df, index=['Курс','Группа', 'Пол'],
-                                         values=['Значение_общей_тревожности', 'Значение_учебной_тревожности',
-                                                 'Значение_самооценочной_тревожности',
-                                                 'Значение_межличностной_тревожности'],
-                                         aggfunc=round_mean)
-            svod_all_group_df.reset_index(inplace=True)
-            all_result_group_df = svod_all_group_df[['Курс','Группа', 'Пол']]  # выделяем базовые колонки
+        all_result_group_df['Значение_учебной_тревожности'] = svod_all_group_df['Значение_учебной_тревожности']
+        all_result_group_df['Уровень_учебной_тревожности'] = all_result_group_df[
+            ['Курс', 'Пол', 'Значение_учебной_тревожности']].apply(
+            calc_level_study_condash_anxiety,
+            axis=1)
 
-            # Начинаем собирать свод
-            all_result_group_df['Значение_общей_тревожности'] = svod_all_group_df['Значение_общей_тревожности']
-            all_result_group_df['Уровень_общей_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_общей_тревожности']].apply(
-                calc_level_all_condash_anxiety,
-                axis=1)
+        all_result_group_df['Значение_самооценочной_тревожности'] = svod_all_group_df[
+            'Значение_самооценочной_тревожности']
+        all_result_group_df['Уровень_самооценочной_тревожности'] = all_result_group_df[
+            ['Курс', 'Пол', 'Значение_самооценочной_тревожности']].apply(
+            calc_level_self_condash_anxiety, axis=1)
 
-            all_result_group_df['Значение_учебной_тревожности'] = svod_all_group_df['Значение_учебной_тревожности']
-            all_result_group_df['Уровень_учебной_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_учебной_тревожности']].apply(
-                calc_level_study_condash_anxiety,
-                axis=1)
+        all_result_group_df['Значение_межличностной_тревожности'] = svod_all_group_df[
+            'Значение_межличностной_тревожности']
+        all_result_group_df['Уровень_межличностной_тревожности'] = all_result_group_df[
+            ['Курс', 'Пол', 'Значение_межличностной_тревожности']].apply(
+            calc_level_soc_condash_anxiety, axis=1)
 
-            all_result_group_df['Значение_самооценочной_тревожности'] = svod_all_group_df[
-                'Значение_самооценочной_тревожности']
-            all_result_group_df['Уровень_самооценочной_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_самооценочной_тревожности']].apply(
-                calc_level_self_condash_anxiety, axis=1)
-
-            all_result_group_df['Значение_межличностной_тревожности'] = svod_all_group_df[
-                'Значение_межличностной_тревожности']
-            all_result_group_df['Уровень_межличностной_тревожности'] = all_result_group_df[
-                ['Курс', 'Пол', 'Значение_межличностной_тревожности']].apply(
-                calc_level_soc_condash_anxiety, axis=1)
-
-            # Делаем свод по количеству
-            svod_all_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
-                                               columns='Уровень_общей_тревожности',
-                                               values='Значение_общей_тревожности',
-                                               aggfunc='count', margins=True, margins_name='Итого')
-            svod_all_group_count_df.reset_index(inplace=True)
-            svod_all_group_count_df = svod_all_group_count_df.reindex(
-                columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
-                         'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
-                         'Итого'])
+        # Делаем свод по количеству
+        svod_all_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+                                           columns='Уровень_общей_тревожности',
+                                           values='Значение_общей_тревожности',
+                                           aggfunc='count', margins=True, margins_name='Итого')
+        svod_all_group_count_df.reset_index(inplace=True)
+        svod_all_group_count_df = svod_all_group_count_df.reindex(
+            columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
+                     'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
+                     'Итого'])
 
 
-            # Добавляем колонки с процентами
-            svod_all_group_count_df['% Нормальный уровень тревожности от общего'] = round(
-                svod_all_group_count_df['Нормальный уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
+        # Добавляем колонки с процентами
+        svod_all_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+            svod_all_group_count_df['Нормальный уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
 
 
-            svod_all_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
-                svod_all_group_count_df['Несколько повышенный уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
+        svod_all_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+            svod_all_group_count_df['Несколько повышенный уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
 
-            svod_all_group_count_df['% Высокий уровень тревожности от общего'] = round(svod_all_group_count_df['Высокий уровень тревожности'] / svod_all_group_count_df['Итого'],
-                                                             2)*100
+        svod_all_group_count_df['% Высокий уровень тревожности от общего'] = round(svod_all_group_count_df['Высокий уровень тревожности'] / svod_all_group_count_df['Итого'],
+                                                         2)*100
 
-            svod_all_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
-                svod_all_group_count_df['Очень высокий уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
+        svod_all_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+            svod_all_group_count_df['Очень высокий уровень тревожности'] / svod_all_group_count_df['Итого'], 2)*100
 
-            svod_all_group_count_df['% Чрезмерное спокойствие от общего'] = round(
-                svod_all_group_count_df['Чрезмерное спокойствие'] / svod_all_group_count_df['Итого'], 2)*100
-
-
-            # свод по учебной тревожности
-            svod_study_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
-                                                       columns='Уровень_учебной_тревожности',
-                                                       values='Значение_учебной_тревожности',
-                                                       aggfunc='count', margins=True, margins_name='Итого')
-            svod_study_group_count_df.reset_index(inplace=True)
-            svod_study_group_count_df = svod_study_group_count_df.reindex(
-                columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
-                         'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
-                         'Итого'])
-
-            # Добавляем колонки с процентами
-            svod_study_group_count_df['% Нормальный уровень тревожности от общего'] = round(
-                svod_study_group_count_df['Нормальный уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
+        svod_all_group_count_df['% Чрезмерное спокойствие от общего'] = round(
+            svod_all_group_count_df['Чрезмерное спокойствие'] / svod_all_group_count_df['Итого'], 2)*100
 
 
-            svod_study_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
-                svod_study_group_count_df['Несколько повышенный уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
+        # свод по учебной тревожности
+        svod_study_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+                                                   columns='Уровень_учебной_тревожности',
+                                                   values='Значение_учебной_тревожности',
+                                                   aggfunc='count', margins=True, margins_name='Итого')
+        svod_study_group_count_df.reset_index(inplace=True)
+        svod_study_group_count_df = svod_study_group_count_df.reindex(
+            columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
+                     'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
+                     'Итого'])
 
-            svod_study_group_count_df['% Высокий уровень тревожности от общего'] = round(
-                svod_study_group_count_df['Высокий уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
-
-            svod_study_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
-                svod_study_group_count_df['Очень высокий уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
-
-            svod_study_group_count_df['% Чрезмерное спокойствие от общего'] = round(
-                svod_study_group_count_df['Чрезмерное спокойствие'] / svod_study_group_count_df['Итого'], 2)*100
-
-
-            # свод по самооценочной тревожности
-            svod_self_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
-                                                      columns='Уровень_самооценочной_тревожности',
-                                                      values='Значение_самооценочной_тревожности',
-                                                      aggfunc='count', margins=True, margins_name='Итого')
-            svod_self_group_count_df.reset_index(inplace=True)
-            svod_self_group_count_df = svod_self_group_count_df.reindex(
-                columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
-                         'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
-                         'Итого'])
-
-            svod_self_group_count_df['% Нормальный уровень тревожности от общего'] = round(
-                svod_self_group_count_df['Нормальный уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
+        # Добавляем колонки с процентами
+        svod_study_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+            svod_study_group_count_df['Нормальный уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
 
-            svod_self_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
-                svod_self_group_count_df['Несколько повышенный уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
+        svod_study_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+            svod_study_group_count_df['Несколько повышенный уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
-            svod_self_group_count_df['% Высокий уровень тревожности от общего'] = round(
-                svod_self_group_count_df['Высокий уровень тревожности'] / svod_self_group_count_df['Итого'],
-                2)*100
+        svod_study_group_count_df['% Высокий уровень тревожности от общего'] = round(
+            svod_study_group_count_df['Высокий уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
-            svod_self_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
-                svod_self_group_count_df['Очень высокий уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
+        svod_study_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+            svod_study_group_count_df['Очень высокий уровень тревожности'] / svod_study_group_count_df['Итого'], 2)*100
 
-            svod_self_group_count_df['% Чрезмерное спокойствие от общего'] = round(
-                svod_self_group_count_df['Чрезмерное спокойствие'] / svod_self_group_count_df['Итого'], 2)*100
-
-
-            # свод по межличностной тревожности
-            svod_soc_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
-                                                     columns='Уровень_межличностной_тревожности',
-                                                     values='Значение_межличностной_тревожности',
-                                                     aggfunc='count', margins=True, margins_name='Итого')
-            svod_soc_group_count_df.reset_index(inplace=True)
-            svod_soc_group_count_df = svod_soc_group_count_df.reindex(
-                columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
-                         'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
-                         'Итого'])
-
-            svod_soc_group_count_df['% Нормальный уровень тревожности от общего'] = round(
-                svod_soc_group_count_df['Нормальный уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
+        svod_study_group_count_df['% Чрезмерное спокойствие от общего'] = round(
+            svod_study_group_count_df['Чрезмерное спокойствие'] / svod_study_group_count_df['Итого'], 2)*100
 
 
-            svod_soc_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
-                svod_soc_group_count_df['Несколько повышенный уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
+        # свод по самооценочной тревожности
+        svod_self_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+                                                  columns='Уровень_самооценочной_тревожности',
+                                                  values='Значение_самооценочной_тревожности',
+                                                  aggfunc='count', margins=True, margins_name='Итого')
+        svod_self_group_count_df.reset_index(inplace=True)
+        svod_self_group_count_df = svod_self_group_count_df.reindex(
+            columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
+                     'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
+                     'Итого'])
 
-            svod_soc_group_count_df['% Высокий уровень тревожности от общего'] = round(
-                svod_soc_group_count_df['Высокий уровень тревожности'] / svod_soc_group_count_df['Итого'],
-                2)*100
-
-            svod_soc_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
-                svod_soc_group_count_df['Очень высокий уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
-
-            svod_soc_group_count_df['% Чрезмерное спокойствие от общего'] = round(
-                svod_soc_group_count_df['Чрезмерное спокойствие'] / svod_soc_group_count_df['Итого'], 2)*100
+        svod_self_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+            svod_self_group_count_df['Нормальный уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
 
 
-            # формируем словарь
-            out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
-                       'Курс_Ср_рез':all_result_df,'Курс_Кол_общ_трев':svod_all_count_df,
-                       'Курс_Кол_учеб_трев':svod_study_count_df,'Курс_Кол_самооц_трев':svod_self_count_df,
-                       'Курс_Кол_межлич_трев':svod_soc_count_df,
-                       'Группа_Ср_рез':all_result_group_df,
-                       'Группа_Кол_общ_трев':svod_all_group_count_df,
-                       'Группа_Кол_учеб_трев':svod_study_group_count_df,
-                       'Группа_Кол_сам_трев':svod_self_group_count_df,
-                       'Группа_Кол_меж_трев':svod_soc_group_count_df,
-                       }
+        svod_self_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+            svod_self_group_count_df['Несколько повышенный уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
 
-            return out_dct, part_df
+        svod_self_group_count_df['% Высокий уровень тревожности от общего'] = round(
+            svod_self_group_count_df['Высокий уровень тревожности'] / svod_self_group_count_df['Итого'],
+            2)*100
+
+        svod_self_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+            svod_self_group_count_df['Очень высокий уровень тревожности'] / svod_self_group_count_df['Итого'], 2)*100
+
+        svod_self_group_count_df['% Чрезмерное спокойствие от общего'] = round(
+            svod_self_group_count_df['Чрезмерное спокойствие'] / svod_self_group_count_df['Итого'], 2)*100
+
+
+        # свод по межличностной тревожности
+        svod_soc_group_count_df = pd.pivot_table(base_df, index=['Группа', 'Пол'],
+                                                 columns='Уровень_межличностной_тревожности',
+                                                 values='Значение_межличностной_тревожности',
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+        svod_soc_group_count_df.reset_index(inplace=True)
+        svod_soc_group_count_df = svod_soc_group_count_df.reindex(
+            columns=['Группа', 'Пол', 'Нормальный уровень тревожности', 'Несколько повышенный уровень тревожности',
+                     'Высокий уровень тревожности', 'Очень высокий уровень тревожности', 'Чрезмерное спокойствие',
+                     'Итого'])
+
+        svod_soc_group_count_df['% Нормальный уровень тревожности от общего'] = round(
+            svod_soc_group_count_df['Нормальный уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
+
+
+        svod_soc_group_count_df['% Несколько повышенный уровень тревожности от общего'] = round(
+            svod_soc_group_count_df['Несколько повышенный уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
+
+        svod_soc_group_count_df['% Высокий уровень тревожности от общего'] = round(
+            svod_soc_group_count_df['Высокий уровень тревожности'] / svod_soc_group_count_df['Итого'],
+            2)*100
+
+        svod_soc_group_count_df['% Очень высокий уровень тревожности от общего'] = round(
+            svod_soc_group_count_df['Очень высокий уровень тревожности'] / svod_soc_group_count_df['Итого'], 2)*100
+
+        svod_soc_group_count_df['% Чрезмерное спокойствие от общего'] = round(
+            svod_soc_group_count_df['Чрезмерное спокойствие'] / svod_soc_group_count_df['Итого'], 2)*100
+
+
+        # формируем словарь
+        out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
+                   'Курс_Ср_рез':all_result_df,'Курс_Кол_общ_трев':svod_all_count_df,
+                   'Курс_Кол_учеб_трев':svod_study_count_df,'Курс_Кол_самооц_трев':svod_self_count_df,
+                   'Курс_Кол_межлич_трев':svod_soc_count_df,
+                   'Группа_Ср_рез':all_result_group_df,
+                   'Группа_Кол_общ_трев':svod_all_group_count_df,
+                   'Группа_Кол_учеб_трев':svod_study_group_count_df,
+                   'Группа_Кол_сам_трев':svod_self_group_count_df,
+                   'Группа_Кол_меж_трев':svod_soc_group_count_df,
+                   }
+
+        return out_dct, part_df
     except BadOrderCondashAnxiety:
         messagebox.showerror('Лахеcис',
                                  f'Названия колонок или их порядок для ответов на тест Шкалы тревожности Кондаша не совпадают с правильным!\n'
