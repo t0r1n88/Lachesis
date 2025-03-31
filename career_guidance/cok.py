@@ -241,33 +241,74 @@ def processing_cok(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         raise BadValueCok
 
     # Создаем колонку для результатов первичного подсчета
-    base_df[f'ЦОК_Необработанное'] = answers_df.apply(processing_result_cok, axis=1)
-    base_df[f'ЦОК_Обработанное'] = base_df[f'ЦОК_Необработанное'].apply(
+    base_df[f'Необработанное'] = answers_df.apply(processing_result_cok, axis=1)
+    base_df[f'Обработанное'] = base_df[f'Необработанное'].apply(
         extract_key_max_value)
-    base_df[f'ЦОК_Максимум'] = base_df[f'ЦОК_Необработанное'].apply(
+    base_df[f'Максимум'] = base_df[f'Необработанное'].apply(
         extract_max_value)
 
     # Создаем датафрейм для создания части в общий датафрейм
     part_df = pd.DataFrame(columns=['ЦОК_Необработанное', 'ЦОК_Обработанное','ЦОК_Максимум'])
-    part_df['ЦОК_Необработанное'] = base_df['ЦОК_Необработанное']
-    part_df['ЦОК_Обработанное'] = base_df['ЦОК_Обработанное']
-    part_df['ЦОК_Максимум'] = base_df['ЦОК_Максимум']
+    part_df['ЦОК_Необработанное'] = base_df['Необработанное']
+    part_df['ЦОК_Обработанное'] = base_df['Обработанное']
+    part_df['ЦОК_Максимум'] = base_df['Максимум']
 
-    base_df.sort_values(by='ЦОК_Максимум', ascending=False, inplace=True)  # сортируем
+    base_df.sort_values(by='Максимум', ascending=False, inplace=True)  # сортируем
     out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
     # Обрабатываем классы
     # Среднее по Класс
-    svod_all_group_df = pd.pivot_table(base_df, index=['Класс','ЦОК_Обработанное'],
-                                       values=['ЦОК_Максимум'],
+    svod_all_group_df = pd.pivot_table(base_df, index=['Класс','Обработанное'],
+                                       values=['Максимум'],
                                        aggfunc=round_mean)
     svod_all_group_df.reset_index(inplace=True)
 
     svod_all_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
+    # Количество класс
+    svod_all_count_group_df = pd.pivot_table(base_df, index=['Класс'],
+                                             columns='Обработанное',
+                                             values='Максимум',
+                                             aggfunc='count', margins=True, margins_name='Итого')
+    svod_all_count_group_df.reset_index(inplace=True)
+    svod_all_count_group_df = svod_all_count_group_df.reindex(
+        columns=['Класс', 'Профессиональная компетентность', 'Менеджмент',
+                 'Автономия (независимость)', 'Стабильность работы',
+                 'Стабильность места жительства', 'Служение',
+                 'Вызов', 'Интеграция стилей жизни',
+                 'Предпринимательство',
+                 'Итого'])
+    svod_all_count_group_df['% Профессиональная компетентность от общего'] = round(
+        svod_all_count_group_df['Профессиональная компетентность'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Менеджмент от общего'] = round(
+        svod_all_count_group_df['Менеджмент'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Автономия (независимость) от общего'] = round(
+        svod_all_count_group_df['Автономия (независимость)'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Стабильность работы от общего'] = round(
+        svod_all_count_group_df['Стабильность работы'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Стабильность места жительства от общего'] = round(
+        svod_all_count_group_df['Стабильность места жительства'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Служение от общего'] = round(
+        svod_all_count_group_df['Служение'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Вызов от общего'] = round(
+        svod_all_count_group_df['Вызов'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Интеграция стилей жизни от общего'] = round(
+        svod_all_count_group_df['Интеграция стилей жизни'] / svod_all_count_group_df['Итого'], 2) * 100
+    svod_all_count_group_df['% Предпринимательство от общего'] = round(
+        svod_all_count_group_df['Предпринимательство'] / svod_all_count_group_df['Итого'], 2) * 100
+    part_svod_df = svod_all_count_group_df.iloc[:-1:]
+    part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+    itog_svod_df = svod_all_count_group_df.iloc[-1:]
+    svod_all_count_group_df = pd.concat([part_svod_df, itog_svod_df])
+
+
+
+
+
+
     # формируем словарь
     out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-               'Среднее по Классам': svod_all_group_df,
+               'Среднее по Классам': svod_all_group_df,'Количество по Классам': svod_all_count_group_df,
                }
 
     return out_dct, part_df

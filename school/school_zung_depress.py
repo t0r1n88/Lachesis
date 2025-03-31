@@ -243,7 +243,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                      'субдепрессивное состояние или маскированная депрессия', 'истинное депрессивное состояние',
                      'Итого'])
 
-        svod_all_count_group_df['% депрессия не выявлена  от общего'] = round(
+        svod_all_count_group_df['% депрессия не выявлена от общего'] = round(
             svod_all_count_group_df['депрессия не выявлена'] / svod_all_count_group_df['Итого'], 2)*100
         svod_all_count_group_df['% легкая депрессия ситуативного или невротического генеза от общего'] = round(
             svod_all_count_group_df['легкая депрессия ситуативного или невротического генеза'] /
