@@ -69,6 +69,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                               'Уровень самооценки Ковалев':'Уровень самооценки Ковалев'
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
+        # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
+        lst_depress_tests = ['Шкала тревожности Кондаша','Шкала депрессии Бека','Шкала безнадежности Бека','Шкала депрессии Цунга']
+        lst_check_depress_tests = []
+
+
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать
         params_df.dropna(inplace=True)  # удаляем пустые строки
@@ -130,6 +135,9 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             передаем туда датафрейм с анкетными данными, датафрейм с данными теста, количество колонок которое занимает данный тест
             получаем 2 датафрейма с результатами для данного теста которые добавляем в основные датафреймы
             """
+            # Присутствует ли тест среди тестов на депрессию и тревогу
+            if name_test in lst_depress_tests:
+                lst_check_depress_tests.append(name_test)
             temp_base_df = base_df.copy()
 
             # получаем колонки относящиеся к тесту
@@ -156,21 +164,34 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
         # Сохраняем в удобном виде
         main_itog_df.sort_values(by='Группа',inplace=True) # сортируем
-        # Отбираем тех кто требует внимания.
-        set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние'] # особое внимание
-        set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия'] # обратить внимание
+        if len(lst_check_depress_tests) != 0:
+            # Отбираем тех кто требует внимания.
+            set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние'] # особое внимание
+            set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия'] # обратить внимание
 
-        alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
-        attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
-        attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
+            alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
+            attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
+            attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
 
-        # Создаем сводную таблицу по группам
-        svod_group_df = main_itog_df.groupby(by='Группа').agg({'ФИО':'count'}).rename(columns={'ФИО':'Количество прошедших'})
-        svod_group_df = svod_group_df.reset_index()
+            # Создаем сводную таблицу по группам
+            svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол':'count'}).rename(columns={'Пол':'Количество прошедших'})
+            svod_group_df = svod_group_df.reset_index()
 
-        temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df,'Свод по группам':svod_group_df}, write_index=False)
-        temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-        temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+            temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df,'Свод по группам':svod_group_df}, write_index=False)
+            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+            temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+        else:
+            # Создаем сводную таблицу по группам
+            svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол': 'count'}).rename(
+                columns={'Пол': 'Количество прошедших'})
+            svod_group_df = svod_group_df.reset_index()
+
+            temp_wb = write_df_to_excel(
+                {'Свод по всем тестам': main_itog_df,
+                 'Свод по группам': svod_group_df}, write_index=False)
+            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+            temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+
 
     except FileNotFoundError:
         messagebox.showerror('Лахеcис',

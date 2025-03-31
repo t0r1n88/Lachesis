@@ -185,7 +185,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
 
             # Создаем сводную таблицу по группам
-            svod_group_df = main_itog_df.groupby(by='Класс').agg({'ФИО':'count'}).rename(columns={'ФИО':'Количество прошедших'})
+            svod_group_df = main_itog_df.groupby(by='Класс').agg({'Пол':'count'}).rename(columns={'Пол':'Количество прошедших'})
             svod_group_df = svod_group_df.reset_index()
             svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class),inplace=True) # сортируем
 
@@ -194,8 +194,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             temp_wb.save(f'{end_folder}/Общий результат.xlsx')
         else:
             # Создаем сводную таблицу по группам
-            svod_group_df = main_itog_df.groupby(by='Класс').agg({'ФИО': 'count'}).rename(
-                columns={'ФИО': 'Количество прошедших'})
+            svod_group_df = main_itog_df.groupby(by='Класс').agg({'Пол': 'count'}).rename(
+                columns={'Пол': 'Количество прошедших'})
             svod_group_df = svod_group_df.reset_index()
             svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
