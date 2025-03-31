@@ -83,6 +83,10 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
         lst_depress_tests = ['Шкала тревожности Кондаша','Шкала депрессии Бека','Шкала безнадежности Бека','Шкала депрессии Цунга']
         lst_check_depress_tests = []
 
+        # Списки для проверки наличия профориентационных тестов
+        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО']
+        lst_check_career_tests = []
+
 
 
 
@@ -148,6 +152,10 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             if name_test in lst_depress_tests:
                 lst_check_depress_tests.append(name_test)
 
+            # Присутствует ли тест среди профориентационных тестов
+            if name_test in lst_career_tests:
+                lst_check_career_tests.append(name_test)
+
 
             temp_base_df = base_df.copy()
 
@@ -163,11 +171,16 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             # Добавляем в итоговый свод
             main_itog_df = pd.concat([main_itog_df,temp_itog_df],axis=1)
 
-
-            # Сохраняем в удобном виде
-            temp_wb = write_df_to_excel(temp_dct, write_index=False)
-            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-            temp_wb.save(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx')
+            # Сохраняем в зависимости от типа теста. Если профориентационный то сохраняем через pandas,
+            # чтобы текст в колонке Описание результата не обрезался
+            if name_test in lst_check_career_tests:
+                with pd.ExcelWriter(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx', engine='xlsxwriter') as writer:
+                    for sheet_name, dataframe in temp_dct.items():
+                        dataframe.to_excel(writer, sheet_name=sheet_name,index=False)
+            else:
+                temp_wb = write_df_to_excel(temp_dct, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx')
 
 
             # увеличиваем предел обозначающий количество обработанных колонок
@@ -193,17 +206,31 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
             temp_wb.save(f'{end_folder}/Общий результат.xlsx')
         else:
-            # Создаем сводную таблицу по группам
-            svod_group_df = main_itog_df.groupby(by='Класс').agg({'Пол': 'count'}).rename(
-                columns={'Пол': 'Количество прошедших'})
-            svod_group_df = svod_group_df.reset_index()
-            svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+            # Если есть профориентационные тесты то сохраняем через пандас
+            if len(lst_check_career_tests) != 0:
+                # Создаем сводную таблицу по группам
+                svod_group_df = main_itog_df.groupby(by='Класс').agg({'Пол': 'count'}).rename(
+                    columns={'Пол': 'Количество прошедших'})
+                svod_group_df = svod_group_df.reset_index()
+                svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
-            temp_wb = write_df_to_excel(
-                {'Свод по всем тестам': main_itog_df,
-                 'Свод по классам': svod_group_df}, write_index=False)
-            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-            temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+
+                with pd.ExcelWriter(f'{end_folder}/Общий результат.xlsx', engine='xlsxwriter') as writer:
+                    for sheet_name, dataframe in {'Свод по всем тестам': main_itog_df,
+                     'Свод по классам': svod_group_df}.items():
+                        dataframe.to_excel(writer, sheet_name=sheet_name,index=False)
+            else:
+                # Создаем сводную таблицу по группам
+                svod_group_df = main_itog_df.groupby(by='Класс').agg({'Пол': 'count'}).rename(
+                    columns={'Пол': 'Количество прошедших'})
+                svod_group_df = svod_group_df.reset_index()
+                svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+
+                temp_wb = write_df_to_excel(
+                    {'Свод по всем тестам': main_itog_df,
+                     'Свод по классам': svod_group_df}, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/Общий результат.xlsx')
 
     except FileNotFoundError:
         messagebox.showerror('Лахеcис',
