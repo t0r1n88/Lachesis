@@ -258,7 +258,7 @@ def processing_cok(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
     # Обрабатываем классы
     # Среднее по Класс
-    svod_all_group_df = pd.pivot_table(base_df, index=['Класс'],
+    svod_all_group_df = pd.pivot_table(base_df, index=['Класс','ЦОК_Обработанное'],
                                        values=['ЦОК_Максимум'],
                                        aggfunc=round_mean)
     svod_all_group_df.reset_index(inplace=True)

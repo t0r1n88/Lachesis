@@ -79,6 +79,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                               'ЦОК':'Ценностные ориентации в карьере Шейн'
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
+
+
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать
         params_df.dropna(inplace=True)  # удаляем пустые строки
@@ -162,11 +164,8 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
             threshold_finshed += dct_tests[name_test][1]
 
         # Сохраняем в удобном виде
-
-
-
-        # main_itog_df.sort_values(by='Класс',inplace=True) # сортируем
         main_itog_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class),inplace=True) # сортируем
+
         # Отбираем тех кто требует внимания.
         set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние'] # особое внимание
         set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия'] # обратить внимание
