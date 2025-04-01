@@ -13,9 +13,18 @@ from spo_leadership.ei import processing_ei # эмоциональный инт�
 from spo_leadership.kos_one import processing_kos # коммуникативные и организаторские способности Федоришин
 from spo_leadership.usk import processing_usk # уровень самооценки Ковалев
 
+# Профориентация
+from spo_career_guidance.spo_cok import processing_cok
+from spo_career_guidance.spo_ptl import processing_ptl
+from spo_career_guidance.spo_spp import processing_spp
+from spo_career_guidance.spo_ddo import processing_ddo
 
 
-from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention # функции для создания итогового файла
+
+
+
+
+from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention,sort_name_class # функции для создания итогового файла
 
 import pandas as pd
 pd.options.mode.chained_assignment = None
@@ -57,7 +66,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                      'Индекс общего самочувствия ВОЗ 1999':(processing_voz_well_being,5),
                      'Эмоциональный интеллект Люсин':(processing_ei,46),
                      'КОС-1':(processing_kos,40),
-                     'Уровень самооценки Ковалев':(processing_usk,32)
+                     'Уровень самооценки Ковалев':(processing_usk,32),
+                     'ЦОК': (processing_cok, 41),
+                     'ПТЛ': (processing_ptl, 30),
+                     'СПП': (processing_spp, 24),
+                     'ДДО': (processing_ddo, 20)
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
@@ -66,12 +79,20 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                               'Индекс общего самочувствия ВОЗ 1999':'Индекс общего самочувствия ВОЗ 1999',
                               'Эмоциональный интеллект Люсин':'Эмоциональный интеллект Люсин',
                               'КОС-1':'КОС-1 Оценка коммуникативных и организаторских способностей',
-                              'Уровень самооценки Ковалев':'Уровень самооценки Ковалев'
+                              'Уровень самооценки Ковалев':'Уровень самооценки Ковалев',
+                              'ЦОК': 'Ценностные ориентации в карьере Шейн',
+                              'ПТЛ': 'Профессиональный тип личности Холланд',
+                              'СПП': 'Сфера профессиональных предпочтений',
+                              'ДДО': 'Дифференциально-диагностический опросник',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
         lst_depress_tests = ['Шкала тревожности Кондаша','Шкала депрессии Бека','Шкала безнадежности Бека','Шкала депрессии Цунга']
         lst_check_depress_tests = []
+
+        # Списки для проверки наличия профориентационных тестов
+        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО']
+        lst_check_career_tests = []
 
 
         params_df = pd.read_excel(params_spo, dtype=str, usecols='A',
@@ -138,6 +159,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             # Присутствует ли тест среди тестов на депрессию и тревогу
             if name_test in lst_depress_tests:
                 lst_check_depress_tests.append(name_test)
+
+            # Присутствует ли тест среди профориентационных тестов
+            if name_test in lst_career_tests:
+                lst_check_career_tests.append(name_test)
+
             temp_base_df = base_df.copy()
 
             # получаем колонки относящиеся к тесту
@@ -152,11 +178,16 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             # Добавляем в итоговый свод
             main_itog_df = pd.concat([main_itog_df,temp_itog_df],axis=1)
 
-
-            # Сохраняем в удобном виде
-            temp_wb = write_df_to_excel(temp_dct, write_index=False)
-            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-            temp_wb.save(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx')
+            # Сохраняем в зависимости от типа теста. Если профориентационный то сохраняем через pandas,
+            # чтобы текст в колонке Описание результата не обрезался
+            if name_test in lst_check_career_tests:
+                with pd.ExcelWriter(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx', engine='xlsxwriter') as writer:
+                    for sheet_name, dataframe in temp_dct.items():
+                        dataframe.to_excel(writer, sheet_name=sheet_name,index=False)
+            else:
+                temp_wb = write_df_to_excel(temp_dct, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/{dct_out_name_tests[name_test]}.xlsx')
 
 
             # увеличиваем предел обозначающий количество обработанных колонок
@@ -181,16 +212,28 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
             temp_wb.save(f'{end_folder}/Общий результат.xlsx')
         else:
-            # Создаем сводную таблицу по группам
-            svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол': 'count'}).rename(
-                columns={'Пол': 'Количество прошедших'})
-            svod_group_df = svod_group_df.reset_index()
+            # Если есть профориентационные тесты то сохраняем через пандас
+            if len(lst_check_career_tests) != 0:
+                # Создаем сводную таблицу по группам
+                svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол': 'count'}).rename(
+                    columns={'Пол': 'Количество прошедших'})
+                svod_group_df = svod_group_df.reset_index()
 
-            temp_wb = write_df_to_excel(
-                {'Свод по всем тестам': main_itog_df,
-                 'Свод по группам': svod_group_df}, write_index=False)
-            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-            temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+                with pd.ExcelWriter(f'{end_folder}/Общий результат.xlsx', engine='xlsxwriter') as writer:
+                    for sheet_name, dataframe in {'Свод по всем тестам': main_itog_df,
+                     'Свод по группам': svod_group_df}.items():
+                        dataframe.to_excel(writer, sheet_name=sheet_name,index=False)
+            else:
+                # Создаем сводную таблицу по группам
+                svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол': 'count'}).rename(
+                    columns={'Пол': 'Количество прошедших'})
+                svod_group_df = svod_group_df.reset_index()
+
+                temp_wb = write_df_to_excel(
+                    {'Свод по всем тестам': main_itog_df,
+                     'Свод по группам': svod_group_df}, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/Общий результат.xlsx')
 
 
     except FileNotFoundError:

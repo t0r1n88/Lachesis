@@ -169,6 +169,9 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         base_df.insert(count_descr_cols,'Значение_уровня_депрессии',base_df[lst_sum_cols].sum(axis=1,numeric_only=True)) #получаем сумму значений
         base_df.insert(count_descr_cols + 1,'Уровень_депрессии',base_df['Значение_уровня_депрессии'].apply(calc_level_bek_depress)) # считаем уровень
         base_df.insert(count_descr_cols + 1,'Значение_нормы','0-9 баллов') # указываем норму
+        # убираем колонки с ответами из основного списка
+        lst_out_cols = [value for value in base_df.columns if 'Группа утверждений' not in value]
+        base_df = base_df[lst_out_cols]
 
 
         # Создаем датафрейм для создания части в общий датафрейм

@@ -6,7 +6,6 @@ from create_result_docs import generate_result_docs # импортируем ф�
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
 from spo.processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
 from school.processing_school_complex import generate_result_school_anxiety # функция для обработки тестов тревожности школ
-from school_career_guidance.processing_career_complex import generate_result_career_guidance # функция для обработки профориентационных тестов
 
 import pandas as pd
 import os
@@ -56,75 +55,6 @@ class NotFoundValue(Exception):
     Класс для обозначения того что значение не найдено
     """
     pass
-
-
-def select_end_folder_complex():
-    """
-    Функция для выбора конечной папки куда будут складываться итоговые файлы
-    :return:
-    """
-    global path_to_end_folder_complex
-    path_to_end_folder_complex = filedialog.askdirectory()
-
-
-def select_file_data_xlsx_complex():
-    """
-    Функция для выбора файла с данными на основе которых будет генерироваться документ
-    :return: Путь к файлу с данными
-    """
-    global file_data_xlsx_complex
-    # Получаем путь к файлу
-    file_data_xlsx_complex = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
-
-
-def select_file_params_complex():
-    """
-    Функция для выбора файла со списком тестов на основе которых будут генерироваться результаты
-    :return: Путь к файлу с данными
-    """
-    global file_params_complex
-    # Получаем путь к файлу
-    file_params_complex = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
-
-
-def processing_career_guidance():
-    """
-    Точка входа для обработки профориентационных тестов
-    :return:
-    """
-    try:
-        threshold_base = var_entry_threshold_complex.get()
-        threshold_base = int(threshold_base)
-
-        generate_result_career_guidance(file_params_complex, file_data_xlsx_complex, path_to_end_folder_complex, threshold_base)
-    except NameError:
-        messagebox.showerror('Лахеcис',
-                             f'Выберите файлы с данными и папку куда будет генерироваться файл')
-    except ValueError:
-        messagebox.showerror('Лахеcис',
-                             f'Введите целое число начиная с 1 !!!')
-    except KeyError as e:
-        messagebox.showerror('Лахеcис',
-                             f'Название теста не найдено, проверьте правильность написания названия в таблице параметров {e.args}\n'
-                             f'Проверьте правильность написания по руководству пользователя')
-    except FileNotFoundError:
-        messagebox.showerror('Лахеcис',
-                             f'Перенесите файлы которые вы хотите обработать в корень диска. Проблема может быть\n '
-                             f'в слишком длинном пути к обрабатываемым файлам')
-    except WrongNumberColumn:
-        messagebox.showerror('Лахеcис',
-                             f'Неправильное количество колонок в таблице!\n'
-                             f'Проверьте количество вопросов в тестах!\n'
-                             f'ДЦОК -41 колонка т.е.41 тестовый вопрос\n'
-                             f'ОПТЛ - 30 колонок т.е. 30 тестовых вопросов\n'
-                             f'СППУ - 24 колонки т.е. 24 тестовых вопроса\n'
-                             f'ДДО - 20 колонок т.е. 20 тестовых вопросов')
-    else:
-        messagebox.showinfo('Лахеcис',
-                            'Данные успешно обработаны')
-
-
-
 
 
 def select_file_template_doc():
@@ -706,68 +636,6 @@ if __name__ == '__main__':
 
 
 
-    """
-    Обработка комплексных результатов
-    """
-    # Создаем вкладку обработки данных complex
-    tab_report_complex = ttk.Frame(tab_control)
-    tab_control.add(tab_report_complex, text='Профориентация школьников\nОбработка результатов')
-    tab_control.pack(expand=1, fill='both')
-    # Добавляем виджеты на вкладку
-    # Создаем метку для описания назначения программы
-    lbl_hello_complex = Label(tab_report_complex,
-                              text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест \n'
-                                   'Все колонки таблицы не относящиеся к тестовым вопросам\n должны быть в начале и в конце таблицы.'
-                                   )
-    lbl_hello_complex.grid(column=0, row=0, padx=10, pady=25)
-
-    # Картинка
-    path_to_img_complex = resource_path('logo.png')
-
-    img_complex = PhotoImage(file=path_to_img_complex)
-    Label(tab_report_complex,
-          image=img_complex
-          ).grid(column=1, row=0, padx=10, pady=25)
-
-    # Создаем кнопку Выбрать файл с параметрами
-    btn_choose_data_complex = Button(tab_report_complex, text='1) Выберите файл с параметрами',
-                                     font=('Arial Bold', 14),
-                                     command=select_file_params_complex
-                                     )
-    btn_choose_data_complex.grid(column=0, row=2, padx=10, pady=10)
-
-    # Создаем кнопку Выбрать файл с данными
-    btn_choose_data_complex = Button(tab_report_complex, text='2) Выберите файл с результатами',
-                                     font=('Arial Bold', 14),
-                                     command=select_file_data_xlsx_complex
-                                     )
-    btn_choose_data_complex.grid(column=0, row=3, padx=10, pady=10)
-
-    # Создаем кнопку для выбора папки куда будут генерироваться файлы
-
-    btn_choose_end_folder_complex = Button(tab_report_complex, text='3) Выберите конечную папку',
-                                           font=('Arial Bold', 14),
-                                           command=select_end_folder_complex
-                                           )
-    btn_choose_end_folder_complex.grid(column=0, row=4, padx=10, pady=10)
-
-    # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
-    # Определяем переменную
-    var_entry_threshold_complex = StringVar()
-    # Описание поля
-    label_name_threshold_complex = Label(tab_report_complex,
-                                         text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
-    label_name_threshold_complex.grid(column=0, row=5, padx=10, pady=5)
-    # поле ввода
-    entry_threshold_complex = Entry(tab_report_complex, textvariable=var_entry_threshold_complex, width=30)
-    entry_threshold_complex.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
-
-    # Создаем кнопку обработки данных
-
-    btn_proccessing_data_complex = Button(tab_report_complex, text='5) Обработать данные', font=('Arial Bold', 14),
-                                          command=processing_career_guidance
-                                          )
-    btn_proccessing_data_complex.grid(column=0, row=7, padx=10, pady=10)
 
 
     """

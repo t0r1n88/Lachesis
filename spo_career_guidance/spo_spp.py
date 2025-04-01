@@ -465,24 +465,24 @@ def processing_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_all_df.rename(columns={'Обработанное':'Сфера','Максимум':'Количество'},inplace=True)
 
         """
-            Обрабатываем Класс
+            Обрабатываем Группа
             """
-        # Среднее по Класс
-        svod_group_df = pd.pivot_table(base_df, index=['Класс','Обработанное'],
+        # Среднее по Группа
+        svod_group_df = pd.pivot_table(base_df, index=['Группа','Обработанное'],
                                            values=['Максимум'],
                                            aggfunc=round_mean)
         svod_group_df.reset_index(inplace=True)
 
-        svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        svod_group_df.sort_values(by='Группа', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
-        # Количество Класс
-        svod_count_group_df = pd.pivot_table(base_df, index=['Класс'],
+        # Количество Группа
+        svod_count_group_df = pd.pivot_table(base_df, index=['Группа'],
                                                  columns='Обработанное',
                                                  values='Максимум',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         svod_count_group_df.reset_index(inplace=True)
         svod_count_group_df = svod_count_group_df.reindex(
-            columns=['Класс', 'сфера работы с людьми', 'сфера умственного труда',
+            columns=['Группа', 'сфера работы с людьми', 'сфера умственного труда',
                  'сфера технических интересов', 'сфера эстетики и искусства',
                  'сфера физического труда, подвижной деятельности', 'сфера материальных интересов, планово-экономических видов работ',
                  'Итого'])
@@ -500,26 +500,26 @@ def processing_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_count_group_df['сфера материальных интересов, планово-экономических видов работ'] / svod_count_group_df['Итого'], 2) * 100
 
         part_svod_df = svod_count_group_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        part_svod_df.sort_values(by='Группа', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
         itog_svod_df = svod_count_group_df.iloc[-1:]
         svod_count_group_df = pd.concat([part_svod_df, itog_svod_df])
 
-        # Среднее по Класс Пол
-        svod_group_sex_df = pd.pivot_table(base_df, index=['Класс','Пол','Обработанное'],
+        # Среднее по Группа Пол
+        svod_group_sex_df = pd.pivot_table(base_df, index=['Группа','Пол','Обработанное'],
                                            values=['Максимум'],
                                            aggfunc=round_mean)
         svod_group_sex_df.reset_index(inplace=True)
 
-        svod_group_sex_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        svod_group_sex_df.sort_values(by='Группа', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
 
-        # Количество Класс Пол
-        svod_count_group_sex_df = pd.pivot_table(base_df, index=['Класс','Пол'],
+        # Количество Группа Пол
+        svod_count_group_sex_df = pd.pivot_table(base_df, index=['Группа','Пол'],
                                                  columns='Обработанное',
                                                  values='Максимум',
                                                  aggfunc='count', margins=True, margins_name='Итого')
         svod_count_group_sex_df.reset_index(inplace=True)
         svod_count_group_sex_df = svod_count_group_sex_df.reindex(
-            columns=['Класс', 'сфера работы с людьми', 'сфера умственного труда',
+            columns=['Группа', 'сфера работы с людьми', 'сфера умственного труда',
                  'сфера технических интересов', 'сфера эстетики и искусства',
                  'сфера физического труда, подвижной деятельности', 'сфера материальных интересов, планово-экономических видов работ',
                  'Итого'])
@@ -537,27 +537,27 @@ def processing_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_count_group_sex_df['сфера материальных интересов, планово-экономических видов работ'] / svod_count_group_sex_df['Итого'], 2) * 100
 
         part_svod_df = svod_count_group_sex_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        part_svod_df.sort_values(by='Группа', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
         itog_svod_df = svod_count_group_sex_df.iloc[-1:]
         svod_count_group_sex_df = pd.concat([part_svod_df, itog_svod_df])
 
         """
-            Обрабатываем Номер_класса
+            Обрабатываем Курс
             """
-        # Среднее по Номер_класса
-        svod_course_df = pd.pivot_table(base_df, index=['Номер_класса', 'Обработанное'],
+        # Среднее по Курс
+        svod_course_df = pd.pivot_table(base_df, index=['Курс', 'Обработанное'],
                                         values=['Максимум'],
                                         aggfunc=round_mean)
         svod_course_df.reset_index(inplace=True)
 
-        # Количество Номер_класса
-        svod_count_course_df = pd.pivot_table(base_df, index=['Номер_класса'],
+        # Количество Курс
+        svod_count_course_df = pd.pivot_table(base_df, index=['Курс'],
                                               columns='Обработанное',
                                               values='Максимум',
                                               aggfunc='count', margins=True, margins_name='Итого')
         svod_count_course_df.reset_index(inplace=True)
         svod_count_course_df = svod_count_course_df.reindex(
-            columns=['Номер_класса', 'сфера работы с людьми', 'сфера умственного труда',
+            columns=['Курс', 'сфера работы с людьми', 'сфера умственного труда',
                      'сфера технических интересов', 'сфера эстетики и искусства',
                      'сфера физического труда, подвижной деятельности',
                      'сфера материальных интересов, планово-экономических видов работ',
@@ -577,20 +577,20 @@ def processing_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_count_course_df['сфера материальных интересов, планово-экономических видов работ'] / svod_count_course_df[
                 'Итого'], 2) * 100
 
-        # Среднее по Номер_класса Пол
-        svod_course_sex_df = pd.pivot_table(base_df, index=['Номер_класса', 'Пол', 'Обработанное'],
+        # Среднее по Курс Пол
+        svod_course_sex_df = pd.pivot_table(base_df, index=['Курс', 'Пол', 'Обработанное'],
                                             values=['Максимум'],
                                             aggfunc=round_mean)
         svod_course_sex_df.reset_index(inplace=True)
 
-        # Количество Номер_класса Пол
-        svod_count_course_sex_df = pd.pivot_table(base_df, index=['Номер_класса', 'Пол'],
+        # Количество Курс Пол
+        svod_count_course_sex_df = pd.pivot_table(base_df, index=['Курс', 'Пол'],
                                                   columns='Обработанное',
                                                   values='Максимум',
                                                   aggfunc='count', margins=True, margins_name='Итого')
         svod_count_course_sex_df.reset_index(inplace=True)
         svod_count_course_sex_df = svod_count_course_sex_df.reindex(
-            columns=['Номер_класса', 'сфера работы с людьми', 'сфера умственного труда',
+            columns=['Курс', 'сфера работы с людьми', 'сфера умственного труда',
                      'сфера технических интересов', 'сфера эстетики и искусства',
                      'сфера физического труда, подвижной деятельности',
                      'сфера материальных интересов, планово-экономических видов работ',
@@ -635,10 +635,10 @@ def processing_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                    'Общий свод':svod_all_df,
-                   'Среднее Класс': svod_group_df,'Количество Класс': svod_count_group_df,
-                   'Среднее Класс Пол': svod_group_sex_df,'Количество Класс Пол': svod_count_group_sex_df,
-                   'Среднее Номер_класса': svod_course_df, 'Количество Номер_класса': svod_count_course_df,
-                   'Среднее Номер_класса Пол': svod_course_sex_df, 'Количество Номер_класса Пол': svod_count_course_sex_df,
+                   'Среднее Группа': svod_group_df,'Количество Группа': svod_count_group_df,
+                   'Среднее Группа Пол': svod_group_sex_df,'Количество Группа Пол': svod_count_group_sex_df,
+                   'Среднее Курс': svod_course_df, 'Количество Курс': svod_count_course_df,
+                   'Среднее Курс Пол': svod_course_sex_df, 'Количество Курс Пол': svod_count_course_sex_df,
                    }
 
         return out_dct, part_df
