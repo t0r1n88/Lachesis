@@ -2,7 +2,7 @@
 Скрипт для обработки результатов теста ценностные ориентиры в карьере
 """
 import pandas as pd
-import os
+from tkinter import messagebox
 from lachesis_support_functions import convert_to_int,round_mean,sort_name_class
 
 class BadValueCok(Exception):
@@ -483,6 +483,15 @@ def processing_cok(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                    }
 
         return out_dct, part_df
-    except:
-        pass
+    except BadValueCok:
+        messagebox.showerror('Лахеcис',
+                             f'При обработке вопросов теста Ценностные ориентиры карьеры обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
+                             f'{error_message}\n'
+                             f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
+
+
+    except BadCountColumnsCok:
+        messagebox.showerror('Лахеcис',
+                             f'Проверьте количество колонок с ответами на тест Ценностные ориентиры карьеры\n'
+                             f'Должно быть 41 колонка с ответами')
 
