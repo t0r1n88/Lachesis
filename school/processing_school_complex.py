@@ -16,6 +16,7 @@ from school_leadership.sсhool_usk import processing_usk # уровень сам
 from career_guidance.cok import processing_cok
 from career_guidance.ptl import processing_ptl
 from career_guidance.spp import processing_spp
+from career_guidance.ddo import processing_ddo
 
 
 
@@ -71,6 +72,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                      'ЦОК': (processing_cok, 41),
                      'ПТЛ': (processing_ptl, 30),
                      'СПП': (processing_spp, 24),
+                     'ДДО': (processing_ddo, 20)
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
@@ -83,6 +85,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                               'ЦОК':'Ценностные ориентации в карьере Шейн',
                               'ПТЛ':'Профессиональный тип личности Холланд',
                               'СПП':'Сфера профессиональных предпочтений',
+                              'ДДО':'Дифференциально-диагностический опросник',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты

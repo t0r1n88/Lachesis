@@ -624,15 +624,9 @@ def processing_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
     # создаем описание результата
-    if 'ФИО' in base_df.columns:
-        base_df[f'Описание_результата'] = base_df['ФИО'] + '.' + ' \nПрофессиональный тип личности.\n' + \
-                                                 base_df[
-                                                     f'Необработанное'] + description_result
-        part_df['ПТЛ_Описание_результата'] = base_df[f'Описание_результата']
-    else:
-        base_df[f'Описание_результата'] = 'Профессиональный тип личности.\n' + base_df[
-            f'Необработанное'] + description_result
-        part_df['ПТЛ_Описание_результата'] = base_df[f'Описание_результата']
+    base_df[f'Описание_результата'] = 'Профессиональный тип личности.\n' + base_df[
+        f'Необработанное'] + description_result
+    part_df['ПТЛ_Описание_результата'] = base_df[f'Описание_результата']
 
 
 
