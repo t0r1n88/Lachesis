@@ -474,7 +474,7 @@ def processing_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_count_group_df['Офисный'] / svod_count_group_df['Итого'], 2) * 100
     svod_count_group_df['% Предпринимательский от общего'] = round(
         svod_count_group_df['Предпринимательский'] / svod_count_group_df['Итого'], 2) * 100
-    svod_count_group_df['% Артистический'] = round(
+    svod_count_group_df['% Артистический от общего'] = round(
         svod_count_group_df['Артистический'] / svod_count_group_df['Итого'], 2) * 100
 
     part_svod_df = svod_count_group_df.iloc[:-1:]
@@ -511,7 +511,7 @@ def processing_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_count_group_sex_df['Офисный'] / svod_count_group_sex_df['Итого'], 2) * 100
     svod_count_group_sex_df['% Предпринимательский от общего'] = round(
         svod_count_group_sex_df['Предпринимательский'] / svod_count_group_sex_df['Итого'], 2) * 100
-    svod_count_group_sex_df['% Артистический'] = round(
+    svod_count_group_sex_df['% Артистический от общего'] = round(
         svod_count_group_sex_df['Артистический'] / svod_count_group_sex_df['Итого'], 2) * 100
 
     part_svod_df = svod_count_group_sex_df.iloc[:-1:]
@@ -548,7 +548,7 @@ def processing_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_count_course_df['Офисный'] / svod_count_course_df['Итого'], 2) * 100
     svod_count_course_df['% Предпринимательский от общего'] = round(
         svod_count_course_df['Предпринимательский'] / svod_count_course_df['Итого'], 2) * 100
-    svod_count_course_df['% Артистический'] = round(
+    svod_count_course_df['% Артистический от общего'] = round(
         svod_count_course_df['Артистический'] / svod_count_course_df['Итого'], 2) * 100
 
     # Среднее по Номер_класса Пол
@@ -579,7 +579,7 @@ def processing_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         svod_count_course_sex_df['Офисный'] / svod_count_course_sex_df['Итого'], 2) * 100
     svod_count_course_sex_df['% Предпринимательский от общего'] = round(
         svod_count_course_sex_df['Предпринимательский'] / svod_count_course_sex_df['Итого'], 2) * 100
-    svod_count_course_sex_df['% Артистический'] = round(
+    svod_count_course_sex_df['% Артистический от общего'] = round(
         svod_count_course_sex_df['Артистический'] / svod_count_course_sex_df['Итого'], 2) * 100
 
     description_result = """
