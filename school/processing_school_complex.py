@@ -13,10 +13,10 @@ from school_leadership.school_kos_one import processing_kos # коммуника
 from school_leadership.sсhool_usk import processing_usk # уровень самооценки Ковалев
 
 # Профориентация
-from school_career_guidance.cok import processing_cok
-from school_career_guidance.ptl import processing_ptl
-from school_career_guidance.spp import processing_spp
-from school_career_guidance.ddo import processing_ddo
+from school_career_guidance.school_cok import processing_cok
+from school_career_guidance.school_ptl import processing_ptl
+from school_career_guidance.school_spp import processing_spp
+from school_career_guidance.school_ddo import processing_ddo
 
 
 
