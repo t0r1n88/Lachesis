@@ -1,10 +1,10 @@
 """
 Точка входа для обработки выбранных профориентационных тестов
 """
-from career_guidance.ddo import processing_ddo # Дифференциально-диагностический опросник
-from career_guidance.cok import processing_cok # Ценностные ориентации в карьере
-from career_guidance.ptl import processing_ptl # Профессиональный тип личности
-from career_guidance.spp import processing_spp # Сфера профессиональных предпочтений
+from school_career_guidance.ddo import processing_ddo # Дифференциально-диагностический опросник
+from school_career_guidance.cok import processing_cok # Ценностные ориентации в карьере
+from school_career_guidance.ptl import processing_ptl # Профессиональный тип личности
+from school_career_guidance.spp import processing_spp # Сфера профессиональных предпочтений
 
 import pandas as pd
 import re
