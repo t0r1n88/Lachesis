@@ -115,6 +115,34 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
         return count_df
 
 
+def count_all_scale(df:pd.DataFrame, lst_cols:list,lst_index:list):
+    """
+    Функция для подсчета уровней по всем шкалам
+    :param df: датарфейм
+    :param lst_cols: список колонок по которым нужно вести обработку
+    :param lst_index: список индексов
+    :return:датафрейм
+    """
+    base_df = pd.DataFrame(index=lst_index) # базовый датафрейм с индексами
+    for scale in lst_cols:
+        scale_df = pd.pivot_table(df, index=f'Уровень_шкалы_{scale}',
+                                                  values=f'Значение_шкалы_{scale}',
+                                                  aggfunc='count')
+
+        scale_df[f'{scale}% от общего'] = round(
+            scale_df[f'Значение_шкалы_{scale}'] / scale_df[f'Значение_шкалы_{scale}'].sum(),3) * 100
+        scale_df.rename(columns={f'Значение_шкалы_{scale}':f'Количество_{scale}'},inplace=True)
+
+        # # Создаем суммирующую строку
+        scale_df.loc['Итого'] = scale_df.sum()
+
+
+        base_df = base_df.join(scale_df)
+
+    base_df = base_df.reset_index()
+    base_df.rename(columns={'index':'Степень дезадаптации'},inplace=True)
+    return base_df
+
 
 
 
@@ -244,38 +272,154 @@ def processing_leus_sdp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     base_df.sort_values(by='Значение_шкалы_СОП', ascending=False, inplace=True)  # сортируем
     out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
-    # Общий свод сколько склонностей всего в процентном соотношении
-    # svod_all_df = pd.pivot_table(base_df, index=['Обработанное'],
-    #                              values='Максимум',
-    #                              aggfunc='count')
-    #
-    # svod_all_df['% от общего'] = round(
-    #     svod_all_df['Максимум'] / svod_all_df['Максимум'].sum(), 3) * 100
-    # # # Создаем суммирующую строку
-    # svod_all_df.loc['Итого'] = svod_all_df.sum()
-    # svod_all_df['Максимум'] = svod_all_df['Максимум'].astype(int)
-    # svod_all_df.reset_index(inplace=True)
-    # svod_all_df.rename(columns={'Обработанное': 'Ценностная ориентация', 'Максимум': 'Количество'}, inplace=True)
+    #Общий свод сколько склонностей всего в процентном соотношении
+    svod_all_df = count_all_scale(base_df,['СОП','ДП','ЗП','АП','СП',],['отсутствие признаков социально-психологической дезадаптации', 'легкая степень социально-психологической дезадаптации',
+             'выраженная социально-психологическая дезадаптация','Итого'])
+
+
 
 
 
     lst_reindex_group_cols = ['Группа', 'отсутствие признаков социально-психологической дезадаптации', 'легкая степень социально-психологической дезадаптации',
              'выраженная социально-психологическая дезадаптация','Итого']
+    lst_reindex_group_sex_cols = ['Группа','Пол', 'отсутствие признаков социально-психологической дезадаптации', 'легкая степень социально-психологической дезадаптации',
+             'выраженная социально-психологическая дезадаптация','Итого']
+
+    lst_reindex_course_cols = ['Курс', 'отсутствие признаков социально-психологической дезадаптации', 'легкая степень социально-психологической дезадаптации',
+             'выраженная социально-психологическая дезадаптация','Итого']
+    lst_reindex_course_sex_cols = ['Курс','Пол','отсутствие признаков социально-психологической дезадаптации', 'легкая степень социально-психологической дезадаптации',
+             'выраженная социально-психологическая дезадаптация','Итого']
+
+
     """
     Обрабатываем Группа
     """
 
-
-    svod_group_df = calc_mean(base_df,'Группа',['Группа'],'Значение_шкалы_СОП')
+    # СОП
+    svod_group_sop_df = calc_mean(base_df,'Группа',['Группа'],'Значение_шкалы_СОП')
     svod_count_group_sop_df = calc_count(base_df,'Группа',['Группа'],'Значение_шкалы_СОП','Уровень_шкалы_СОП',lst_reindex_group_cols)
+    # ДП
+    svod_group_dp_df = calc_mean(base_df,'Группа',['Группа'],'Значение_шкалы_ДП')
+    svod_count_group_dp_df = calc_count(base_df,'Группа',['Группа'],'Значение_шкалы_ДП','Уровень_шкалы_ДП',lst_reindex_group_cols)
+
+    # ЗП
+    svod_group_zp_df = calc_mean(base_df,'Группа',['Группа'],'Значение_шкалы_ЗП')
+    svod_count_group_zp_df = calc_count(base_df,'Группа',['Группа'],'Значение_шкалы_ЗП','Уровень_шкалы_ЗП',lst_reindex_group_cols)
+
+    # АП
+    svod_group_ap_df = calc_mean(base_df,'Группа',['Группа'],'Значение_шкалы_АП')
+    svod_count_group_ap_df = calc_count(base_df,'Группа',['Группа'],'Значение_шкалы_АП','Уровень_шкалы_АП',lst_reindex_group_cols)
+
+    # СП
+    svod_group_sp_df = calc_mean(base_df,'Группа',['Группа'],'Значение_шкалы_СП')
+    svod_count_group_sp_df = calc_count(base_df,'Группа',['Группа'],'Значение_шкалы_СП','Уровень_шкалы_СП',lst_reindex_group_cols)
+
+    """
+    Обрабатываем Группа Пол
+    """
+    # СОП
+    svod_group_sex_sop_df = calc_mean(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_СОП')
+    svod_count_group_sex_sop_df = calc_count(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_СОП','Уровень_шкалы_СОП',lst_reindex_group_sex_cols)
+
+    # ДП
+    svod_group_sex_dp_df = calc_mean(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_ДП')
+    svod_count_group_sex_dp_df = calc_count(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_ДП','Уровень_шкалы_ДП',lst_reindex_group_sex_cols)
+
+    # ЗП
+    svod_group_sex_zp_df = calc_mean(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_ЗП')
+    svod_count_group_sex_zp_df = calc_count(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_ЗП','Уровень_шкалы_ЗП',lst_reindex_group_sex_cols)
+
+    # АП
+    svod_group_sex_ap_df = calc_mean(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_АП')
+    svod_count_group_sex_ap_df = calc_count(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_АП','Уровень_шкалы_АП',lst_reindex_group_sex_cols)
+
+    # СП
+    svod_group_sex_sp_df = calc_mean(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_СП')
+    svod_count_group_sex_sp_df = calc_count(base_df,'Группа',['Группа','Пол'],'Значение_шкалы_СП','Уровень_шкалы_СП',lst_reindex_group_sex_cols)
+
+    """
+    Обрабатываем Курс
+    """
+
+    # СОП
+    svod_course_sop_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_шкалы_СОП')
+    svod_count_course_sop_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_шкалы_СОП', 'Уровень_шкалы_СОП',
+                                          lst_reindex_course_cols)
+    # ДП
+    svod_course_dp_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_шкалы_ДП')
+    svod_count_course_dp_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_шкалы_ДП', 'Уровень_шкалы_ДП',
+                                         lst_reindex_course_cols)
+
+    # ЗП
+    svod_course_zp_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_шкалы_ЗП')
+    svod_count_course_zp_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_шкалы_ЗП', 'Уровень_шкалы_ЗП',
+                                         lst_reindex_course_cols)
+
+    # АП
+    svod_course_ap_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_шкалы_АП')
+    svod_count_course_ap_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_шкалы_АП', 'Уровень_шкалы_АП',
+                                         lst_reindex_course_cols)
+
+    # СП
+    svod_course_sp_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_шкалы_СП')
+    svod_count_course_sp_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_шкалы_СП', 'Уровень_шкалы_СП',
+                                         lst_reindex_course_cols)
+
+    """
+    Обрабатываем Курс Пол
+    """
+    # СОП
+    svod_course_sex_sop_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_СОП')
+    svod_count_course_sex_sop_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_СОП',
+                                              'Уровень_шкалы_СОП', lst_reindex_course_sex_cols)
+
+    # ДП
+    svod_course_sex_dp_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_ДП')
+    svod_count_course_sex_dp_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_ДП', 'Уровень_шкалы_ДП',
+                                             lst_reindex_course_sex_cols)
+
+    # ЗП
+    svod_course_sex_zp_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_ЗП')
+    svod_count_course_sex_zp_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_ЗП', 'Уровень_шкалы_ЗП',
+                                             lst_reindex_course_sex_cols)
+
+    # АП
+    svod_course_sex_ap_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_АП')
+    svod_count_course_sex_ap_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_АП', 'Уровень_шкалы_АП',
+                                             lst_reindex_course_sex_cols)
+
+    # СП
+    svod_course_sex_sp_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_СП')
+    svod_count_course_sex_sp_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_шкалы_СП', 'Уровень_шкалы_СП',
+                                             lst_reindex_course_sex_cols)
 
     out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-               'Среднее Группа СОП':svod_group_df,'Количество Группа СОП':svod_count_group_sop_df,
-               # 'Общий свод': svod_all_df,
-               # 'Среднее Группа': svod_group_df, 'Количество Группа': svod_count_group_df,
-               # 'Среднее Группа Пол': svod_group_sex_df, 'Количество Группа Пол': svod_count_group_sex_df,
-               # 'Среднее Курс': svod_course_df, 'Количество Курс': svod_count_course_df,
-               # 'Среднее Курс Пол': svod_course_sex_df, 'Количество Курс Пол': svod_count_course_sex_df,
+               'Общий свод':svod_all_df,
+               'Среднее Группа СОП':svod_group_sop_df,'Количество Группа СОП':svod_count_group_sop_df,
+               'Среднее Группа ДП':svod_group_dp_df,'Количество Группа ДП':svod_count_group_dp_df,
+               'Среднее Группа ЗП':svod_group_zp_df,'Количество Группа ЗП':svod_count_group_zp_df,
+               'Среднее Группа АП':svod_group_ap_df,'Количество Группа АП':svod_count_group_sop_df,
+               'Среднее Группа СП':svod_group_sp_df,'Количество Группа СП':svod_count_group_sp_df,
+
+               'Среднее Группа Пол СОП':svod_group_sex_sop_df,'Количество Группа Пол СОП':svod_count_group_sex_sop_df,
+               'Среднее Группа Пол ДП':svod_group_sex_dp_df,'Количество Группа Пол ДП':svod_count_group_sex_dp_df,
+               'Среднее Группа Пол ЗП':svod_group_sex_zp_df,'Количество Группа Пол ЗП':svod_count_group_sex_zp_df,
+               'Среднее Группа Пол АП':svod_group_sex_ap_df,'Количество Группа Пол АП':svod_count_group_sex_ap_df,
+               'Среднее Группа Пол СП':svod_group_sex_sp_df,'Количество Группа Пол СП':svod_count_group_sex_sp_df,
+
+
+               'Среднее Курс СОП': svod_course_sop_df, 'Количество Курс СОП': svod_count_course_sop_df,
+               'Среднее Курс ДП': svod_course_dp_df, 'Количество Курс ДП': svod_count_course_dp_df,
+               'Среднее Курс ЗП': svod_course_zp_df, 'Количество Курс ЗП': svod_count_course_zp_df,
+               'Среднее Курс АП': svod_course_ap_df, 'Количество Курс АП': svod_count_course_sop_df,
+               'Среднее Курс СП': svod_course_sp_df, 'Количество Курс СП': svod_count_course_sp_df,
+
+               'Среднее Курс Пол СОП': svod_course_sex_sop_df, 'Количество Курс Пол СОП': svod_count_course_sex_sop_df,
+               'Среднее Курс Пол ДП': svod_course_sex_dp_df, 'Количество Курс Пол ДП': svod_count_course_sex_dp_df,
+               'Среднее Курс Пол ЗП': svod_course_sex_zp_df, 'Количество Курс Пол ЗП': svod_count_course_sex_zp_df,
+               'Среднее Курс Пол АП': svod_course_sex_ap_df, 'Количество Курс Пол АП': svod_count_course_sex_ap_df,
+               'Среднее Курс Пол СП': svod_course_sex_sp_df, 'Количество Курс Пол СП': svod_count_course_sex_sp_df,
+
                }
 
     return out_dct, part_df
