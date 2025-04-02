@@ -300,9 +300,28 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
             svod_all_count_group_sex_df['истинное депрессивное состояние'] / svod_all_count_group_sex_df['Итого'],
             2)*100
 
+        # Общий свод сколько склонностей всего в процентном соотношении
+        base_svod_all_df = pd.DataFrame(index=['депрессия не выявлена','легкая депрессия ситуативного или невротического генеза','субдепрессивное состояние или маскированная депрессия','истинное депрессивное состояние','Итого'])
+
+        svod_all_df = pd.pivot_table(base_df, index='Уровень_депрессии',
+                                     values='Значение_депрессии',
+                                     aggfunc='count')
+
+        svod_all_df['% от общего'] = round(
+            svod_all_df['Значение_депрессии'] / svod_all_df['Значение_депрессии'].sum(), 3) * 100
+        # # Создаем суммирующую строку
+        svod_all_df.loc['Итого'] = svod_all_df.sum()
+
+        base_svod_all_df =base_svod_all_df.join(svod_all_df)
+
+
+        base_svod_all_df.reset_index(inplace=True)
+        base_svod_all_df.rename(columns={'index': 'Уровень депрессии', 'Значение_депрессии': 'Количество'}, inplace=True)
+
 
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Общий свод':base_svod_all_df,
                    'Среднее по группам': svod_all_group_df, 'Количество по группам': svod_all_count_group_df,
                    'Среднее по группам и полам': svod_all_group_sex_df,
                    'Количество по группам и полам': svod_all_count_group_sex_df,
