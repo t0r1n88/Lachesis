@@ -19,6 +19,9 @@ from spo_career_guidance.spo_ptl import processing_ptl
 from spo_career_guidance.spo_spp import processing_spp
 from spo_career_guidance.spo_ddo import processing_ddo
 
+# Девиантное поведение
+from spo.leus_sdp import processing_leus_sdp
+
 
 
 
@@ -70,7 +73,8 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                      'ЦОК': (processing_cok, 41),
                      'ПТЛ': (processing_ptl, 30),
                      'СПП': (processing_spp, 24),
-                     'ДДО': (processing_ddo, 20)
+                     'ДДО': (processing_ddo, 20),
+                     'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Шкала тревожности Кондаша': 'Шкала тревожности Кондаша', 'Шкала депрессии Бека':'Шкала депрессии Бека',
@@ -84,11 +88,12 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                               'ПТЛ': 'Профессиональный тип личности Холланд',
                               'СПП': 'Сфера профессиональных предпочтений',
                               'ДДО': 'Дифференциально-диагностический опросник',
+                              'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
-        lst_depress_tests = ['Шкала тревожности Кондаша','Шкала депрессии Бека','Шкала безнадежности Бека','Шкала депрессии Цунга']
-        lst_check_depress_tests = []
+        lst_alert_tests = ['Шкала тревожности Кондаша','Шкала депрессии Бека','Шкала безнадежности Бека','Шкала депрессии Цунга','Склонность к девиантному поведению Леус']
+        lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
         lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО']
@@ -157,8 +162,8 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
             получаем 2 датафрейма с результатами для данного теста которые добавляем в основные датафреймы
             """
             # Присутствует ли тест среди тестов на депрессию и тревогу
-            if name_test in lst_depress_tests:
-                lst_check_depress_tests.append(name_test)
+            if name_test in lst_alert_tests:
+                lst_check_alert_tests.append(name_test)
 
             # Присутствует ли тест среди профориентационных тестов
             if name_test in lst_career_tests:
@@ -195,10 +200,10 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
         # Сохраняем в удобном виде
         main_itog_df.sort_values(by='Группа',inplace=True) # сортируем
-        if len(lst_check_depress_tests) != 0:
+        if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
-            set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние'] # особое внимание
-            set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия'] # обратить внимание
+            set_alert_value = ['тяжелая депрессия','безнадежность тяжёлая','Очень высокий уровень тревожности','истинное депрессивное состояние','выраженная социально-психологическая дезадаптация'] # особое внимание
+            set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия','легкая степень социально-психологической дезадаптации'] # обратить внимание
 
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
@@ -259,8 +264,10 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Тревожность.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Тревожность.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО data девиантность.xlsx'
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
 
