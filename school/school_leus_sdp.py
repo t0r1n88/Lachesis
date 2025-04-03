@@ -4,7 +4,7 @@
 
 import pandas as pd
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,round_mean_two
+from lachesis_support_functions import round_mean,sort_name_class
 
 class BadOrderSDP(Exception):
     """
@@ -53,6 +53,7 @@ def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
                                            values=[val_cat],
                                            aggfunc=round_mean)
         calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
         return calc_mean_df
     else:
         calc_mean_df = pd.pivot_table(df, index=lst_cat,
@@ -92,6 +93,11 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
 
         count_df['% выраженная социально-психологическая дезадаптация от общего'] = round(
             count_df['выраженная социально-психологическая дезадаптация'] / count_df['Итого'], 2) * 100
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
 
         return count_df
     else:

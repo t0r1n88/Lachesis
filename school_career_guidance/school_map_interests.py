@@ -26,6 +26,86 @@ class BadCountColumnsMIGA(Exception):
     """
     pass
 
+def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=[val_cat],
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        calc_mean_df.rename(columns={val_cat: 'Среднее значение'}, inplace=True)
+
+        return calc_mean_df
+    else:
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=val_cat,
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
+        return calc_mean_df
+
+
+
+def calc_count_miga(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+        lst_sphere = count_df.columns[:-1]
+        count_df.reset_index(inplace=True)
+
+        for sphere in lst_sphere:
+            count_df[f'% {sphere} от общего'] = round(
+            count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
+
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        lst_sphere = count_df.columns[:-1]
+        count_df.reset_index(inplace=True)
+
+        for sphere in lst_sphere:
+            count_df[f'% {sphere} от общего'] = round(
+            count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
+
+        return count_df
+
+
+
+
+
+
 def extract_key_max_value(cell:str) ->str:
     """
     Функция для извлечения ключа с максимальным значением
@@ -41,7 +121,7 @@ def extract_key_max_value(cell:str) ->str:
     for result in lst_temp:
         # отбрасываем пустую строку
         if result:
-            key,value = result.split(' - ') # извлекаем ключ и значение
+            key,value = result.split(': ') # извлекаем ключ и значение
             dct_result[key] = int(value)
 
     # возвращаем элемент с максимальным значением
@@ -62,11 +142,62 @@ def extract_max_value(cell:str):
     for result in lst_temp:
         # отбрасываем пустую строку
         if result:
-            key,value = result.split(' - ') # извлекаем ключ и значение
+            key,value = result.split(': ') # извлекаем ключ и значение
             dct_result[key] = int(value)
 
     # возвращаем элемент с максимальным значением
     return dct_result[max(dct_result, key=dct_result.get)]
+
+
+def processing_result_miga(row):
+    """
+    Обработка результатов тестирования
+    """
+    dct_cols = {'Биология': [1, 25, 49, 73, 97, 121],
+                'Физика': [2, 26, 50, 74, 98, 122],
+                'Химия':[3,27,51,75,99,123],
+                'География':[4,28,52,76,100,124],
+                'Медицина':[5,29,53,77,101,125],
+                'Техника и электроника':[6,30,54,78,102,126],
+                'Строительство':[7,31,55,79,103,127],
+                'Математика':[8,32,56,80,104,128],
+                'Экономика':[9,33,57,81,105,129],
+                'Иностранные языки':[10,34,58,82,106,130],
+                'Транспорт':[11,35,59,83,107,131],
+                'Авиация, морское дело':[12,36,60,84,108,132],
+                'Военные специальности':[13,37,61,85,109,133],
+                'История':[14,38,62,86,110,134],
+                'Рабочие специальности':[15,39,63,87,111,135],
+                'Журналистика':[16,40,64,88,112,136],
+                'Юриспруденция':[17,41,65,89,113,137],
+                'Педагогика':[18,42,66,90,114,138],
+                'Сфера обслуживания, торговля':[19,43,67,91,115,139],
+                'Физкультура и спорт':[20,44,68,92,116,140],
+                'Музыка':[21,45,69,93,117,141],
+                'Сценическое искусство':[22,46,70,94,118,142],
+                'Изобразительное искусство':[23,47,71,95,119,143],
+                'Экология':[24,48,72,96,120,144],
+                }
+
+    dct_answers = dict() # словарь для результатов
+
+    for key, ind_cols in dct_cols.items():
+        prepared_lst = list(map(lambda x:x-1,ind_cols))
+        total = sum(row[i] for i in prepared_lst) # получаем сумму выбранных колонок
+        dct_answers[key] = total
+
+    result_lst = sorted(dct_answers.items(), key=lambda t: t[1], reverse=True)
+    begin_str = ''
+    # создаем строку с результатами
+    for sphere, value in result_lst:
+        begin_str += f'{sphere}: {value};\n'
+
+    return begin_str
+
+
+
+
+
 
 
 
@@ -186,6 +317,99 @@ def processing_map_interests(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         error_row = list(map(str, error_row))
         error_message = ';'.join(error_row)
         raise BadValueMIGA
+
+
+
+
+
+    base_df[f'Необработанное'] = answers_df.apply(processing_result_miga, axis=1)
+    base_df[f'Обработанное'] = base_df[f'Необработанное'].apply(
+        extract_key_max_value)
+    base_df[f'Максимум'] = base_df[f'Необработанное'].apply(
+        extract_max_value)
+
+
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame(columns=['КИ_Голомшток_Необработанное', 'КИ_Голомшток_Обработанное', 'КИ_Голомшток_Максимум'])
+    part_df['КИ_Голомшток_Необработанное'] = base_df['Необработанное']
+    part_df['КИ_Голомшток_Обработанное'] = base_df['Обработанное']
+    part_df['КИ_Голомшток_Максимум'] = base_df['Максимум']
+
+    base_df.sort_values(by='Максимум', ascending=False, inplace=True)  # сортируем
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    # Общий свод сколько склонностей всего в процентном соотношении
+    base_svod_all_df = pd.DataFrame(
+        index=['Авиация, морское дело', 'Биология',
+               'Военные специальности', 'География',
+               'Журналистика','Изобразительное искусство',
+               'Иностранные языки','История',
+               'Математика','Медицина',
+               'Музыка','Педагогика',
+               'Рабочие специальности','Строительство',
+               'Сфера обслуживания, торговля','Сценическое искусство',
+               'Техника и электроника','Транспорт',
+               'Физика','Физкультура и спорт',
+               'Химия','Экология',
+               'Экономика','Юриспруденция',
+               'Итого'])
+
+    svod_all_df = pd.pivot_table(base_df, index='Обработанное',
+                                 values='Максимум',
+                                 aggfunc='count')
+
+    svod_all_df['% от общего'] = round(
+        svod_all_df['Максимум'] / svod_all_df['Максимум'].sum(), 3) * 100
+    # # Создаем суммирующую строку
+    svod_all_df.loc['Итого'] = svod_all_df.sum()
+
+    base_svod_all_df = base_svod_all_df.join(svod_all_df)
+
+    base_svod_all_df.reset_index(inplace=True)
+    base_svod_all_df.rename(columns={'index': 'Предпочтительная сфера деятельности', 'Максимум': 'Количество'}, inplace=True)
+
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               'Общий свод': base_svod_all_df,
+               }
+
+    # формируем списки по сфера деятельности
+    lst_sphere = base_df['Обработанное'].unique()
+    dct_sphere = dict() # словарь для хранения списков
+
+    for sphere in lst_sphere:
+        temp_df = base_df[base_df['Обработанное'] == sphere]
+        dct_sphere[sphere] = temp_df
+
+    out_dct.update(dct_sphere)
+
+    # Класс
+    svod_group_df = calc_mean(base_df,'Класс',['Класс','Обработанное'],'Максимум')
+    svod_count_group_df = calc_count_miga(base_df, 'Класс', ['Класс'], 'Максимум', 'Обработанное')
+
+    # Класс Пол
+    svod_group_sex_df = calc_mean(base_df,'Класс',['Класс','Обработанное','Пол'],'Максимум')
+    svod_count_group_sex_df = calc_count_miga(base_df, 'Класс', ['Класс','Пол'], 'Максимум', 'Обработанное')
+
+    # Номер_класса
+    svod_course_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное'],'Максимум')
+    svod_count_course_df = calc_count_miga(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум', 'Обработанное')
+
+    # Номер_класса Пол
+    svod_course_sex_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное','Пол'],'Максимум')
+    svod_count_course_sex_df = calc_count_miga(base_df, 'Номер_класса', ['Номер_класса','Пол'], 'Максимум', 'Обработанное')
+
+
+    svod_dct =  {'Среднее Класс':svod_group_df,'Количество Класс':svod_count_group_df,
+                 'Среднее Класс Пол':svod_group_sex_df,'Количество Класс Пол':svod_count_group_sex_df,
+                 'Среднее Номер_класса': svod_course_df, 'Количество Номер_класса': svod_count_course_df,
+                 'Среднее Номер_класса Пол': svod_course_sex_df, 'Количество Номер_класса Пол': svod_count_course_sex_df,
+
+                 }
+    out_dct.update(svod_dct) # добавляем чтобы сохранить порядок
+
+    return out_dct, part_df
 
 
 
