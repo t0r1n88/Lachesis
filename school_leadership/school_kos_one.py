@@ -622,7 +622,6 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                    'Общий свод': svod_all_df,
-
                    'Среднее Класс Ком': mean_group_com_cos_one_df, 'Количество Класс Ком': count_group_com_cos_one_df,
                    'Среднее Класс Орг': mean_group_org_cos_one_df, 'Количество Класс Орг': count_group_org_cos_one_df,
                    'Среднее Класс Пол Ком': mean_group_sex_com_cos_one_df, 'Количество Класс Пол Ком': count_group_sex_com_cos_one_df,
