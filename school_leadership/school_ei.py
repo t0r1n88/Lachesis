@@ -23,6 +23,51 @@ class BadCountColumnsEI(Exception):
     """
     pass
 
+def count_all_scale(df:pd.DataFrame, lst_cols:list,lst_index:list):
+    """
+    Функция для подсчета уровней по всем шкалам
+    :param df: датарфейм
+    :param lst_cols: список колонок по которым нужно вести обработку
+    :param lst_index: список индексов
+    :return:датафрейм
+    """
+    base_df = pd.DataFrame(index=lst_index) # базовый датафрейм с индексами
+    for scale in lst_cols:
+        if scale == 'ЭИ':
+            scale_df = pd.pivot_table(df, index=f'Уровень_общего_ЭИ',
+                                      values=f'Значение_общего_ЭИ',
+                                      aggfunc='count')
+
+            scale_df[f'Общий ЭИ % от общего'] = round(
+                scale_df[f'Значение_общего_ЭИ'] / scale_df[f'Значение_общего_ЭИ'].sum(), 3) * 100
+            scale_df.rename(columns={f'Значение_общего_ЭИ': f'Количество_ЭИ'}, inplace=True)
+
+            # # Создаем суммирующую строку
+            scale_df.loc['Итого'] = scale_df.sum()
+        else:
+            scale_df = pd.pivot_table(df, index=f'Уровень_шкалы_{scale}',
+                                                      values=f'Значение_шкалы_{scale}',
+                                                      aggfunc='count')
+
+            scale_df[f'{scale} % от общего'] = round(
+                scale_df[f'Значение_шкалы_{scale}'] / scale_df[f'Значение_шкалы_{scale}'].sum(),3) * 100
+            scale_df.rename(columns={f'Значение_шкалы_{scale}':f'Количество_{scale}'},inplace=True)
+
+            # # Создаем суммирующую строку
+            scale_df.loc['Итого'] = scale_df.sum()
+
+
+        base_df = base_df.join(scale_df)
+
+    base_df = base_df.reset_index()
+    base_df.rename(columns={'index':'Уровень эмоционального интеллекта'},inplace=True)
+    return base_df
+
+
+
+
+
+
 
 def calc_union_value_ei(row):
     """
@@ -663,7 +708,6 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
         base_df.sort_values(by='Значение_общего_ЭИ', ascending=False, inplace=True)  # сортируем
-
 
         # Делаем сводную таблицу по курсу
         mean_course_oei_df = pd.pivot_table(base_df, index=['Номер_класса'],
@@ -1439,8 +1483,22 @@ def processing_ei(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
+        # Общий свод сколько склонностей всего в процентном соотношении
+        svod_all_df = count_all_scale(base_df, ['ЭИ', 'МЭИ', 'ВЭИ', 'ПЭ', 'УЭ'],
+                                      ['Очень низкое значение',
+                                       'Низкое значение',
+                                       'Среднее значение',
+                                       'Высокое значение',
+                                       'Очень высокое значение',
+                                        'Итого'])
+
+
+
+
+
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Общий свод':svod_all_df,
                    'Среднее Класс ОЭИ': mean_group_oei_df, 'Количество Класс ОЭИ': count_group_oei_df,
                    'Среднее Класс МЭИ': mean_group_mei_df, 'Количество Класс МЭИ': count_group_mei_df,
                    'Среднее Класс ВЭИ': mean_group_vei_df, 'Количество Класс ВЭИ': count_group_vei_df,

@@ -24,6 +24,37 @@ class BadCountColumnsKOSOne(Exception):
     """
     pass
 
+def count_all_scale(df:pd.DataFrame, lst_cols:list,lst_index:list):
+    """
+    Функция для подсчета уровней по всем шкалам
+    :param df: датарфейм
+    :param lst_cols: список колонок по которым нужно вести обработку
+    :param lst_index: список индексов
+    :return:датафрейм
+    """
+    base_df = pd.DataFrame(index=lst_index) # базовый датафрейм с индексами
+    for scale in lst_cols:
+        scale_df = pd.pivot_table(df, index=f'Уровень_{scale}_навыков',
+                                                  values=f'Значение_{scale}_навыков',
+                                                  aggfunc='count')
+
+        scale_df[f'{scale}_навыки % от общего'] = round(
+            scale_df[f'Значение_{scale}_навыков'] / scale_df[f'Значение_{scale}_навыков'].sum(),3) * 100
+        scale_df.rename(columns={f'Значение_{scale}_навыков':f'Количество_{scale}'},inplace=True)
+
+        # # Создаем суммирующую строку
+        scale_df.loc['Итого'] = scale_df.sum()
+
+
+        base_df = base_df.join(scale_df)
+
+    base_df = base_df.reset_index()
+    base_df.rename(columns={'index':'Уровень навыков'},inplace=True)
+    return base_df
+
+
+
+
 
 def calc_value_com_cos_one(row):
     """
@@ -576,8 +607,22 @@ def processing_kos(base_df: pd.DataFrame, answers_df: pd.DataFrame,):
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
+        # Общий свод сколько склонностей всего в процентном соотношении
+        svod_all_df = count_all_scale(base_df, ['ком', 'орг'],
+                                      ['Низкий',
+                                       'Ниже среднего',
+                                       'Средний',
+                                       'Высокий',
+                                       'Очень высокий',
+                                        'Итого'])
+
+
+
+
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Общий свод': svod_all_df,
+
                    'Среднее Класс Ком': mean_group_com_cos_one_df, 'Количество Класс Ком': count_group_com_cos_one_df,
                    'Среднее Класс Орг': mean_group_org_cos_one_df, 'Количество Класс Орг': count_group_org_cos_one_df,
                    'Среднее Класс Пол Ком': mean_group_sex_com_cos_one_df, 'Количество Класс Пол Ком': count_group_sex_com_cos_one_df,

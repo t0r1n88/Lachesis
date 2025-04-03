@@ -292,8 +292,28 @@ def processing_usk(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
 
+        # Общий свод сколько склонностей всего в процентном соотношении
+        base_svod_all_df = pd.DataFrame(index=['Низкий уровень самооценки','Средний уровень самооценки','Высокий уровень самооценки','Итого'])
+
+        svod_all_df = pd.pivot_table(base_df, index='Уровень_самооценки',
+                                     values='Значение_уровня_самооценки',
+                                     aggfunc='count')
+
+
+        svod_all_df['% от общего'] = round(
+            svod_all_df['Значение_уровня_самооценки'] / svod_all_df['Значение_уровня_самооценки'].sum(), 3) * 100
+        # # Создаем суммирующую строку
+        svod_all_df.loc['Итого'] = svod_all_df.sum()
+
+        base_svod_all_df =base_svod_all_df.join(svod_all_df)
+
+        base_svod_all_df.reset_index(inplace=True)
+        base_svod_all_df.rename(columns={'index': 'Уровень самооценки', 'Значение_уровня_самооценки': 'Количество'}, inplace=True)
+
+
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Общий свод':base_svod_all_df,
                    'Среднее Класс': mean_group_usk_df, 'Количество Класс': count_group_usk_df,
                    'Среднее Класс Пол': mean_group_sex_usk_df, 'Количество Класс Пол': count_group_sex_usk_df,
                    'Среднее Номер_класса': mean_course_usk_df, 'Количество Номер_класса': count_course_usk_df,
