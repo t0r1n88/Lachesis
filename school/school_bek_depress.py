@@ -287,11 +287,31 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
 
+        # Общий свод сколько склонностей всего в процентном соотношении
+        base_svod_all_df = pd.DataFrame(index=['удовлетворительное эмоциональное состояние','легкая депрессия','умеренная депрессия','тяжелая депрессия','Итого'])
+
+        svod_all_df = pd.pivot_table(base_df, index='Уровень_депрессии',
+                                     values='Значение_уровня_депрессии',
+                                     aggfunc='count')
+
+        svod_all_df['% от общего'] = round(
+            svod_all_df['Значение_уровня_депрессии'] / svod_all_df['Значение_уровня_депрессии'].sum(), 3) * 100
+        # # Создаем суммирующую строку
+        svod_all_df.loc['Итого'] = svod_all_df.sum()
+
+        base_svod_all_df =base_svod_all_df.join(svod_all_df)
+
+
+        base_svod_all_df.reset_index(inplace=True)
+        base_svod_all_df.rename(columns={'index': 'Уровень депрессии', 'Значение_уровня_депрессии': 'Количество'}, inplace=True)
+
+
 
 
         # формируем словарь
         out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
-            'Средний результат':svod_all_df,'Количество':svod_all_count_df,
+                   'Общий свод': base_svod_all_df,
+                   'Средний результат':svod_all_df,'Количество':svod_all_count_df,
                    'Ср_рез по Классам': svod_all_only_group_df, 'Кол по Классам': svod_all_only_group_count_df,
                    'Ср_рез по Классам и полам':svod_all_group_df,'Кол по Классам и полам':svod_all_group_count_df
                    }
@@ -310,22 +330,4 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                              f'Проверьте количество колонок с ответами на тест Шкала депрессии Бека\n'
                              f'Должно быть 52 колонки с ответами, то есть  13 вопросов по 4 колонки'
                             )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -307,8 +307,32 @@ def processing_bek_hopelessness(base_df: pd.DataFrame, answers_df: pd.DataFrame)
         itog_svod_df = svod_all_count_group_sex_df.iloc[-1:]
         svod_all_count_group_sex_df = pd.concat([part_svod_df, itog_svod_df])
 
+        # Общий свод сколько склонностей всего в процентном соотношении
+        base_svod_all_df = pd.DataFrame(index=['безнадёжность не выявлена','безнадежность лёгкая','безнадежность умеренная','безнадежность тяжёлая','Итого'])
+
+        svod_all_df = pd.pivot_table(base_df, index='Уровень_безнадежности',
+                                     values='Значение_безнадежности',
+                                     aggfunc='count')
+
+        svod_all_df['% от общего'] = round(
+            svod_all_df['Значение_безнадежности'] / svod_all_df['Значение_безнадежности'].sum(), 3) * 100
+        # # Создаем суммирующую строку
+        svod_all_df.loc['Итого'] = svod_all_df.sum()
+
+        base_svod_all_df =base_svod_all_df.join(svod_all_df)
+
+
+        base_svod_all_df.reset_index(inplace=True)
+        base_svod_all_df.rename(columns={'index': 'Уровень безнадежности', 'Значение_безнадежности': 'Количество'}, inplace=True)
+
+
+
+
+
         # формируем словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Общий свод': base_svod_all_df,
+
                    'Среднее по Классам': svod_all_group_df, 'Количество по Классам': svod_all_count_group_df,
                    'Среднее Класс Пол': svod_all_group_sex_df, 'Количество Класс Пол': svod_all_count_group_sex_df,
                    'Среднее по Номер_класса': svod_all_course_df, 'Количество по Номер_класса': svod_all_count_course_df,

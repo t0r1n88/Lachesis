@@ -265,9 +265,15 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
 
 
 if __name__ == '__main__':
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация комплекс.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Тревожность.xlsx'
+    # main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
+
+
+    # main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация комплекс.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Комплекс профориентация.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа data девиантность.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа тревожность.xlsx'
+
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
 

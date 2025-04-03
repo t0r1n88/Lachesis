@@ -21,6 +21,39 @@ class BadValueCondashAnxiety(Exception):
     pass
 
 
+
+def count_all_scale(df:pd.DataFrame, lst_cols:list,lst_index:list):
+    """
+    Функция для подсчета уровней по всем шкалам
+    :param df: датарфейм
+    :param lst_cols: список колонок по которым нужно вести обработку
+    :param lst_index: список индексов
+    :return:датафрейм
+    """
+    base_df = pd.DataFrame(index=lst_index) # базовый датафрейм с индексами
+    for scale in lst_cols:
+        scale_df = pd.pivot_table(df, index=f'Уровень_{scale}_тревожности',
+                                                  values=f'Значение_{scale}_тревожности',
+                                                  aggfunc='count')
+
+        scale_df[f'%{scale}_тревожности от общего'] = round(
+            scale_df[f'Значение_{scale}_тревожности'] / scale_df[f'Значение_{scale}_тревожности'].sum(),3) * 100
+        scale_df.rename(columns={f'Значение_{scale}_тревожности':f'Количество_{scale}_тревожности'},inplace=True)
+
+        # # Создаем суммирующую строку
+        scale_df.loc['Итого'] = scale_df.sum()
+
+
+        base_df = base_df.join(scale_df)
+
+    base_df = base_df.reset_index()
+    base_df.rename(columns={'index':'Степень тревожности'},inplace=True)
+    return base_df
+
+
+
+
+
 def calc_level_all_condash_anxiety(ser:pd.Series):
     """
     Функция для подсчета уровня тревожности
@@ -573,7 +606,7 @@ def processing_school_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.Data
         part_df['Уровень_общей_тревожности_Кондаш'] = base_df['Уровень_общей_тревожности']
         part_df['Значение_учебной_тревожности_Кондаш'] = base_df['Значение_учебной_тревожности']
         part_df['Уровень_учебной_тревожности_Кондаш'] = base_df['Уровень_учебной_тревожности']
-        part_df['Значение_самооценочной_тревожности_Кондаш'] = base_df['Значение_общей_тревожности']
+        part_df['Значение_самооценочной_тревожности_Кондаш'] = base_df['Значение_самооценочной_тревожности']
         part_df['Уровень_самооценочной_тревожности_Кондаш'] = base_df['Уровень_самооценочной_тревожности']
         part_df['Значение_межличностной_тревожности_Кондаш'] = base_df['Значение_межличностной_тревожности']
         part_df['Уровень_межличностной_тревожности_Кондаш'] = base_df['Уровень_межличностной_тревожности']
@@ -850,8 +883,20 @@ def processing_school_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.Data
         itog_svod_df = svod_soc_group_count_df.iloc[-1:]
         svod_soc_group_count_df = pd.concat([part_svod_df, itog_svod_df])
 
+
+        # Общий свод сколько склонностей всего в процентном соотношении
+        svod_all_df = count_all_scale(base_df, ['общей', 'учебной', 'самооценочной', 'межличностной' ],
+                                      ['Нормальный уровень тревожности',
+                                       'Несколько повышенный уровень тревожности',
+                                       'Высокий уровень тревожности',
+                                       'Очень высокий уровень тревожности',
+                                       'Чрезмерное спокойствие', 'Итого'])
+
+
+
         # формируем словарь
         out_dct = {'Списочный результат':base_df,'Список для проверки':out_answer_df,
+                   'Общий свод':svod_all_df,
                    'Средний результат':all_result_df,'Кол_общая_трев':svod_all_count_df,
                    'Кол_учеб_трев':svod_study_count_df,'Кол_самооц_трев':svod_self_count_df,
                    'Кол_межлич_трев':svod_soc_count_df,
