@@ -26,6 +26,26 @@ class BadCountColumnsMIGA(Exception):
     """
     pass
 
+def calc_level_miga(value):
+    """
+    Функция для подсчета уровня склонности к то или иной сфере
+    """
+    if -12 <= value <= -6:
+        return 'область деятельности активно отрицается'
+    elif -5 <= value <= 0:
+        return 'область деятельности интереса не вызывает'
+    elif 1 <= value <= 4:
+        return 'интерес выражен слабо'
+    elif 5 <= value <= 7:
+        return 'выраженный интерес'
+    elif 8 <= value <= 12:
+        return 'ярко выраженный интерес'
+
+
+
+
+
+
 def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
     """
     Функция для создания сводных датафреймов
@@ -55,7 +75,7 @@ def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
 
 
 
-def calc_count_miga(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat):
+def calc_count_sphere_miga(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat):
     """
     Функция для создания сводных датафреймов
 
@@ -102,6 +122,65 @@ def calc_count_miga(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_c
         return count_df
 
 
+
+def calc_count_level_miga(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat,lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+        count_df['% область деятельности активно отрицается от общего'] = round(
+            count_df['область деятельности активно отрицается'] / count_df['Итого'], 2) * 100
+        count_df['% область деятельности интереса не вызывает от общего'] = round(
+            count_df['область деятельности интереса не вызывает'] / count_df['Итого'], 2) * 100
+        count_df['% интерес выражен слабо от общего'] = round(
+            count_df['интерес выражен слабо'] / count_df['Итого'], 2) * 100
+        count_df['% выраженный интерес от общего'] = round(
+            count_df['выраженный интерес'] / count_df['Итого'], 2) * 100
+        count_df['% ярко выраженный интерес от общего'] = round(
+            count_df['ярко выраженный интерес'] / count_df['Итого'], 2) * 100
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+        count_df['% область деятельности активно отрицается от общего'] = round(
+            count_df['область деятельности активно отрицается'] / count_df['Итого'], 2) * 100
+        count_df['% область деятельности интереса не вызывает от общего'] = round(
+            count_df['область деятельности интереса не вызывает'] / count_df['Итого'], 2) * 100
+        count_df['% интерес выражен слабо от общего'] = round(
+            count_df['интерес выражен слабо'] / count_df['Итого'], 2) * 100
+        count_df['% выраженный интерес от общего'] = round(
+            count_df['выраженный интерес'] / count_df['Итого'], 2) * 100
+        count_df['% ярко выраженный интерес от общего'] = round(
+            count_df['ярко выраженный интерес'] / count_df['Итого'], 2) * 100
+
+        return count_df
 
 
 
@@ -327,84 +406,174 @@ def processing_map_interests(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         extract_key_max_value)
     base_df[f'Максимум'] = base_df[f'Необработанное'].apply(
         extract_max_value)
+    base_df[f'Уровень'] = base_df[f'Максимум'].apply(
+        calc_level_miga)
+
 
 
     # Создаем датафрейм для создания части в общий датафрейм
-    part_df = pd.DataFrame(columns=['КИ_Голомшток_Необработанное', 'КИ_Голомшток_Обработанное', 'КИ_Голомшток_Максимум'])
+    part_df = pd.DataFrame(columns=['КИ_Голомшток_Необработанное', 'КИ_Голомшток_Обработанное', 'КИ_Голомшток_Максимум','КИ_Голомшток_Уровень'])
     part_df['КИ_Голомшток_Необработанное'] = base_df['Необработанное']
     part_df['КИ_Голомшток_Обработанное'] = base_df['Обработанное']
     part_df['КИ_Голомшток_Максимум'] = base_df['Максимум']
+    part_df['КИ_Голомшток_Уровень'] = base_df['Уровень']
+
 
     base_df.sort_values(by='Максимум', ascending=False, inplace=True)  # сортируем
     out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
-    # Общий свод сколько склонностей всего в процентном соотношении
+    # Общий свод по уровням склонности всего в процентном соотношении
     base_svod_all_df = pd.DataFrame(
-        index=['Авиация, морское дело', 'Биология',
-               'Военные специальности', 'География',
-               'Журналистика','Изобразительное искусство',
-               'Иностранные языки','История',
-               'Математика','Медицина',
-               'Музыка','Педагогика',
-               'Рабочие специальности','Строительство',
-               'Сфера обслуживания, торговля','Сценическое искусство',
-               'Техника и электроника','Транспорт',
-               'Физика','Физкультура и спорт',
-               'Химия','Экология',
-               'Экономика','Юриспруденция',
-               'Итого'])
+        index=['область деятельности активно отрицается', 'область деятельности интереса не вызывает', 'интерес выражен слабо',
+               'выраженный интерес','ярко выраженный интерес', 'Итого'])
 
-    svod_all_df = pd.pivot_table(base_df, index='Обработанное',
+    svod_level_df = pd.pivot_table(base_df, index='Уровень',
                                  values='Максимум',
                                  aggfunc='count')
 
-    svod_all_df['% от общего'] = round(
-        svod_all_df['Максимум'] / svod_all_df['Максимум'].sum(), 3) * 100
+    svod_level_df['% от общего'] = round(
+        svod_level_df['Максимум'] / svod_level_df['Максимум'].sum(), 3) * 100
+
+    base_svod_all_df = base_svod_all_df.join(svod_level_df)
+
     # # Создаем суммирующую строку
-    svod_all_df.loc['Итого'] = svod_all_df.sum()
-
-    base_svod_all_df = base_svod_all_df.join(svod_all_df)
-
+    base_svod_all_df.loc['Итого'] = svod_level_df.sum()
     base_svod_all_df.reset_index(inplace=True)
-    base_svod_all_df.rename(columns={'index': 'Предпочтительная сфера деятельности', 'Максимум': 'Количество'}, inplace=True)
+    base_svod_all_df.rename(columns={'index': 'Уровень склонности', 'Максимум': 'Количество'}, inplace=True)
 
+    # Создаем строку с описанием
+    description_result = """
+    Шкала оценки результатов
+    от -12 до -6 баллов – сфера деятельности активно отрицается («Что угодно, только не это!»);;
+    от-5 до 0 баллов – область деятельности интереса не вызывает;
+    от 1 до 4 баллов – интерес выражен слабо;
+    от 5 до 7 баллов – выраженный интерес;
+    от 8 до 12 баллов – ярко выраженный интерес.
+    """
+
+    # создаем описание результата
+    base_df[f'Описание_результата'] = 'Карта интересов Голомшток.\n'+description_result + base_df[
+        f'Необработанное']
+    part_df['КИ_Голомшток_Описание_результата'] = base_df[f'Описание_результата']
 
     # формируем основной словарь
     out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-               'Общий свод': base_svod_all_df,
+               'Свод по уровням': base_svod_all_df,
                }
 
-    # формируем списки по сфера деятельности
+
+
+    lst_level = ['область деятельности активно отрицается', 'область деятельности интереса не вызывает', 'интерес выражен слабо',
+               'выраженный интерес','ярко выраженный интерес']
+    dct_level = dict()
+
+    for level in lst_level:
+        temp_df = base_df[base_df['Уровень'] == level]
+        if temp_df.shape[0] !=0:
+            if level == 'область деятельности активно отрицается':
+                level = ' сфера активно отрицается'
+            elif level == 'область деятельности интереса не вызывает':
+                level = ' сфера интереса не вызывает'
+            dct_level[level] = temp_df
+
+    out_dct.update(dct_level)
+
+    # Общий свод по сферам всего в процентном соотношении
+    svod_sphere_df = pd.pivot_table(base_df, index='Обработанное',
+                                 values='Максимум',
+                                 aggfunc='count')
+
+    svod_sphere_df['% от общего'] = round(
+        svod_sphere_df['Максимум'] / svod_sphere_df['Максимум'].sum(), 3) * 100
+
+    svod_sphere_df.sort_index(inplace=True)
+
+    # # Создаем суммирующую строку
+    svod_sphere_df.loc['Итого'] = svod_sphere_df.sum()
+    svod_sphere_df.reset_index(inplace=True)
+    svod_sphere_df.rename(columns={'index': 'Предпочтительная сфера деятельности', 'Максимум': 'Количество'}, inplace=True)
+
+    # формируем списки по сферам деятельности
     lst_sphere = base_df['Обработанное'].unique()
-    dct_sphere = dict() # словарь для хранения списков
+    lst_sphere.sort() # сортируем
+    dct_sphere = {'Свод по сферам': svod_sphere_df} # словарь для хранения списков
 
     for sphere in lst_sphere:
         temp_df = base_df[base_df['Обработанное'] == sphere]
         dct_sphere[sphere] = temp_df
 
-    out_dct.update(dct_sphere)
 
+    out_dct.update(dct_sphere)
+    """
+    Своды 
+    """
+    lst_reindex_group_cols = ['Класс','область деятельности активно отрицается', 'область деятельности интереса не вызывает', 'интерес выражен слабо',
+               'выраженный интерес','ярко выраженный интерес' ,'Итого']
+    lst_reindex_group_sex_cols = ['Класс','Пол','область деятельности активно отрицается', 'область деятельности интереса не вызывает', 'интерес выражен слабо',
+               'выраженный интерес','ярко выраженный интерес' ,'Итого']
+
+    lst_reindex_course_cols = ['Номер_класса','область деятельности активно отрицается', 'область деятельности интереса не вызывает', 'интерес выражен слабо',
+               'выраженный интерес','ярко выраженный интерес' ,'Итого']
+    lst_reindex_course_sex_cols = ['Номер_класса','Пол','область деятельности активно отрицается', 'область деятельности интереса не вызывает', 'интерес выражен слабо',
+               'выраженный интерес','ярко выраженный интерес' ,'Итого']
+
+
+    # Своды по уровням
     # Класс
-    svod_group_df = calc_mean(base_df,'Класс',['Класс','Обработанное'],'Максимум')
-    svod_count_group_df = calc_count_miga(base_df, 'Класс', ['Класс'], 'Максимум', 'Обработанное')
+    svod_group_level_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень'], 'Максимум')
+    svod_count_group_level_df = calc_count_level_miga(base_df, 'Класс', ['Класс'], 'Максимум', 'Уровень',
+                                                      lst_reindex_group_cols)
 
     # Класс Пол
-    svod_group_sex_df = calc_mean(base_df,'Класс',['Класс','Обработанное','Пол'],'Максимум')
-    svod_count_group_sex_df = calc_count_miga(base_df, 'Класс', ['Класс','Пол'], 'Максимум', 'Обработанное')
+    svod_group_level_sex_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень', 'Пол'], 'Максимум')
+    svod_count_group_level_sex_df = calc_count_level_miga(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум', 'Уровень',
+                                                          lst_reindex_group_sex_cols)
 
     # Номер_класса
-    svod_course_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное'],'Максимум')
-    svod_count_course_df = calc_count_miga(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум', 'Обработанное')
+    svod_course_level_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень'], 'Максимум')
+    svod_count_course_level_df = calc_count_level_miga(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум',
+                                                       'Уровень', lst_reindex_course_cols)
 
     # Номер_класса Пол
-    svod_course_sex_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное','Пол'],'Максимум')
-    svod_count_course_sex_df = calc_count_miga(base_df, 'Номер_класса', ['Номер_класса','Пол'], 'Максимум', 'Обработанное')
+    svod_course_level_sex_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень', 'Пол'], 'Максимум')
+    svod_count_course_level_sex_df = calc_count_level_miga(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+                                                           'Максимум',
+                                                           'Уровень', lst_reindex_course_sex_cols)
 
 
-    svod_dct =  {'Среднее Класс':svod_group_df,'Количество Класс':svod_count_group_df,
-                 'Среднее Класс Пол':svod_group_sex_df,'Количество Класс Пол':svod_count_group_sex_df,
-                 'Среднее Номер_класса': svod_course_df, 'Количество Номер_класса': svod_count_course_df,
-                 'Среднее Номер_класса Пол': svod_course_sex_df, 'Количество Номер_класса Пол': svod_count_course_sex_df,
+    # Своды по сферам
+    # Класс
+    svod_group_sphere_df = calc_mean(base_df,'Класс',['Класс','Обработанное'],'Максимум')
+    svod_count_group_sphere_df = calc_count_sphere_miga(base_df, 'Класс', ['Класс'], 'Максимум', 'Обработанное')
+
+    # Класс Пол
+    svod_group_sphere_sex_df = calc_mean(base_df,'Класс',['Класс','Обработанное','Пол'],'Максимум')
+    svod_count_group_sphere_sex_df = calc_count_sphere_miga(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум', 'Обработанное')
+
+    # Номер_класса
+    svod_course_sphere_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное'],'Максимум')
+    svod_count_course_sphere_df = calc_count_sphere_miga(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум', 'Обработанное')
+
+    # Номер_класса Пол
+    svod_course_sphere_sex_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное','Пол'],'Максимум')
+    svod_count_course_sphere_sex_df = calc_count_sphere_miga(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Максимум', 'Обработанное')
+
+
+
+
+
+
+
+
+    svod_dct =  {'Ср. Уровень Класс':svod_group_level_df,'Кол. Уровень Класс':svod_count_group_level_df,
+                 'Ср. Уровень Класс Пол':svod_group_level_sex_df,'Кол. Уровень Класс Пол':svod_count_group_level_sex_df,
+                 'Ср. Уровень Номер_класса': svod_course_level_df, 'Кол. Уровень Номер_класса': svod_count_course_level_df,
+                 'Ср. Уровень Номер_класса Пол': svod_course_level_sex_df, 'Кол. Уровень Номер_класса Пол': svod_count_course_level_sex_df,
+
+                 'Ср. Сфера Класс':svod_group_sphere_df,'Кол. Сфера Класс':svod_count_group_sphere_df,
+                 'Ср. Сфера Класс Пол':svod_group_sphere_sex_df,'Кол. Сфера Класс Пол':svod_count_group_sphere_sex_df,
+                 'Ср. Сфера Номер_класса': svod_course_sphere_df, 'Кол. Сфера Номер_класса': svod_count_course_sphere_df,
+                 'Ср. Сфера Номер_класса Пол': svod_course_sphere_sex_df, 'Кол. Сфера Номер_класса Пол': svod_count_course_sphere_sex_df,
 
                  }
     out_dct.update(svod_dct) # добавляем чтобы сохранить порядок
