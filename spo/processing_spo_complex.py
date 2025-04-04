@@ -18,6 +18,7 @@ from spo_career_guidance.spo_cok import processing_cok
 from spo_career_guidance.spo_ptl import processing_ptl
 from spo_career_guidance.spo_spp import processing_spp
 from spo_career_guidance.spo_ddo import processing_ddo
+from spo_career_guidance.spo_map_interests import processing_map_interests
 
 # Девиантное поведение
 from spo.leus_sdp import processing_leus_sdp
@@ -74,6 +75,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                      'ПТЛ': (processing_ptl, 30),
                      'СПП': (processing_spp, 24),
                      'ДДО': (processing_ddo, 20),
+                     'Карта интересов Голомшток Азбель': (processing_map_interests, 144),
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -88,6 +90,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                               'ПТЛ': 'Профессиональный тип личности Холланд',
                               'СПП': 'Сфера профессиональных предпочтений',
                               'ДДО': 'Дифференциально-диагностический опросник',
+                              'Карта интересов Голомшток Азбель': 'Карта интересов Голомшток Азбель',
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
