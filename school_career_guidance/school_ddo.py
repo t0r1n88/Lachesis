@@ -19,6 +19,149 @@ class BadCountColumnsDDO(Exception):
     """
     pass
 
+def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=[val_cat],
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        calc_mean_df.rename(columns={val_cat: 'Среднее значение'}, inplace=True)
+
+        return calc_mean_df
+    else:
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=val_cat,
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
+        return calc_mean_df
+
+
+def calc_count_sphere_ddo(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+        lst_sphere = count_df.columns[:-1]
+        count_df.reset_index(inplace=True)
+
+        for sphere in lst_sphere:
+            count_df[f'% {sphere} от общего'] = round(
+            count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
+
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        lst_sphere = count_df.columns[:-1]
+        count_df.reset_index(inplace=True)
+
+        for sphere in lst_sphere:
+            count_df[f'% {sphere} от общего'] = round(
+            count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
+
+        return count_df
+
+
+
+def calc_count_level_ddo(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+        count_df['% работа с таким предметом труда активно отвергается от общего'] = round(
+            count_df['работа с таким предметом труда активно отвергается'] / count_df['Итого'], 2) * 100
+        count_df['% склонность не выражена от общего'] = round(
+            count_df['склонность не выражена'] / count_df['Итого'], 2) * 100
+        count_df['% склонность на среднем уровне от общего'] = round(
+            count_df['склонность на среднем уровне'] / count_df['Итого'], 2) * 100
+        count_df['% выраженная склонность от общего'] = round(
+            count_df['выраженная склонность'] / count_df['Итого'], 2) * 100
+        count_df['% ярко выраженная склонность от общего'] = round(
+            count_df['ярко выраженная склонность'] / count_df['Итого'], 2) * 100
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+        count_df['% работа с таким предметом труда активно отвергается от общего'] = round(
+            count_df['работа с таким предметом труда активно отвергается'] / count_df['Итого'], 2) * 100
+        count_df['% склонность не выражена от общего'] = round(
+            count_df['склонность не выражена'] / count_df['Итого'], 2) * 100
+        count_df['% склонность на среднем уровне от общего'] = round(
+            count_df['склонность на среднем уровне'] / count_df['Итого'], 2) * 100
+        count_df['% выраженная склонность от общего'] = round(
+            count_df['выраженная склонность'] / count_df['Итого'], 2) * 100
+        count_df['% ярко выраженная склонность от общего'] = round(
+            count_df['ярко выраженная склонность'] / count_df['Итого'], 2) * 100
+
+        return count_df
+
+
+
+
+
+
+
+
+
 def calc_level_ddo(value):
     """
     Функция для подсчета уровня склонности к то или иной сфере
@@ -495,160 +638,143 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         base_df.sort_values(by='Максимум', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
-        # Общий свод сколько склонностей всего в процентном соотношении
-        svod_all_df = pd.pivot_table(base_df, index=['Обработанное'],
+        # Общий свод по уровням склонности всего в процентном соотношении
+        base_svod_all_df = pd.DataFrame(
+            index=['работа с таким предметом труда активно отвергается', 'склонность не выражена',
+                     'склонность на среднем уровне', 'выраженная склонность',
+                     'ярко выраженная склонность',
+                     'Итого'])
+
+        svod_level_df = pd.pivot_table(base_df, index='Уровень',
                                      values='Максимум',
                                      aggfunc='count')
 
-        svod_all_df['% от общего'] = round(
-            svod_all_df['Максимум'] / svod_all_df['Максимум'].sum(), 3) * 100
+        svod_level_df['% от общего'] = round(
+            svod_level_df['Максимум'] / svod_level_df['Максимум'].sum(), 3) * 100
+
+        base_svod_all_df = base_svod_all_df.join(svod_level_df)
+
         # # Создаем суммирующую строку
-        svod_all_df.loc['Итого'] = svod_all_df.sum()
-        svod_all_df['Максимум'] = svod_all_df['Максимум'].astype(int)
-        svod_all_df.reset_index(inplace=True)
-        svod_all_df.rename(columns={'Обработанное': 'Тип', 'Максимум': 'Количество'}, inplace=True)
+        base_svod_all_df.loc['Итого'] = svod_level_df.sum()
+        base_svod_all_df.reset_index(inplace=True)
+        base_svod_all_df.rename(columns={'index': 'Уровень склонности', 'Максимум': 'Количество'}, inplace=True)
 
-        """
-                Обрабатываем Класс
-                """
-        # Среднее по Класс
-        svod_group_df = pd.pivot_table(base_df, index=['Класс', 'Обработанное'],
-                                       values=['Максимум'],
-                                       aggfunc=round_mean)
-        svod_group_df.reset_index(inplace=True)
 
-        svod_group_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-
-        # Количество Класс
-        svod_count_group_df = pd.pivot_table(base_df, index=['Класс'],
-                                             columns='Обработанное',
-                                             values='Максимум',
-                                             aggfunc='count', margins=True, margins_name='Итого')
-        svod_count_group_df.reset_index(inplace=True)
-        svod_count_group_df = svod_count_group_df.reindex(
-            columns=['Класс', 'Человек-природа', 'Человек-техника',
-                     'Человек-другой человек', 'Человек-знаковые системы',
-                     'Человек-художественный образ',
-                     'Итого'])
-        svod_count_group_df['% Человек-природа от общего'] = round(
-            svod_count_group_df['Человек-природа'] / svod_count_group_df['Итого'], 2) * 100
-        svod_count_group_df['% Человек-техника от общего'] = round(
-            svod_count_group_df['Человек-техника'] / svod_count_group_df['Итого'], 2) * 100
-        svod_count_group_df['% Человек-другой человек от общего'] = round(
-            svod_count_group_df['Человек-другой человек'] / svod_count_group_df['Итого'], 2) * 100
-        svod_count_group_df['% Человек-знаковые системы от общего'] = round(
-            svod_count_group_df['Человек-знаковые системы'] / svod_count_group_df['Итого'], 2) * 100
-        svod_count_group_df['% Человек-художественный образ от общего'] = round(
-            svod_count_group_df['Человек-художественный образ'] / svod_count_group_df['Итого'], 2) * 100
-
-        part_svod_df = svod_count_group_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-        itog_svod_df = svod_count_group_df.iloc[-1:]
-        svod_count_group_df = pd.concat([part_svod_df, itog_svod_df])
-
-        # Среднее по Класс Пол
-        svod_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол', 'Обработанное'],
-                                           values=['Максимум'],
-                                           aggfunc=round_mean)
-        svod_group_sex_df.reset_index(inplace=True)
-
-        svod_group_sex_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-
-        # Количество Класс Пол
-        svod_count_group_sex_df = pd.pivot_table(base_df, index=['Класс', 'Пол'],
-                                                 columns='Обработанное',
-                                                 values='Максимум',
-                                                 aggfunc='count', margins=True, margins_name='Итого')
-        svod_count_group_sex_df.reset_index(inplace=True)
-        svod_count_group_sex_df = svod_count_group_sex_df.reindex(
-            columns=['Класс', 'Человек-природа', 'Человек-техника',
-                     'Человек-другой человек', 'Человек-знаковые системы',
-                     'Человек-художественный образ',
-                     'Итого'])
-        svod_count_group_sex_df['% Человек-природа от общего'] = round(
-            svod_count_group_sex_df['Человек-природа'] / svod_count_group_sex_df['Итого'], 2) * 100
-        svod_count_group_sex_df['% Человек-техника от общего'] = round(
-            svod_count_group_sex_df['Человек-техника'] / svod_count_group_sex_df['Итого'], 2) * 100
-        svod_count_group_sex_df['% Человек-другой человек от общего'] = round(
-            svod_count_group_sex_df['Человек-другой человек'] / svod_count_group_sex_df['Итого'], 2) * 100
-        svod_count_group_sex_df['% Человек-знаковые системы от общего'] = round(
-            svod_count_group_sex_df['Человек-знаковые системы'] / svod_count_group_sex_df['Итого'], 2) * 100
-        svod_count_group_sex_df['% Человек-художественный образ от общего'] = round(
-            svod_count_group_sex_df['Человек-художественный образ'] / svod_count_group_sex_df['Итого'], 2) * 100
-
-        part_svod_df = svod_count_group_sex_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-        itog_svod_df = svod_count_group_sex_df.iloc[-1:]
-        svod_count_group_sex_df = pd.concat([part_svod_df, itog_svod_df])
-
-        """
-                Обрабатываем Номер_класса
-                """
-        # Среднее по Номер_класса
-        svod_course_df = pd.pivot_table(base_df, index=['Номер_класса', 'Обработанное'],
-                                        values=['Максимум'],
-                                        aggfunc=round_mean)
-        svod_course_df.reset_index(inplace=True)
-
-        # Количество Номер_класса
-        svod_count_course_df = pd.pivot_table(base_df, index=['Номер_класса'],
-                                              columns='Обработанное',
-                                              values='Максимум',
-                                              aggfunc='count', margins=True, margins_name='Итого')
-        svod_count_course_df.reset_index(inplace=True)
-        svod_count_course_df = svod_count_course_df.reindex(
-            columns=['Номер_класса', 'Человек-природа', 'Человек-техника',
-                     'Человек-другой человек', 'Человек-знаковые системы',
-                     'Человек-художественный образ',
-                     'Итого'])
-        svod_count_course_df['% Человек-природа от общего'] = round(
-            svod_count_course_df['Человек-природа'] / svod_count_course_df['Итого'], 2) * 100
-        svod_count_course_df['% Человек-техника от общего'] = round(
-            svod_count_course_df['Человек-техника'] / svod_count_course_df['Итого'], 2) * 100
-        svod_count_course_df['% Человек-другой человек от общего'] = round(
-            svod_count_course_df['Человек-другой человек'] / svod_count_course_df['Итого'], 2) * 100
-        svod_count_course_df['% Человек-знаковые системы от общего'] = round(
-            svod_count_course_df['Человек-знаковые системы'] / svod_count_course_df['Итого'], 2) * 100
-        svod_count_course_df['% Человек-художественный образ от общего'] = round(
-            svod_count_course_df['Человек-художественный образ'] / svod_count_course_df['Итого'], 2) * 100
-
-        # Среднее по Номер_класса Пол
-        svod_course_sex_df = pd.pivot_table(base_df, index=['Номер_класса', 'Пол', 'Обработанное'],
-                                            values=['Максимум'],
-                                            aggfunc=round_mean)
-        svod_course_sex_df.reset_index(inplace=True)
-
-        # Количество Номер_класса Пол
-        svod_count_course_sex_df = pd.pivot_table(base_df, index=['Номер_класса', 'Пол'],
-                                                  columns='Обработанное',
-                                                  values='Максимум',
-                                                  aggfunc='count', margins=True, margins_name='Итого')
-        svod_count_course_sex_df.reset_index(inplace=True)
-        svod_count_course_sex_df = svod_count_course_sex_df.reindex(
-            columns=['Номер_класса', 'Человек-природа', 'Человек-техника',
-                     'Человек-другой человек', 'Человек-знаковые системы',
-                     'Человек-художественный образ',
-                     'Итого'])
-        svod_count_course_sex_df['% Человек-природа от общего'] = round(
-            svod_count_course_sex_df['Человек-природа'] / svod_count_course_sex_df['Итого'], 2) * 100
-        svod_count_course_sex_df['% Человек-техника от общего'] = round(
-            svod_count_course_sex_df['Человек-техника'] / svod_count_course_sex_df['Итого'], 2) * 100
-        svod_count_course_sex_df['% Человек-другой человек от общего'] = round(
-            svod_count_course_sex_df['Человек-другой человек'] / svod_count_course_sex_df['Итого'], 2) * 100
-        svod_count_course_sex_df['% Человек-знаковые системы от общего'] = round(
-            svod_count_course_sex_df['Человек-знаковые системы'] / svod_count_course_sex_df['Итого'], 2) * 100
-        svod_count_course_sex_df['% Человек-художественный образ от общего'] = round(
-            svod_count_course_sex_df['Человек-художественный образ'] / svod_count_course_sex_df['Итого'], 2) * 100
-
-        # формируем словарь
+        # формируем основной словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                   'Общий свод': svod_all_df,
-                   'Среднее Класс': svod_group_df, 'Количество Класс': svod_count_group_df,
-                   'Среднее Класс Пол': svod_group_sex_df, 'Количество Класс Пол': svod_count_group_sex_df,
-                   'Среднее Номер_класса': svod_course_df, 'Количество Номер_класса': svod_count_course_df,
-                   'Среднее Номер_класса Пол': svod_course_sex_df,
-                   'Количество Номер_класса Пол': svod_count_course_sex_df,
+                   'Свод по уровням': base_svod_all_df,
                    }
+
+        lst_level = ['работа с таким предметом труда активно отвергается', 'склонность не выражена',
+                     'склонность на среднем уровне', 'выраженная склонность',
+                     'ярко выраженная склонность',
+                     ]
+        dct_level = dict()
+
+        for level in lst_level:
+            temp_df = base_df[base_df['Уровень'] == level]
+            if temp_df.shape[0] != 0:
+                if level == 'работа с таким предметом труда активно отвергается':
+                    level = 'склонность активно отвергается'
+                dct_level[level] = temp_df
+
+        out_dct.update(dct_level)
+
+        # Общий свод по сферам всего в процентном соотношении
+        svod_sphere_df = pd.pivot_table(base_df, index='Обработанное',
+                                        values='Максимум',
+                                        aggfunc='count')
+
+        svod_sphere_df['% от общего'] = round(
+            svod_sphere_df['Максимум'] / svod_sphere_df['Максимум'].sum(), 3) * 100
+
+        svod_sphere_df.sort_index(inplace=True)
+
+        # # Создаем суммирующую строку
+        svod_sphere_df.loc['Итого'] = svod_sphere_df.sum()
+        svod_sphere_df.reset_index(inplace=True)
+        svod_sphere_df.rename(columns={'index': 'Предпочтительная сфера деятельности', 'Максимум': 'Количество'},
+                              inplace=True)
+
+        # формируем списки по сферам деятельности
+        lst_sphere = base_df['Обработанное'].unique()
+        lst_sphere.sort()  # сортируем
+        dct_sphere = {'Свод по сферам': svod_sphere_df}  # словарь для хранения списков
+
+        for sphere in lst_sphere:
+            temp_df = base_df[base_df['Обработанное'] == sphere]
+            dct_sphere[sphere] = temp_df
+
+        out_dct.update(dct_sphere)
+
+        lst_reindex_group_cols = ['Класс','работа с таким предметом труда активно отвергается', 'склонность не выражена', 'склонность на среднем уровне',
+                   'выраженная склонность','ярко выраженная склонность' ,'Итого']
+        lst_reindex_group_sex_cols = ['Класс','Пол','работа с таким предметом труда активно отвергается', 'склонность не выражена', 'склонность на среднем уровне',
+                   'выраженная склонность','ярко выраженная склонность' ,'Итого']
+        lst_reindex_course_cols = ['Номер_класса','работа с таким предметом труда активно отвергается', 'склонность не выражена', 'склонность на среднем уровне',
+                   'выраженная склонность','ярко выраженная склонность' ,'Итого']
+        lst_reindex_course_sex_cols = ['Номер_класса','Пол','работа с таким предметом труда активно отвергается', 'склонность не выражена', 'склонность на среднем уровне',
+                   'выраженная склонность','ярко выраженная склонность' ,'Итого']
+
+
+        # Своды по уровням
+        # Класс
+        svod_group_level_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень'], 'Максимум')
+        svod_count_group_level_df = calc_count_level_ddo(base_df, 'Класс', ['Класс'], 'Максимум', 'Уровень',
+                                                          lst_reindex_group_cols)
+
+        # Класс Пол
+        svod_group_level_sex_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень', 'Пол'], 'Максимум')
+        svod_count_group_level_sex_df = calc_count_level_ddo(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум', 'Уровень',
+                                                              lst_reindex_group_sex_cols)
+
+        # Номер_класса
+        svod_course_level_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень'], 'Максимум')
+        svod_count_course_level_df = calc_count_level_ddo(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум',
+                                                           'Уровень', lst_reindex_course_cols)
+
+        # Номер_класса Пол
+        svod_course_level_sex_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень', 'Пол'], 'Максимум')
+        svod_count_course_level_sex_df = calc_count_level_ddo(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+                                                               'Максимум',
+                                                               'Уровень', lst_reindex_course_sex_cols)
+
+
+
+
+
+
+        # Своды по сферам
+        # Класс
+        svod_group_sphere_df = calc_mean(base_df,'Класс',['Класс','Обработанное'],'Максимум')
+        svod_count_group_sphere_df = calc_count_sphere_ddo(base_df, 'Класс', ['Класс'], 'Максимум', 'Обработанное')
+
+        # Класс Пол
+        svod_group_sphere_sex_df = calc_mean(base_df,'Класс',['Класс','Обработанное','Пол'],'Максимум')
+        svod_count_group_sphere_sex_df = calc_count_sphere_ddo(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум', 'Обработанное')
+
+        # Номер_класса
+        svod_course_sphere_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное'],'Максимум')
+        svod_count_course_sphere_df = calc_count_sphere_ddo(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум', 'Обработанное')
+
+        # Номер_класса Пол
+        svod_course_sphere_sex_df = calc_mean(base_df,'Номер_класса',['Номер_класса','Обработанное','Пол'],'Максимум')
+        svod_count_course_sphere_sex_df = calc_count_sphere_ddo(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Максимум', 'Обработанное')
+
+        svod_dct =  {'Ср. Уровень Класс':svod_group_level_df,'Кол. Уровень Класс':svod_count_group_level_df,
+                     'Ср. Уровень Класс Пол':svod_group_level_sex_df,'Кол. Уровень Класс Пол':svod_count_group_level_sex_df,
+                     'Ср. Уровень Номер_класса': svod_course_level_df, 'Кол. Уровень Номер_класса': svod_count_course_level_df,
+                     'Ср. Уровень Номер_класса Пол': svod_course_level_sex_df, 'Кол. Уровень Номер_класса Пол': svod_count_course_level_sex_df,
+
+                     'Ср. Сфера Класс':svod_group_sphere_df,'Кол. Сфера Класс':svod_count_group_sphere_df,
+                     'Ср. Сфера Класс Пол':svod_group_sphere_sex_df,'Кол. Сфера Класс Пол':svod_count_group_sphere_sex_df,
+                     'Ср. Сфера Номер_класса': svod_course_sphere_df, 'Кол. Сфера Номер_класса': svod_count_course_sphere_df,
+                     'Ср. Сфера Номер_класса Пол': svod_course_sphere_sex_df, 'Кол. Сфера Номер_класса Пол': svod_count_course_sphere_sex_df,
+
+                     }
+        out_dct.update(svod_dct) # добавляем, чтобы сохранить порядок
+
+
 
         return out_dct, part_df
     except BadValueDDO:
