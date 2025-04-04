@@ -282,6 +282,7 @@ if __name__ == '__main__':
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство школа.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Карта интересов.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа ДДО.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Профориентация.xlsx'
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
