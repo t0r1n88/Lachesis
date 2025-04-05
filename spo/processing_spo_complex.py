@@ -74,7 +74,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                      'ЦОК': (processing_cok, 41),
                      'ПТЛ': (processing_ptl, 30),
                      'СПП': (processing_spp, 24),
-                     'ДДО': (processing_ddo, 20),
+                     'ДДО': (processing_ddo, 30),
                      'Карта интересов Голомшток Азбель': (processing_map_interests, 144),
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -266,11 +266,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 
 if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация.xlsx'
     # main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Тревожность.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство СПО.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Профориентация.xlsx'
     # main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО data девиантность.xlsx'
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
