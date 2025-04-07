@@ -353,7 +353,7 @@ def open_list_changes():
 
     # Настройка нового окна
     new_window.title("Список изменений")
-    text_area = Text(new_window, width=90, height=50)
+    text_area = Text(new_window, width=200, height=100)
 
     with open(list_changes_path, 'r', encoding='utf-8') as file:
         text = file.read()
@@ -372,7 +372,7 @@ def open_license():
 
     # Настройка нового окна
     new_window.title("Лицензия")
-    text_area = Text(new_window, width=90, height=50)
+    text_area = Text(new_window, width=200, height=100)
 
     with open(license_path, 'r', encoding='utf-8') as file:
         text = file.read()
@@ -392,7 +392,7 @@ def open_libraries():
 
     # Настройка нового окна
     new_window.title("Дополнительные библиотеки Python")
-    text_area = Text(new_window, width=90, height=50)
+    text_area = Text(new_window, width=200, height=100)
 
     with open(license_library, 'r', encoding='utf-8') as file:
         text = file.read()
