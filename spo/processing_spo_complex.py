@@ -267,10 +267,11 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
 if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для СПО.xlsx'
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация.xlsx'
-    # main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры для проверки всех тестов.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/data.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Тревожность.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Профориентация.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Данные для проверки всех тестов.xlsx'
     # main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО data девиантность.xlsx'
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
