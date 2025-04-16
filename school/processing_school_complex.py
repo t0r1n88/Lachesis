@@ -13,11 +13,14 @@ from school_leadership.school_kos_one import processing_kos # коммуника
 from school_leadership.sсhool_usk import processing_usk # уровень самооценки Ковалев
 
 # Профориентация
-from school_career_guidance.school_cok import processing_cok
-from school_career_guidance.school_ptl import processing_ptl
-from school_career_guidance.school_spp import processing_spp
-from school_career_guidance.school_ddo import processing_ddo
-from school_career_guidance.school_map_interests import processing_map_interests
+from school_career_guidance.school_cok import processing_cok # ценностные ориентиры в карьере
+from school_career_guidance.school_ptl import processing_ptl # профессиональный тип личности
+from school_career_guidance.school_spp import processing_spp # сфера профессиональных интересов
+from school_career_guidance.school_ddo import processing_ddo # дифференциально-диагностический опросник
+from school_career_guidance.school_map_interests import processing_map_interests # карта интересов голомшток азбель
+from school_career_guidance.school_pia import processing_pia # профессиональная идентичность Азбель
+
+
 
 # Девиантное поведение
 from school.school_leus_sdp import processing_leus_sdp
@@ -76,6 +79,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                      'СПП': (processing_spp, 24),
                      'ДДО': (processing_ddo, 30),
                      'Карта интересов Голомшток Азбель': (processing_map_interests, 144),
+                     'Профессиональная идентичность Азбель': (processing_pia, 20),
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -91,6 +95,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                               'СПП':'Сфера профессиональных предпочтений',
                               'ДДО':'Дифференциально-диагностический опросник',
                               'Карта интересов Голомшток Азбель':'Карта интересов Голомшток Азбель',
+                              'Профессиональная идентичность Азбель':'Профессиональная идентичность Азбель',
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -99,7 +104,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
-        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Карта интересов Голомшток Азбель']
+        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Карта интересов Голомшток Азбель','Профессиональная идентичность Азбель']
         lst_check_career_tests = []
 
 
@@ -269,20 +274,14 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
 
 if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Тревожность.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Карта интересов.xlsx'
-    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Новые Профориентация.xlsx'
+
 
 
     # main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация комплекс.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Комплекс профориентация.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа data девиантность.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа тревожность.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство школа.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Карта интересов.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа ДДО.xlsx'
-    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Профориентация.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа профидентичность Азбель.xlsx'
+
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
