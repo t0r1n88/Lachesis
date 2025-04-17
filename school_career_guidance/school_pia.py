@@ -300,60 +300,192 @@ def calc_level_pia(row):
     """
     if row[0] == 'Неопределенное состояние профессиональной идентичности':
         if 0 <= row[1] <= 3:
-            return 'Статус не выражен'
+            return 'статус не выражен'
         elif 4 <=  row[1] <= 7:
-            return 'Выраженность ниже среднего уровня'
+            return 'выраженность ниже среднего уровня'
         elif 8 <=  row[1] <= 11:
-            return 'Средняя степень выраженности'
+            return 'средняя степень выраженности'
         elif 12 <=  row[1] <= 15:
-            return 'Выраженность выше среднего уровня'
+            return 'выраженность выше среднего уровня'
         elif 16 <=  row[1]:
-            return 'Ярко выраженный статус'
+            return 'ярко выраженный статус'
 
     elif row[0] == 'Навязанная профессиональная идентичность':
         if 0 <= row[1] <= 4:
-            return 'Статус не выражен'
+            return 'статус не выражен'
         elif 5 <=  row[1] <= 9:
-            return 'Выраженность ниже среднего уровня'
+            return 'выраженность ниже среднего уровня'
         elif 10 <=  row[1] <= 14:
-            return 'Средняя степень выраженности'
+            return 'средняя степень выраженности'
         elif 15 <=  row[1] <= 19:
-            return 'Выраженность выше среднего уровня'
+            return 'выраженность выше среднего уровня'
         elif 20 <=  row[1]:
-            return 'Ярко выраженный статус'
+            return 'ярко выраженный статус'
 
     elif row[0] == 'Мораторий (кризис выбора)':
         if 0 <= row[1] <= 4:
-            return 'Статус не выражен'
+            return 'статус не выражен'
         elif 5 <=  row[1] <= 9:
-            return 'Выраженность ниже среднего уровня'
+            return 'выраженность ниже среднего уровня'
         elif 10 <=  row[1] <= 14:
-            return 'Средняя степень выраженности'
+            return 'средняя степень выраженности'
         elif 15 <=  row[1] <= 19:
-            return 'Выраженность выше среднего уровня'
+            return 'выраженность выше среднего уровня'
         elif 20 <=  row[1]:
-            return 'Ярко выраженный статус'
+            return 'ярко выраженный статус'
 
     elif row[0] == 'Сформированная профессиональная идентичность':
         if 0 <= row[1] <= 2:
-            return 'Статус не выражен'
+            return 'статус не выражен'
         elif 3 <=  row[1] <= 5:
-            return 'Выраженность ниже среднего уровня'
+            return 'выраженность ниже среднего уровня'
         elif 6 <=  row[1] <= 8:
-            return 'Средняя степень выраженности'
+            return 'средняя степень выраженности'
         elif 9 <=  row[1] <= 11:
-            return 'Выраженность выше среднего уровня'
+            return 'выраженность выше среднего уровня'
         elif 12 <=  row[1]:
-            return 'Ярко выраженный статус'
+            return 'ярко выраженный статус'
 
 
 
 
+def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=[val_cat],
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        calc_mean_df.rename(columns={val_cat: 'Среднее значение'}, inplace=True)
+
+        return calc_mean_df
+    else:
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=val_cat,
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
+        return calc_mean_df
+
+
+
+def calc_count_sphere_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+        lst_sphere = count_df.columns[:-1]
+        count_df.reset_index(inplace=True)
+
+        for sphere in lst_sphere:
+            count_df[f'% {sphere} от общего'] = round(
+            count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
+
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        lst_sphere = count_df.columns[:-1]
+        count_df.reset_index(inplace=True)
+
+        for sphere in lst_sphere:
+            count_df[f'% {sphere} от общего'] = round(
+            count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
+
+        return count_df
 
 
 
 
+def calc_count_level_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
 
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+        count_df['% статус не выражен от общего'] = round(
+            count_df['статус не выражен'] / count_df['Итого'], 2) * 100
+        count_df['% выраженность ниже среднего уровня от общего'] = round(
+            count_df['выраженность ниже среднего уровня'] / count_df['Итого'], 2) * 100
+        count_df['% средняя степень выраженности от общего'] = round(
+            count_df['средняя степень выраженности'] / count_df['Итого'], 2) * 100
+        count_df['% выраженность выше среднего уровня от общего'] = round(
+            count_df['выраженность выше среднего уровня'] / count_df['Итого'], 2) * 100
+        count_df['% ярко выраженный статус от общего'] = round(
+            count_df['ярко выраженный статус'] / count_df['Итого'], 2) * 100
+
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+        count_df['% статус не выражен от общего'] = round(
+            count_df['статус не выражен'] / count_df['Итого'], 2) * 100
+        count_df['% выраженность ниже среднего уровня от общего'] = round(
+            count_df['выраженность ниже среднего уровня'] / count_df['Итого'], 2) * 100
+        count_df['% средняя степень выраженности от общего'] = round(
+            count_df['средняя степень выраженности'] / count_df['Итого'], 2) * 100
+        count_df['% выраженность выше среднего уровня от общего'] = round(
+            count_df['выраженность выше среднего уровня'] / count_df['Итого'], 2) * 100
+        count_df['% ярко выраженный статус от общего'] = round(
+            count_df['ярко выраженный статус'] / count_df['Итого'], 2) * 100
+
+        return count_df
 
 
 
@@ -511,13 +643,6 @@ def processing_pia(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 Сформированная профессиональная идентичность:
 Эти юноши и девушки характеризуются тем, что они готовы совершить осознанный выбор дальнейшего профессионального развития или уже его совершили. У них присутствует уверенность в правильности принятого решения об их профессиональном будущем. Этим статусом обладают те юноши и девушки, которые прошли через «кризис выбора» и самостоятельно сформировали систему знаний о себе, о профессиональных ценностях и жизненных убеждениях. Они могут осознанно выстраивать свою жизнь потому, что определились, чего хотят достигнуть.
-
-
-
-
-
-
-
                 """
 
     # создаем описание результата
@@ -525,7 +650,169 @@ def processing_pia(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         f'Необработанное'] + description_result
     part_df['ПИА_Описание_результата'] = base_df[f'Описание_результата']
 
-    base_df.to_excel('dada.xlsx')
+ # Общий свод по уровням склонности всего в процентном соотношении
+    base_svod_all_df = pd.DataFrame(
+        index=['статус не выражен', 'выраженность ниже среднего уровня',
+               'средняя степень выраженности',
+               'выраженность выше среднего уровня','ярко выраженный статус', 'Итого'])
+
+    svod_level_df = pd.pivot_table(base_df, index='Уровень',
+                                   values='Максимум',
+                                   aggfunc='count')
+
+    svod_level_df['% от общего'] = round(
+        svod_level_df['Максимум'] / svod_level_df['Максимум'].sum(), 3) * 100
+
+    base_svod_all_df = base_svod_all_df.join(svod_level_df)
+
+    # # Создаем суммирующую строку
+    base_svod_all_df.loc['Итого'] = svod_level_df.sum()
+    base_svod_all_df.reset_index(inplace=True)
+    base_svod_all_df.rename(columns={'index': 'Уровень выраженности', 'Максимум': 'Количество'}, inplace=True)
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               'Свод по уровням': base_svod_all_df,
+               }
+
+    lst_level = ['статус не выражен', 'выраженность ниже среднего уровня',
+               'средняя степень выраженности',
+               'выраженность выше среднего уровня','ярко выраженный статус']
+    dct_level = dict()
+
+    for level in lst_level:
+        temp_df = base_df[base_df['Уровень'] == level]
+        if temp_df.shape[0] != 0:
+            if level == 'выраженность ниже среднего уровня':
+                level = 'ниже среднего уровня'
+            elif level == 'средняя степень выраженности':
+                level = 'средний уровень'
+            elif level == 'выраженность выше среднего уровня':
+                level = 'выше среднего уровня'
+            dct_level[level] = temp_df
+
+    out_dct.update(dct_level)
+
+    # Общий свод по сферам всего в процентном соотношении
+    svod_sphere_df = pd.pivot_table(base_df, index='Обработанное',
+                                    values='Максимум',
+                                    aggfunc='count')
+
+    svod_sphere_df['% от общего'] = round(
+        svod_sphere_df['Максимум'] / svod_sphere_df['Максимум'].sum(), 3) * 100
+
+    svod_sphere_df.sort_index(inplace=True)
+
+    # # Создаем суммирующую строку
+    svod_sphere_df.loc['Итого'] = svod_sphere_df.sum()
+    svod_sphere_df.reset_index(inplace=True)
+    svod_sphere_df.rename(columns={'Обработанное': 'Состояние идентичности', 'Максимум': 'Количество'},
+                          inplace=True)
+
+    # формируем списки по сферам деятельности
+    lst_sphere = base_df['Обработанное'].unique()
+    lst_sphere.sort()  # сортируем
+    dct_sphere = {'Свод по состояниям': svod_sphere_df}  # словарь для хранения списков
+
+    for sphere in lst_sphere:
+        temp_df = base_df[base_df['Обработанное'] == sphere]
+        dct_sphere[sphere] = temp_df
+
+    new_keys = {'Неопределенное состояние профессиональной идентичности': 'Неопределенная',
+                'Навязанная профессиональная идентичность': 'Навязанная',
+                'Мораторий (кризис выбора)': 'Кризис выбора',
+                'Сформированная профессиональная идентичность': 'Сформированная',
+                }
+
+    renamed_dict = {new_keys.get(key, key): value for key, value in dct_sphere.items()}
+
+    out_dct.update(renamed_dict)
+
+    """
+        Своды 
+        """
+    lst_reindex_group_cols = ['Класс', 'статус не выражен', 'выраженность ниже среднего уровня',
+               'средняя степень выраженности',
+               'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
+    lst_reindex_group_sex_cols = ['Класс', 'Пол', 'статус не выражен', 'выраженность ниже среднего уровня',
+               'средняя степень выраженности',
+               'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
+
+    lst_reindex_course_cols = ['Номер_класса', 'статус не выражен', 'выраженность ниже среднего уровня',
+               'средняя степень выраженности',
+               'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
+    lst_reindex_course_sex_cols = ['Номер_класса', 'Пол', 'статус не выражен', 'выраженность ниже среднего уровня',
+               'средняя степень выраженности',
+               'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
+
+    # Своды по уровням
+    # Класс
+    svod_group_level_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень'], 'Максимум')
+    svod_count_group_level_df = calc_count_level_pia(base_df, 'Класс', ['Класс'], 'Максимум', 'Уровень',
+                                                     lst_reindex_group_cols)
+
+    # Класс Пол
+    svod_group_level_sex_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень', 'Пол'], 'Максимум')
+    svod_count_group_level_sex_df = calc_count_level_pia(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум', 'Уровень',
+                                                         lst_reindex_group_sex_cols)
+
+    # Номер_класса
+    svod_course_level_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень'], 'Максимум')
+    svod_count_course_level_df = calc_count_level_pia(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум',
+                                                      'Уровень', lst_reindex_course_cols)
+
+    # Номер_класса Пол
+    svod_course_level_sex_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень', 'Пол'], 'Максимум')
+    svod_count_course_level_sex_df = calc_count_level_pia(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+                                                          'Максимум',
+                                                          'Уровень', lst_reindex_course_sex_cols)
+
+    # Своды по сферам
+    # Класс
+    svod_group_sphere_df = calc_mean(base_df, 'Класс', ['Класс', 'Обработанное'], 'Максимум')
+    svod_count_group_sphere_df = calc_count_sphere_pia(base_df, 'Класс', ['Класс'], 'Максимум', 'Обработанное')
+
+    # Класс Пол
+    svod_group_sphere_sex_df = calc_mean(base_df, 'Класс', ['Класс', 'Обработанное', 'Пол'], 'Максимум')
+    svod_count_group_sphere_sex_df = calc_count_sphere_pia(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум',
+                                                           'Обработанное')
+
+    # Номер_класса
+    svod_course_sphere_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Обработанное'], 'Максимум')
+    svod_count_course_sphere_df = calc_count_sphere_pia(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум',
+                                                        'Обработанное')
+
+    # Номер_класса Пол
+    svod_course_sphere_sex_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Обработанное', 'Пол'],
+                                          'Максимум')
+    svod_count_course_sphere_sex_df = calc_count_sphere_pia(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+                                                            'Максимум', 'Обработанное')
+
+    svod_dct = {'Ср. Уровень Класс': svod_group_level_df, 'Кол. Уровень Класс': svod_count_group_level_df,
+                'Ср. Уровень Класс Пол': svod_group_level_sex_df,
+                'Кол. Уровень Класс Пол': svod_count_group_level_sex_df,
+                'Ср. Уровень Номер_класса': svod_course_level_df,
+                'Кол. Уровень Номер_класса': svod_count_course_level_df,
+                'Ср. Уровень Номер_класса Пол': svod_course_level_sex_df,
+                'Кол. Уровень Номер_класса Пол': svod_count_course_level_sex_df,
+
+                'Ср. Сфера Класс': svod_group_sphere_df, 'Кол. Сфера Класс': svod_count_group_sphere_df,
+                'Ср. Сфера Класс Пол': svod_group_sphere_sex_df,
+                'Кол. Сфера Класс Пол': svod_count_group_sphere_sex_df,
+                'Ср. Сфера Номер_класса': svod_course_sphere_df,
+                'Кол. Сфера Номер_класса': svod_count_course_sphere_df,
+                'Ср. Сфера Номер_класса Пол': svod_course_sphere_sex_df,
+                'Кол. Сфера Номер_класса Пол': svod_count_course_sphere_sex_df,
+
+                }
+    out_dct.update(svod_dct)  # добавляем чтобы сохранить порядок
+
+
+
+
+
+
+    return out_dct, part_df
 
 
 
