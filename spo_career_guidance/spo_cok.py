@@ -358,14 +358,20 @@ def processing_cok(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         # проверяем правильность
         valid_values = [1, 2, 3, 4,5,6,7,8,9,10]
         # Проверяем, есть ли значения, отличающиеся от указанных в списке
-        mask = ~answers_df.isin(valid_values)
+        lst_error_answers = [] # список для хранения строк где найдены неправильные ответы
 
-        # Получаем строки с отличающимися значениями
-        result_check = answers_df[mask.any(axis=1)]
-        if len(result_check) != 0:
-            error_row = list(map(lambda x: x + 2, result_check.index))
-            error_row = list(map(str, error_row))
-            error_message = ';'.join(error_row)
+        for i in range(41):
+            mask = ~answers_df.iloc[:,i].isin(valid_values) # проверяем на допустимые значения
+            result_check = answers_df.iloc[:,i][mask]
+            if len(result_check) != 0:
+                error_row = list(map(lambda x: x + 2, result_check.index))
+                error_row = list(map(str, error_row))
+                error_row_lst = [f'В {i+1} вопросной колонке на строке {value}' for value in error_row]
+                error_in_column = ','.join(error_row_lst)
+                lst_error_answers.append(error_in_column)
+
+        if len(lst_error_answers) !=0:
+            error_message = ';'.join(lst_error_answers)
             raise BadValueCok
 
         # Создаем колонку для результатов первичного подсчета
