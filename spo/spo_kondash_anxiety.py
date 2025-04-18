@@ -20,7 +20,11 @@ class BadValueCondashAnxiety(Exception):
     """
     pass
 
-
+class BadCountColumnsCondashAnxiety(Exception):
+    """
+    Исключение для обработки случая если количество колонок не равно 30
+    """
+    pass
 
 def count_all_scale(df:pd.DataFrame, lst_cols:list,lst_index:list):
     """
@@ -393,6 +397,8 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     """
     try:
         out_answer_df = base_df.copy() # делаем копию для последующего соединения с сырыми ответами
+        if len(answers_df.columns) != 30:
+            raise BadCountColumnsCondashAnxiety
 
         dct_replace_value = {'ситуация совершенно не кажется вам неприятной': 0,
                              'ситуация немного волнует, беспокоит вас': 1,
@@ -430,14 +436,20 @@ def processing_kondash_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         valid_values = [0, 1, 2, 3,4]
 
         # Проверяем, есть ли значения, отличающиеся от указанных в списке
-        mask = ~answers_df.isin(valid_values)
+        lst_error_answers = [] # список для хранения строк где найдены неправильные ответы
 
-        # Получаем строки с отличающимися значениями
-        result_check = answers_df[mask.any(axis=1)]
-        if len(result_check) != 0:
-            error_row =list(map(lambda x:x+2,result_check.index))
-            error_row = list(map(str,error_row))
-            error_message = ';'.join(error_row)
+        for i in range(30):
+            mask = ~answers_df.iloc[:,i].isin(valid_values) # проверяем на допустимые значения
+            result_check = answers_df.iloc[:,i][mask]
+            if len(result_check) != 0:
+                error_row = list(map(lambda x: x + 2, result_check.index))
+                error_row = list(map(str, error_row))
+                error_row_lst = [f'В {i+1} вопросной колонке на строке {value}' for value in error_row]
+                error_in_column = ','.join(error_row_lst)
+                lst_error_answers.append(error_in_column)
+
+        if len(lst_error_answers) !=0:
+            error_message = ';'.join(lst_error_answers)
             raise BadValueCondashAnxiety
 
 

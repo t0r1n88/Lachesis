@@ -278,6 +278,7 @@ if __name__ == '__main__':
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация.xlsx'
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
     main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
+    main_params_spo = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Тревожность.xlsx'
 
 
 
@@ -287,6 +288,7 @@ if __name__ == '__main__':
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Профориентация.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство школа.xlsx'
     main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа data девиантность.xlsx'
+    main_spo_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа тревожность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
