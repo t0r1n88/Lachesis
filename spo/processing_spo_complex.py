@@ -19,6 +19,7 @@ from spo_career_guidance.spo_ptl import processing_ptl
 from spo_career_guidance.spo_spp import processing_spp
 from spo_career_guidance.spo_ddo import processing_ddo
 from spo_career_guidance.spo_map_interests import processing_map_interests
+from spo_career_guidance.spo_pia import processing_pia
 
 # Девиантное поведение
 from spo.leus_sdp import processing_leus_sdp
@@ -76,6 +77,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                      'СПП': (processing_spp, 24),
                      'ДДО': (processing_ddo, 30),
                      'Карта интересов Голомшток Азбель': (processing_map_interests, 144),
+                     'Профессиональная идентичность Азбель': (processing_pia, 20),
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -91,6 +93,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                               'СПП': 'Сфера профессиональных предпочтений',
                               'ДДО': 'Дифференциально-диагностический опросник',
                               'Карта интересов Голомшток Азбель': 'Карта интересов Голомшток Азбель',
+                              'Профессиональная идентичность Азбель': 'Профессиональная идентичность Азбель',
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -99,7 +102,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
-        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО']
+        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Профессиональная идентичность Азбель','Карта интересов Голомшток Азбель']
         lst_check_career_tests = []
 
 
