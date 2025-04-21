@@ -354,17 +354,16 @@ def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         calc_mean_df = pd.pivot_table(df, index=lst_cat,
                                            values=[val_cat],
                                            aggfunc=round_mean)
         calc_mean_df.reset_index(inplace=True)
-        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
         calc_mean_df.rename(columns={val_cat: 'Среднее значение'}, inplace=True)
 
         return calc_mean_df
@@ -383,13 +382,13 @@ def calc_count_sphere_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat,
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :param col_cat: колонка по которой будет формироваться свод
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         count_df = pd.pivot_table(df, index=lst_cat,
                                                  columns=col_cat,
                                                  values=val_cat,
@@ -402,11 +401,6 @@ def calc_count_sphere_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat,
             count_df[f'% {sphere} от общего'] = round(
             count_df[f'{sphere}'] / count_df['Итого'], 2) * 100
 
-
-        part_svod_df = count_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-        itog_svod_df = count_df.iloc[-1:]
-        count_df = pd.concat([part_svod_df, itog_svod_df])
 
         return count_df
     else:
@@ -432,14 +426,14 @@ def calc_count_level_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, 
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :param col_cat: колонка по которой будет формироваться свод
     :param lst_cols: список с колонками
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         count_df = pd.pivot_table(df, index=lst_cat,
                                                  columns=col_cat,
                                                  values=val_cat,
@@ -459,11 +453,6 @@ def calc_count_level_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, 
         count_df['% ярко выраженный статус от общего'] = round(
             count_df['ярко выраженный статус'] / count_df['Итого'], 2) * 100
 
-
-        part_svod_df = count_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-        itog_svod_df = count_df.iloc[-1:]
-        count_df = pd.concat([part_svod_df, itog_svod_df])
 
         return count_df
     else:
@@ -486,26 +475,6 @@ def calc_count_level_pia(df:pd.DataFrame, type_calc:str, lst_cat:list, val_cat, 
             count_df['ярко выраженный статус'] / count_df['Итого'], 2) * 100
 
         return count_df
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def processing_pia(base_df: pd.DataFrame, answers_df: pd.DataFrame):
@@ -731,78 +700,78 @@ def processing_pia(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         """
                 Своды 
                 """
-        lst_reindex_group_cols = ['Класс', 'статус не выражен', 'выраженность ниже среднего уровня',
+        lst_reindex_group_cols = ['Группа', 'статус не выражен', 'выраженность ниже среднего уровня',
                    'средняя степень выраженности',
                    'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
-        lst_reindex_group_sex_cols = ['Класс', 'Пол', 'статус не выражен', 'выраженность ниже среднего уровня',
+        lst_reindex_group_sex_cols = ['Группа', 'Пол', 'статус не выражен', 'выраженность ниже среднего уровня',
                    'средняя степень выраженности',
                    'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
 
-        lst_reindex_course_cols = ['Номер_класса', 'статус не выражен', 'выраженность ниже среднего уровня',
+        lst_reindex_course_cols = ['Курс', 'статус не выражен', 'выраженность ниже среднего уровня',
                    'средняя степень выраженности',
                    'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
-        lst_reindex_course_sex_cols = ['Номер_класса', 'Пол', 'статус не выражен', 'выраженность ниже среднего уровня',
+        lst_reindex_course_sex_cols = ['Курс', 'Пол', 'статус не выражен', 'выраженность ниже среднего уровня',
                    'средняя степень выраженности',
                    'выраженность выше среднего уровня','ярко выраженный статус', 'Итого']
 
         # Своды по уровням
-        # Класс
-        svod_group_level_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень'], 'Максимум')
-        svod_count_group_level_df = calc_count_level_pia(base_df, 'Класс', ['Класс'], 'Максимум', 'Уровень',
+        # Группа
+        svod_group_level_df = calc_mean(base_df, 'Группа', ['Группа', 'Уровень'], 'Максимум')
+        svod_count_group_level_df = calc_count_level_pia(base_df, 'Группа', ['Группа'], 'Максимум', 'Уровень',
                                                          lst_reindex_group_cols)
 
-        # Класс Пол
-        svod_group_level_sex_df = calc_mean(base_df, 'Класс', ['Класс', 'Уровень', 'Пол'], 'Максимум')
-        svod_count_group_level_sex_df = calc_count_level_pia(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум', 'Уровень',
+        # Группа Пол
+        svod_group_level_sex_df = calc_mean(base_df, 'Группа', ['Группа', 'Уровень', 'Пол'], 'Максимум')
+        svod_count_group_level_sex_df = calc_count_level_pia(base_df, 'Группа', ['Группа', 'Пол'], 'Максимум', 'Уровень',
                                                              lst_reindex_group_sex_cols)
 
-        # Номер_класса
-        svod_course_level_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень'], 'Максимум')
-        svod_count_course_level_df = calc_count_level_pia(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум',
+        # Курс
+        svod_course_level_df = calc_mean(base_df, 'Курс', ['Курс', 'Уровень'], 'Максимум')
+        svod_count_course_level_df = calc_count_level_pia(base_df, 'Курс', ['Курс'], 'Максимум',
                                                           'Уровень', lst_reindex_course_cols)
 
-        # Номер_класса Пол
-        svod_course_level_sex_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Уровень', 'Пол'], 'Максимум')
-        svod_count_course_level_sex_df = calc_count_level_pia(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        # Курс Пол
+        svod_course_level_sex_df = calc_mean(base_df, 'Курс', ['Курс', 'Уровень', 'Пол'], 'Максимум')
+        svod_count_course_level_sex_df = calc_count_level_pia(base_df, 'Курс', ['Курс', 'Пол'],
                                                               'Максимум',
                                                               'Уровень', lst_reindex_course_sex_cols)
 
         # Своды по сферам
-        # Класс
-        svod_group_sphere_df = calc_mean(base_df, 'Класс', ['Класс', 'Обработанное'], 'Максимум')
-        svod_count_group_sphere_df = calc_count_sphere_pia(base_df, 'Класс', ['Класс'], 'Максимум', 'Обработанное')
+        # Группа
+        svod_group_sphere_df = calc_mean(base_df, 'Группа', ['Группа', 'Обработанное'], 'Максимум')
+        svod_count_group_sphere_df = calc_count_sphere_pia(base_df, 'Группа', ['Группа'], 'Максимум', 'Обработанное')
 
-        # Класс Пол
-        svod_group_sphere_sex_df = calc_mean(base_df, 'Класс', ['Класс', 'Обработанное', 'Пол'], 'Максимум')
-        svod_count_group_sphere_sex_df = calc_count_sphere_pia(base_df, 'Класс', ['Класс', 'Пол'], 'Максимум',
+        # Группа Пол
+        svod_group_sphere_sex_df = calc_mean(base_df, 'Группа', ['Группа', 'Обработанное', 'Пол'], 'Максимум')
+        svod_count_group_sphere_sex_df = calc_count_sphere_pia(base_df, 'Группа', ['Группа', 'Пол'], 'Максимум',
                                                                'Обработанное')
 
-        # Номер_класса
-        svod_course_sphere_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Обработанное'], 'Максимум')
-        svod_count_course_sphere_df = calc_count_sphere_pia(base_df, 'Номер_класса', ['Номер_класса'], 'Максимум',
+        # Курс
+        svod_course_sphere_df = calc_mean(base_df, 'Курс', ['Курс', 'Обработанное'], 'Максимум')
+        svod_count_course_sphere_df = calc_count_sphere_pia(base_df, 'Курс', ['Курс'], 'Максимум',
                                                             'Обработанное')
 
-        # Номер_класса Пол
-        svod_course_sphere_sex_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Обработанное', 'Пол'],
+        # Курс Пол
+        svod_course_sphere_sex_df = calc_mean(base_df, 'Курс', ['Курс', 'Обработанное', 'Пол'],
                                               'Максимум')
-        svod_count_course_sphere_sex_df = calc_count_sphere_pia(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_count_course_sphere_sex_df = calc_count_sphere_pia(base_df, 'Курс', ['Курс', 'Пол'],
                                                                 'Максимум', 'Обработанное')
 
-        svod_dct = {'Ср. Уровень Класс': svod_group_level_df, 'Кол. Уровень Класс': svod_count_group_level_df,
-                    'Ср. Уровень Класс Пол': svod_group_level_sex_df,
-                    'Кол. Уровень Класс Пол': svod_count_group_level_sex_df,
-                    'Ср. Уровень Номер_класса': svod_course_level_df,
-                    'Кол. Уровень Номер_класса': svod_count_course_level_df,
-                    'Ср. Уровень Номер_класса Пол': svod_course_level_sex_df,
-                    'Кол. Уровень Номер_класса Пол': svod_count_course_level_sex_df,
+        svod_dct = {'Ср. Уровень Группа': svod_group_level_df, 'Кол. Уровень Группа': svod_count_group_level_df,
+                    'Ср. Уровень Группа Пол': svod_group_level_sex_df,
+                    'Кол. Уровень Группа Пол': svod_count_group_level_sex_df,
+                    'Ср. Уровень Курс': svod_course_level_df,
+                    'Кол. Уровень Курс': svod_count_course_level_df,
+                    'Ср. Уровень Курс Пол': svod_course_level_sex_df,
+                    'Кол. Уровень Курс Пол': svod_count_course_level_sex_df,
 
-                    'Ср. Сфера Класс': svod_group_sphere_df, 'Кол. Сфера Класс': svod_count_group_sphere_df,
-                    'Ср. Сфера Класс Пол': svod_group_sphere_sex_df,
-                    'Кол. Сфера Класс Пол': svod_count_group_sphere_sex_df,
-                    'Ср. Сфера Номер_класса': svod_course_sphere_df,
-                    'Кол. Сфера Номер_класса': svod_count_course_sphere_df,
-                    'Ср. Сфера Номер_класса Пол': svod_course_sphere_sex_df,
-                    'Кол. Сфера Номер_класса Пол': svod_count_course_sphere_sex_df,
+                    'Ср. Сфера Группа': svod_group_sphere_df, 'Кол. Сфера Группа': svod_count_group_sphere_df,
+                    'Ср. Сфера Группа Пол': svod_group_sphere_sex_df,
+                    'Кол. Сфера Группа Пол': svod_count_group_sphere_sex_df,
+                    'Ср. Сфера Курс': svod_course_sphere_df,
+                    'Кол. Сфера Курс': svod_count_course_sphere_df,
+                    'Ср. Сфера Курс Пол': svod_course_sphere_sex_df,
+                    'Кол. Сфера Курс Пол': svod_count_course_sphere_sex_df,
 
                     }
         out_dct.update(svod_dct)  # добавляем чтобы сохранить порядок

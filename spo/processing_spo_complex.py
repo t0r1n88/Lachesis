@@ -14,12 +14,14 @@ from spo_leadership.kos_one import processing_kos # коммуникативны
 from spo_leadership.usk import processing_usk # уровень самооценки Ковалев
 
 # Профориентация
-from spo_career_guidance.spo_cok import processing_cok
-from spo_career_guidance.spo_ptl import processing_ptl
-from spo_career_guidance.spo_spp import processing_spp
-from spo_career_guidance.spo_ddo import processing_ddo
-from spo_career_guidance.spo_map_interests import processing_map_interests
-from spo_career_guidance.spo_pia import processing_pia
+from spo_career_guidance.spo_cok import processing_cok # ценностные ориентиры в карьере
+from spo_career_guidance.spo_ptl import processing_ptl # профессиональный тип личности
+from spo_career_guidance.spo_spp import processing_spp # сфера профессиональных интересов
+from spo_career_guidance.spo_ddo import processing_ddo # дифференциально-диагностический опросник
+from spo_career_guidance.spo_map_interests import processing_map_interests # карта интересов Голомшток Азбель
+from spo_career_guidance.spo_pia import processing_pia # профессиональная идентичность Азбель
+from spo_career_guidance.spo_hpr import processing_hpr # характер и профессия Резапкина
+
 
 # Девиантное поведение
 from spo.leus_sdp import processing_leus_sdp
@@ -78,6 +80,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                      'ДДО': (processing_ddo, 30),
                      'Карта интересов Голомшток Азбель': (processing_map_interests, 144),
                      'Профессиональная идентичность Азбель': (processing_pia, 20),
+                     'Характер и профессия Резапкина': (processing_hpr, 24),
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -94,6 +97,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
                               'ДДО': 'Дифференциально-диагностический опросник',
                               'Карта интересов Голомшток Азбель': 'Карта интересов Голомшток Азбель',
                               'Профессиональная идентичность Азбель': 'Профессиональная идентичность Азбель',
+                              'Характер и профессия Резапкина': 'Характер и профессия Резапкина',
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -102,7 +106,7 @@ def generate_result_spo(params_spo: str, data_spo: str, end_folder: str, thresho
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
-        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Профессиональная идентичность Азбель','Карта интересов Голомшток Азбель']
+        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Профессиональная идентичность Азбель','Карта интересов Голомшток Азбель','Характер и профессия Резапкина']
         lst_check_career_tests = []
 
 
