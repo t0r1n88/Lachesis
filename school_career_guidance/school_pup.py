@@ -251,15 +251,23 @@ def processing_pup(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                    'Свод по уровням': svod_all_df,
                    }
 
-        lst_level = ['низкая',
-                     'средняя',
-                     'высокая']
+        lst_level = ['низкий',
+                     'средний',
+                     'высокий']
         dct_conf = dict()
+
 
         for level in lst_level:
             temp_df = base_df[base_df['Уровень_уверенности'] == level]
             if temp_df.shape[0] != 0:
+                if level == 'низкий':
+                    level = 'низкая уверенность'
+                elif level == 'средний':
+                    level = 'средняя уверенность'
+                elif level == 'высокий':
+                    level = 'высокая уверенность'
                 dct_conf[level] = temp_df
+
 
         out_dct.update(dct_conf)
 
@@ -268,7 +276,16 @@ def processing_pup(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         for level in lst_level:
             temp_df = base_df[base_df['Уровень_нерешительности'] == level]
             if temp_df.shape[0] != 0:
+                if level == 'низкий':
+                    level = 'низкая нерешительность'
+                elif level == 'средний':
+                    level = 'средняя нерешительность'
+                elif level == 'высокий':
+                    level = 'высокая нерешительность'
+
                 dct_indecision[level] = temp_df
+
+
 
         out_dct.update(dct_indecision)
 
