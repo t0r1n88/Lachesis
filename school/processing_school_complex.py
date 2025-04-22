@@ -21,6 +21,7 @@ from school_career_guidance.school_map_interests import processing_map_interests
 from school_career_guidance.school_pia import processing_pia # профессиональная идентичность Азбель
 from school_career_guidance.school_hpr import processing_hpr # характер и профессия Резапкина
 from school_career_guidance.school_sitt import processing_sitt # склонность к исполнительскому или творческому труду Азбель
+from school_career_guidance.school_ntfp import processing_ntfp # наемный труд фриланс предпринимательство Грецов
 
 
 # Девиантное поведение
@@ -83,6 +84,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                      'Профессиональная идентичность Азбель': (processing_pia, 20),
                      'Характер и профессия Резапкина': (processing_hpr, 24),
                      'СИТТ Азбель': (processing_sitt, 12),
+                     'НТФП Грецов': (processing_ntfp, 24),
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -101,6 +103,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
                               'Профессиональная идентичность Азбель':'Профессиональная идентичность Азбель',
                               'Характер и профессия Резапкина':'Характер и профессия Резапкина',
                               'СИТТ Азбель':'Склонность к исполнительскому или творческому труду Азбель',
+                              'НТФП Грецов':'Наемный труд,фриланс,предпринимательство Грецов',
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -109,7 +112,7 @@ def generate_result_school_anxiety(params_spo: str, data_spo: str, end_folder: s
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
-        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Карта интересов Голомшток Азбель','Профессиональная идентичность Азбель','Характер и профессия Резапкина','СИТТ Азбель']
+        lst_career_tests = ['ЦОК','ПТЛ','СПП','ДДО','Карта интересов Голомшток Азбель','Профессиональная идентичность Азбель','Характер и профессия Резапкина','СИТТ Азбель','НТФП Грецов']
         lst_check_career_tests = []
 
 

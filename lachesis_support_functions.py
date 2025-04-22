@@ -23,7 +23,7 @@ def convert_to_int(value):
     try:
         return int(value)
     except:
-        return 0
+        return 99
 
 
 
