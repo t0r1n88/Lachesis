@@ -146,17 +146,16 @@ def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         calc_mean_df = pd.pivot_table(df, index=lst_cat,
                                            values=[val_cat],
                                            aggfunc=round_mean)
         calc_mean_df.reset_index(inplace=True)
-        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
         return calc_mean_df
     else:
         calc_mean_df = pd.pivot_table(df, index=lst_cat,
@@ -172,14 +171,14 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :param col_cat: колонка по которой будет формироваться свод
     :param lst_cols:список колонок для правильного порядка сводной таблицы
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         count_df = pd.pivot_table(df, index=lst_cat,
                                                  columns=col_cat,
                                                  values=val_cat,
@@ -196,11 +195,6 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
 
         count_df['% высокий от общего'] = round(
             count_df['высокий'] / count_df['Итого'], 2) * 100
-
-        part_svod_df = count_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-        itog_svod_df = count_df.iloc[-1:]
-        count_df = pd.concat([part_svod_df, itog_svod_df])
 
         return count_df
     else:
@@ -222,13 +216,6 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
             count_df['высокий'] / count_df['Итого'], 2) * 100
 
         return count_df
-
-
-
-
-
-
-
 
 
 
@@ -374,73 +361,73 @@ def processing_pup(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         out_dct.update(dct_indecision)
 
 
-        lst_reindex_group_cols = ['Класс', 'низкий',
+        lst_reindex_group_cols = ['Группа', 'низкий',
                      'средний',
                      'высокий','Итого']
-        lst_reindex_group_sex_cols = ['Класс','Пол', 'низкий',
+        lst_reindex_group_sex_cols = ['Группа','Пол', 'низкий',
                      'средний',
                      'высокий','Итого']
 
-        lst_reindex_course_cols = ['Номер_класса', 'низкий',
+        lst_reindex_course_cols = ['Курс', 'низкий',
                      'средний',
                      'высокий','Итого']
-        lst_reindex_course_sex_cols = ['Номер_класса','Пол','низкий',
+        lst_reindex_course_sex_cols = ['Курс','Пол','низкий',
                      'средний',
                      'высокий','Итого']
 
 
         """
-              Обрабатываем Класс
+              Обрабатываем Группа
               """
 
         # Уверенность
-        svod_group_sop_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_уверенности')
-        svod_count_group_sop_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_уверенности', 'Уровень_уверенности',
+        svod_group_sop_df = calc_mean(base_df, 'Группа', ['Группа'], 'Значение_уверенности')
+        svod_count_group_sop_df = calc_count(base_df, 'Группа', ['Группа'], 'Значение_уверенности', 'Уровень_уверенности',
                                              lst_reindex_group_cols)
         # Неуверенность
-        svod_group_dp_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_нерешительности')
-        svod_count_group_dp_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_нерешительности', 'Уровень_нерешительности',
+        svod_group_dp_df = calc_mean(base_df, 'Группа', ['Группа'], 'Значение_нерешительности')
+        svod_count_group_dp_df = calc_count(base_df, 'Группа', ['Группа'], 'Значение_нерешительности', 'Уровень_нерешительности',
                                             lst_reindex_group_cols)
 
         """
-                   Обрабатываем Класс Пол
+                   Обрабатываем Группа Пол
                    """
         # Уверенность
-        svod_group_sex_sop_df = calc_mean(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_уверенности')
-        svod_count_group_sex_sop_df = calc_count(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_уверенности',
+        svod_group_sex_sop_df = calc_mean(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_уверенности')
+        svod_count_group_sex_sop_df = calc_count(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_уверенности',
                                                  'Уровень_уверенности', lst_reindex_group_sex_cols)
 
         # Нерешительность
-        svod_group_sex_dp_df = calc_mean(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_нерешительности')
-        svod_count_group_sex_dp_df = calc_count(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_нерешительности',
+        svod_group_sex_dp_df = calc_mean(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_нерешительности')
+        svod_count_group_sex_dp_df = calc_count(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_нерешительности',
                                                 'Уровень_нерешительности', lst_reindex_group_sex_cols)
 
 
         """
-            Обрабатываем Номер_класса
+            Обрабатываем Курс
             """
 
         # Уверенность
-        svod_course_sop_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_уверенности')
-        svod_count_course_sop_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_уверенности', 'Уровень_уверенности',
+        svod_course_sop_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_уверенности')
+        svod_count_course_sop_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_уверенности', 'Уровень_уверенности',
                                               lst_reindex_course_cols)
         # Нерешительность
-        svod_course_dp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_нерешительности')
-        svod_count_course_dp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_нерешительности', 'Уровень_нерешительности',
+        svod_course_dp_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_нерешительности')
+        svod_count_course_dp_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_нерешительности', 'Уровень_нерешительности',
                                              lst_reindex_course_cols)
 
         """
-             Обрабатываем Номер_класса Пол
+             Обрабатываем Курс Пол
              """
         # Уверенность
-        svod_course_sex_sop_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_уверенности')
-        svod_count_course_sex_sop_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_course_sex_sop_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_уверенности')
+        svod_count_course_sex_sop_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'],
                                                   'Значение_уверенности',
                                                   'Уровень_уверенности', lst_reindex_course_sex_cols)
 
         # Нерешительность
-        svod_course_sex_dp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_нерешительности')
-        svod_count_course_sex_dp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_нерешительности',
+        svod_course_sex_dp_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_нерешительности')
+        svod_count_course_sex_dp_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_нерешительности',
                                                  'Уровень_нерешительности',
                                                  lst_reindex_course_sex_cols)
 
@@ -448,14 +435,14 @@ def processing_pup(base_df: pd.DataFrame, answers_df: pd.DataFrame):
 
 
 
-        svod_dct = {'Среднее Класс Ув':svod_group_sop_df,'Количество Класс Ув':svod_count_group_sop_df,
-                    'Среднее Класс Нер': svod_group_dp_df, 'Количество Класс Нер': svod_count_group_dp_df,
-                    'Среднее Класс Пол Ув': svod_group_sex_sop_df,'Количество Класс Пол Ув': svod_count_group_sex_sop_df,
-                    'Среднее Класс Пол Нер': svod_group_sex_dp_df, 'Количество Класс Пол Нер': svod_count_group_sex_dp_df,
-                    'Среднее Номер_класса Ув': svod_course_sop_df,'Количество Номер_класса Ув': svod_count_course_sop_df,
-                    'Среднее Номер_класса Нер': svod_course_dp_df, 'Количество Номер_класса Нер': svod_count_course_dp_df,
-                    'Среднее Номер_класса Пол Ув': svod_course_sex_sop_df,'Количество Номер_класса Пол Ув': svod_count_course_sex_sop_df,
-                    'Среднее Номер_класса Пол Нер': svod_course_sex_dp_df,'Количество Номер_класса Пол Нер': svod_count_course_sex_dp_df,
+        svod_dct = {'Среднее Группа Ув':svod_group_sop_df,'Количество Группа Ув':svod_count_group_sop_df,
+                    'Среднее Группа Нер': svod_group_dp_df, 'Количество Группа Нер': svod_count_group_dp_df,
+                    'Среднее Группа Пол Ув': svod_group_sex_sop_df,'Количество Группа Пол Ув': svod_count_group_sex_sop_df,
+                    'Среднее Группа Пол Нер': svod_group_sex_dp_df, 'Количество Группа Пол Нер': svod_count_group_sex_dp_df,
+                    'Среднее Курс Ув': svod_course_sop_df,'Количество Курс Ув': svod_count_course_sop_df,
+                    'Среднее Курс Нер': svod_course_dp_df, 'Количество Курс Нер': svod_count_course_dp_df,
+                    'Среднее Курс Пол Ув': svod_course_sex_sop_df,'Количество Курс Пол Ув': svod_count_course_sex_sop_df,
+                    'Среднее Курс Пол Нер': svod_course_sex_dp_df,'Количество Курс Пол Нер': svod_count_course_sex_dp_df,
                     }
         out_dct.update(svod_dct)
 
