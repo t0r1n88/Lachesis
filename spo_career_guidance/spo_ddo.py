@@ -756,4 +756,4 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     except BadCountColumnsDDO:
         messagebox.showerror('Лахеcис',
                              f'Проверьте количество колонок с ответами на тест Дифференциально-диагностический опросник\n'
-                             f'Должно быть 20 колонок с ответами')
+                             f'Должно быть 30 колонок с ответами')
