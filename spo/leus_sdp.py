@@ -399,7 +399,7 @@ def processing_leus_sdp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                    'Среднее Группа СОП':svod_group_sop_df,'Количество Группа СОП':svod_count_group_sop_df,
                    'Среднее Группа ДП':svod_group_dp_df,'Количество Группа ДП':svod_count_group_dp_df,
                    'Среднее Группа ЗП':svod_group_zp_df,'Количество Группа ЗП':svod_count_group_zp_df,
-                   'Среднее Группа АП':svod_group_ap_df,'Количество Группа АП':svod_count_group_sop_df,
+                   'Среднее Группа АП':svod_group_ap_df,'Количество Группа АП':svod_count_group_ap_df,
                    'Среднее Группа СП':svod_group_sp_df,'Количество Группа СП':svod_count_group_sp_df,
 
                    'Среднее Группа Пол СОП':svod_group_sex_sop_df,'Количество Группа Пол СОП':svod_count_group_sex_sop_df,
@@ -412,7 +412,7 @@ def processing_leus_sdp(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                    'Среднее Курс СОП': svod_course_sop_df, 'Количество Курс СОП': svod_count_course_sop_df,
                    'Среднее Курс ДП': svod_course_dp_df, 'Количество Курс ДП': svod_count_course_dp_df,
                    'Среднее Курс ЗП': svod_course_zp_df, 'Количество Курс ЗП': svod_count_course_zp_df,
-                   'Среднее Курс АП': svod_course_ap_df, 'Количество Курс АП': svod_count_course_sop_df,
+                   'Среднее Курс АП': svod_course_ap_df, 'Количество Курс АП': svod_count_course_ap_df,
                    'Среднее Курс СП': svod_course_sp_df, 'Количество Курс СП': svod_count_course_sp_df,
 
                    'Среднее Курс Пол СОП': svod_course_sex_sop_df, 'Количество Курс Пол СОП': svod_count_course_sex_sop_df,

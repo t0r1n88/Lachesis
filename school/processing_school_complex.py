@@ -28,7 +28,7 @@ from school_career_guidance.school_nvid import processing_nvid # направл�
 
 # Девиантное поведение, остракизм, буллинг
 from school.school_leus_sdp import processing_leus_sdp # склонность к девиантности Леус
-from school.school_shnpo import processing_shnpo # шкала нарушенных потребностей остракизм Бойкина
+from school.school_boykina_shnpo import processing_shnpo # шкала нарушенных потребностей остракизм Бойкина
 
 
 
