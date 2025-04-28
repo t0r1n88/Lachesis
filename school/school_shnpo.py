@@ -302,6 +302,123 @@ def count_all_scale_pod(df:pd.DataFrame, lst_cols:list, lst_index:list):
     return base_df
 
 
+def count_all_scale_mol(df:pd.DataFrame, lst_cols:list, lst_index:list):
+    """
+    Функция для подсчета уровней по всем шкалам
+    :param df: датарфейм
+    :param lst_cols: список колонок по которым нужно вести обработку
+    :param lst_index: список индексов
+    :return:датафрейм
+    """
+    base_df = pd.DataFrame(index=lst_index) # базовый датафрейм с индексами
+    for scale in lst_cols:
+        scale_df = pd.pivot_table(df, index=f'Уровень_субшкалы_{scale}_Молодежь',
+                                                  values=f'Значение_субшкалы_{scale}',
+                                                  aggfunc='count')
+
+        scale_df[f'{scale}% от общего'] = round(
+            scale_df[f'Значение_субшкалы_{scale}'] / scale_df[f'Значение_субшкалы_{scale}'].sum(),3) * 100
+        scale_df.rename(columns={f'Значение_субшкалы_{scale}':f'Количество_{scale}'},inplace=True)
+
+        # # Создаем суммирующую строку
+        scale_df.loc['Итого'] = scale_df.sum()
+
+
+        base_df = base_df.join(scale_df)
+
+    base_df = base_df.reset_index()
+    base_df.rename(columns={'index':'Уровень потребности'},inplace=True)
+    return base_df
+
+
+
+
+
+def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=[val_cat],
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        return calc_mean_df
+    else:
+        calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                           values=val_cat,
+                                           aggfunc=round_mean)
+        calc_mean_df.reset_index(inplace=True)
+        return calc_mean_df
+
+
+
+def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param type_calc:тип обработки Класс или Номер_класса
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols:список колонок для правильного порядка сводной таблицы
+    :return:датафрейм
+    """
+    if type_calc == 'Класс':
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                                 columns=col_cat,
+                                                 values=val_cat,
+                                                 aggfunc='count', margins=True, margins_name='Итого')
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+
+        count_df['% низкий уровень социального остракизма от общего'] = round(
+            count_df['низкий уровень социального остракизма'] / count_df['Итого'], 2) * 100
+
+        count_df['% средний уровень социального остракизма от общего'] = round(
+            count_df['средний уровень социального остракизма'] / count_df['Итого'], 2) * 100
+
+        count_df['% высокий уровень социального остракизма от общего'] = round(
+            count_df['высокий уровень социального остракизма'] / count_df['Итого'], 2) * 100
+
+        part_svod_df = count_df.iloc[:-1:]
+        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
+        itog_svod_df = count_df.iloc[-1:]
+        count_df = pd.concat([part_svod_df, itog_svod_df])
+
+        return count_df
+    else:
+        count_df = pd.pivot_table(df, index=lst_cat,
+                                  columns=col_cat,
+                                  values=val_cat,
+                                  aggfunc='count', margins=True, margins_name='Итого')
+
+        count_df.reset_index(inplace=True)
+        count_df = count_df.reindex(columns=lst_cols)
+
+        count_df['% низкий уровень социального остракизма от общего'] = round(
+            count_df['низкий уровень социального остракизма'] / count_df['Итого'], 2) * 100
+
+        count_df['% средний уровень социального остракизма от общего'] = round(
+            count_df['средний уровень социального остракизма'] / count_df['Итого'], 2) * 100
+
+        count_df['% высокий уровень социального остракизма от общего'] = round(
+            count_df['высокий уровень социального остракизма'] / count_df['Итого'], 2) * 100
+
+        return count_df
+
+
+
+
 
 
 
@@ -445,12 +562,168 @@ def processing_shnpo(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     svod_all_df_pod = count_all_scale_pod(base_df, ['Принадлежность', 'Самоуважение', 'Контроль', 'Ос_существование'],
                                       ['низкий уровень социального остракизма','средний уровень социального остракизма','высокий уровень социального остракизма', 'Итого'])
 
+    lst_reindex_group_cols = ['Класс', 'низкий уровень социального остракизма','средний уровень социального остракизма','высокий уровень социального остракизма', 'Итого']
+    lst_reindex_group_sex_cols = ['Класс', 'Пол', 'низкий уровень социального остракизма','средний уровень социального остракизма','высокий уровень социального остракизма', 'Итого']
+
+    lst_reindex_course_cols = ['Номер_класса', 'низкий уровень социального остракизма','средний уровень социального остракизма','высокий уровень социального остракизма', 'Итого']
+    lst_reindex_course_sex_cols = ['Номер_класса', 'Пол', 'низкий уровень социального остракизма','средний уровень социального остракизма','высокий уровень социального остракизма', 'Итого']
+
+    """
+    Общий свод для молодежи
+    """
+    svod_all_df_mol = count_all_scale_mol(base_df, ['Принадлежность', 'Самоуважение', 'Контроль', 'Ос_существование'],
+                                      ['низкий уровень социального остракизма','средний уровень социального остракизма','высокий уровень социального остракизма', 'Итого'])
+
+
+
+
+    """
+        Обрабатываем Класс
+        """
+
+    # Принадлежность
+    svod_group_sop_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Принадлежность')
+    svod_count_group_sop_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Принадлежность', 'Уровень_субшкалы_Принадлежность_Подростки',
+                                         lst_reindex_group_cols)
+    # Самоуважение
+    svod_group_dp_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Самоуважение')
+    svod_count_group_dp_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Самоуважение', 'Уровень_субшкалы_Самоуважение_Подростки',
+                                        lst_reindex_group_cols)
+
+    # Контроль
+    svod_group_zp_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Контроль')
+    svod_count_group_zp_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Контроль', 'Уровень_субшкалы_Контроль_Подростки',
+                                        lst_reindex_group_cols)
+
+    # Осмысленное существование
+    svod_group_ap_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Ос_существование')
+    svod_count_group_ap_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Ос_существование', 'Уровень_субшкалы_Ос_существование_Подростки',
+                                        lst_reindex_group_cols)
+
+
+
+    """
+        Обрабатываем Класс Пол
+        """
+
+    # Принадлежность
+    svod_group_sex_sop_df = calc_mean(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Принадлежность')
+    svod_count_group_sex_sop_df = calc_count(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Принадлежность', 'Уровень_субшкалы_Принадлежность_Подростки',
+                                         lst_reindex_group_sex_cols)
+    # Самоуважение
+    svod_group_sex_dp_df = calc_mean(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Самоуважение')
+    svod_count_group_sex_dp_df = calc_count(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Самоуважение', 'Уровень_субшкалы_Самоуважение_Подростки',
+                                        lst_reindex_group_sex_cols)
+
+    # Контроль
+    svod_group_sex_zp_df = calc_mean(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Контроль')
+    svod_count_group_sex_zp_df = calc_count(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Контроль', 'Уровень_субшкалы_Контроль_Подростки',
+                                        lst_reindex_group_sex_cols)
+
+    # Осмысленное существование
+    svod_group_sex_ap_df = calc_mean(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Ос_существование')
+    svod_count_group_sex_ap_df = calc_count(base_df, 'Класс', ['Класс','Пол'], 'Значение_субшкалы_Ос_существование', 'Уровень_субшкалы_Ос_существование_Подростки',
+                                        lst_reindex_group_sex_cols)
+
+
+    """
+        Обрабатываем Номер класса
+        """
+
+    # Принадлежность
+    svod_course_sop_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Принадлежность')
+    svod_count_course_sop_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Принадлежность', 'Уровень_субшкалы_Принадлежность_Подростки',
+                                         lst_reindex_course_cols)
+    # Самоуважение
+    svod_course_dp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Самоуважение')
+    svod_count_course_dp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Самоуважение', 'Уровень_субшкалы_Самоуважение_Подростки',
+                                        lst_reindex_course_cols)
+
+    # Контроль
+    svod_course_zp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Контроль')
+    svod_count_course_zp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Контроль', 'Уровень_субшкалы_Контроль_Подростки',
+                                        lst_reindex_course_cols)
+
+    # Осмысленное существование
+    svod_course_ap_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Ос_существование')
+    svod_count_course_ap_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Ос_существование', 'Уровень_субшкалы_Ос_существование_Подростки',
+                                        lst_reindex_course_cols)
+
+
+    """
+        Обрабатываем Номер класса Пол
+        """
+
+    # Принадлежность
+    svod_course_sex_sop_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Принадлежность')
+    svod_count_course_sex_sop_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Принадлежность', 'Уровень_субшкалы_Принадлежность_Подростки',
+                                         lst_reindex_course_sex_cols)
+    # Самоуважение
+    svod_course_sex_dp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Самоуважение')
+    svod_count_course_sex_dp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Самоуважение', 'Уровень_субшкалы_Самоуважение_Подростки',
+                                        lst_reindex_course_sex_cols)
+
+    # Контроль
+    svod_course_sex_zp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Контроль')
+    svod_count_course_sex_zp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Контроль', 'Уровень_субшкалы_Контроль_Подростки',
+                                        lst_reindex_course_sex_cols)
+
+    # Осмысленное существование
+    svod_course_sex_ap_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Ос_существование')
+    svod_count_course_sex_ap_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Ос_существование', 'Уровень_субшкалы_Ос_существование_Подростки',
+                                        lst_reindex_course_sex_cols)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
     out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-               'Общий свод Подростки': svod_all_df_pod}
+               'Общий свод Подростки': svod_all_df_pod,
+               'Общий свод Молодежь': svod_all_df_mol,
+
+
+               'Ср Класс Пр Под': svod_group_sop_df, 'Кол Класс Пр Под': svod_count_group_sop_df,
+               'Ср Класс Са Под': svod_group_dp_df, 'Кол Класс Са Под': svod_count_group_dp_df,
+               'Ср Класс Ко Под': svod_group_zp_df, 'Кол Класс Ко Под': svod_count_group_zp_df,
+               'Ср Класс Ос Под': svod_group_ap_df, 'Кол Класс Ос Под': svod_count_group_ap_df,
+
+               'Ср Класс Пол Пр Под': svod_group_sex_sop_df, 'Кол Класс Пол Пр Под': svod_count_group_sex_sop_df,
+               'Ср Класс Пол Са Под': svod_group_sex_dp_df, 'Кол Класс Пол Са Под': svod_count_group_sex_dp_df,
+               'Ср Класс Пол Ко Под': svod_group_sex_zp_df, 'Кол Класс Пол Ко Под': svod_count_group_sex_zp_df,
+               'Ср Класс Пол Ос Под': svod_group_sex_ap_df, 'Кол Класс Пол Ос Под': svod_count_group_sex_ap_df,
+
+               'Ср Номер_класса Пр Под': svod_course_sop_df, 'Кол Номер_класса Пр Под': svod_count_course_sop_df,
+               'Ср Номер_класса Са Под': svod_course_dp_df, 'Кол Номер_класса Са Под': svod_count_course_dp_df,
+               'Ср Номер_класса Ко Под': svod_course_zp_df, 'Кол Номер_класса Ко Под': svod_count_course_zp_df,
+               'Ср Номер_класса Ос Под': svod_course_ap_df, 'Кол Номер_класса Ос Под': svod_count_course_ap_df,
+
+               'Ср Номер_класса Пол Пр Под': svod_course_sex_sop_df,'Кол Номер_класса Пол Пр Под': svod_count_course_sex_sop_df,
+               'Ср Номер_класса Пол Са Под': svod_course_sex_dp_df,'Кол Номер_класса Пол Са Под': svod_count_course_sex_dp_df,
+               'Ср Номер_класса Пол Ко Под': svod_course_sex_zp_df,'Кол Номер_класса Пол Ко Под': svod_count_course_sex_zp_df,
+               'Ср Номер_класса Пол Ос Под': svod_course_sex_ap_df,'Кол Номер_класса Пол Ос Под': svod_count_course_sex_ap_df,
+
+
+
+
+
+               }
 
 
     return out_dct, part_df
