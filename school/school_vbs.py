@@ -198,6 +198,152 @@ def processing_result_vbs(row):
     elif row[9] == 'это я не хочу с ними общаться':
         dct_type['помощник'] += 1
 
+    # 11
+    if row[10] == 'да, я думаю, что я один из них':
+        dct_type['инициатор'] += 1
+        dct_type['защитник'] += 1
+    elif row[10] == 'да, но они этого не заслуживают':
+        dct_type['жертва'] += 1
+        dct_type['наблюдатель'] += 1
+    elif row[10] == 'нет, у нас таких нет':
+        dct_type['помощник'] += 1
+    elif row[10] == 'да, я тоже на них равняюсь':
+        pass
+
+    # 12
+    if row[11] == 'да':
+        dct_type['инициатор'] += 1
+    elif row[11] == 'нет':
+        dct_type['наблюдатель'] += 1
+    elif row[11] == 'иногда':
+        dct_type['защитник'] += 1
+        dct_type['жертва'] += 1
+    elif row[11] == 'часто':
+        dct_type['помощник'] += 1
+
+    # 14
+    if row[13] == 'да, мне не нравится наш коллектив':
+        dct_type['наблюдатель'] += 1
+    elif row[13] == 'нет, меня все устраивает':
+        dct_type['инициатор'] += 1
+        dct_type['помощник'] += 1
+    elif row[13] == 'иногда, после ссоры с одноклассниками':
+        dct_type['защитник'] += 1
+    elif row[13] == 'нет, а вдруг там будет хуже':
+        dct_type['жертва'] += 1
+
+    # 15
+    if row[14] == 'да это самый действенный способ':
+        dct_type['помощник'] += 1
+    elif row[14] == 'нет, лучше решать «мирным» путем':
+        dct_type['защитник'] += 1
+    elif row[14] == 'иногда без этого не обойтись':
+        dct_type['жертва'] += 1
+    elif row[14] == 'все зависит от обстоятельств и от людей':
+        dct_type['инициатор'] += 1
+        dct_type['наблюдатель'] += 1
+
+    # 16
+    if row[15] == 'да и мне их жаль':
+        dct_type['защитник'] += 1
+    elif row[15] == 'нет, мы все дружим':
+        dct_type['инициатор'] += 1
+    elif row[15] == 'да, но они этого заслуживают':
+        dct_type['помощник'] += 1
+        dct_type['наблюдатель'] += 1
+    elif row[15] == 'я сам из их числа':
+        dct_type['жертва'] += 1
+
+    # 18
+    if row[17] == 'пройду мимо это меня не касается':
+        dct_type['жертва'] += 1
+    elif row[17] == 'обязательно остановлюсь и посмотрю':
+        dct_type['инициатор'] += 1
+        dct_type['наблюдатель'] += 1
+    elif row[17] == 'сниму это все на телефон, и после размещу в интернете, пусть все увидят':
+        dct_type['помощник'] += 1
+    elif row[17] == 'попытаюсь остановить драку и выяснить в чем дело':
+        dct_type['защитник'] += 1
+
+    # 19
+    if row[18] == 'да':
+        dct_type['помощник'] += 1
+    elif row[18] == 'нет':
+        dct_type['защитник'] += 1
+        dct_type['инициатор'] += 1
+    elif row[18] == 'иногда':
+        dct_type['наблюдатель'] += 1
+    elif row[18] == 'часто':
+        dct_type['жертва'] += 1
+
+    # 21
+    if row[20] == 'капитаном':
+        dct_type['инициатор'] += 1
+        dct_type['защитник'] += 1
+    elif row[20] == 'помощником капитана':
+        dct_type['помощник'] += 1
+    elif row[20] == 'обычным матросом':
+        dct_type['наблюдатель'] += 1
+    elif row[20] == 'юнгой':
+        dct_type['жертва'] += 1
+
+    # 22
+    if row[21] == 'это повод для насмешек':
+        dct_type['помощник'] += 1
+    elif row[21] == 'я с таким не буду общаться':
+        pass
+    elif row[21] == 'меня это не беспокоит, буду общаться':
+        dct_type['защитник'] += 1
+        dct_type['жертва'] += 1
+    elif row[21] == 'не буду общаться, чтобы не уронить свою репутацию':
+        dct_type['инициатор'] += 1
+        dct_type['наблюдатель'] += 1
+
+    # 23
+    if row[22] == 'я буду поступать так же, как все':
+        dct_type['инициатор'] += 1
+        dct_type['наблюдатель'] += 1
+    elif row[22] == 'встану на его защиту':
+        dct_type['защитник'] += 1
+    elif row[22] == 'один из первых стану смеяться над ним':
+        dct_type['помощник'] += 1
+    elif row[22] == 'ничего делать не буду, меня это не касается':
+        dct_type['жертва'] += 1
+
+    # 24
+    if row[23] == 'да, для меня это очень важно':
+        dct_type['помощник'] += 1
+    elif row[23] == 'нет, мне все равно':
+        dct_type['защитник'] += 1
+        dct_type['наблюдатель'] += 1
+    elif row[23] == 'я всегда пользуюсь успехом':
+        dct_type['инициатор'] += 1
+    elif row[23] == 'нет, я никогда не был успешен в классе':
+        dct_type['жертва'] += 1
+
+    # 25
+    if row[24] == 'да':
+        dct_type['наблюдатель'] += 1
+    elif row[24] == 'нет':
+        dct_type['защитник'] += 1
+    elif row[24] == 'иногда':
+        dct_type['инициатор'] += 1
+        dct_type['жертва'] += 1
+    elif row[24] == 'часто':
+        dct_type['помощник'] += 1
+
+    # сортируем по убыванию
+    result_lst = sorted(dct_type.items(), key=lambda t: t[1], reverse=True)
+    begin_str = '\n'
+    # создаем строку с результатами
+    for sphere, value in result_lst:
+        begin_str += f'{sphere}: {value};\n'
+
+    # добавляем описание
+    return begin_str
+
+
+
 
 
 
@@ -299,8 +445,142 @@ def processing_vbs(base_df: pd.DataFrame, answers_df: pd.DataFrame):
     base_df[f'Необработанное'] = answers_df.apply(processing_result_vbs, axis=1)
     base_df[f'Роль'] = base_df[f'Необработанное'].apply(
         extract_key_max_value)
-    base_df[f'Числовой_показатель_роли'] = base_df[f'Необработанное'].apply(
+    base_df[f'Числовое_значение_роли'] = base_df[f'Необработанное'].apply(
         extract_max_value)
+    base_df['Максимум'] = '22 балла'
+    base_df['Вопрос_13'] = answers_df['В нашем классе есть несколько ребят, которых все боятся']
+    base_df['Вопрос_17'] = answers_df['Мне кажется, что в нашем классе часто происходят акты насилия (обзывания, насмешки, обидные жесты или действия)']
+    base_df['Вопрос_20'] = answers_df['По-моему, педагоги в школе унижают и оскорбляют учащихся']
+
+
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+    part_df['ВБС_Необработанное'] = base_df['Необработанное']
+    part_df['ВБС_Роль'] = base_df['Роль']
+    part_df['ВБС_Числовое_значение_роли'] = base_df['Числовое_значение_роли']
+
+    base_df.sort_values(by='Числовое_значение_роли', ascending=False, inplace=True)  # сортируем
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    # Общий свод по ролям всего в процентном соотношении
+    base_svod_all_df = pd.DataFrame(
+        index=['инициатор', 'помощник',
+               'защитник',
+               'жертва', 'наблюдатель','Итого'])
+
+    svod_level_df = pd.pivot_table(base_df, index='Роль',
+                                   values='Числовое_значение_роли',
+                                   aggfunc='count')
+
+    svod_level_df['% от общего'] = round(
+        svod_level_df['Числовое_значение_роли'] / svod_level_df['Числовое_значение_роли'].sum(), 3) * 100
+
+    base_svod_all_df = base_svod_all_df.join(svod_level_df)
+
+    # # Создаем суммирующую строку
+    base_svod_all_df.loc['Итого'] = svod_level_df.sum()
+    base_svod_all_df.reset_index(inplace=True)
+    base_svod_all_df.rename(columns={'index': 'Роль', 'Максимум': 'Количество'}, inplace=True)
+
+
+    # Общий свод по вопросу 13 в процентном соотношении
+    thirteen_svod_all_df = pd.DataFrame(
+        index=['да, они всех унижают, а иногда и бьют', 'нет, у нас таких нет',
+               'я и сам из их числа — меня все боятся',
+               'конечно, так и должно быть, это нормально','Итого'])
+
+    thirteen_svod_level_df = pd.pivot_table(base_df, index='Вопрос_13',
+                                   values='Числовое_значение_роли',
+                                   aggfunc='count')
+
+    thirteen_svod_level_df['% от общего'] = round(
+        thirteen_svod_level_df['Числовое_значение_роли'] / thirteen_svod_level_df['Числовое_значение_роли'].sum(), 3) * 100
+
+    thirteen_svod_all_df = thirteen_svod_all_df.join(thirteen_svod_level_df)
+
+    # # Создаем суммирующую строку
+    thirteen_svod_all_df.loc['Итого'] = svod_level_df.sum()
+    thirteen_svod_all_df.reset_index(inplace=True)
+    thirteen_svod_all_df.rename(columns={'index': 'Ответ', 'Числовое_значение_роли': 'Количество'}, inplace=True)
+
+
+    # Общий свод по вопросу 17 в процентном соотношении
+    seventeen_svod_all_df = pd.DataFrame(
+        index=['да, постоянно ссоры и драки', 'нет, у нас такого не бывает',
+               'почти нет, если не считать пару случаев',
+               'конечно, так и должно быть','Итого'])
+
+    seventeen_svod_level_df = pd.pivot_table(base_df, index='Вопрос_17',
+                                   values='Числовое_значение_роли',
+                                   aggfunc='count')
+
+    seventeen_svod_level_df['% от общего'] = round(
+        seventeen_svod_level_df['Числовое_значение_роли'] / seventeen_svod_level_df['Числовое_значение_роли'].sum(), 3) * 100
+
+    seventeen_svod_all_df = seventeen_svod_all_df.join(seventeen_svod_level_df)
+
+    # # Создаем суммирующую строку
+    seventeen_svod_all_df.loc['Итого'] = svod_level_df.sum()
+    seventeen_svod_all_df.reset_index(inplace=True)
+    seventeen_svod_all_df.rename(columns={'index': 'Ответ', 'Числовое_значение_роли': 'Количество'}, inplace=True)
+
+
+    # Общий свод по вопросу 20 в процентном соотношении
+    twenty_svod_all_df = pd.DataFrame(
+        index=['да', 'нет',
+               'иногда',
+               'часто','Итого'])
+
+    twenty_svod_level_df = pd.pivot_table(base_df, index='Вопрос_20',
+                                   values='Числовое_значение_роли',
+                                   aggfunc='count')
+
+    twenty_svod_level_df['% от общего'] = round(
+        twenty_svod_level_df['Числовое_значение_роли'] / twenty_svod_level_df['Числовое_значение_роли'].sum(), 3) * 100
+
+    twenty_svod_all_df = twenty_svod_all_df.join(twenty_svod_level_df)
+
+    # # Создаем суммирующую строку
+    twenty_svod_all_df.loc['Итого'] = svod_level_df.sum()
+    twenty_svod_all_df.reset_index(inplace=True)
+    twenty_svod_all_df.rename(columns={'index': 'Ответ', 'Числовое_значение_роли': 'Количество'}, inplace=True)
+
+
+
+
+
+
+
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               'Свод по ролям': base_svod_all_df,
+               'Свод по вопросу 13': thirteen_svod_all_df,
+               'Свод по вопросу 17': seventeen_svod_all_df,
+               'Свод по вопросу 20': twenty_svod_all_df,
+
+               }
+
+    lst_level = ['инициатор', 'помощник',
+               'защитник',
+               'жертва', 'наблюдатель']
+    dct_level = dict()
+
+    for level in lst_level:
+        temp_df = base_df[base_df['Роль'] == level]
+        if temp_df.shape[0] != 0:
+            dct_level[level] = temp_df
+
+    out_dct.update(dct_level)
+
+
+
+    return out_dct, part_df
+
+
+
+
+
 
 
 
