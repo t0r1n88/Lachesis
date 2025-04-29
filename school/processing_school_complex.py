@@ -30,7 +30,7 @@ from school_career_guidance.school_nvid import processing_nvid # направл�
 from school.school_leus_sdp import processing_leus_sdp # склонность к девиантности Леус
 from school.school_boykina_shnpo import processing_shnpo # шкала нарушенных потребностей остракизм Бойкина
 from school.school_boykina_shso import processing_shso # шкала субъективного остракизма Бойкина
-from school.school_vbs import processing_vbs # выявление буллинг структуры Норкина
+from school.school_norkina_vbs import processing_vbs # выявление буллинг структуры Норкина
 
 
 
