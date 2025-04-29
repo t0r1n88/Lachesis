@@ -298,7 +298,7 @@ def count_all_scale_pod(df:pd.DataFrame, lst_cols:list, lst_index:list):
         base_df = base_df.join(scale_df)
 
     base_df = base_df.reset_index()
-    base_df.rename(columns={'index':'Уровень потребности'},inplace=True)
+    base_df.rename(columns={'index':'Уровень остракизма'},inplace=True)
     return base_df
 
 

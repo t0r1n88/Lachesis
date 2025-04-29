@@ -200,17 +200,16 @@ def calc_mean(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat):
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         calc_mean_df = pd.pivot_table(df, index=lst_cat,
                                            values=[val_cat],
                                            aggfunc=round_mean)
         calc_mean_df.reset_index(inplace=True)
-        calc_mean_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
         return calc_mean_df
     else:
         calc_mean_df = pd.pivot_table(df, index=lst_cat,
@@ -226,14 +225,14 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
     Функция для создания сводных датафреймов
 
     :param df: датафрейм с данными
-    :param type_calc:тип обработки Класс или Номер_класса
+    :param type_calc:тип обработки Группа или Курс
     :param lst_cat:список колонок по которым будет формироваться свод
     :param val_cat:значение по которому будет формиваться свод
     :param col_cat: колонка по которой будет формироваться свод
     :param lst_cols:список колонок для правильного порядка сводной таблицы
     :return:датафрейм
     """
-    if type_calc == 'Класс':
+    if type_calc == 'Группа':
         count_df = pd.pivot_table(df, index=lst_cat,
                                                  columns=col_cat,
                                                  values=val_cat,
@@ -251,10 +250,6 @@ def calc_count(df:pd.DataFrame,type_calc:str,lst_cat:list,val_cat,col_cat,lst_co
         count_df['% высокий уровень социального остракизма от общего'] = round(
             count_df['высокий уровень социального остракизма'] / count_df['Итого'], 2) * 100
 
-        part_svod_df = count_df.iloc[:-1:]
-        part_svod_df.sort_values(by='Класс', key=lambda x: x.map(sort_name_class), inplace=True)  # сортируем
-        itog_svod_df = count_df.iloc[-1:]
-        count_df = pd.concat([part_svod_df, itog_svod_df])
 
         return count_df
     else:
@@ -384,6 +379,7 @@ def processing_shso(base_df: pd.DataFrame, answers_df: pd.DataFrame):
         part_df['ШСО_Отвержение'] = base_df['Значение_субшкалы_Отвержение']
         part_df['ШСО_Уровень_Отвержение'] = base_df['Уровень_субшкалы_Отвержение']
 
+
         base_df.sort_values(by='Значение_субшкалы_Игнорирование', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
@@ -393,60 +389,60 @@ def processing_shso(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                                                'средний уровень социального остракизма',
                                                'высокий уровень социального остракизма', 'Итого'])
 
-        lst_reindex_group_cols = ['Класс', 'низкий уровень социального остракизма',
+        lst_reindex_group_cols = ['Группа', 'низкий уровень социального остракизма',
                                   'средний уровень социального остракизма', 'высокий уровень социального остракизма',
                                   'Итого']
-        lst_reindex_group_sex_cols = ['Класс', 'Пол', 'низкий уровень социального остракизма',
+        lst_reindex_group_sex_cols = ['Группа', 'Пол', 'низкий уровень социального остракизма',
                                       'средний уровень социального остракизма', 'высокий уровень социального остракизма',
                                       'Итого']
 
-        lst_reindex_course_cols = ['Номер_класса', 'низкий уровень социального остракизма',
+        lst_reindex_course_cols = ['Курс', 'низкий уровень социального остракизма',
                                    'средний уровень социального остракизма', 'высокий уровень социального остракизма',
                                    'Итого']
-        lst_reindex_course_sex_cols = ['Номер_класса', 'Пол', 'низкий уровень социального остракизма',
+        lst_reindex_course_sex_cols = ['Курс', 'Пол', 'низкий уровень социального остракизма',
                                        'средний уровень социального остракизма',
                                        'высокий уровень социального остракизма',
                                        'Итого']
 
         """
-                    Обрабатываем Класс
+                    Обрабатываем Группа
                     """
 
         # Игнорирование
-        svod_group_sop_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Игнорирование')
-        svod_count_group_sop_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Игнорирование',
+        svod_group_sop_df = calc_mean(base_df, 'Группа', ['Группа'], 'Значение_субшкалы_Игнорирование')
+        svod_count_group_sop_df = calc_count(base_df, 'Группа', ['Группа'], 'Значение_субшкалы_Игнорирование',
                                              'Уровень_субшкалы_Игнорирование',
                                              lst_reindex_group_cols)
         # Исключение
-        svod_group_dp_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Исключение')
-        svod_count_group_dp_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Исключение',
+        svod_group_dp_df = calc_mean(base_df, 'Группа', ['Группа'], 'Значение_субшкалы_Исключение')
+        svod_count_group_dp_df = calc_count(base_df, 'Группа', ['Группа'], 'Значение_субшкалы_Исключение',
                                             'Уровень_субшкалы_Исключение',
                                             lst_reindex_group_cols)
 
         # Отвержение
-        svod_group_zp_df = calc_mean(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Отвержение')
-        svod_count_group_zp_df = calc_count(base_df, 'Класс', ['Класс'], 'Значение_субшкалы_Отвержение',
+        svod_group_zp_df = calc_mean(base_df, 'Группа', ['Группа'], 'Значение_субшкалы_Отвержение')
+        svod_count_group_zp_df = calc_count(base_df, 'Группа', ['Группа'], 'Значение_субшкалы_Отвержение',
                                             'Уровень_субшкалы_Отвержение',
                                             lst_reindex_group_cols)
 
         """
-                      Обрабатываем Класс Пол
+                      Обрабатываем Группа Пол
                       """
 
         # Игнорирование
-        svod_group_sex_sop_df = calc_mean(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_субшкалы_Игнорирование')
-        svod_count_group_sex_sop_df = calc_count(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_субшкалы_Игнорирование',
+        svod_group_sex_sop_df = calc_mean(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_субшкалы_Игнорирование')
+        svod_count_group_sex_sop_df = calc_count(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_субшкалы_Игнорирование',
                                                  'Уровень_субшкалы_Игнорирование',
                                                  lst_reindex_group_sex_cols)
         # Исключение
-        svod_group_sex_dp_df = calc_mean(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_субшкалы_Исключение')
-        svod_count_group_sex_dp_df = calc_count(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_субшкалы_Исключение',
+        svod_group_sex_dp_df = calc_mean(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_субшкалы_Исключение')
+        svod_count_group_sex_dp_df = calc_count(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_субшкалы_Исключение',
                                                 'Уровень_субшкалы_Исключение',
                                                 lst_reindex_group_sex_cols)
 
         # Отвержение
-        svod_group_sex_zp_df = calc_mean(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_субшкалы_Отвержение')
-        svod_count_group_sex_zp_df = calc_count(base_df, 'Класс', ['Класс', 'Пол'], 'Значение_субшкалы_Отвержение',
+        svod_group_sex_zp_df = calc_mean(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_субшкалы_Отвержение')
+        svod_count_group_sex_zp_df = calc_count(base_df, 'Группа', ['Группа', 'Пол'], 'Значение_субшкалы_Отвержение',
                                                 'Уровень_субшкалы_Отвержение',
                                                 lst_reindex_group_sex_cols)
 
@@ -455,19 +451,19 @@ def processing_shso(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                      """
 
         # Игнорирование
-        svod_course_sop_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Игнорирование')
-        svod_count_course_sop_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Игнорирование',
+        svod_course_sop_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_субшкалы_Игнорирование')
+        svod_count_course_sop_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_субшкалы_Игнорирование',
                                               'Уровень_субшкалы_Игнорирование',
                                               lst_reindex_course_cols)
         # Исключение
-        svod_course_dp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Исключение')
-        svod_count_course_dp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Исключение',
+        svod_course_dp_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_субшкалы_Исключение')
+        svod_count_course_dp_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_субшкалы_Исключение',
                                              'Уровень_субшкалы_Исключение',
                                              lst_reindex_course_cols)
 
         # Отвержение
-        svod_course_zp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Отвержение')
-        svod_count_course_zp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса'], 'Значение_субшкалы_Отвержение',
+        svod_course_zp_df = calc_mean(base_df, 'Курс', ['Курс'], 'Значение_субшкалы_Отвержение')
+        svod_count_course_zp_df = calc_count(base_df, 'Курс', ['Курс'], 'Значение_субшкалы_Отвержение',
                                              'Уровень_субшкалы_Отвержение',
                                              lst_reindex_course_cols)
 
@@ -476,43 +472,43 @@ def processing_shso(base_df: pd.DataFrame, answers_df: pd.DataFrame):
                      """
 
         # Игнорирование
-        svod_course_sex_sop_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_course_sex_sop_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'],
                                            'Значение_субшкалы_Игнорирование')
-        svod_count_course_sex_sop_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_count_course_sex_sop_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'],
                                                   'Значение_субшкалы_Игнорирование',
                                                   'Уровень_субшкалы_Игнорирование',
                                                   lst_reindex_course_sex_cols)
         # Исключение
-        svod_course_sex_dp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_course_sex_dp_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'],
                                           'Значение_субшкалы_Исключение')
-        svod_count_course_sex_dp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_count_course_sex_dp_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'],
                                                  'Значение_субшкалы_Исключение',
                                                  'Уровень_субшкалы_Исключение',
                                                  lst_reindex_course_sex_cols)
 
         # Отвержение
-        svod_course_sex_zp_df = calc_mean(base_df, 'Номер_класса', ['Номер_класса', 'Пол'], 'Значение_субшкалы_Отвержение')
-        svod_count_course_sex_zp_df = calc_count(base_df, 'Номер_класса', ['Номер_класса', 'Пол'],
+        svod_course_sex_zp_df = calc_mean(base_df, 'Курс', ['Курс', 'Пол'], 'Значение_субшкалы_Отвержение')
+        svod_count_course_sex_zp_df = calc_count(base_df, 'Курс', ['Курс', 'Пол'],
                                                  'Значение_субшкалы_Отвержение', 'Уровень_субшкалы_Отвержение',
                                                  lst_reindex_course_sex_cols)
 
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                    'Общий свод': svod_all_df,
-                   'Среднее Класс Иг': svod_group_sop_df, 'Количество Класс Иг': svod_count_group_sop_df,
-                   'Среднее Класс Ис': svod_group_dp_df, 'Количество Класс Ис': svod_count_group_dp_df,
-                   'Среднее Класс От': svod_group_zp_df, 'Количество Класс От': svod_count_group_zp_df,
+                   'Среднее Группа Иг': svod_group_sop_df, 'Количество Группа Иг': svod_count_group_sop_df,
+                   'Среднее Группа Ис': svod_group_dp_df, 'Количество Группа Ис': svod_count_group_dp_df,
+                   'Среднее Группа От': svod_group_zp_df, 'Количество Группа От': svod_count_group_zp_df,
 
-                   'Среднее Класс Пол Иг': svod_group_sex_sop_df, 'Количество Класс Пол Иг': svod_count_group_sex_sop_df,
-                   'Среднее Класс Пол Ис': svod_group_sex_dp_df, 'Количество Класс Пол Ис': svod_count_group_sex_dp_df,
-                   'Среднее Класс Пол От': svod_group_sex_zp_df, 'Количество Класс Пол От': svod_count_group_sex_zp_df,
+                   'Среднее Группа Пол Иг': svod_group_sex_sop_df, 'Количество Группа Пол Иг': svod_count_group_sex_sop_df,
+                   'Среднее Группа Пол Ис': svod_group_sex_dp_df, 'Количество Группа Пол Ис': svod_count_group_sex_dp_df,
+                   'Среднее Группа Пол От': svod_group_sex_zp_df, 'Количество Группа Пол От': svod_count_group_sex_zp_df,
 
-                   'Среднее Номер_класса Иг': svod_course_sop_df, 'Количество Номер_класса Иг': svod_count_course_sop_df,
-                   'Среднее Номер_класса Ис': svod_course_dp_df, 'Количество Номер_класса Ис': svod_count_course_dp_df,
-                   'Среднее Номер_класса От': svod_course_zp_df, 'Количество Номер_класса От': svod_count_course_zp_df,
+                   'Среднее Курс Иг': svod_course_sop_df, 'Количество Курс Иг': svod_count_course_sop_df,
+                   'Среднее Курс Ис': svod_course_dp_df, 'Количество Курс Ис': svod_count_course_dp_df,
+                   'Среднее Курс От': svod_course_zp_df, 'Количество Курс От': svod_count_course_zp_df,
 
-                   'Среднее Номер_класса Пол Иг': svod_course_sex_sop_df,'Количество Номер_класса Пол Иг': svod_count_course_sex_sop_df,
-                   'Среднее Номер_класса Пол Ис': svod_course_sex_dp_df,'Количество Номер_класса Пол Ис': svod_count_course_sex_dp_df,
-                   'Среднее Номер_класса Пол От': svod_course_sex_zp_df,'Количество Номер_класса Пол От': svod_count_course_sex_zp_df,
+                   'Среднее Курс Пол Иг': svod_course_sex_sop_df,'Количество Курс Пол Иг': svod_count_course_sex_sop_df,
+                   'Среднее Курс Пол Ис': svod_course_sex_dp_df,'Количество Курс Пол Ис': svod_count_course_sex_dp_df,
+                   'Среднее Курс Пол От': svod_course_sex_zp_df,'Количество Курс Пол От': svod_count_course_sex_zp_df,
                    }
 
         return out_dct, part_df
