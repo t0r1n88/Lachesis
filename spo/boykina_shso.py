@@ -150,7 +150,7 @@ def calc_sub_value_ot(row):
                 elif value == 1:
                     value_reverse += 5
 
-    return round((value_forward + value_reverse) /5,1)
+    return round((value_forward + value_reverse) /4,1)
 
 def calc_level_sub_ot(value):
     """
