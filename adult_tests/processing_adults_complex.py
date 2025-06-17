@@ -19,20 +19,27 @@ class NotSameSize(Exception):
     """
     pass
 
-class NotRequiredColumns(Exception):
+class NotCorrectParamsTests(Exception):
     """
-    Исключение для проверки есть ли колонки Курс, Группа, Пол в файле с ответами
+    Исключение для проверки есть ли хотя бы один реализованный тест
+    """
+    pass
+
+class BadSvodCols(Exception):
+    """
+    Исключение для проверки правильности введенной строки с перечислением колонок по которым нужно сделать свод
     """
     pass
 
 
-def generate_result_adults(params_adults: str, data_adults: str, end_folder: str, threshold_base: int):
+def generate_result_adults(params_adults: str, data_adults: str, end_folder: str, threshold_base: int,svod_cols:str):
     """
     Функция для генерации результатов комплексного теста для взрослых
     :param params_adults: какие тесты используются и в каком порядке
     :param data_adults: файл с данными
     :param end_folder: конечная папка
     :param threshold_base: количество колонок с вводными данными
+    :param svod_cols: строка с перечислением колонок по которым нужно сделать свод
     :return:
     """
     try:
@@ -61,6 +68,9 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         params_df.dropna(inplace=True)  # удаляем пустые строки
         lst_used_test = params_df.iloc[:, 0].tolist()  # получаем список
         lst_used_test = [value for value in lst_used_test if value in dct_tests.keys()]  # отбираем только те что прописаны
+
+        if len(lst_used_test) == 0:
+            raise NotCorrectParamsTests
 
         # создаем счетчик обработанных колонок
         threshold_finshed = threshold_base
@@ -182,6 +192,9 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
     except NotSameSize:
         messagebox.showerror('Лахеcис',
                                  f'Не совпадает количество колонок с ответами на тесты с эталонным количеством. В файле {df.shape[1]} колонок а должно быть {check_size_df+threshold_base}.')
+    except NotCorrectParamsTests:
+        messagebox.showerror('Лахеcис',
+                                 f'В файле с параметрами тестирования (список исполь).')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')
@@ -195,7 +208,8 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 2
+    main_svod_cols = '1,2'
 
-    generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols)
+    generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
     print('Lindy Booth')
