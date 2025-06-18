@@ -56,7 +56,7 @@ def check_svod_cols(df:pd.DataFrame,str_svod_cols:str,threshold:int):
                 elif value == 0:
                     raise NotCorrectSvodCols
                 else:
-                    return [value]
+                    return [df.columns[value-1]]
             elif len(result) == 2:
                 for idx,value in enumerate(result):
                     value = int(value)
@@ -65,7 +65,7 @@ def check_svod_cols(df:pd.DataFrame,str_svod_cols:str,threshold:int):
                     elif value == 0:
                         raise NotCorrectSvodCols
                     else:
-                        result[idx] = value
+                        result[idx] = df.columns[value-1]
                 return result
             else:
                 raise NotCorrectSvodCols
@@ -261,7 +261,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = ''
+    main_svod_cols = '1'
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 

@@ -1,5 +1,6 @@
 # Скрипт для обработки результатов теста Профессиональное выгорание методика Н. Е. Водопьяновой на основе модели К. Маслач и С. Джексон
 import pandas as pd
+import re
 
 
 
@@ -162,6 +163,68 @@ def calc_level_burnout(row:pd.Series):
 
 
 
+def calc_count_level_vpbp(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% уровень выгорания в пределах нормы от общего'] = round(
+        count_df['уровень выгорания в пределах нормы'] / count_df['Итого'], 2) * 100
+    count_df['% пограничное выгорание от общего'] = round(
+        count_df['пограничное выгорание'] / count_df['Итого'], 2) * 100
+    count_df['% высокий уровень выгорания от общего'] = round(
+        count_df['высокий уровень выгорания'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+def calc_count_level_sub_vpbp(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по субшкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% низкий уровень от общего'] = round(
+        count_df['низкий уровень'] / count_df['Итого'], 2) * 100
+    count_df['% средний уровень от общего'] = round(
+        count_df['средний уровень'] / count_df['Итого'], 2) * 100
+    count_df['% высокий уровень от общего'] = round(
+        count_df['высокий уровень'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+
+
+
+
 
 
 
@@ -298,14 +361,9 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
     base_svod_all_df.loc['Итого'] = svod_level_df.sum()
     base_svod_all_df.reset_index(inplace=True)
     base_svod_all_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'}, inplace=True)
-
-
-
-
     # формируем основной словарь
     out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-               'Свод общий уровень': base_svod_all_df,
-
+               'Свод Общий': base_svod_all_df,
                }
 
     lst_level = ['уровень выгорания в пределах нормы', 'пограничное выгорание',
@@ -321,11 +379,145 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
 
     out_dct.update(dct_level)
 
+    # Свод по уровням субшкалы Эмоциональное истощение всего в процентном соотношении
+    base_svod_em_df = pd.DataFrame(
+        index=['низкий уровень', 'средний уровень',
+               'высокий уровень'])
+
+    svod_level_em_df = pd.pivot_table(base_df, index='Уровень_субшкалы_Эмоциональное_истощение',
+                                   values='Значение_субшкалы_Эмоциональное_истощение',
+                                   aggfunc='count')
+
+    svod_level_em_df['% от общего'] = round(
+        svod_level_em_df['Значение_субшкалы_Эмоциональное_истощение'] / svod_level_em_df[
+            'Значение_субшкалы_Эмоциональное_истощение'].sum(), 3) * 100
+
+    base_svod_em_df = base_svod_em_df.join(svod_level_em_df)
+
+    # # Создаем суммирующую строку
+    base_svod_em_df.loc['Итого'] = svod_level_em_df.sum()
+    base_svod_em_df.reset_index(inplace=True)
+    base_svod_em_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'},
+                            inplace=True)
+
+    # Свод по уровням субшкалы Деперсонализация всего в процентном соотношении
+    base_svod_depers_df = pd.DataFrame(
+        index=['низкий уровень', 'средний уровень',
+               'высокий уровень'])
+
+    svod_level_depers_df = pd.pivot_table(base_df, index='Уровень_субшкалы_Деперсонализация',
+                                   values='Значение_субшкалы_Эмоциональное_истощение',
+                                   aggfunc='count')
+
+    svod_level_depers_df['% от общего'] = round(
+        svod_level_depers_df['Значение_субшкалы_Эмоциональное_истощение'] / svod_level_depers_df[
+            'Значение_субшкалы_Эмоциональное_истощение'].sum(), 3) * 100
+
+    base_svod_depers_df = base_svod_depers_df.join(svod_level_depers_df)
+
+    # # Создаем суммирующую строку
+    base_svod_depers_df.loc['Итого'] = svod_level_depers_df.sum()
+    base_svod_depers_df.reset_index(inplace=True)
+    base_svod_depers_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'},
+                            inplace=True)
+
+    # Свод по уровням субшкалы Редукция_персональных_достижений всего в процентном соотношении
+    base_svod_reduc_df = pd.DataFrame(
+        index=['низкий уровень', 'средний уровень',
+               'высокий уровень'])
+
+    svod_level_reduc_df = pd.pivot_table(base_df, index='Уровень_субшкалы_Редукция_персональных_достижений',
+                                   values='Значение_субшкалы_Эмоциональное_истощение',
+                                   aggfunc='count')
+
+    svod_level_reduc_df['% от общего'] = round(
+        svod_level_reduc_df['Значение_субшкалы_Эмоциональное_истощение'] / svod_level_reduc_df[
+            'Значение_субшкалы_Эмоциональное_истощение'].sum(), 3) * 100
+
+    base_svod_reduc_df = base_svod_reduc_df.join(svod_level_reduc_df)
+
+    # # Создаем суммирующую строку
+    base_svod_reduc_df.loc['Итого'] = svod_level_reduc_df.sum()
+    base_svod_reduc_df.reset_index(inplace=True)
+    base_svod_reduc_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'},
+                            inplace=True)
+
+    out_dct.update({'Свод ЭИ':base_svod_em_df,'Свод ДП':base_svod_depers_df,'Свод РПД':base_svod_reduc_df})
+
+    """
+    Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+    """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+
+    elif len(lst_svod_cols) == 1:
+        lst_reindex_mail_level_cols = [lst_svod_cols[0],'уровень выгорания в пределах нормы', 'пограничное выгорание',
+               'высокий уровень выгорания','Итого'] # Основная шкала
+
+        lst_reindex_sub_level_cols = [lst_svod_cols[0],'низкий уровень', 'средний уровень',
+               'высокий уровень','Итого'] # Субшкалы
+
+        # основная шкала
+        svod_count_one_level_df = calc_count_level_vpbp(base_df, lst_svod_cols, 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_выгорания',
+                                                        lst_reindex_mail_level_cols)
+
+        # Субшкалы
+        svod_count_one_level_em_df = calc_count_level_sub_vpbp(base_df, lst_svod_cols, 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_субшкалы_Эмоциональное_истощение',
+                                                        lst_reindex_sub_level_cols)
+
+        svod_count_one_level_depers_df = calc_count_level_sub_vpbp(base_df, lst_svod_cols, 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_субшкалы_Деперсонализация',
+                                                        lst_reindex_sub_level_cols)
+
+        svod_count_one_level_reduc_df = calc_count_level_sub_vpbp(base_df, lst_svod_cols, 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_субшкалы_Редукция_персональных_достижений',
+                                                        lst_reindex_sub_level_cols)
 
 
 
 
-    return out_dct, part_df
+        # очищаем название колонки по которой делали свод
+        name_one = lst_svod_cols[0]
+        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        name_one = name_one[:15]
+
+
+
+        out_dct.update({f'Свод {name_one}':svod_count_one_level_df,
+                        f'Свод ЭИ {name_one}':svod_count_one_level_em_df,
+                        f'Свод ДП {name_one}':svod_count_one_level_depers_df,
+                        f'Свод РПД {name_one}':svod_count_one_level_reduc_df})
+
+
+
+        return out_dct, part_df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
