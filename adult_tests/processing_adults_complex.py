@@ -92,14 +92,14 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        dct_tests = {'Профессиональное выгорание Водопьянова': (processing_vod_prof_burnout, 22),
+        dct_tests = {'Профессиональное выгорание Водопьянова педагоги': (processing_vod_prof_burnout, 22),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
-        dct_out_name_tests = {'Профессиональное выгорание Водопьянова': 'Профессиональное выгорание Водопьянова',
+        dct_out_name_tests = {'Профессиональное выгорание Водопьянова педагоги': 'Профессиональное выгорание Водопьянова педагоги',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
-        lst_alert_tests = ['Профессиональное выгорание Водопьянова']
+        lst_alert_tests = ['Профессиональное выгорание Водопьянова педагоги']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
@@ -197,11 +197,10 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
             threshold_finshed += dct_tests[name_test][1]
 
         # Сохраняем в удобном виде
-        main_itog_df.sort_values(by='Группа',inplace=True) # сортируем
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
-            set_alert_value = ['высокий уровень'] # особое внимание
-            set_attention_value = ['умеренная депрессия','безнадежность умеренная','Высокий уровень тревожности','субдепрессивное состояние или маскированная депрессия','легкая степень социально-психологической дезадаптации'] # обратить внимание
+            set_alert_value = ['высокий уровень выгорания'] # особое внимание
+            set_attention_value = ['пограничное выгорание'] # обратить внимание
 
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
