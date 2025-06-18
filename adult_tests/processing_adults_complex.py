@@ -92,14 +92,14 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        dct_tests = {'Профессиональное выгорание Водопьянова педагоги': (processing_vod_prof_burnout, 22),
+        dct_tests = {'Профессиональное выгорание педагогов Водопьянова': (processing_vod_prof_burnout, 22),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
-        dct_out_name_tests = {'Профессиональное выгорание Водопьянова педагоги': 'Профессиональное выгорание Водопьянова педагоги',
+        dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
-        lst_alert_tests = ['Профессиональное выгорание Водопьянова педагоги']
+        lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
@@ -257,8 +257,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                                              index=lst_svod_cols,
                                              values=main_itog_df.columns[-1],
                                              aggfunc='count',
-                                             margins_name='Итого',
-                                             margins=True)
+                                             )
 
                 all_svod_df = all_svod_df.reset_index()
                 all_svod_df.rename(columns={main_itog_df.columns[-1]: 'Количество прошедших тестирование'},inplace=True)
