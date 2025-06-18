@@ -209,10 +209,66 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
             # # Создаем сводную таблицу по группам
             # svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол':'count'}).rename(columns={'Пол':'Количество прошедших'})
             # svod_group_df = svod_group_df.reset_index()
+            # Сохраняем в зависимости от количества сводных колонок
+            if len(lst_svod_cols) == 0:
+                temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df}, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/Общий результат.xlsx')
 
-            temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df}, write_index=False)
-            temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
-            temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+            elif len(lst_svod_cols) == 1:
+                main_itog_df.sort_values(by=lst_svod_cols[0], inplace=True)  # сортируем
+                svod_one_df = main_itog_df.groupby(by=lst_svod_cols[0]).agg({main_itog_df.columns[-1]:'count'}).rename(columns={main_itog_df.columns[-1]:'Количество прошедших тестирование'})
+                svod_one_df = svod_one_df.reset_index()
+                svod_one_df.sort_values(by='Количество прошедших тестирование',ascending=False,inplace=True)
+
+                # очищаем название колонки по которой делали свод
+                name_one = lst_svod_cols[0]
+                name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+                name_one = name_one[:20]
+
+                temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df,
+                                             name_one:svod_one_df}, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+
+            elif len(lst_svod_cols) == 2:
+                main_itog_df.sort_values(by=lst_svod_cols[0], inplace=True)  # сортируем
+                svod_one_df = main_itog_df.groupby(by=lst_svod_cols[0]).agg({main_itog_df.columns[-1]:'count'}).rename(columns={main_itog_df.columns[-1]:'Количество прошедших тестирование'})
+                svod_one_df = svod_one_df.reset_index()
+                svod_one_df.sort_values(by='Количество прошедших тестирование',ascending=False,inplace=True)
+
+                # очищаем название колонки по которой делали свод
+                name_one = lst_svod_cols[0]
+                name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+                name_one = name_one[:20]
+
+                # Делаем по второй колонке
+                svod_two_df = main_itog_df.groupby(by=lst_svod_cols[1]).agg({main_itog_df.columns[-1]: 'count'}).rename(
+                    columns={main_itog_df.columns[-1]: 'Количество прошедших тестирование'})
+                svod_two_df = svod_two_df.reset_index()
+                svod_two_df.sort_values(by='Количество прошедших тестирование', ascending=False, inplace=True)
+
+                # очищаем название колонки по которой делали свод
+                name_two = lst_svod_cols[1]
+                name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
+                name_two = name_two[:20]
+
+                all_svod_df = pd.pivot_table(data=main_itog_df,
+                                             index=lst_svod_cols,
+                                             values=main_itog_df.columns[-1],
+                                             aggfunc='count',
+                                             margins_name='Итого',
+                                             margins=True)
+
+                all_svod_df = all_svod_df.reset_index()
+                all_svod_df.rename(columns={main_itog_df.columns[-1]: 'Количество прошедших тестирование'},inplace=True)
+
+                temp_wb = write_df_to_excel(
+                    {'Свод по всем тестам': main_itog_df, 'Особое внимание': alert_df, 'Зона риска': attention_df,
+                     name_one: svod_one_df,name_two:svod_two_df,f'{name_one[:12]}_{name_two[:12]}':all_svod_df}, write_index=False)
+                temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
+                temp_wb.save(f'{end_folder}/Общий результат.xlsx')
+
         else:
             # Если есть профориентационные тесты, то сохраняем через пандас
             if len(lst_check_career_tests) != 0:
@@ -261,7 +317,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1'
+    main_svod_cols = '1,2'
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 

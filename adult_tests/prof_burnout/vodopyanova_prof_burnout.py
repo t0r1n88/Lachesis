@@ -472,8 +472,6 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
                                                         lst_reindex_sub_level_cols)
 
 
-
-
         # очищаем название колонки по которой делали свод
         name_one = lst_svod_cols[0]
         name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
@@ -489,6 +487,51 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
 
 
         return out_dct, part_df
+
+    elif len(lst_svod_cols) == 2:
+        lst_reindex_mail_level_cols = [lst_svod_cols[0],lst_svod_cols[1], 'уровень выгорания в пределах нормы', 'пограничное выгорание',
+                                       'высокий уровень выгорания', 'Итого']  # Основная шкала
+
+        lst_reindex_sub_level_cols = [lst_svod_cols[0],lst_svod_cols[1], 'низкий уровень', 'средний уровень',
+                                      'высокий уровень', 'Итого']  # Субшкалы
+
+        # основная шкала
+        svod_count_two_level_df = calc_count_level_vpbp(base_df, lst_svod_cols,
+                                                        'Значение_субшкалы_Эмоциональное_истощение',
+                                                        'Уровень_выгорания',
+                                                        lst_reindex_mail_level_cols)
+
+        # Субшкалы
+        svod_count_two_level_em_df = calc_count_level_sub_vpbp(base_df, lst_svod_cols,
+                                                               'Значение_субшкалы_Эмоциональное_истощение',
+                                                               'Уровень_субшкалы_Эмоциональное_истощение',
+                                                               lst_reindex_sub_level_cols)
+
+        svod_count_two_level_depers_df = calc_count_level_sub_vpbp(base_df, lst_svod_cols,
+                                                                   'Значение_субшкалы_Эмоциональное_истощение',
+                                                                   'Уровень_субшкалы_Деперсонализация',
+                                                                   lst_reindex_sub_level_cols)
+
+        svod_count_two_level_reduc_df = calc_count_level_sub_vpbp(base_df, lst_svod_cols,
+                                                                  'Значение_субшкалы_Эмоциональное_истощение',
+                                                                  'Уровень_субшкалы_Редукция_персональных_достижений',
+                                                                  lst_reindex_sub_level_cols)
+
+        # очищаем название колонки по которой делали свод
+        name_one = lst_svod_cols[0]
+        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+
+        name_two = lst_svod_cols[1]
+        name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
+
+        out_dct.update({f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
+                        f'Свод ЭИ {name_one[:10]}_{name_two[:10]}': svod_count_two_level_em_df,
+                        f'Свод ДП {name_one[:10]}_{name_two[:10]}': svod_count_two_level_depers_df,
+                        f'Свод РПД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_reduc_df})
+
+        return out_dct, part_df
+
+
 
 
 
