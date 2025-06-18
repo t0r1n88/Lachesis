@@ -25,11 +25,56 @@ class NotCorrectParamsTests(Exception):
     """
     pass
 
+class NotCorrectSvodCols(Exception):
+    """
+    Исключение для проверки корректности строки с колонками по которым нужно сделать свод
+    """
+    pass
+
 class BadSvodCols(Exception):
     """
     Исключение для проверки правильности введенной строки с перечислением колонок по которым нужно сделать свод
     """
     pass
+
+
+def check_svod_cols(df:pd.DataFrame,str_svod_cols:str,threshold:int):
+    """
+    Фцнкция для проверки корректности
+    :param df: датафрейм с анкетными данными
+    :param str_svod_cols: строка с порядоквыми номерами
+    :param threshold: количество колонок в анкетной части
+    :return: список
+    """
+    try:
+        result = re.findall(r'\d+',str_svod_cols)
+        if result:
+            if len(result) == 1:
+                value = int(result[0])
+                if value > threshold:
+                    raise NotCorrectSvodCols
+                elif value == 0:
+                    raise NotCorrectSvodCols
+                else:
+                    return [value]
+            elif len(result) == 2:
+                for idx,value in enumerate(result):
+                    value = int(value)
+                    if value > threshold:
+                        raise NotCorrectSvodCols
+                    elif value == 0:
+                        raise NotCorrectSvodCols
+                    else:
+                        result[idx] = value
+                return result
+            else:
+                raise NotCorrectSvodCols
+
+        else:
+            return []
+    except:
+        raise NotCorrectSvodCols
+
 
 
 def generate_result_adults(params_adults: str, data_adults: str, end_folder: str, threshold_base: int,svod_cols:str):
@@ -96,6 +141,9 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         # очищаем от всех символов кроме букв цифр
         base_df.columns = [re.sub(r'[^_\d\w]', '', column) for column in base_df.columns]
 
+        # проверяем и обрабатываем строку с колонками по которым нужно делать свод
+        lst_svod_cols = check_svod_cols(base_df,svod_cols,threshold_base)
+
         # Создаем копию датафрейма с анкетными данными для передачи в функцию
         base_df_for_func = base_df.copy()
         # Создаем копию анкетных данных для создания свода по всем тестам
@@ -124,7 +172,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
             # получаем колонки относящиеся к тесту
             temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
-            temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df)
+            temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df,lst_svod_cols)
 
             base_df_for_func = pd.concat([base_df_for_func, temp_dct['Списочный результат']],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
@@ -194,7 +242,13 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                                  f'Не совпадает количество колонок с ответами на тесты с эталонным количеством. В файле {df.shape[1]} колонок а должно быть {check_size_df+threshold_base}.')
     except NotCorrectParamsTests:
         messagebox.showerror('Лахеcис',
-                                 f'В файле с параметрами тестирования (список исполь).')
+                                 f'В файле с параметрами тестирования (в котором вы указали использованные тесты) не найдено ни одного правильного названия теста.\nПроверьте написание названий тестов.')
+
+    except NotCorrectSvodCols:
+        messagebox.showerror('Лахеcис',
+                                 f'Проверьте правильность написания порядковых номеров колонок по которым вы хотите сделать свод.\nПравильный формат это не более двух чисел разделенных запятой, начиная с цифры 1, '
+                                 f'например 1,3 или 2 а если вам не нужны своды то оставьте это поле пустым.\n'
+                                 f'Проверьте числа которые вы указали потому что, порядковый номер колонки не может превышать количество колонок в анкетной части вашего файла с ответами на тест.')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')
@@ -207,8 +261,8 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 2
-    main_svod_cols = '1,2'
+    main_quantity_descr_cols = 3
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
