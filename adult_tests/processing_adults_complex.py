@@ -3,6 +3,7 @@
 """
 # Тесты Профессиональное выгорание
 from prof_burnout.vodopyanova_prof_burnout import processing_vod_prof_burnout # Профессиональное выгорание Водопьянова
+from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Эмоциональное выгорание Бойко
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention,sort_name_class # функции для создания итогового файла
 
@@ -93,13 +94,15 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         current_time = time.strftime('%H_%M_%S', t)
 
         dct_tests = {'Профессиональное выгорание педагогов Водопьянова': (processing_vod_prof_burnout, 22),
+                     'Эмоциональное выгорание Бойко Ильин': (processing_boiko_emotional_burnout, 35),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
+                              'Эмоциональное выгорание Бойко Ильин': 'Эмоциональное выгорание Бойко Ильин',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
-        lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова']
+        lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
