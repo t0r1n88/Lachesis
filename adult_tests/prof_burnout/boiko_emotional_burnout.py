@@ -234,6 +234,88 @@ def calc_level_attrition(value):
         return 'имеется выгорание'
 
 
+def calc_count_main_level(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% отсутствие выгорания от общего'] = round(
+        count_df['отсутствие выгорания'] / count_df['Итого'], 2) * 100
+    count_df['% симптомы начинающегося выгорания от общего'] = round(
+        count_df['симптомы начинающегося выгорания'] / count_df['Итого'], 2) * 100
+    count_df['% начинающееся выгорание от общего'] = round(
+        count_df['начинающееся выгорание'] / count_df['Итого'], 2) * 100
+    count_df['% симптомы выгорания от общего'] = round(
+        count_df['симптомы выгорания'] / count_df['Итого'], 2) * 100
+    count_df['% имеется выгорание'] = round(
+        count_df['имеется выгорание'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+def calc_count_level_sub(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по субшкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% не сложившийся симптом от общего'] = round(
+        count_df['не сложившийся симптом'] / count_df['Итого'], 2) * 100
+    count_df['% складывающийся симптом от общего'] = round(
+        count_df['складывающийся симптом'] / count_df['Итого'], 2) * 100
+    count_df['% сложившийся симптом от общего'] = round(
+        count_df['сложившийся симптом'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+
+def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                       values=val_cat,
+                                       aggfunc=round_mean)
+    calc_mean_df.reset_index(inplace=True)
+    calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
+    return calc_mean_df
+
+
+
+
 
 def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
     """
@@ -453,6 +535,161 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
         """
     if len(lst_svod_cols) == 0:
         return out_dct, part_df
+
+    elif len(lst_svod_cols) == 1:
+        lst_reindex_main_level_cols = [lst_svod_cols[0], 'отсутствие выгорания', 'симптомы начинающегося выгорания',
+             'начинающееся выгорание', 'симптомы выгорания', 'имеется выгорание', 'Итого']  # Основная шкала
+
+        lst_reindex_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом', 'складывающийся симптом', 'сложившийся симптом', 'Итого']  # Симптомы
+
+        # основная шкала
+        svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
+                                                        'Значение_уровня_выгорания',
+                                                        'Уровень_выгорания',
+                                                        lst_reindex_main_level_cols)
+
+        # Симптомы
+        svod_count_one_level_dissatisfaction_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                               'Значение_симптома_Неудовлетворенность_собой',
+                                                               'Уровень_симптома_Неудовлетворенность_собой',
+                                                          lst_reindex_sub_level_cols)
+
+        svod_count_one_level_trapped_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                   'Значение_симптома_Загнанность_в_клетку',
+                                                                   'Уровень_симптома_Загнанность_в_клетку',
+                                                              lst_reindex_sub_level_cols)
+
+        svod_count_one_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                                  'Уровень_симптома_Редукция_профессиональных_обязанностей',
+                                                             lst_reindex_sub_level_cols)
+        svod_count_one_level_detachment_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                  'Значение_симптома_Эмоциональная_отстраненность',
+                                                                  'Уровень_симптома_Эмоциональная_отстраненность',
+                                                             lst_reindex_sub_level_cols)
+        svod_count_one_level_self_detachment_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                  'Значение_симптома_Личностная_отстраненность',
+                                                                  'Уровень_симптома_Личностная_отстраненность',
+                                                             lst_reindex_sub_level_cols)
+
+        # очищаем название колонки по которой делали свод
+        name_one = lst_svod_cols[0]
+        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        name_one = name_one[:15]
+
+        # Считаем среднее по субшкалам
+        svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
+        svod_mean_dissatisfaction_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Неудовлетворенность_собой')
+        svod_mean_trapped_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Загнанность_в_клетку')
+        svod_mean_reduc_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Редукция_профессиональных_обязанностей')
+        svod_mean_detachment_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Эмоциональная_отстраненность')
+        svod_mean_self_detachment_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Личностная_отстраненность')
+
+        out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+
+                        f'Свод НС {name_one}': svod_count_one_level_dissatisfaction_df,
+                        f'Свод ЗК {name_one}': svod_count_one_level_trapped_df,
+                        f'Свод РПО {name_one}': svod_count_one_level_reduc_df,
+                        f'Свод ЭО {name_one}': svod_count_one_level_detachment_df,
+                        f'Свод ЛО {name_one}': svod_count_one_level_self_detachment_df,
+
+                        f'Ср. {name_one}': svod_mean_df,
+                        f'Ср. НС {name_one}': svod_mean_dissatisfaction_df,
+                        f'Ср. ЗК {name_one}': svod_mean_trapped_df,
+                        f'Ср. РПО {name_one}': svod_mean_reduc_df,
+                        f'Ср. ЭО {name_one}': svod_mean_detachment_df,
+                        f'Ср. ЛО {name_one}': svod_mean_self_detachment_df})
+
+        return out_dct, part_df
+
+    elif len(lst_svod_cols) == 2:
+        lst_reindex_main_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'отсутствие выгорания', 'симптомы начинающегося выгорания',
+             'начинающееся выгорание', 'симптомы выгорания', 'имеется выгорание', 'Итого']  # Основная шкала
+
+        lst_reindex_sub_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'не сложившийся симптом', 'складывающийся симптом', 'сложившийся симптом', 'Итого']  # Субшкалы
+
+        # первая колонка
+        lst_reindex_first_main_level_cols = [lst_svod_cols[0], 'отсутствие выгорания', 'симптомы начинающегося выгорания',
+             'начинающееся выгорание', 'симптомы выгорания', 'имеется выгорание', 'Итого']  # Основная шкала
+
+        lst_reindex_first_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом', 'складывающийся симптом', 'сложившийся симптом', 'Итого']  # Субшкалы
+
+        # вторая колонка
+        lst_reindex_second_main_level_cols = [lst_svod_cols[1], 'отсутствие выгорания', 'симптомы начинающегося выгорания',
+             'начинающееся выгорание', 'симптомы выгорания', 'имеется выгорание', 'Итого']  # Основная шкала
+
+        lst_reindex_second_sub_level_cols = [lst_svod_cols[1], 'не сложившийся симптом', 'складывающийся симптом', 'сложившийся симптом', 'Итого']  # Субшкалы
+
+        # основная шкала
+        svod_count_two_level_df = calc_count_main_level(base_df, lst_svod_cols,
+                                                        'Значение_уровня_выгорания',
+                                                        'Уровень_выгорания',
+                                                        lst_reindex_main_level_cols)
+
+        # Субшкалы
+        svod_count_two_level_dissatisfaction_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                               'Значение_симптома_Неудовлетворенность_собой',
+                                                               'Уровень_симптома_Неудовлетворенность_собой',
+                                                               lst_reindex_sub_level_cols)
+
+        svod_count_two_level_trapped_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                   'Значение_симптома_Загнанность_в_клетку',
+                                                                   'Уровень_симптома_Загнанность_в_клетку',
+                                                                   lst_reindex_sub_level_cols)
+
+        svod_count_two_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                                  'Уровень_симптома_Редукция_профессиональных_обязанностей',
+                                                                  lst_reindex_sub_level_cols)
+        svod_count_two_level_detachment_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                  'Значение_симптома_Эмоциональная_отстраненность',
+                                                                  'Уровень_симптома_Эмоциональная_отстраненность',
+                                                                  lst_reindex_sub_level_cols)
+        svod_count_two_level_self_detachment_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                  'Значение_симптома_Личностная_отстраненность',
+                                                                  'Уровень_симптома_Личностная_отстраненность',
+                                                                  lst_reindex_sub_level_cols)
+
+        # Считаем среднее по субшкалам
+        svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_уровня_выгорания')
+        svod_mean_dissatisfaction_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Неудовлетворенность_собой')
+        svod_mean_trapped_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Загнанность_в_клетку')
+        svod_mean_reduc_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Редукция_профессиональных_обязанностей')
+        svod_mean_detachment_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Эмоциональная_отстраненность')
+        svod_mean_self_detachment_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Личностная_отстраненность')
+
+
+
+
+
+        # очищаем название колонки по которой делали свод
+        name_one = lst_svod_cols[0]
+        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        name_one = name_one[:15]
+
+        name_two = lst_svod_cols[1]
+        name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
+        name_two = name_two[:15]
+
+        out_dct.update({f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
+                        f'Свод НС {name_one[:10]}_{name_two[:10]}': svod_count_two_level_dissatisfaction_df,
+                        f'Свод ЗК {name_one[:10]}_{name_two[:10]}': svod_count_two_level_trapped_df,
+                        f'Свод РПО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_reduc_df,
+                        f'Свод ЭО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_detachment_df,
+                        f'Свод ЛО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_self_detachment_df,
+
+                        f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df,
+                        f'Ср. НС {name_one[:10]}_{name_two[:10]}': svod_mean_dissatisfaction_df,
+                        f'Ср. ЗК {name_one[:10]}_{name_two[:10]}': svod_mean_trapped_df,
+                        f'Ср. РПО {name_one[:10]}_{name_two[:10]}': svod_mean_reduc_df,
+                        f'Ср. ЭО {name_one[:10]}_{name_two[:10]}': svod_mean_detachment_df,
+                        f'Ср. ЛО {name_one[:10]}_{name_two[:10]}': svod_mean_self_detachment_df,
+                        })
+
+
+
+
+
 
 
 

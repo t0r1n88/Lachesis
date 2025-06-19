@@ -499,14 +499,14 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
                                           'высокий уровень', 'Итого']  # Субшкалы
 
             # первая колонка
-            lst_reindex_first_mail_level_cols = [lst_svod_cols[0],'уровень выгорания в пределах нормы', 'пограничное выгорание',
+            lst_reindex_first_main_level_cols = [lst_svod_cols[0],'уровень выгорания в пределах нормы', 'пограничное выгорание',
                    'высокий уровень выгорания','Итого'] # Основная шкала
 
             lst_reindex_first_sub_level_cols = [lst_svod_cols[0],'низкий уровень', 'средний уровень',
                    'высокий уровень','Итого'] # Субшкалы
 
             # вторая колонка
-            lst_reindex_second_mail_level_cols = [lst_svod_cols[1],'уровень выгорания в пределах нормы', 'пограничное выгорание',
+            lst_reindex_second_main_level_cols = [lst_svod_cols[1],'уровень выгорания в пределах нормы', 'пограничное выгорание',
                    'высокий уровень выгорания','Итого'] # Основная шкала
 
             lst_reindex_second_sub_level_cols = [lst_svod_cols[1],'низкий уровень', 'средний уровень',
@@ -541,7 +541,7 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
             # первая колонка
             # основная шкала
             svod_count_first_level_df = calc_count_level_vpbp(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_выгорания',
-                                                            lst_reindex_first_mail_level_cols)
+                                                            lst_reindex_first_main_level_cols)
 
             # Субшкалы
             svod_count_first_level_em_df = calc_count_level_sub_vpbp(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_субшкалы_Эмоциональное_истощение',
@@ -557,7 +557,7 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
 
             # Вторая колонка
             svod_count_second_level_df = calc_count_level_vpbp(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_выгорания',
-                                                            lst_reindex_second_mail_level_cols)
+                                                            lst_reindex_second_main_level_cols)
 
             # Субшкалы
             svod_count_second_level_em_df = calc_count_level_sub_vpbp(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Эмоциональное_истощение', 'Уровень_субшкалы_Эмоциональное_истощение',
@@ -583,13 +583,6 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
             svod_mean_second_em_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Эмоциональное_истощение')
             svod_mean_second_depers_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Деперсонализация')
             svod_mean_second_reduc_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Редукция_персональных_достижений')
-
-
-
-
-
-
-
 
 
             # очищаем название колонки по которой делали свод
