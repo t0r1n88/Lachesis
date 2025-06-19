@@ -124,7 +124,7 @@ def count_attention(row,set_value):
     for value in row:
         if value in set_value:
             count_val += 1
-    if count_val >=1:
+    if count_val >=2:
         return True
     else:
         return False

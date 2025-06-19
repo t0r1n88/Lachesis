@@ -63,7 +63,7 @@ def calc_sub_value_dissatisfaction(row):
     return result
 
 
-def calc_level_sub_dissatisfaction(value):
+def calc_level_sub(value):
     """
     Функция для подсчета уровня
     :param value:
@@ -76,6 +76,162 @@ def calc_level_sub_dissatisfaction(value):
     else:
         return 'сложившийся симптом'
 
+
+def calc_sub_value_trapped(row):
+    """
+    Функция для подсчета значения субшкалы Загнанность в клетку
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [2,7,12,17,22,27,32] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 2: # Вопрос 2
+                if value == 'да':
+                    result += 10
+            elif idx +1 == 7: # Вопрос 7
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 12: # Вопрос 12
+                if value == 'да':
+                    result += 2
+            elif idx +1 == 17: # Вопрос 17
+                if value == 'да':
+                    result += 2
+            elif idx +1 == 22: # Вопрос 22
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 27: # Вопрос 27
+                if value == 'да':
+                    result += 1
+            elif idx +1 == 32: # Вопрос 32
+                if value == 'нет':
+                    result += 5
+    return result
+
+
+def calc_sub_value_reduc(row):
+    """
+    Функция для подсчета значения субшкалы Редукция профессиональных обязанностей
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [3,8,13,18,26,28,33] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 3: # Вопрос 3
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 8: # Вопрос 8
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 13: # Вопрос 13
+                if value == 'да':
+                    result += 2
+            elif idx +1 == 18: # Вопрос 18
+                if value == 'нет':
+                    result += 2
+            elif idx +1 == 26: # Вопрос 26
+                if value == 'да':
+                    result += 3
+            elif idx +1 == 28: # Вопрос 28
+                if value == 'да':
+                    result += 3
+            elif idx +1 == 33: # Вопрос 33
+                if value == 'да':
+                    result += 10
+    return result
+
+
+def calc_sub_value_detachment(row):
+    """
+    Функция для подсчета значения субшкалы Эмоциональная отстраненность
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [4,9,14,19,24,29,34] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 4: # Вопрос 4
+                if value == 'да':
+                    result += 2
+            elif idx +1 == 9: # Вопрос 9
+                if value == 'да':
+                    result += 3
+            elif idx +1 == 14: # Вопрос 14
+                if value == 'нет':
+                    result += 2
+            elif idx +1 == 19: # Вопрос 19
+                if value == 'да':
+                    result += 3
+            elif idx +1 == 24: # Вопрос 24
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 29: # Вопрос 29
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 34: # Вопрос 34
+                if value == 'да':
+                    result += 10
+    return result
+
+
+
+def calc_sub_value_self_detachment(row):
+    """
+    Функция для подсчета значения субшкалы Эмоциональная отстраненность
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [5,10,15,20,25,30,35] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 5: # Вопрос 5
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 10: # Вопрос 10
+                if value == 'да':
+                    result += 3
+            elif idx +1 == 15: # Вопрос 15
+                if value == 'да':
+                    result += 3
+            elif idx +1 == 20: # Вопрос 20
+                if value == 'да':
+                    result += 2
+            elif idx +1 == 25: # Вопрос 25
+                if value == 'да':
+                    result += 5
+            elif idx +1 == 30: # Вопрос 30
+                if value == 'да':
+                    result += 2
+            elif idx +1 == 35: # Вопрос 35
+                if value == 'да':
+                    result += 10
+
+    return result
+
+
+
+def calc_level_attrition(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 45:
+        return 'отсутствие выгорания'
+    elif 46 <= value <= 49:
+        return 'симптомы начинающегося выгорания'
+    elif 50 <= value <= 75:
+        return 'начинающееся выгорание'
+    elif 76 <= value <= 79:
+        return 'симптомы выгорания'
+    else:
+        return 'имеется выгорание'
 
 
 
@@ -167,7 +323,43 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
     base_df['Значение_симптома_Неудовлетворенность_собой'] = answers_df.apply(calc_sub_value_dissatisfaction, axis=1)
     base_df['Норма_Неудовлетворенность_собой'] = '0-9 баллов'
     base_df['Уровень_симптома_Неудовлетворенность_собой'] = base_df['Значение_симптома_Неудовлетворенность_собой'].apply(
-        calc_level_sub_dissatisfaction)
+        calc_level_sub)
+
+    # Симптом Загнанность в клетку
+    base_df['Значение_симптома_Загнанность_в_клетку'] = answers_df.apply(calc_sub_value_trapped, axis=1)
+    base_df['Норма_Загнанность_в_клетку'] = '0-9 баллов'
+    base_df['Уровень_симптома_Загнанность_в_клетку'] = base_df['Значение_симптома_Загнанность_в_клетку'].apply(
+        calc_level_sub)
+
+
+    # Симптом Редукция профессиональных обязанностей
+    base_df['Значение_симптома_Редукция_профессиональных_обязанностей'] = answers_df.apply(calc_sub_value_reduc, axis=1)
+    base_df['Норма_Редукция_профессиональных_обязанностей'] = '0-9 баллов'
+    base_df['Уровень_симптома_Редукция_профессиональных_обязанностей'] = base_df['Значение_симптома_Редукция_профессиональных_обязанностей'].apply(
+        calc_level_sub)
+
+    # Симптом Эмоциональная отстраненность
+    base_df['Значение_симптома_Эмоциональная_отстраненность'] = answers_df.apply(calc_sub_value_detachment, axis=1)
+    base_df['Норма_Эмоциональная_отстраненность'] = '0-9 баллов'
+    base_df['Уровень_симптома_Эмоциональная_отстраненность'] = base_df['Значение_симптома_Эмоциональная_отстраненность'].apply(
+        calc_level_sub)
+
+    # Симптом Личностная отстраненность (деперсонализация)»:
+    base_df['Значение_симптома_Личностная_отстраненность'] = answers_df.apply(calc_sub_value_self_detachment, axis=1)
+    base_df['Норма_Личностная_отстраненность'] = '0-9 баллов'
+    base_df['Уровень_симптома_Личностная_отстраненность'] = base_df['Значение_симптома_Личностная_отстраненность'].apply(
+        calc_level_sub)
+
+    base_df['Значение_уровня_выгорания'] = base_df[['Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку',
+                                                    'Значение_симптома_Редукция_профессиональных_обязанностей','Значение_симптома_Эмоциональная_отстраненность',
+                                                    'Значение_симптома_Личностная_отстраненность']].sum(axis=1)
+    base_df['Уровень_выгорания'] = base_df['Значение_уровня_выгорания'].apply(
+        calc_level_attrition)
+
+
+
+
+
 
 
 

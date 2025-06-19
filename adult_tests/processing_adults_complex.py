@@ -202,8 +202,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         # Сохраняем в удобном виде
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
-            set_alert_value = ['высокий уровень выгорания'] # особое внимание
-            set_attention_value = ['пограничное выгорание'] # обратить внимание
+            set_alert_value = ['высокий уровень выгорания','имеется выгорание'] # особое внимание
+            set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание'] # обратить внимание
 
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
