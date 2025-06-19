@@ -4,7 +4,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean
+from lachesis_support_functions import round_mean,create_svod_sub
 
 
 
@@ -401,68 +401,24 @@ def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,
 
         out_dct.update(dct_level)
 
+
+        lst_sub_level = ['низкий уровень', 'средний уровень',
+                   'высокий уровень']
         # Свод по уровням субшкалы Эмоциональное истощение всего в процентном соотношении
-        base_svod_em_df = pd.DataFrame(
-            index=['низкий уровень', 'средний уровень',
-                   'высокий уровень'])
 
-        svod_level_em_df = pd.pivot_table(base_df, index='Уровень_субшкалы_Эмоциональное_истощение',
-                                       values='Значение_субшкалы_Эмоциональное_истощение',
-                                       aggfunc='count')
+        base_svod_em_df=create_svod_sub(base_df, lst_sub_level, 'Уровень_субшкалы_Эмоциональное_истощение',
+                        'Значение_субшкалы_Эмоциональное_истощение', 'count')
 
-        svod_level_em_df['% от общего'] = round(
-            svod_level_em_df['Значение_субшкалы_Эмоциональное_истощение'] / svod_level_em_df[
-                'Значение_субшкалы_Эмоциональное_истощение'].sum(), 3) * 100
-
-        base_svod_em_df = base_svod_em_df.join(svod_level_em_df)
-
-        # # Создаем суммирующую строку
-        base_svod_em_df.loc['Итого'] = svod_level_em_df.sum()
-        base_svod_em_df.reset_index(inplace=True)
-        base_svod_em_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'},
-                                inplace=True)
 
         # Свод по уровням субшкалы Деперсонализация всего в процентном соотношении
-        base_svod_depers_df = pd.DataFrame(
-            index=['низкий уровень', 'средний уровень',
-                   'высокий уровень'])
+        base_svod_depers_df = create_svod_sub(base_df, lst_sub_level, 'Уровень_субшкалы_Деперсонализация',
+                        'Значение_субшкалы_Эмоциональное_истощение', 'count')
 
-        svod_level_depers_df = pd.pivot_table(base_df, index='Уровень_субшкалы_Деперсонализация',
-                                       values='Значение_субшкалы_Эмоциональное_истощение',
-                                       aggfunc='count')
-
-        svod_level_depers_df['% от общего'] = round(
-            svod_level_depers_df['Значение_субшкалы_Эмоциональное_истощение'] / svod_level_depers_df[
-                'Значение_субшкалы_Эмоциональное_истощение'].sum(), 3) * 100
-
-        base_svod_depers_df = base_svod_depers_df.join(svod_level_depers_df)
-
-        # # Создаем суммирующую строку
-        base_svod_depers_df.loc['Итого'] = svod_level_depers_df.sum()
-        base_svod_depers_df.reset_index(inplace=True)
-        base_svod_depers_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'},
-                                inplace=True)
 
         # Свод по уровням субшкалы Редукция_персональных_достижений всего в процентном соотношении
-        base_svod_reduc_df = pd.DataFrame(
-            index=['низкий уровень', 'средний уровень',
-                   'высокий уровень'])
+        base_svod_reduc_df = create_svod_sub(base_df, lst_sub_level, 'Уровень_субшкалы_Редукция_персональных_достижений',
+                        'Значение_субшкалы_Эмоциональное_истощение', 'count')
 
-        svod_level_reduc_df = pd.pivot_table(base_df, index='Уровень_субшкалы_Редукция_персональных_достижений',
-                                       values='Значение_субшкалы_Эмоциональное_истощение',
-                                       aggfunc='count')
-
-        svod_level_reduc_df['% от общего'] = round(
-            svod_level_reduc_df['Значение_субшкалы_Эмоциональное_истощение'] / svod_level_reduc_df[
-                'Значение_субшкалы_Эмоциональное_истощение'].sum(), 3) * 100
-
-        base_svod_reduc_df = base_svod_reduc_df.join(svod_level_reduc_df)
-
-        # # Создаем суммирующую строку
-        base_svod_reduc_df.loc['Итого'] = svod_level_reduc_df.sum()
-        base_svod_reduc_df.reset_index(inplace=True)
-        base_svod_reduc_df.rename(columns={'index': 'Уровень', 'Значение_субшкалы_Эмоциональное_истощение': 'Количество'},
-                                inplace=True)
 
         # считаем среднее значение по субшкалам
         avg_em = round(base_df['Значение_субшкалы_Эмоциональное_истощение'].mean(),1)

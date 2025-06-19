@@ -1,7 +1,7 @@
 """
 Вспомогательные функции
 """
-import os
+import pandas as pd
 import openpyxl
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Alignment
@@ -143,3 +143,30 @@ def sort_name_class(value):
     return (number_part, letter_part)
 
 
+def create_svod_sub(df:pd.DataFrame,lst_index:list,col_index:str,col_value:str,func:str):
+    """
+    Функция для создания сводов по субшкалам по всему датафрейму
+    :param df: датафрейм
+    :param lst_index: список с порядком строк индекса
+    :param col_index: колонка по которой будет делатьться сводная таблица
+    :param col_value: колонка к которой будет применятся функция
+    :param func: функция свода
+    :return: свод
+    """
+    base_svod = pd.DataFrame(index=lst_index)
+
+    svod_level = pd.pivot_table(df, index=col_index,
+                                      values=col_value,
+                                      aggfunc=func)
+    svod_level['% от общего'] = round(
+        svod_level[col_value] / svod_level[col_value].sum(), 3) * 100
+
+
+    base_svod = base_svod.join(svod_level)
+
+    # # Создаем суммирующую строку
+    base_svod.loc['Итого'] = svod_level.sum()
+    base_svod.reset_index(inplace=True)
+    base_svod.rename(columns={'index': 'Уровень', col_value: 'Количество'},
+                           inplace=True)
+    return base_svod

@@ -4,7 +4,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean
+from lachesis_support_functions import round_mean,create_svod_sub
 
 
 
@@ -235,12 +235,6 @@ def calc_level_attrition(value):
 
 
 
-
-
-
-
-
-
 def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
     """
     Функция для обработки
@@ -356,6 +350,109 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
     base_df['Уровень_выгорания'] = base_df['Значение_уровня_выгорания'].apply(
         calc_level_attrition)
 
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+
+    part_df['ЭВБИ_Значение_выгорания'] = base_df['Значение_уровня_выгорания']
+    part_df['ЭВБИ_Уровень_выгорания'] = base_df['Уровень_выгорания']
+
+    part_df['ЭВБИ_НС_Значение'] = base_df['Значение_симптома_Неудовлетворенность_собой']
+    part_df['ЭВБИ_НС_Уровень'] = base_df['Уровень_симптома_Неудовлетворенность_собой']
+
+    part_df['ЭВБИ_ЗК_Значение'] = base_df['Значение_симптома_Загнанность_в_клетку']
+    part_df['ЭВБИ_ЗК_Уровень'] = base_df['Уровень_симптома_Загнанность_в_клетку']
+
+    part_df['ЭВБИ_РПО_Значение'] = base_df['Значение_симптома_Редукция_профессиональных_обязанностей']
+    part_df['ЭВБИ_РПО_Уровень'] = base_df['Уровень_симптома_Редукция_профессиональных_обязанностей']
+
+    part_df['ЭВБИ_ЭО_Значение'] = base_df['Значение_симптома_Эмоциональная_отстраненность']
+    part_df['ЭВБИ_ЭО_Уровень'] = base_df['Уровень_симптома_Эмоциональная_отстраненность']
+
+    part_df['ЭВБИ_ЛО_Значение'] = base_df['Значение_симптома_Личностная_отстраненность']
+    part_df['ЭВБИ_ЛО_Уровень'] = base_df['Уровень_симптома_Личностная_отстраненность']
+
+    base_df.sort_values(by='Значение_уровня_выгорания', ascending=False, inplace=True)  # сортируем
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    # Общий свод по уровням общей шкалы всего в процентном соотношении
+    base_svod_all_df = pd.DataFrame(
+        index=['отсутствие выгорания', 'симптомы начинающегося выгорания',
+               'начинающееся выгорание','симптомы выгорания','имеется выгорание'])
+
+    svod_level_df = pd.pivot_table(base_df, index='Уровень_выгорания',
+                                   values='Значение_уровня_выгорания',
+                                   aggfunc='count')
+
+    svod_level_df['% от общего'] = round(
+        svod_level_df['Значение_уровня_выгорания'] / svod_level_df[
+            'Значение_уровня_выгорания'].sum(), 3) * 100
+
+    base_svod_all_df = base_svod_all_df.join(svod_level_df)
+
+    # # Создаем суммирующую строку
+    base_svod_all_df.loc['Итого'] = svod_level_df.sum()
+    base_svod_all_df.reset_index(inplace=True)
+    base_svod_all_df.rename(columns={'index': 'Уровень', 'Значение_уровня_выгорания': 'Количество'},
+                            inplace=True)
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               'Свод Общий': base_svod_all_df,
+               }
+
+    lst_level = ['отсутствие выгорания', 'симптомы начинающегося выгорания',
+               'начинающееся выгорание','симптомы выгорания','имеется выгорание']
+    dct_level = dict()
+
+    for level in lst_level:
+        temp_df = base_df[base_df['Уровень_выгорания'] == level]
+        if temp_df.shape[0] != 0:
+            if level == 'симптомы начинающегося выгорания':
+                level = 'симптомы начин-ся выгорания'
+            dct_level[level] = temp_df
+
+    out_dct.update(dct_level)
+
+    lst_simptom = ['не сложившийся симптом','складывающийся симптом','сложившийся симптом']
+
+    # Свод по уровням симптомов всего в процентном соотношении
+    svod_dissatisfaction = create_svod_sub(base_df,lst_simptom,'Уровень_симптома_Неудовлетворенность_собой','Значение_симптома_Неудовлетворенность_собой','count')
+    svod_trapped = create_svod_sub(base_df,lst_simptom,'Уровень_симптома_Загнанность_в_клетку','Значение_симптома_Загнанность_в_клетку','count')
+    svod_reduc = create_svod_sub(base_df,lst_simptom,'Уровень_симптома_Редукция_профессиональных_обязанностей','Значение_симптома_Редукция_профессиональных_обязанностей','count')
+    svod_detachment = create_svod_sub(base_df,lst_simptom,'Уровень_симптома_Эмоциональная_отстраненность','Значение_симптома_Эмоциональная_отстраненность','count')
+    svod_self_detachment = create_svod_sub(base_df,lst_simptom,'Уровень_симптома_Личностная_отстраненность','Значение_симптома_Личностная_отстраненность','count')
+
+    # Среднее значение по симптомам
+    # считаем среднее значение по субшкалам
+    avg_dissatisfaction = round(base_df['Значение_симптома_Неудовлетворенность_собой'].mean(), 1)
+    avg_trapped = round(base_df['Значение_симптома_Загнанность_в_клетку'].mean(), 1)
+    avg_reduc = round(base_df['Значение_симптома_Редукция_профессиональных_обязанностей'].mean(), 1)
+    avg_detachment = round(base_df['Значение_симптома_Эмоциональная_отстраненность'].mean(), 1)
+    avg_self_detachment = round(base_df['Значение_симптома_Личностная_отстраненность'].mean(), 1)
+
+    avg_dct = {'Среднее значение симптома Неудовлетворенность собой': avg_dissatisfaction,
+               'Среднее значение симптома Загнанность в клетку': avg_trapped,
+               'Среднее значение симптома Редукция профессиональных обязанностей': avg_reduc,
+               'Среднее значение симптома Эмоциональная отстраненность': avg_detachment,
+               'Среднее значение симптома Личностная отстраненность': avg_self_detachment,
+               }
+
+    avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+    avg_df = avg_df.reset_index()
+    avg_df.columns = ['Показатель', 'Среднее значение']
+
+    out_dct.update({'Свод НС':svod_dissatisfaction,
+                    'Свод ЗК':svod_trapped,
+                    'Свод РПО':svod_reduc,
+                    'Свод ЭО':svod_detachment,
+                    'Свод ЛО':svod_self_detachment,
+                    'Среднее по симптомам':avg_df})
+
+
+    """
+        Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+        """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
 
 
 
@@ -363,6 +460,6 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
 
 
 
-    base_df.to_excel('res.xlsx')
+
 
 
