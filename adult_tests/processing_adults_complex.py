@@ -4,8 +4,9 @@
 # Тесты Профессиональное выгорание
 from prof_burnout.vodopyanova_prof_burnout import processing_vod_prof_burnout # Профессиональное выгорание Водопьянова
 from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Эмоциональное выгорание Бойко
+from prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
 
-from lachesis_support_functions import write_df_to_excel, del_sheet, convert_to_int,count_attention,sort_name_class # функции для создания итогового файла
+from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 
 import pandas as pd
 pd.options.mode.chained_assignment = None
@@ -95,14 +96,17 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
         dct_tests = {'Профессиональное выгорание педагогов Водопьянова': (processing_vod_prof_burnout, 22),
                      'Эмоциональное выгорание Бойко Ильин': (processing_boiko_emotional_burnout, 35),
+                     'Выгорание Каппони Новак': (processing_kapponi_burnout, 10),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
                               'Эмоциональное выгорание Бойко Ильин': 'Эмоциональное выгорание Бойко Ильин',
+                              'Выгорание Каппони Новак': 'Экспресс-оценка выгорания Каппони Новак',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
-        lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин']
+        lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин',
+                           'Выгорание Каппони Новак']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
@@ -202,8 +206,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         # Сохраняем в удобном виде
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
-            set_alert_value = ['высокий уровень выгорания','имеется выгорание'] # особое внимание
-            set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание'] # обратить внимание
+            set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания'] # особое внимание
+            set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания'] # обратить внимание
 
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
@@ -319,7 +323,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
