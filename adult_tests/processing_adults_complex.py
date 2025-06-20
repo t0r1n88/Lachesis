@@ -2,8 +2,8 @@
 Скрипт для обработки тестов для взрослых
 """
 # Тесты Профессиональное выгорание
-from adult_tests.prof_burnout.vodopyanova_prof_burnout import processing_vod_prof_burnout # Профессиональное выгорание Водопьянова
-from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Эмоциональное выгорание Бойко
+from adult_tests.prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание Водопьянова
+from adult_tests.prof_burnout.boiko_ilin_emotional_burnout import processing_boiko_ilin_emotional_burnout # Эмоциональное выгорание Бойко
 from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
@@ -94,8 +94,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         t = time.localtime()
         current_time = time.strftime('%H_%M_%S', t)
 
-        dct_tests = {'Профессиональное выгорание педагогов Водопьянова': (processing_vod_prof_burnout, 22),
-                     'Эмоциональное выгорание Бойко Ильин': (processing_boiko_emotional_burnout, 35),
+        dct_tests = {'Профессиональное выгорание педагогов Водопьянова': (processing_vod_ped_prof_burnout, 22),
+                     'Эмоциональное выгорание Бойко Ильин': (processing_boiko_ilin_emotional_burnout, 35),
                      'Выгорание Каппони Новак': (processing_kapponi_burnout, 10),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -322,8 +322,8 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_quantity_descr_cols = 2
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 

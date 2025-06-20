@@ -254,7 +254,7 @@ def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
 
 
 
-def processing_vod_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
+def processing_vod_ped_prof_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
