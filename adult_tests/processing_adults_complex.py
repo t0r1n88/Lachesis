@@ -2,9 +2,10 @@
 Скрипт для обработки тестов для взрослых
 """
 # Тесты Профессиональное выгорание
-from adult_tests.prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание Водопьянова
+from adult_tests.prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание педагогов Водопьянова
 from adult_tests.prof_burnout.boiko_ilin_emotional_burnout import processing_boiko_ilin_emotional_burnout # Эмоциональное выгорание Бойко
 from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
+from adult_tests.prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_prof_burnout_vod # Профессиональное выгорание Маслач Водопьянова
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 
@@ -97,16 +98,18 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         dct_tests = {'Профессиональное выгорание педагогов Водопьянова': (processing_vod_ped_prof_burnout, 22),
                      'Эмоциональное выгорание Бойко Ильин': (processing_boiko_ilin_emotional_burnout, 35),
                      'Выгорание Каппони Новак': (processing_kapponi_burnout, 10),
+                     'Профессиональное выгорание Маслач Водопьянова': (processing_maslach_prof_burnout_vod, 22),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
                               'Эмоциональное выгорание Бойко Ильин': 'Эмоциональное выгорание Бойко Ильин',
                               'Выгорание Каппони Новак': 'Экспресс-оценка выгорания Каппони Новак',
+                              'Профессиональное выгорание Маслач Водопьянова': 'Профессиональное выгорание Маслач Водопьянова',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
         lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин',
-                           'Выгорание Каппони Новак']
+                           'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
@@ -206,16 +209,13 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         # Сохраняем в удобном виде
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
-            set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания'] # особое внимание
-            set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания'] # обратить внимание
+            set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень'] # особое внимание
+            set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень'] # обратить внимание
 
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
             attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
 
-            # # Создаем сводную таблицу по группам
-            # svod_group_df = main_itog_df.groupby(by='Группа').agg({'Пол':'count'}).rename(columns={'Пол':'Количество прошедших'})
-            # svod_group_df = svod_group_df.reset_index()
             # Сохраняем в зависимости от количества сводных колонок
             if len(lst_svod_cols) == 0:
                 temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df}, write_index=False)
@@ -318,11 +318,11 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
 
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессионально выгорание.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 2
+    main_quantity_descr_cols = 1
     main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
