@@ -2,9 +2,9 @@
 Скрипт для обработки тестов для взрослых
 """
 # Тесты Профессиональное выгорание
-from prof_burnout.vodopyanova_prof_burnout import processing_vod_prof_burnout # Профессиональное выгорание Водопьянова
-from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Эмоциональное выгорание Бойко
-from prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
+from adult_tests.prof_burnout.vodopyanova_prof_burnout import processing_vod_prof_burnout # Профессиональное выгорание Водопьянова
+from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Эмоциональное выгорание Бойко
+from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 

@@ -6,6 +6,7 @@ from create_result_docs import generate_result_docs # импортируем ф�
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
 from spo.processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
 from school.processing_school_complex import generate_result_school_anxiety # функция для обработки тестов тревожности школ
+from adult_tests.processing_adults_complex import generate_result_adults # функция для обработки взрослых тестов
 
 import pandas as pd
 import os
@@ -194,6 +195,70 @@ def processing_school_anxiety():
     except NameError:
         messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
+
+"""
+Функции для обработки взрослых тестов
+"""
+
+def select_file_params_adults():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_params_adults
+    # Получаем путь к файлу
+    file_params_adults = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def select_file_data_xlsx_adults():
+    """
+    Функция для выбора файла с данными на основе которых будет генерироваться документ
+    :return: Путь к файлу с данными
+    """
+    global file_data_xlsx_adults
+    # Получаем путь к файлу
+    file_data_xlsx_adults = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+def select_end_folder_adults():
+    """
+    Функция для выбора конечной папки куда будут складываться итоговые файлы
+    :return:
+    """
+    global path_to_end_folder_adults
+    path_to_end_folder_adults = filedialog.askdirectory()
+
+
+def processing_adults():
+    """
+    Функция для генерации результатов комплексного тестирования на тревожность школьников
+    """
+    try:
+        start_threshold = var_entry_threshold_adults.get() # получаем количество колонок
+        start_threshold = int(start_threshold)
+
+
+        svod_cols = var_entry_svod_adults.get() # получаем строку
+
+        generate_result_adults(file_params_adults,file_data_xlsx_adults,path_to_end_folder_adults,start_threshold,svod_cols)
+    except ValueError:
+        messagebox.showerror('Лахеcис',
+                             f'Введите целое число начиная с 1 !!!')
+    except NameError:
+        messagebox.showerror('Лахеcис',
+                             f'Выберите файлы с данными и папку куда будет генерироваться файл')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """
 Функции для создания остальных документов 
@@ -482,7 +547,7 @@ def open_list_pioneers():
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов психологических тестов ver 2.2')
+    window.title('Лахеcис Обработка результатов психологических тестов ver 2.3')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
@@ -633,6 +698,91 @@ if __name__ == '__main__':
                                                  command=processing_school_anxiety
                                                  )
     btn_proccessing_data_school_anxiety.grid(column=0, row=7, padx=10, pady=10)
+
+    """
+    Обработка результатов тестов для взрослых
+    """
+    # Создаем вкладку обработки данных
+    tab_report_adults = ttk.Frame(tab_control)
+    tab_control.add(tab_report_adults, text='Взрослые\nОбработка результатов')
+    tab_control.pack(expand=1, fill='both')
+    # Добавляем виджеты на вкладку
+    # Создаем метку для описания назначения программы
+    lbl_hello_adults = Label(tab_report_adults,
+                             text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест для взрослых \n'
+                             )
+    lbl_hello_adults.grid(column=0, row=0, padx=10, pady=25)
+
+    # Картинка
+    path_to_img_adults = resource_path('logo.png')
+
+    img_adults = PhotoImage(file=path_to_img_adults)
+    Label(tab_report_adults,
+          image=img_adults
+          ).grid(column=1, row=0, padx=10, pady=25)
+
+    # Создаем кнопку Выбрать файл с параметрами
+    btn_choose_data_adults = Button(tab_report_adults, text='1) Выберите файл с параметрами',
+                                    font=('Arial Bold', 14),
+                                    command=select_file_params_adults
+                                    )
+    btn_choose_data_adults.grid(column=0, row=2, padx=10, pady=10)
+
+    # Создаем кнопку Выбрать файл с данными
+    btn_choose_data_adults = Button(tab_report_adults, text='2) Выберите файл с результатами',
+                                    font=('Arial Bold', 14),
+                                    command=select_file_data_xlsx_adults
+                                    )
+    btn_choose_data_adults.grid(column=0, row=3, padx=10, pady=10)
+
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    btn_choose_end_folder_adults = Button(tab_report_adults, text='3) Выберите конечную папку',
+                                          font=('Arial Bold', 14),
+                                          command=select_end_folder_adults
+                                          )
+    btn_choose_end_folder_adults.grid(column=0, row=4, padx=10, pady=10)
+
+    # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
+    # Определяем переменную
+    var_entry_threshold_adults = StringVar()
+    # Описание поля
+    label_name_threshold_adults = Label(tab_report_adults,
+                                        text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
+    label_name_threshold_adults.grid(column=0, row=5, padx=10, pady=5)
+    # поле ввода
+    entry_threshold_adults = Entry(tab_report_adults, textvariable=var_entry_threshold_adults,
+                                   width=30)
+    entry_threshold_adults.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
+
+
+    # Создаем поле для ввода количества колонок по которым нужно сделать свод
+    # Определяем переменную
+    var_entry_svod_adults = StringVar()
+    # Описание поля
+    label_name_svod_adults = Label(tab_report_adults,
+                                        text='5) Введите через запятую порядковые номера колонок по которым нужно сделать свод.\n'
+                                             'Например 1,2 или 2\n'
+                                             'или оставьте это поле пустым\n'
+                                             ' если вам не надо делать своды по организациям, категориям и т.п.\n'
+                                             'Можно ввести не более 2 целых цифр разделенных запятой')
+    label_name_svod_adults.grid(column=0, row=7, padx=10, pady=5)
+    # поле ввода
+    entry_svod_adults = Entry(tab_report_adults, textvariable=var_entry_svod_adults,
+                                   width=30)
+    entry_svod_adults.grid(column=0, row=8, padx=5, pady=5, ipadx=30, ipady=4)
+
+
+
+
+    # Создаем кнопку обработки данных
+
+    btn_proccessing_data_adults = Button(tab_report_adults, text='6) Обработать данные',
+                                         font=('Arial Bold', 14),
+                                         command=processing_adults
+                                         )
+    btn_proccessing_data_adults.grid(column=0, row=9, padx=10, pady=10)
+
 
 
 
@@ -943,7 +1093,7 @@ if __name__ == '__main__':
 
     lbl_about = Label(about_frame_description,
                       text="""Лахесис Обработка результатов психологических тестов.
-                              Версия 2.2
+                              Версия 2.3
                               Язык программирования - Python 3\n
                               Используемая лицензия BSD-2-Clause\n
                               Copyright (c) <2025> <Будаев Олег Тимурович>\n
