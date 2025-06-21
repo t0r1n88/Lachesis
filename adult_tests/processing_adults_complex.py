@@ -3,9 +3,10 @@
 """
 # Тесты Профессиональное выгорание
 from adult_tests.prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание педагогов Водопьянова
-from adult_tests.prof_burnout.boiko_ilin_emotional_burnout import processing_boiko_ilin_emotional_burnout # Эмоциональное выгорание Бойко
+from adult_tests.prof_burnout.boiko_ilin_emotional_burnout import processing_boiko_ilin_emotional_burnout # Эмоциональное выгорание Бойко Ильин
 from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
 from adult_tests.prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_prof_burnout_vod # Профессиональное выгорание Маслач Водопьянова
+from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Профессиональное выгорание Бойко
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 
@@ -99,17 +100,19 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Эмоциональное выгорание Бойко Ильин': (processing_boiko_ilin_emotional_burnout, 35),
                      'Выгорание Каппони Новак': (processing_kapponi_burnout, 10),
                      'Профессиональное выгорание Маслач Водопьянова': (processing_maslach_prof_burnout_vod, 22),
+                     'Эмоциональное выгорание Бойко': (processing_boiko_emotional_burnout, 84),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
                               'Эмоциональное выгорание Бойко Ильин': 'Эмоциональное выгорание Бойко Ильин',
                               'Выгорание Каппони Новак': 'Экспресс-оценка выгорания Каппони Новак',
                               'Профессиональное выгорание Маслач Водопьянова': 'Профессиональное выгорание Маслач Водопьянова',
+                              'Эмоциональное выгорание Бойко': 'Эмоциональное выгорание Бойко',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
         lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин',
-                           'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова']
+                           'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
