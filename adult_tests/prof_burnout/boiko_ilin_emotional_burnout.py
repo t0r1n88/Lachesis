@@ -578,14 +578,38 @@ def processing_boiko_ilin_emotional_burnout(base_df: pd.DataFrame, answers_df: p
             name_one = name_one[:15]
 
             # Считаем среднее по субшкалам
-            svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
-            svod_mean_dissatisfaction_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Неудовлетворенность_собой')
-            svod_mean_trapped_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Загнанность_в_клетку')
-            svod_mean_reduc_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Редукция_профессиональных_обязанностей')
-            svod_mean_detachment_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Эмоциональная_отстраненность')
-            svod_mean_self_detachment_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Личностная_отстраненность')
-
+            svod_mean_df = pd.pivot_table(base_df,
+                                          index=lst_svod_cols,
+                                          values=['Значение_уровня_выгорания',
+                                                  'Значение_симптома_Неудовлетворенность_собой',
+                                                  'Значение_симптома_Загнанность_в_клетку',
+                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                  'Значение_симптома_Эмоциональная_отстраненность',
+                                                  'Значение_симптома_Личностная_отстраненность',
+                                                  ],
+                                          aggfunc=round_mean)
+            svod_mean_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = lst_svod_cols.copy()
+            new_order_cols.extend(
+                ['Значение_уровня_выгорания',
+                                                  'Значение_симптома_Неудовлетворенность_собой',
+                                                  'Значение_симптома_Загнанность_в_клетку',
+                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                  'Значение_симптома_Эмоциональная_отстраненность',
+                                                  'Значение_симптома_Личностная_отстраненность',
+                 ])
+            svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+            dct_rename_cols_mean = {'Значение_уровня_выгорания': 'Ср. эмоционального выгорания',
+                                    'Значение_симптома_Неудовлетворенность_собой': 'Ср. Неудовлетворенность собой',
+                                    'Значение_симптома_Загнанность_в_клетку': 'Ср. Загнанность в клетку',
+                                    'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. Редукция_профессиональных обязанностей',
+                                    'Значение_симптома_Эмоциональная_отстраненность': 'Ср.Эмоциональная отстраненность',
+                                    'Значение_симптома_Личностная_отстраненность': 'Ср. Личностная отстраненность',
+                                    }
+            svod_mean_df.rename(columns=dct_rename_cols_mean, inplace=True)
             out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+                            f'Ср. {name_one}': svod_mean_df,
 
                             f'Свод НС {name_one}': svod_count_one_level_dissatisfaction_df,
                             f'Свод ЗК {name_one}': svod_count_one_level_trapped_df,
@@ -593,12 +617,7 @@ def processing_boiko_ilin_emotional_burnout(base_df: pd.DataFrame, answers_df: p
                             f'Свод ЭО {name_one}': svod_count_one_level_detachment_df,
                             f'Свод ЛО {name_one}': svod_count_one_level_self_detachment_df,
 
-                            f'Ср. {name_one}': svod_mean_df,
-                            f'Ср. НС {name_one}': svod_mean_dissatisfaction_df,
-                            f'Ср. ЗК {name_one}': svod_mean_trapped_df,
-                            f'Ср. РПО {name_one}': svod_mean_reduc_df,
-                            f'Ср. ЭО {name_one}': svod_mean_detachment_df,
-                            f'Ср. ЛО {name_one}': svod_mean_self_detachment_df})
+                            })
 
             return out_dct, part_df
 
@@ -651,12 +670,36 @@ def processing_boiko_ilin_emotional_burnout(base_df: pd.DataFrame, answers_df: p
                                                                       lst_reindex_sub_level_cols)
 
             # Считаем среднее по субшкалам
-            svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_уровня_выгорания')
-            svod_mean_dissatisfaction_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Неудовлетворенность_собой')
-            svod_mean_trapped_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Загнанность_в_клетку')
-            svod_mean_reduc_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Редукция_профессиональных_обязанностей')
-            svod_mean_detachment_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Эмоциональная_отстраненность')
-            svod_mean_self_detachment_df = calc_mean(base_df, lst_svod_cols, 'Значение_симптома_Личностная_отстраненность')
+            svod_mean_df = pd.pivot_table(base_df,
+                                          index=lst_svod_cols,
+                                          values=['Значение_уровня_выгорания',
+                                                  'Значение_симптома_Неудовлетворенность_собой',
+                                                  'Значение_симптома_Загнанность_в_клетку',
+                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                  'Значение_симптома_Эмоциональная_отстраненность',
+                                                  'Значение_симптома_Личностная_отстраненность',
+                                                  ],
+                                          aggfunc=round_mean)
+            svod_mean_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = lst_svod_cols.copy()
+            new_order_cols.extend(
+                ['Значение_уровня_выгорания',
+                                                  'Значение_симптома_Неудовлетворенность_собой',
+                                                  'Значение_симптома_Загнанность_в_клетку',
+                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                  'Значение_симптома_Эмоциональная_отстраненность',
+                                                  'Значение_симптома_Личностная_отстраненность',
+                 ])
+            svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+            dct_rename_cols_mean = {'Значение_уровня_выгорания': 'Ср. эмоционального выгорания',
+                                    'Значение_симптома_Неудовлетворенность_собой': 'Ср. Неудовлетворенность собой',
+                                    'Значение_симптома_Загнанность_в_клетку': 'Ср. Загнанность в клетку',
+                                    'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. Редукция_профессиональных обязанностей',
+                                    'Значение_симптома_Эмоциональная_отстраненность': 'Ср.Эмоциональная отстраненность',
+                                    'Значение_симптома_Личностная_отстраненность': 'Ср. Личностная отстраненность',
+                                    }
+            svod_mean_df.rename(columns=dct_rename_cols_mean, inplace=True)
 
             # первая колонка
             # основная шкала
@@ -691,12 +734,38 @@ def processing_boiko_ilin_emotional_burnout(base_df: pd.DataFrame, answers_df: p
 
 
             # Считаем среднее по субшкалам
-            svod_mean_first_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
-            svod_mean_first_dissatisfaction_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Неудовлетворенность_собой')
-            svod_mean_first_trapped_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Загнанность_в_клетку')
-            svod_mean_first_reduc_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Редукция_профессиональных_обязанностей')
-            svod_mean_first_detachment_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Эмоциональная_отстраненность')
-            svod_mean_first_self_detachment_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_симптома_Личностная_отстраненность')
+            svod_mean_first_df = pd.pivot_table(base_df,
+                                                index=[lst_svod_cols[0]],
+                                                values=['Значение_уровня_выгорания',
+                                                        'Значение_симптома_Неудовлетворенность_собой',
+                                                        'Значение_симптома_Загнанность_в_клетку',
+                                                        'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                        'Значение_симптома_Эмоциональная_отстраненность',
+                                                        'Значение_симптома_Личностная_отстраненность',
+                                                        ],
+                                                aggfunc=round_mean)
+            svod_mean_first_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = [lst_svod_cols[0]].copy()
+            new_order_cols.extend(
+                ['Значение_уровня_выгорания',
+                 'Значение_симптома_Неудовлетворенность_собой',
+                 'Значение_симптома_Загнанность_в_клетку',
+                 'Значение_симптома_Редукция_профессиональных_обязанностей',
+                 'Значение_симптома_Эмоциональная_отстраненность',
+                 'Значение_симптома_Личностная_отстраненность',
+                 ])
+            svod_mean_first_df = svod_mean_first_df.reindex(columns=new_order_cols)
+            dct_rename_cols_mean = {'Значение_уровня_выгорания': 'Ср. эмоционального выгорания',
+                                    'Значение_симптома_Неудовлетворенность_собой': 'Ср. Неудовлетворенность собой',
+                                    'Значение_симптома_Загнанность_в_клетку': 'Ср. Загнанность в клетку',
+                                    'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. Редукция_профессиональных обязанностей',
+                                    'Значение_симптома_Эмоциональная_отстраненность': 'Ср.Эмоциональная отстраненность',
+                                    'Значение_симптома_Личностная_отстраненность': 'Ср. Личностная отстраненность',
+                                    }
+            svod_mean_first_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+
 
 
             # Вторая колонка
@@ -730,16 +799,36 @@ def processing_boiko_ilin_emotional_burnout(base_df: pd.DataFrame, answers_df: p
                                                                               lst_reindex_second_sub_level_cols)
 
             # Считаем среднее по субшкалам
-            svod_mean_second_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_уровня_выгорания')
-            svod_mean_second_dissatisfaction_df = calc_mean(base_df, [lst_svod_cols[1]],
-                                                            'Значение_симптома_Неудовлетворенность_собой')
-            svod_mean_second_trapped_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_симптома_Загнанность_в_клетку')
-            svod_mean_second_reduc_df = calc_mean(base_df, [lst_svod_cols[1]],
-                                                  'Значение_симптома_Редукция_профессиональных_обязанностей')
-            svod_mean_second_detachment_df = calc_mean(base_df, [lst_svod_cols[1]],
-                                                       'Значение_симптома_Эмоциональная_отстраненность')
-            svod_mean_second_self_detachment_df = calc_mean(base_df, [lst_svod_cols[1]],
-                                                            'Значение_симптома_Личностная_отстраненность')
+            svod_mean_second_df = pd.pivot_table(base_df,
+                                                 index=[lst_svod_cols[1]],
+                                                 values=['Значение_уровня_выгорания',
+                                                         'Значение_симптома_Неудовлетворенность_собой',
+                                                         'Значение_симптома_Загнанность_в_клетку',
+                                                         'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                         'Значение_симптома_Эмоциональная_отстраненность',
+                                                         'Значение_симптома_Личностная_отстраненность',
+                                                         ],
+                                                 aggfunc=round_mean)
+            svod_mean_second_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = [lst_svod_cols[1]].copy()
+            new_order_cols.extend(
+                ['Значение_уровня_выгорания',
+                 'Значение_симптома_Неудовлетворенность_собой',
+                 'Значение_симптома_Загнанность_в_клетку',
+                 'Значение_симптома_Редукция_профессиональных_обязанностей',
+                 'Значение_симптома_Эмоциональная_отстраненность',
+                 'Значение_симптома_Личностная_отстраненность',
+                 ])
+            svod_mean_second_df = svod_mean_second_df.reindex(columns=new_order_cols)
+            dct_rename_cols_mean = {'Значение_уровня_выгорания': 'Ср. эмоционального выгорания',
+                                    'Значение_симптома_Неудовлетворенность_собой': 'Ср. Неудовлетворенность собой',
+                                    'Значение_симптома_Загнанность_в_клетку': 'Ср. Загнанность в клетку',
+                                    'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. Редукция_профессиональных обязанностей',
+                                    'Значение_симптома_Эмоциональная_отстраненность': 'Ср.Эмоциональная отстраненность',
+                                    'Значение_симптома_Личностная_отстраненность': 'Ср. Личностная отстраненность',
+                                    }
+            svod_mean_second_df.rename(columns=dct_rename_cols_mean, inplace=True)
 
             # очищаем название колонки по которой делали свод
             name_one = lst_svod_cols[0]
@@ -751,47 +840,32 @@ def processing_boiko_ilin_emotional_burnout(base_df: pd.DataFrame, answers_df: p
             name_two = name_two[:15]
 
             out_dct.update({f'Свод {name_one}': svod_count_first_level_df,
+                            f'Ср. {name_one}': svod_mean_first_df,
                             f'Свод НС {name_one}': svod_count_first_level_dissatisfaction_df,
                             f'Свод ЗК {name_one}': svod_count_first_level_trapped_df,
                             f'Свод РПО {name_one}': svod_count_first_level_reduc_df,
                             f'Свод ЭО {name_one}': svod_count_first_level_detachment_df,
                             f'Свод ЛО {name_one}': svod_count_first_level_self_detachment_df,
 
-                            f'Ср. {name_one}': svod_mean_first_df,
-                            f'Ср. НС {name_one}': svod_mean_first_dissatisfaction_df,
-                            f'Ср. ЗК {name_one}': svod_mean_first_trapped_df,
-                            f'Ср. РПО {name_one}': svod_mean_first_reduc_df,
-                            f'Ср. ЭО {name_one}': svod_mean_first_detachment_df,
-                            f'Ср. ЛО {name_one}': svod_mean_first_self_detachment_df,
 
 
                             f'Свод {name_two}': svod_count_second_level_df,
+                            f'Ср. {name_two}': svod_mean_second_df,
                             f'Свод НС {name_two}': svod_count_second_level_dissatisfaction_df,
                             f'Свод ЗК {name_two}': svod_count_second_level_trapped_df,
                             f'Свод РПО {name_two}': svod_count_second_level_reduc_df,
                             f'Свод ЭО {name_two}': svod_count_second_level_detachment_df,
                             f'Свод ЛО {name_two}': svod_count_second_level_self_detachment_df,
 
-                            f'Ср. {name_two}': svod_mean_second_df,
-                            f'Ср. НС {name_two}': svod_mean_second_dissatisfaction_df,
-                            f'Ср. ЗК {name_two}': svod_mean_second_trapped_df,
-                            f'Ср. РПО {name_two}': svod_mean_second_reduc_df,
-                            f'Ср. ЭО {name_two}': svod_mean_second_detachment_df,
-                            f'Ср. ЛО {name_two}': svod_mean_second_self_detachment_df,
-
                             f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
+                            f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df,
                             f'Свод НС {name_one[:10]}_{name_two[:10]}': svod_count_two_level_dissatisfaction_df,
                             f'Свод ЗК {name_one[:10]}_{name_two[:10]}': svod_count_two_level_trapped_df,
                             f'Свод РПО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_reduc_df,
                             f'Свод ЭО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_detachment_df,
                             f'Свод ЛО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_self_detachment_df,
 
-                            f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df,
-                            f'Ср. НС {name_one[:10]}_{name_two[:10]}': svod_mean_dissatisfaction_df,
-                            f'Ср. ЗК {name_one[:10]}_{name_two[:10]}': svod_mean_trapped_df,
-                            f'Ср. РПО {name_one[:10]}_{name_two[:10]}': svod_mean_reduc_df,
-                            f'Ср. ЭО {name_one[:10]}_{name_two[:10]}': svod_mean_detachment_df,
-                            f'Ср. ЛО {name_one[:10]}_{name_two[:10]}': svod_mean_self_detachment_df,
+
                             })
 
             return out_dct, part_df
