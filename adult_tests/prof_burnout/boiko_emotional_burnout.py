@@ -1166,39 +1166,39 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
         # Считаем среднее по субшкалам
         svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Итоговое_значение_эмоционального_выгорания')
         # Фазы
-        svod_mean_phase_stress_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_phase_stress_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_фазы_Напряжение')
-        svod_mean_phase_resistance_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_phase_resistance_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_фазы_Резистенция')
-        svod_mean_phase_exhaustion_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_phase_exhaustion_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_фазы_Истощение')
 
         # Симптомы
-        svod_mean_simptom_ppo_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_ppo_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Переживание_психотравмирующих_обстоятельств')
-        svod_mean_simptom_ns_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_ns_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Неудовлетворенность_собой')
-        svod_mean_simptom_zk_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_zk_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Загнанность_в_клетку')
-        svod_mean_simptom_td_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_td_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Тревога_и_депрессия')
 
-        svod_mean_simptom_niar_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_niar_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование')
-        svod_mean_simptom_and_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_and_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Эмоционально_нравственная_дезориентация')
-        svod_mean_simptom_rsaa_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_rsaa_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Расширение_сферы_экономии_эмоций')
-        svod_mean_simptom_rpo_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_rpo_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Редукция_профессиональных_обязанностей')
 
-        svod_mean_simptom_ad_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_ad_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Эмоциональный_дефицит')
-        svod_mean_simptom_ao_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_ao_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Эмоциональная_отстраненность')
-        svod_mean_simptom_lo_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_lo_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Личностная_отстраненность')
-        svod_mean_simptom_ppn_df = calc_mean(base_df, [lst_svod_cols[0]],
+        svod_mean_one_simptom_ppn_df = calc_mean(base_df, [lst_svod_cols[0]],
                                                  'Значение_симптома_Психосоматические_и_психовегетативные_нарушения')
 
 
@@ -1225,24 +1225,24 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
                         f'Свод ППН {name_one}': svod_count_one_level_ppn_df,
 
                         f'Ср. {name_one}': svod_mean_df,
-                        f'Ср. Напряжение {name_one[:10]}': svod_mean_phase_stress_df,
-                        f'Ср. Резистенция {name_one[:10]}': svod_mean_phase_resistance_df,
-                        f'Ср. Истощение {name_one[:10]}': svod_mean_phase_exhaustion_df,
+                        f'Ср. Напряжение {name_one[:10]}': svod_mean_one_phase_stress_df,
+                        f'Ср. Резистенция {name_one[:10]}': svod_mean_one_phase_resistance_df,
+                        f'Ср. Истощение {name_one[:10]}': svod_mean_one_phase_exhaustion_df,
 
-                        f'Ср. ППО {name_one}': svod_mean_simptom_ppo_df,
-                        f'Ср. НС {name_one}': svod_mean_simptom_ns_df,
-                        f'Ср. ЗК {name_one}': svod_mean_simptom_zk_df,
-                        f'Ср. ТД {name_one}': svod_mean_simptom_td_df,
+                        f'Ср. ППО {name_one}': svod_mean_one_simptom_ppo_df,
+                        f'Ср. НС {name_one}': svod_mean_one_simptom_ns_df,
+                        f'Ср. ЗК {name_one}': svod_mean_one_simptom_zk_df,
+                        f'Ср. ТД {name_one}': svod_mean_one_simptom_td_df,
 
-                        f'Ср. НИЭР {name_one}': svod_mean_simptom_niar_df,
-                        f'Ср. ЭНД {name_one}': svod_mean_simptom_and_df,
-                        f'Ср. РСЭЭ {name_one}': svod_mean_simptom_rsaa_df,
-                        f'Ср. РПО {name_one}': svod_mean_simptom_rpo_df,
+                        f'Ср. НИЭР {name_one}': svod_mean_one_simptom_niar_df,
+                        f'Ср. ЭНД {name_one}': svod_mean_one_simptom_and_df,
+                        f'Ср. РСЭЭ {name_one}': svod_mean_one_simptom_rsaa_df,
+                        f'Ср. РПО {name_one}': svod_mean_one_simptom_rpo_df,
 
-                        f'Ср. ЭД {name_one}': svod_mean_simptom_ad_df,
-                        f'Ср. ЭО {name_one}': svod_mean_simptom_ao_df,
-                        f'Ср. ЛО {name_one}': svod_mean_simptom_lo_df,
-                        f'Ср. ППН {name_one}': svod_mean_simptom_ppn_df,
+                        f'Ср. ЭД {name_one}': svod_mean_one_simptom_ad_df,
+                        f'Ср. ЭО {name_one}': svod_mean_one_simptom_ao_df,
+                        f'Ср. ЛО {name_one}': svod_mean_one_simptom_lo_df,
+                        f'Ср. ППН {name_one}': svod_mean_one_simptom_ppn_df,
 
                         })
 
