@@ -28,6 +28,173 @@ class BadCountColumnsBEB(Exception):
     pass
 
 
+def calc_level_sub(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 9:
+        return 'не сложившийся симптом'
+    elif 10 <= value <= 15:
+        return 'складывающийся симптом'
+    elif 16 <= value <= 19:
+        return 'сложившийся симптом'
+    else:
+        return 'доминирующий симптом'
+
+def calc_level_phase(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 36:
+        return 'фаза не сформировалась'
+    elif 37 <= value <= 60:
+        return 'фаза в стадии формирования'
+    else:
+        return 'сформировавшаяся фаза'
+
+
+
+def calc_sub_value_ppo(row):
+    """
+    Функция для подсчета значения субшкалы Переживание психотравмирующих обстоятельств
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [1,13,25,37,49,61,73] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 1: # Вопрос 1
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 13: # Вопрос 13
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 25: # Вопрос 25
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 37: # Вопрос 37
+                if value == 'нет':
+                    result += 3
+            elif idx + 1 == 49: # Вопрос 49
+                if value == 'да':
+                    result += 10
+            elif idx + 1 == 61: # Вопрос 61
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 73: # Вопрос 73
+                if value == 'нет':
+                    result += 5
+    return result
+
+
+def calc_sub_value_ns(row):
+    """
+    Функция для подсчета значения субшкалы Неудовлетворенность собой
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [2,14,26,38,50,62,74] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 2: # Вопрос 2
+                if value == 'нет':
+                    result += 3
+            elif idx + 1 == 14: # Вопрос 14
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 26: # Вопрос 26
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 38: # Вопрос 38
+                if value == 'нет':
+                    result += 10
+            elif idx + 1 == 50: # Вопрос 50
+                if value == 'нет':
+                    result += 5
+            elif idx + 1 == 62: # Вопрос 62
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 74: # Вопрос 74
+                if value == 'да':
+                    result += 3
+    return result
+
+def calc_sub_value_zk(row):
+    """
+    Функция для подсчета значения субшкалы «Загнанность в клетку»
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [3,15,27,39,51,63,75] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 3: # Вопрос 3
+                if value == 'да':
+                    result += 10
+            elif idx + 1 == 15: # Вопрос 15
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 27: # Вопрос 27
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 39: # Вопрос 39
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 51: # Вопрос 51
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 63: # Вопрос 63
+                if value == 'да':
+                    result += 1
+            elif idx + 1 == 75: # Вопрос 75
+                if value == 'нет':
+                    result += 5
+    return result
+
+
+def calc_sub_value_td(row):
+    """
+    Функция для подсчета значения субшкалы Тревога и депрессия
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [4,16,28,40,52,64,76] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 4: # Вопрос 4
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 16: # Вопрос 16
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 28: # Вопрос 28
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 40: # Вопрос 40
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 52: # Вопрос 52
+                if value == 'да':
+                    result += 10
+            elif idx + 1 == 64: # Вопрос 64
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 76: # Вопрос 76
+                if value == 'да':
+                    result += 3
+
+
+    return result
+
+
 
 
 def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
@@ -156,3 +323,52 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueBEB
+
+    # Симптом Переживание психотравмирующих обстоятельств
+    base_df['Значение_симптома_Переживание_психотравмирующих_обстоятельств'] = answers_df.apply(calc_sub_value_ppo, axis=1)
+    base_df['Норма_Переживание_психотравмирующих_обстоятельств'] = '0-9 баллов'
+    base_df['Уровень_симптома_Переживание_психотравмирующих_обстоятельств'] = base_df[
+        'Значение_симптома_Переживание_психотравмирующих_обстоятельств'].apply(
+        calc_level_sub)
+
+    # Симптом Неудовлетворенность собой
+    base_df['Значение_симптома_Неудовлетворенность_собой'] = answers_df.apply(calc_sub_value_ns, axis=1)
+    base_df['Норма_Неудовлетворенность_собой'] = '0-9 баллов'
+    base_df['Уровень_симптома_Неудовлетворенность_собой'] = base_df[
+        'Значение_симптома_Неудовлетворенность_собой'].apply(
+        calc_level_sub)
+
+    # Симптом «Загнанность в клетку»
+    base_df['Значение_симптома_Загнанность_в_клетку'] = answers_df.apply(calc_sub_value_zk, axis=1)
+    base_df['Норма_Загнанность_в_клетку'] = '0-9 баллов'
+    base_df['Уровень_симптома_Загнанность_в_клетку'] = base_df[
+        'Значение_симптома_Загнанность_в_клетку'].apply(
+        calc_level_sub)
+
+    # Симптом Тревога и депрессия
+    base_df['Значение_симптома_Тревога_и_депрессия'] = answers_df.apply(calc_sub_value_td, axis=1)
+    base_df['Норма_Тревога_и_депрессия'] = '0-9 баллов'
+    base_df['Уровень_симптома_Тревога_и_депрессия'] = base_df[
+        'Значение_симптома_Тревога_и_депрессия'].apply(
+        calc_level_sub)
+
+    # Фаза Напряжение
+    base_df['Значение_фазы_Напряжение'] = base_df[['Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                   'Значение_симптома_Неудовлетворенность_собой',
+                                                   'Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия']].sum(axis=1)
+
+    base_df['Уровень_фазы_Напряжение'] = base_df[
+        'Значение_фазы_Напряжение'].apply(calc_level_phase)
+
+
+
+
+    base_df.to_excel('res.xlsx')
+
+
+
+
+
+
+
+
