@@ -1164,46 +1164,37 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
         name_one = name_one[:15]
 
         # Считаем среднее по субшкалам
-        svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Итоговое_значение_эмоционального_выгорания')
-        # Фазы
-        svod_mean_one_phase_stress_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_фазы_Напряжение')
-        svod_mean_one_phase_resistance_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_фазы_Резистенция')
-        svod_mean_one_phase_exhaustion_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_фазы_Истощение')
+        svod_mean_df = pd.pivot_table(base_df,
+                                      index=[lst_svod_cols[0]],
+                                      values=['Итоговое_значение_эмоционального_выгорания','Значение_фазы_Напряжение','Значение_фазы_Резистенция','Значение_фазы_Истощение',
+                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств','Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия',
+                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование','Значение_симптома_Эмоционально_нравственная_дезориентация','Значение_симптома_Расширение_сферы_экономии_эмоций','Значение_симптома_Редукция_профессиональных_обязанностей',
+                                              'Значение_симптома_Эмоциональный_дефицит','Значение_симптома_Эмоциональная_отстраненность','Значение_симптома_Личностная_отстраненность','Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+                                              ],
+                                      aggfunc=round_mean)
+        svod_mean_df.reset_index(inplace=True)
+        # упорядочиваем колонки
+        new_order_cols = lst_svod_cols.copy()
+        new_order_cols.extend(['Итоговое_значение_эмоционального_выгорания','Значение_фазы_Напряжение','Значение_фазы_Резистенция','Значение_фазы_Истощение',
+                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств','Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия',
+                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование','Значение_симптома_Эмоционально_нравственная_дезориентация','Значение_симптома_Расширение_сферы_экономии_эмоций','Значение_симптома_Редукция_профессиональных_обязанностей',
+                                              'Значение_симптома_Эмоциональный_дефицит','Значение_симптома_Эмоциональная_отстраненность','Значение_симптома_Личностная_отстраненность','Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+        svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+        dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания':'Ср. эмоционального выгорания',
+                                'Значение_фазы_Напряжение':'Ср. фазы Напряжение','Значение_фазы_Резистенция':'Ср. фазы Резистенция','Значение_фазы_Истощение':'Ср. фазы Истощение',
+                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств':'Ср. ППО','Значение_симптома_Неудовлетворенность_собой':'Ср. НС',
+                                'Значение_симптома_Загнанность_в_клетку':'Ср. ЗК','Значение_симптома_Тревога_и_депрессия':'Ср. ТД',
 
-        # Симптомы
-        svod_mean_one_simptom_ppo_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Переживание_психотравмирующих_обстоятельств')
-        svod_mean_one_simptom_ns_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Неудовлетворенность_собой')
-        svod_mean_one_simptom_zk_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Загнанность_в_клетку')
-        svod_mean_one_simptom_td_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Тревога_и_депрессия')
+                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование':'Ср. НИЭР','Значение_симптома_Эмоционально_нравственная_дезориентация':'Ср. ЭНД',
+                                'Значение_симптома_Расширение_сферы_экономии_эмоций':'Ср. РСЭЭ','Значение_симптома_Редукция_профессиональных_обязанностей':'Ср. РПО',
 
-        svod_mean_one_simptom_niar_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование')
-        svod_mean_one_simptom_and_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Эмоционально_нравственная_дезориентация')
-        svod_mean_one_simptom_rsaa_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Расширение_сферы_экономии_эмоций')
-        svod_mean_one_simptom_rpo_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Редукция_профессиональных_обязанностей')
-
-        svod_mean_one_simptom_ad_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Эмоциональный_дефицит')
-        svod_mean_one_simptom_ao_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Эмоциональная_отстраненность')
-        svod_mean_one_simptom_lo_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Личностная_отстраненность')
-        svod_mean_one_simptom_ppn_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                                 'Значение_симптома_Психосоматические_и_психовегетативные_нарушения')
-
+                                              'Значение_симптома_Эмоциональный_дефицит':'Ср. ЭД','Значение_симптома_Эмоциональная_отстраненность':'Ср. ЭО',
+                                'Значение_симптома_Личностная_отстраненность':'Ср. ЛО','Значение_симптома_Психосоматические_и_психовегетативные_нарушения':'Ср. ППН'}
+        svod_mean_df.rename(columns=dct_rename_cols_mean,inplace=True)
 
 
         out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+                        f'Ср. {name_one}': svod_mean_df,
                         f'Свод Напряжение {name_one[:10]}': svod_count_one_phase_stress_df,
                         f'Свод Резистенция {name_one[:10]}': svod_count_one_phase_resistance_df,
                         f'Свод Истощение {name_one[:10]}': svod_count_one_phase_exhaustion_df,
@@ -1224,29 +1215,27 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
                         f'Свод ЛО {name_one}': svod_count_one_level_lo_df,
                         f'Свод ППН {name_one}': svod_count_one_level_ppn_df,
 
-                        f'Ср. {name_one}': svod_mean_df,
-                        f'Ср. Напряжение {name_one[:10]}': svod_mean_one_phase_stress_df,
-                        f'Ср. Резистенция {name_one[:10]}': svod_mean_one_phase_resistance_df,
-                        f'Ср. Истощение {name_one[:10]}': svod_mean_one_phase_exhaustion_df,
-
-                        f'Ср. ППО {name_one}': svod_mean_one_simptom_ppo_df,
-                        f'Ср. НС {name_one}': svod_mean_one_simptom_ns_df,
-                        f'Ср. ЗК {name_one}': svod_mean_one_simptom_zk_df,
-                        f'Ср. ТД {name_one}': svod_mean_one_simptom_td_df,
-
-                        f'Ср. НИЭР {name_one}': svod_mean_one_simptom_niar_df,
-                        f'Ср. ЭНД {name_one}': svod_mean_one_simptom_and_df,
-                        f'Ср. РСЭЭ {name_one}': svod_mean_one_simptom_rsaa_df,
-                        f'Ср. РПО {name_one}': svod_mean_one_simptom_rpo_df,
-
-                        f'Ср. ЭД {name_one}': svod_mean_one_simptom_ad_df,
-                        f'Ср. ЭО {name_one}': svod_mean_one_simptom_ao_df,
-                        f'Ср. ЛО {name_one}': svod_mean_one_simptom_lo_df,
-                        f'Ср. ППН {name_one}': svod_mean_one_simptom_ppn_df,
-
                         })
 
         return out_dct, part_df
+
+
+    elif len(lst_svod_cols) == 2:
+        # 2 колонки
+        lst_reindex_main_level_cols = [lst_svod_cols[0], lst_svod_cols[1], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
+        lst_reindex_main_phase_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
+        lst_reindex_main_sub_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
+
+        # 1 колонка
+        lst_reindex_first_level_cols = [lst_svod_cols[0], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
+        lst_reindex_first_phase_level_cols = [lst_svod_cols[0], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
+        lst_reindex_first_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
+
+        # 2 колонка
+        lst_reindex_second_level_cols = [lst_svod_cols[1], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
+        lst_reindex_second_phase_level_cols = [lst_svod_cols[1], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
+        lst_reindex_second_sub_level_cols = [lst_svod_cols[1], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
+
 
 
 
