@@ -195,6 +195,159 @@ def calc_sub_value_td(row):
     return result
 
 
+def calc_sub_value_niar(row):
+    """
+    Функция для подсчета значения субшкалы Неадекватное избирательное эмоциональное реагирование
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [5,17,29,41,53,65,77] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 5: # Вопрос 5
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 17: # Вопрос 17
+                if value == 'нет':
+                    result += 3
+            elif idx + 1 == 29: # Вопрос 29
+                if value == 'да':
+                    result += 10
+            elif idx + 1 == 41: # Вопрос 41
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 53: # Вопрос 53
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 65: # Вопрос 65
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 77: # Вопрос 77
+                if value == 'да':
+                    result += 5
+
+
+
+    return result
+
+
+def calc_sub_value_and(row):
+    """
+    Функция для подсчета значения субшкалы Эмоционально-нравственная дезориентация
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [6,18,30,42,54,66,78] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 6: # Вопрос 6
+                if value == 'да':
+                    result += 10
+            elif idx + 1 == 18: # Вопрос 18
+                if value == 'нет':
+                    result += 3
+            elif idx + 1 == 30: # Вопрос 30
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 42: # Вопрос 42
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 54: # Вопрос 54
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 66: # Вопрос 66
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 78: # Вопрос 78
+                if value == 'нет':
+                    result += 5
+
+
+
+
+    return result
+
+
+def calc_sub_value_rsaa(row):
+    """
+    Функция для подсчета значения субшкалы Расширение сферы экономии эмоций
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [7,19,31,43,55,67,79] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 7: # Вопрос 7
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 19: # Вопрос 19
+                if value == 'да':
+                    result += 10
+            elif idx + 1 == 31: # Вопрос 31
+                if value == 'нет':
+                    result += 2
+            elif idx + 1 == 43: # Вопрос 43
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 55: # Вопрос 55
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 67: # Вопрос 67
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 79: # Вопрос 79
+                if value == 'нет':
+                    result += 5
+
+
+
+
+    return result
+
+
+def calc_sub_value_rpo(row):
+    """
+    Функция для подсчета значения субшкалы Редукция профессиональных обязанностей
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [8,20,32,44,56,68,80] # вопросы
+    result = 0 # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            if idx + 1 == 8: # Вопрос 8
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 20: # Вопрос 20
+                if value == 'да':
+                    result += 5
+            elif idx + 1 == 32: # Вопрос 32
+                if value == 'да':
+                    result += 2
+            elif idx + 1 == 44: # Вопрос 44
+                if value == 'нет':
+                    result += 2
+            elif idx + 1 == 56: # Вопрос 56
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 68: # Вопрос 68
+                if value == 'да':
+                    result += 3
+            elif idx + 1 == 80: # Вопрос 80
+                if value == 'да':
+                    result += 10
+
+
+
+    return result
+
+
+
+
+
 
 
 def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
@@ -359,6 +512,51 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
 
     base_df['Уровень_фазы_Напряжение'] = base_df[
         'Значение_фазы_Напряжение'].apply(calc_level_phase)
+
+
+    # 2 фаза
+    # Симптом Неадекватное избирательное эмоциональное реагирование
+    base_df['Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование'] = answers_df.apply(calc_sub_value_niar, axis=1)
+    base_df['Норма_Неадекватное_избирательное_эмоциональное_реагирование'] = '0-9 баллов'
+    base_df['Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование'] = base_df[
+        'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование'].apply(
+        calc_level_sub)
+
+    # Симптом Эмоционально-нравственная дезориентация
+    base_df['Значение_симптома_Эмоционально_нравственная_дезориентация'] = answers_df.apply(calc_sub_value_and, axis=1)
+    base_df['Норма_Эмоционально_нравственная_дезориентация'] = '0-9 баллов'
+    base_df['Уровень_симптома_Эмоционально_нравственная_дезориентация'] = base_df[
+        'Значение_симптома_Эмоционально_нравственная_дезориентация'].apply(
+        calc_level_sub)
+
+    # Симптом Расширение сферы экономии эмоций
+    base_df['Значение_симптома_Расширение_сферы_экономии_эмоций'] = answers_df.apply(calc_sub_value_rsaa, axis=1)
+    base_df['Норма_Расширение_сферы_экономии_эмоций'] = '0-9 баллов'
+    base_df['Уровень_симптома_Расширение_сферы_экономии_эмоций'] = base_df[
+        'Значение_симптома_Расширение_сферы_экономии_эмоций'].apply(
+        calc_level_sub)
+
+    # Симптом Редукция профессиональных обязанностей
+    base_df['Значение_симптома_Редукция_профессиональных_обязанностей'] = answers_df.apply(calc_sub_value_rpo, axis=1)
+    base_df['Норма_Редукция_профессиональных_обязанностей'] = '0-9 баллов'
+    base_df['Уровень_симптома_Редукция_профессиональных_обязанностей'] = base_df[
+        'Значение_симптома_Редукция_профессиональных_обязанностей'].apply(
+        calc_level_sub)
+
+
+    # Фаза РЕЗИСТЕНЦИЯ
+    base_df['Значение_фазы_Резистенция'] = base_df[['Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                   'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                                                   'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                                                    'Значение_симптома_Редукция_профессиональных_обязанностей']].sum(axis=1)
+
+    base_df['Уровень_фазы_Резистенция'] = base_df[
+        'Значение_фазы_Резистенция'].apply(calc_level_phase)
+
+
+
+
+
 
 
 
