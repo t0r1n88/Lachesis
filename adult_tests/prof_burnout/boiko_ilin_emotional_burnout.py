@@ -261,7 +261,7 @@ def calc_count_main_level(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_c
         count_df['начинающееся выгорание'] / count_df['Итого'], 2) * 100
     count_df['% симптомы выгорания от общего'] = round(
         count_df['симптомы выгорания'] / count_df['Итого'], 2) * 100
-    count_df['% имеется выгорание'] = round(
+    count_df['% имеется выгорание от общего'] = round(
         count_df['имеется выгорание'] / count_df['Итого'], 2) * 100
 
     return count_df

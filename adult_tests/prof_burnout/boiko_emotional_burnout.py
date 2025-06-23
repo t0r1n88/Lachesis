@@ -507,6 +507,114 @@ def calc_sub_value_ppn(row):
     return result
 
 
+def calc_count_main_level(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% 0-99 от общего'] = round(
+        count_df['0-99'] / count_df['Итого'], 2) * 100
+    count_df['% 100-149 от общего'] = round(
+        count_df['100-149'] / count_df['Итого'], 2) * 100
+    count_df['% 150-199 от общего'] = round(
+        count_df['150-199'] / count_df['Итого'], 2) * 100
+    count_df['% 200-249 от общего'] = round(
+        count_df['200-249'] / count_df['Итого'], 2) * 100
+    count_df['% 250-299 от общего'] = round(
+        count_df['250-299'] / count_df['Итого'], 2) * 100
+    count_df['% 300 и более от общего'] = round(
+        count_df['300 и более'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+def calc_count_level_phase(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по фазам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% фаза не сформировалась от общего'] = round(
+        count_df['фаза не сформировалась'] / count_df['Итого'], 2) * 100
+    count_df['% фаза в стадии формирования от общего'] = round(
+        count_df['фаза в стадии формирования'] / count_df['Итого'], 2) * 100
+    count_df['% сформировавшаяся фаза от общего'] = round(
+        count_df['сформировавшаяся фаза'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+def calc_count_level_sub(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по субшкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% не сложившийся симптом от общего'] = round(
+        count_df['не сложившийся симптом'] / count_df['Итого'], 2) * 100
+    count_df['% складывающийся симптом от общего'] = round(
+        count_df['складывающийся симптом'] / count_df['Итого'], 2) * 100
+    count_df['% сложившийся симптом от общего'] = round(
+        count_df['сложившийся симптом'] / count_df['Итого'], 2) * 100
+    count_df['% доминирующий симптом от общего'] = round(
+        count_df['доминирующий симптом'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                       values=val_cat,
+                                       aggfunc=round_mean)
+    calc_mean_df.reset_index(inplace=True)
+    calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
+    return calc_mean_df
 
 
 
@@ -965,6 +1073,199 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
             """
     if len(lst_svod_cols) == 0:
         return out_dct, part_df
+
+    elif len(lst_svod_cols) == 1:
+        lst_reindex_main_level_cols = [lst_svod_cols[0],'0-99','100-149','150-199','200-249','250-299','300 и более',
+                                       'Итого']  # Основная шкала
+
+        lst_reindex_phase_level_cols = [lst_svod_cols[0], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза',
+                                      'Итого']  # Фазы
+        lst_reindex_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом',
+                                      'Итого']  # Симптомы
+
+        # основная шкала
+        svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
+                                                        'Итоговое_значение_эмоционального_выгорания',
+                                                        'Диапазон_эмоционального_выгорания',
+                                                        lst_reindex_main_level_cols)
+
+
+        # Фазы
+        svod_count_one_phase_stress_df = calc_count_level_phase(base_df, lst_svod_cols,
+                                                                       'Значение_фазы_Напряжение',
+                                                                       'Уровень_фазы_Напряжение',
+                                                                       lst_reindex_phase_level_cols)
+
+        svod_count_one_phase_resistance_df = calc_count_level_phase(base_df, lst_svod_cols,
+                                                                       'Значение_фазы_Резистенция',
+                                                                       'Уровень_фазы_Резистенция',
+                                                                       lst_reindex_phase_level_cols)
+        svod_count_one_phase_exhaustion_df = calc_count_level_phase(base_df, lst_svod_cols,
+                                                                       'Значение_фазы_Истощение',
+                                                                       'Уровень_фазы_Истощение',
+                                                                       lst_reindex_phase_level_cols)
+
+        # Симптомы
+        # 1 phase
+        svod_count_one_level_ppo_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                                       'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_ns_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Неудовлетворенность_собой',
+                                                                       'Уровень_симптома_Неудовлетворенность_собой',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_zk_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Загнанность_в_клетку',
+                                                                       'Уровень_симптома_Загнанность_в_клетку',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_td_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Тревога_и_депрессия',
+                                                                       'Уровень_симптома_Тревога_и_депрессия',
+                                                                       lst_reindex_sub_level_cols)
+        # 2 phase
+        svod_count_one_level_niar_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                                       'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_and_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                                                                       'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_rsaa_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                                                                       'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_rpo_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                                       'Уровень_симптома_Редукция_профессиональных_обязанностей',
+                                                                       lst_reindex_sub_level_cols)
+        # 3 phase
+        svod_count_one_level_ad_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Эмоциональный_дефицит',
+                                                                       'Уровень_симптома_Эмоциональный_дефицит',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_ao_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Эмоциональная_отстраненность',
+                                                                       'Уровень_симптома_Эмоциональная_отстраненность',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_lo_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Личностная_отстраненность',
+                                                                       'Уровень_симптома_Личностная_отстраненность',
+                                                                       lst_reindex_sub_level_cols)
+        svod_count_one_level_ppn_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                                       'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+                                                                       'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+                                                                       lst_reindex_sub_level_cols)
+
+        # очищаем название колонки по которой делали свод
+        name_one = lst_svod_cols[0]
+        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        name_one = name_one[:15]
+
+        # Считаем среднее по субшкалам
+        svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Итоговое_значение_эмоционального_выгорания')
+        # Фазы
+        svod_mean_phase_stress_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_фазы_Напряжение')
+        svod_mean_phase_resistance_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_фазы_Резистенция')
+        svod_mean_phase_exhaustion_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_фазы_Истощение')
+
+        # Симптомы
+        svod_mean_simptom_ppo_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Переживание_психотравмирующих_обстоятельств')
+        svod_mean_simptom_ns_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Неудовлетворенность_собой')
+        svod_mean_simptom_zk_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Загнанность_в_клетку')
+        svod_mean_simptom_td_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Тревога_и_депрессия')
+
+        svod_mean_simptom_niar_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование')
+        svod_mean_simptom_and_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Эмоционально_нравственная_дезориентация')
+        svod_mean_simptom_rsaa_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Расширение_сферы_экономии_эмоций')
+        svod_mean_simptom_rpo_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Редукция_профессиональных_обязанностей')
+
+        svod_mean_simptom_ad_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Эмоциональный_дефицит')
+        svod_mean_simptom_ao_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Эмоциональная_отстраненность')
+        svod_mean_simptom_lo_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Личностная_отстраненность')
+        svod_mean_simptom_ppn_df = calc_mean(base_df, [lst_svod_cols[0]],
+                                                 'Значение_симптома_Психосоматические_и_психовегетативные_нарушения')
+
+
+
+        out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+                        f'Свод Напряжение {name_one[:10]}': svod_count_one_phase_stress_df,
+                        f'Свод Резистенция {name_one[:10]}': svod_count_one_phase_resistance_df,
+                        f'Свод Истощение {name_one[:10]}': svod_count_one_phase_exhaustion_df,
+
+
+                        f'Свод ППО {name_one}': svod_count_one_level_ppo_df,
+                        f'Свод НС {name_one}': svod_count_one_level_ns_df,
+                        f'Свод ЗК {name_one}': svod_count_one_level_zk_df,
+                        f'Свод ТД {name_one}': svod_count_one_level_td_df,
+
+                        f'Свод НИЭР {name_one}': svod_count_one_level_niar_df,
+                        f'Свод ЭНД {name_one}': svod_count_one_level_and_df,
+                        f'Свод РСЭЭ {name_one}': svod_count_one_level_rsaa_df,
+                        f'Свод РПО {name_one}': svod_count_one_level_rpo_df,
+
+                        f'Свод ЭД {name_one}': svod_count_one_level_ad_df,
+                        f'Свод ЭО {name_one}': svod_count_one_level_ao_df,
+                        f'Свод ЛО {name_one}': svod_count_one_level_lo_df,
+                        f'Свод ППН {name_one}': svod_count_one_level_ppn_df,
+
+                        f'Ср. {name_one}': svod_mean_df,
+                        f'Ср. Напряжение {name_one[:10]}': svod_mean_phase_stress_df,
+                        f'Ср. Резистенция {name_one[:10]}': svod_mean_phase_resistance_df,
+                        f'Ср. Истощение {name_one[:10]}': svod_mean_phase_exhaustion_df,
+
+                        f'Ср. ППО {name_one}': svod_mean_simptom_ppo_df,
+                        f'Ср. НС {name_one}': svod_mean_simptom_ns_df,
+                        f'Ср. ЗК {name_one}': svod_mean_simptom_zk_df,
+                        f'Ср. ТД {name_one}': svod_mean_simptom_td_df,
+
+                        f'Ср. НИЭР {name_one}': svod_mean_simptom_niar_df,
+                        f'Ср. ЭНД {name_one}': svod_mean_simptom_and_df,
+                        f'Ср. РСЭЭ {name_one}': svod_mean_simptom_rsaa_df,
+                        f'Ср. РПО {name_one}': svod_mean_simptom_rpo_df,
+
+                        f'Ср. ЭД {name_one}': svod_mean_simptom_ad_df,
+                        f'Ср. ЭО {name_one}': svod_mean_simptom_ao_df,
+                        f'Ср. ЛО {name_one}': svod_mean_simptom_lo_df,
+                        f'Ср. ППН {name_one}': svod_mean_simptom_ppn_df,
+
+                        })
+
+        return out_dct, part_df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
