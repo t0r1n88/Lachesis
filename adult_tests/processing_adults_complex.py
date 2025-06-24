@@ -71,6 +71,16 @@ def check_svod_cols(df:pd.DataFrame,str_svod_cols:str,threshold:int):
                     else:
                         result[idx] = df.columns[value-1]
                 return result
+            elif len(result) == 3:
+                for idx,value in enumerate(result):
+                    value = int(value)
+                    if value > threshold:
+                        raise NotCorrectSvodCols
+                    elif value == 0:
+                        raise NotCorrectSvodCols
+                    else:
+                        result[idx] = df.columns[value-1]
+                return result
             else:
                 raise NotCorrectSvodCols
 
@@ -310,8 +320,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
     except NotCorrectSvodCols:
         messagebox.showerror('Лахеcис',
-                                 f'Проверьте правильность написания порядковых номеров колонок по которым вы хотите сделать свод.\nПравильный формат это не более двух чисел разделенных запятой, начиная с цифры 1, '
-                                 f'например 1,3 или 2 а если вам не нужны своды то оставьте это поле пустым.\n'
+                                 f'Проверьте правильность написания порядковых номеров колонок по которым вы хотите сделать свод.\nПравильный формат это не более трех чисел разделенных запятой, начиная с цифры 1, '
+                                 f'например 1,3 или 2 или 3,1,2 а если вам не нужны своды то оставьте это поле пустым.\n'
                                  f'Проверьте числа которые вы указали потому что, порядковый номер колонки не может превышать количество колонок в анкетной части вашего файла с ответами на тест.')
     else:
         messagebox.showinfo('Лахеcис',
@@ -325,8 +335,8 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 2
-    main_svod_cols = '1,2'
+    main_quantity_descr_cols = 3
+    main_svod_cols = '1,2,3'
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 

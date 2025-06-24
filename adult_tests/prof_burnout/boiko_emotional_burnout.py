@@ -638,6 +638,383 @@ def calc_dominus_simptom(row:pd.Series,dct_replace:dict):
         return ',\n'.join(lst_simptom)
 
 
+def create_result_beb(base_df:pd.DataFrame,out_dct:dict,lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_reindex_main_level_cols = lst_svod_cols.copy()
+    lst_reindex_main_level_cols.extend(['0-99', '100-149', '150-199', '200-249', '250-299', '300 и более',
+   'Итого'])  # Основная шкала
+
+    lst_reindex_phase_level_cols = lst_svod_cols.copy()
+    lst_reindex_phase_level_cols.extend(['фаза не сформировалась', 'фаза в стадии формирования',
+                                    'сформировавшаяся фаза',
+                                    'Итого'])  # Фазы
+    lst_reindex_sub_level_cols = lst_svod_cols.copy()
+    lst_reindex_sub_level_cols.extend(['не сложившийся симптом', 'складывающийся симптом',
+                                  'сложившийся симптом', 'доминирующий симптом',
+                                  'Итого'])  # Симптомы
+
+    # основная шкала
+    svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
+                                                    'Итоговое_значение_эмоционального_выгорания',
+                                                    'Диапазон_эмоционального_выгорания',
+                                                    lst_reindex_main_level_cols)
+
+    # Фазы
+    svod_count_one_phase_stress_df = calc_count_level_phase(base_df, lst_svod_cols,
+                                                            'Значение_фазы_Напряжение',
+                                                            'Уровень_фазы_Напряжение',
+                                                            lst_reindex_phase_level_cols)
+
+    svod_count_one_phase_resistance_df = calc_count_level_phase(base_df, lst_svod_cols,
+                                                                'Значение_фазы_Резистенция',
+                                                                'Уровень_фазы_Резистенция',
+                                                                lst_reindex_phase_level_cols)
+    svod_count_one_phase_exhaustion_df = calc_count_level_phase(base_df, lst_svod_cols,
+                                                                'Значение_фазы_Истощение',
+                                                                'Уровень_фазы_Истощение',
+                                                                lst_reindex_phase_level_cols)
+
+    # Симптомы
+    # 1 phase
+    svod_count_one_level_ppo_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                       'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                       lst_reindex_sub_level_cols)
+    svod_count_one_level_ns_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_симптома_Неудовлетворенность_собой',
+                                                      'Уровень_симптома_Неудовлетворенность_собой',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_zk_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_симптома_Загнанность_в_клетку',
+                                                      'Уровень_симптома_Загнанность_в_клетку',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_td_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_симптома_Тревога_и_депрессия',
+                                                      'Уровень_симптома_Тревога_и_депрессия',
+                                                      lst_reindex_sub_level_cols)
+    # 2 phase
+    svod_count_one_level_niar_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                        'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                        'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                        lst_reindex_sub_level_cols)
+    svod_count_one_level_and_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                       'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                                                       'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+                                                       lst_reindex_sub_level_cols)
+    svod_count_one_level_rsaa_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                        'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                                                        'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+                                                        lst_reindex_sub_level_cols)
+    svod_count_one_level_rpo_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                       'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                       'Уровень_симптома_Редукция_профессиональных_обязанностей',
+                                                       lst_reindex_sub_level_cols)
+    # 3 phase
+    svod_count_one_level_ad_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_симптома_Эмоциональный_дефицит',
+                                                      'Уровень_симптома_Эмоциональный_дефицит',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_ao_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_симптома_Эмоциональная_отстраненность',
+                                                      'Уровень_симптома_Эмоциональная_отстраненность',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_lo_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_симптома_Личностная_отстраненность',
+                                                      'Уровень_симптома_Личностная_отстраненность',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_ppn_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                       'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+                                                       'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+                                                       lst_reindex_sub_level_cols)
+
+
+
+    # Считаем среднее по субшкалам
+    svod_mean_df = pd.pivot_table(base_df,
+                                  index=[lst_svod_cols[0]],
+                                  values=['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение',
+                                          'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
+                                          'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                                          'Значение_симптома_Неудовлетворенность_собой',
+                                          'Значение_симптома_Загнанность_в_клетку',
+                                          'Значение_симптома_Тревога_и_депрессия',
+                                          'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                          'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                                          'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                                          'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                          'Значение_симптома_Эмоциональный_дефицит',
+                                          'Значение_симптома_Эмоциональная_отстраненность',
+                                          'Значение_симптома_Личностная_отстраненность',
+                                          'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+                                          ],
+                                  aggfunc=round_mean)
+    svod_mean_df.reset_index(inplace=True)
+    # упорядочиваем колонки
+    new_order_cols = lst_svod_cols.copy()
+    new_order_cols.extend(
+        ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
+         'Значение_фазы_Истощение',
+         'Значение_симптома_Переживание_психотравмирующих_обстоятельств', 'Значение_симптома_Неудовлетворенность_собой',
+         'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
+         'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+         'Значение_симптома_Эмоционально_нравственная_дезориентация',
+         'Значение_симптома_Расширение_сферы_экономии_эмоций',
+         'Значение_симптома_Редукция_профессиональных_обязанностей',
+         'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
+         'Значение_симптома_Личностная_отстраненность',
+         'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+    svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+    dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
+                            'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
+                            'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
+                            'Значение_фазы_Истощение': 'Ср. фазы Истощение',
+                            'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
+                            'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
+                            'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
+                            'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
+
+                            'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
+                            'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
+                            'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
+                            'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
+
+                            'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
+                            'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
+                            'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
+                            'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
+    svod_mean_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        out_name_lst.append(name[:10])
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+
+
+
+    out_dct.update({f'Свод {out_name}': svod_count_one_level_df,
+                    f'Ср. {out_name}': svod_mean_df,
+                    f'Свод Напряжение {out_name}': svod_count_one_phase_stress_df,
+                    f'Свод Резистенция {out_name}': svod_count_one_phase_resistance_df,
+                    f'Свод Истощение {out_name}': svod_count_one_phase_exhaustion_df,
+
+                    f'Свод ППО {out_name}': svod_count_one_level_ppo_df,
+                    f'Свод НС {out_name}': svod_count_one_level_ns_df,
+                    f'Свод ЗК {out_name}': svod_count_one_level_zk_df,
+                    f'Свод ТД {out_name}': svod_count_one_level_td_df,
+
+                    f'Свод НИЭР {out_name}': svod_count_one_level_niar_df,
+                    f'Свод ЭНД {out_name}': svod_count_one_level_and_df,
+                    f'Свод РСЭЭ {out_name}': svod_count_one_level_rsaa_df,
+                    f'Свод РПО {out_name}': svod_count_one_level_rpo_df,
+
+                    f'Свод ЭД {out_name}': svod_count_one_level_ad_df,
+                    f'Свод ЭО {out_name}': svod_count_one_level_ao_df,
+                    f'Свод ЛО {out_name}': svod_count_one_level_lo_df,
+                    f'Свод ППН {out_name}': svod_count_one_level_ppn_df,
+
+                    })
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
+    else:
+        for idx,name_column in enumerate(lst_svod_cols):
+            lst_reindex_column_level_cols = [lst_svod_cols[idx], '0-99', '100-149', '150-199', '200-249', '250-299',
+                                           '300 и более',
+                                           'Итого']  # Основная шкала
+
+            lst_reindex_column_phase_level_cols = [lst_svod_cols[idx], 'фаза не сформировалась', 'фаза в стадии формирования',
+                                            'сформировавшаяся фаза',
+                                            'Итого']  # Фазы
+            lst_reindex_column_sub_level_cols = [lst_svod_cols[idx], 'не сложившийся симптом', 'складывающийся симптом',
+                                          'сложившийся симптом', 'доминирующий симптом',
+                                          'Итого']  # Симптомы
+
+            svod_count_column_level_df = calc_count_main_level(base_df, [lst_svod_cols[idx]],
+                                                               'Итоговое_значение_эмоционального_выгорания',
+                                                               'Диапазон_эмоционального_выгорания',
+                                                               lst_reindex_column_level_cols)
+
+            # Фазы
+            svod_count_column_phase_stress_df = calc_count_level_phase(base_df, [lst_svod_cols[idx]],
+                                                                       'Значение_фазы_Напряжение',
+                                                                       'Уровень_фазы_Напряжение',
+                                                                       lst_reindex_column_phase_level_cols)
+
+            svod_count_column_phase_resistance_df = calc_count_level_phase(base_df, [lst_svod_cols[idx]],
+                                                                           'Значение_фазы_Резистенция',
+                                                                           'Уровень_фазы_Резистенция',
+                                                                           lst_reindex_column_phase_level_cols)
+            svod_count_column_phase_exhaustion_df = calc_count_level_phase(base_df, [lst_svod_cols[idx]],
+                                                                           'Значение_фазы_Истощение',
+                                                                           'Уровень_фазы_Истощение',
+                                                                           lst_reindex_column_phase_level_cols)
+
+            # Симптомы
+            # 1 phase
+            svod_count_column_level_ppo_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                  'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                                  'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                                  lst_reindex_column_sub_level_cols)
+            svod_count_column_level_ns_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                 'Значение_симптома_Неудовлетворенность_собой',
+                                                                 'Уровень_симптома_Неудовлетворенность_собой',
+                                                                 lst_reindex_column_sub_level_cols)
+            svod_count_column_level_zk_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                 'Значение_симптома_Загнанность_в_клетку',
+                                                                 'Уровень_симптома_Загнанность_в_клетку',
+                                                                 lst_reindex_column_sub_level_cols)
+            svod_count_column_level_td_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                 'Значение_симптома_Тревога_и_депрессия',
+                                                                 'Уровень_симптома_Тревога_и_депрессия',
+                                                                 lst_reindex_column_sub_level_cols)
+            # 2 phase
+            svod_count_column_level_niar_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                   'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                                   'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                                   lst_reindex_column_sub_level_cols)
+            svod_count_column_level_and_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                  'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                                                                  'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+                                                                  lst_reindex_column_sub_level_cols)
+            svod_count_column_level_rsaa_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                   'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                                                                   'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+                                                                   lst_reindex_column_sub_level_cols)
+            svod_count_column_level_rpo_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                  'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                                  'Уровень_симптома_Редукция_профессиональных_обязанностей',
+                                                                  lst_reindex_column_sub_level_cols)
+            # 3 phase
+            svod_count_column_level_ad_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                 'Значение_симптома_Эмоциональный_дефицит',
+                                                                 'Уровень_симптома_Эмоциональный_дефицит',
+                                                                 lst_reindex_column_sub_level_cols)
+            svod_count_column_level_ao_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                 'Значение_симптома_Эмоциональная_отстраненность',
+                                                                 'Уровень_симптома_Эмоциональная_отстраненность',
+                                                                 lst_reindex_column_sub_level_cols)
+            svod_count_column_level_lo_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                 'Значение_симптома_Личностная_отстраненность',
+                                                                 'Уровень_симптома_Личностная_отстраненность',
+                                                                 lst_reindex_column_sub_level_cols)
+            svod_count_column_level_ppn_df = calc_count_level_sub(base_df, [lst_svod_cols[idx]],
+                                                                  'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+                                                                  'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+                                                                  lst_reindex_column_sub_level_cols)
+
+            # Считаем среднее по субшкалам
+            svod_mean_column_df = pd.pivot_table(base_df,
+                                                 index=[lst_svod_cols[idx]],
+                                                 values=['Итоговое_значение_эмоционального_выгорания',
+                                                         'Значение_фазы_Напряжение',
+                                                         'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
+                                                         'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                                                         'Значение_симптома_Неудовлетворенность_собой',
+                                                         'Значение_симптома_Загнанность_в_клетку',
+                                                         'Значение_симптома_Тревога_и_депрессия',
+                                                         'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                                                         'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                                                         'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                                                         'Значение_симптома_Редукция_профессиональных_обязанностей',
+                                                         'Значение_симптома_Эмоциональный_дефицит',
+                                                         'Значение_симптома_Эмоциональная_отстраненность',
+                                                         'Значение_симптома_Личностная_отстраненность',
+                                                         'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+                                                         ],
+                                                 aggfunc=round_mean)
+            svod_mean_column_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = [lst_svod_cols[idx]].copy()
+            new_order_cols.extend(
+                ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
+                 'Значение_фазы_Истощение',
+                 'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+                 'Значение_симптома_Неудовлетворенность_собой',
+                 'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
+                 'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+                 'Значение_симптома_Эмоционально_нравственная_дезориентация',
+                 'Значение_симптома_Расширение_сферы_экономии_эмоций',
+                 'Значение_симптома_Редукция_профессиональных_обязанностей',
+                 'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
+                 'Значение_симптома_Личностная_отстраненность',
+                 'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+            svod_mean_column_df = svod_mean_column_df.reindex(columns=new_order_cols)
+            dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
+                                    'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
+                                    'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
+                                    'Значение_фазы_Истощение': 'Ср. фазы Истощение',
+                                    'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
+                                    'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
+                                    'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
+                                    'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
+
+                                    'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
+                                    'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
+                                    'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
+                                    'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
+
+                                    'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
+                                    'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
+                                    'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
+                                    'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
+            svod_mean_column_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+            name_column = lst_svod_cols[idx]
+            name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)
+            name_column = name_column[:15]
+
+            out_dct.update({f'Свод {name_column}': svod_count_column_level_df,
+            f'Ср. {name_column}': svod_mean_column_df,
+            f'Свод Напряжение {name_column[:10]}': svod_count_column_phase_stress_df,
+            f'Свод Резистенция {name_column[:10]}': svod_count_column_phase_resistance_df,
+            f'Свод Истощение {name_column[:10]}': svod_count_column_phase_exhaustion_df,
+
+            f'Свод ППО {name_column}': svod_count_column_level_ppo_df,
+            f'Свод НС {name_column}': svod_count_column_level_ns_df,
+            f'Свод ЗК {name_column}': svod_count_column_level_zk_df,
+            f'Свод ТД {name_column}': svod_count_column_level_td_df,
+
+            f'Свод НИЭР {name_column}': svod_count_column_level_niar_df,
+            f'Свод ЭНД {name_column}': svod_count_column_level_and_df,
+            f'Свод РСЭЭ {name_column}': svod_count_column_level_rsaa_df,
+            f'Свод РПО {name_column}': svod_count_column_level_rpo_df,
+
+            f'Свод ЭД {name_column}': svod_count_column_level_ad_df,
+            f'Свод ЭО {name_column}': svod_count_column_level_ao_df,
+            f'Свод ЛО {name_column}': svod_count_column_level_lo_df,
+            f'Свод ППН {name_column}': svod_count_column_level_ppn_df})
+
+
+        return out_dct
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
@@ -1112,654 +1489,661 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
     if len(lst_svod_cols) == 0:
         return out_dct, part_df
 
-    elif len(lst_svod_cols) == 1:
-        lst_reindex_main_level_cols = [lst_svod_cols[0],'0-99','100-149','150-199','200-249','250-299','300 и более',
-                                       'Итого']  # Основная шкала
+    # elif len(lst_svod_cols) == 1:
+    else:
+        out_dct = create_result_beb(base_df,out_dct,lst_svod_cols)
 
-        lst_reindex_phase_level_cols = [lst_svod_cols[0], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза',
-                                      'Итого']  # Фазы
-        lst_reindex_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом',
-                                      'Итого']  # Симптомы
-
-        # основная шкала
-        svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
-                                                        'Итоговое_значение_эмоционального_выгорания',
-                                                        'Диапазон_эмоционального_выгорания',
-                                                        lst_reindex_main_level_cols)
+        return out_dct,part_df
 
 
-        # Фазы
-        svod_count_one_phase_stress_df = calc_count_level_phase(base_df, lst_svod_cols,
-                                                                       'Значение_фазы_Напряжение',
-                                                                       'Уровень_фазы_Напряжение',
-                                                                       lst_reindex_phase_level_cols)
+        # lst_reindex_main_level_cols = [lst_svod_cols[0],'0-99','100-149','150-199','200-249','250-299','300 и более',
+        #                                'Итого']  # Основная шкала
+        #
+        # lst_reindex_phase_level_cols = [lst_svod_cols[0], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза',
+        #                               'Итого']  # Фазы
+        # lst_reindex_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом',
+        #                               'Итого']  # Симптомы
+        #
+        # # основная шкала
+        # svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
+        #                                                 'Итоговое_значение_эмоционального_выгорания',
+        #                                                 'Диапазон_эмоционального_выгорания',
+        #                                                 lst_reindex_main_level_cols)
+        #
+        #
+        # # Фазы
+        # svod_count_one_phase_stress_df = calc_count_level_phase(base_df, lst_svod_cols,
+        #                                                                'Значение_фазы_Напряжение',
+        #                                                                'Уровень_фазы_Напряжение',
+        #                                                                lst_reindex_phase_level_cols)
+        #
+        # svod_count_one_phase_resistance_df = calc_count_level_phase(base_df, lst_svod_cols,
+        #                                                                'Значение_фазы_Резистенция',
+        #                                                                'Уровень_фазы_Резистенция',
+        #                                                                lst_reindex_phase_level_cols)
+        # svod_count_one_phase_exhaustion_df = calc_count_level_phase(base_df, lst_svod_cols,
+        #                                                                'Значение_фазы_Истощение',
+        #                                                                'Уровень_фазы_Истощение',
+        #                                                                lst_reindex_phase_level_cols)
+        #
+        # # Симптомы
+        # # 1 phase
+        # svod_count_one_level_ppo_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                                'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_ns_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Неудовлетворенность_собой',
+        #                                                                'Уровень_симптома_Неудовлетворенность_собой',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_zk_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Загнанность_в_клетку',
+        #                                                                'Уровень_симптома_Загнанность_в_клетку',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_td_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Тревога_и_депрессия',
+        #                                                                'Уровень_симптома_Тревога_и_депрессия',
+        #                                                                lst_reindex_sub_level_cols)
+        # # 2 phase
+        # svod_count_one_level_niar_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                                'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_and_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                                'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_rsaa_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                                'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_rpo_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                                                'Уровень_симптома_Редукция_профессиональных_обязанностей',
+        #                                                                lst_reindex_sub_level_cols)
+        # # 3 phase
+        # svod_count_one_level_ad_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Эмоциональный_дефицит',
+        #                                                                'Уровень_симптома_Эмоциональный_дефицит',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_ao_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Эмоциональная_отстраненность',
+        #                                                                'Уровень_симптома_Эмоциональная_отстраненность',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_lo_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Личностная_отстраненность',
+        #                                                                'Уровень_симптома_Личностная_отстраненность',
+        #                                                                lst_reindex_sub_level_cols)
+        # svod_count_one_level_ppn_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                                'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                                lst_reindex_sub_level_cols)
+        #
+        # # очищаем название колонки по которой делали свод
+        # name_one = lst_svod_cols[0]
+        # name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        # name_one = name_one[:15]
+        #
+        # # Считаем среднее по субшкалам
+        # svod_mean_df = pd.pivot_table(base_df,
+        #                               index=[lst_svod_cols[0]],
+        #                               values=['Итоговое_значение_эмоционального_выгорания','Значение_фазы_Напряжение','Значение_фазы_Резистенция','Значение_фазы_Истощение',
+        #                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств','Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия',
+        #                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование','Значение_симптома_Эмоционально_нравственная_дезориентация','Значение_симптома_Расширение_сферы_экономии_эмоций','Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                       'Значение_симптома_Эмоциональный_дефицит','Значение_симптома_Эмоциональная_отстраненность','Значение_симптома_Личностная_отстраненность','Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+        #                                       ],
+        #                               aggfunc=round_mean)
+        # svod_mean_df.reset_index(inplace=True)
+        # # упорядочиваем колонки
+        # new_order_cols = lst_svod_cols.copy()
+        # new_order_cols.extend(['Итоговое_значение_эмоционального_выгорания','Значение_фазы_Напряжение','Значение_фазы_Резистенция','Значение_фазы_Истощение',
+        #                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств','Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия',
+        #                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование','Значение_симптома_Эмоционально_нравственная_дезориентация','Значение_симптома_Расширение_сферы_экономии_эмоций','Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                       'Значение_симптома_Эмоциональный_дефицит','Значение_симптома_Эмоциональная_отстраненность','Значение_симптома_Личностная_отстраненность','Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+        # svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+        # dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания':'Ср. эмоционального выгорания',
+        #                         'Значение_фазы_Напряжение':'Ср. фазы Напряжение','Значение_фазы_Резистенция':'Ср. фазы Резистенция','Значение_фазы_Истощение':'Ср. фазы Истощение',
+        #                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств':'Ср. ППО','Значение_симптома_Неудовлетворенность_собой':'Ср. НС',
+        #                         'Значение_симптома_Загнанность_в_клетку':'Ср. ЗК','Значение_симптома_Тревога_и_депрессия':'Ср. ТД',
+        #
+        #                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование':'Ср. НИЭР','Значение_симптома_Эмоционально_нравственная_дезориентация':'Ср. ЭНД',
+        #                         'Значение_симптома_Расширение_сферы_экономии_эмоций':'Ср. РСЭЭ','Значение_симптома_Редукция_профессиональных_обязанностей':'Ср. РПО',
+        #
+        #                                       'Значение_симптома_Эмоциональный_дефицит':'Ср. ЭД','Значение_симптома_Эмоциональная_отстраненность':'Ср. ЭО',
+        #                         'Значение_симптома_Личностная_отстраненность':'Ср. ЛО','Значение_симптома_Психосоматические_и_психовегетативные_нарушения':'Ср. ППН'}
+        # svod_mean_df.rename(columns=dct_rename_cols_mean,inplace=True)
+        #
+        #
+        # out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+        #                 f'Ср. {name_one}': svod_mean_df,
+        #                 f'Свод Напряжение {name_one[:10]}': svod_count_one_phase_stress_df,
+        #                 f'Свод Резистенция {name_one[:10]}': svod_count_one_phase_resistance_df,
+        #                 f'Свод Истощение {name_one[:10]}': svod_count_one_phase_exhaustion_df,
+        #
+        #
+        #                 f'Свод ППО {name_one}': svod_count_one_level_ppo_df,
+        #                 f'Свод НС {name_one}': svod_count_one_level_ns_df,
+        #                 f'Свод ЗК {name_one}': svod_count_one_level_zk_df,
+        #                 f'Свод ТД {name_one}': svod_count_one_level_td_df,
+        #
+        #                 f'Свод НИЭР {name_one}': svod_count_one_level_niar_df,
+        #                 f'Свод ЭНД {name_one}': svod_count_one_level_and_df,
+        #                 f'Свод РСЭЭ {name_one}': svod_count_one_level_rsaa_df,
+        #                 f'Свод РПО {name_one}': svod_count_one_level_rpo_df,
+        #
+        #                 f'Свод ЭД {name_one}': svod_count_one_level_ad_df,
+        #                 f'Свод ЭО {name_one}': svod_count_one_level_ao_df,
+        #                 f'Свод ЛО {name_one}': svod_count_one_level_lo_df,
+        #                 f'Свод ППН {name_one}': svod_count_one_level_ppn_df,
+        #
+        #                 })
+        #
+        # return out_dct, part_df
 
-        svod_count_one_phase_resistance_df = calc_count_level_phase(base_df, lst_svod_cols,
-                                                                       'Значение_фазы_Резистенция',
-                                                                       'Уровень_фазы_Резистенция',
-                                                                       lst_reindex_phase_level_cols)
-        svod_count_one_phase_exhaustion_df = calc_count_level_phase(base_df, lst_svod_cols,
-                                                                       'Значение_фазы_Истощение',
-                                                                       'Уровень_фазы_Истощение',
-                                                                       lst_reindex_phase_level_cols)
 
-        # Симптомы
-        # 1 phase
-        svod_count_one_level_ppo_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                                       'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_ns_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Неудовлетворенность_собой',
-                                                                       'Уровень_симптома_Неудовлетворенность_собой',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_zk_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Загнанность_в_клетку',
-                                                                       'Уровень_симптома_Загнанность_в_клетку',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_td_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Тревога_и_депрессия',
-                                                                       'Уровень_симптома_Тревога_и_депрессия',
-                                                                       lst_reindex_sub_level_cols)
-        # 2 phase
-        svod_count_one_level_niar_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                                       'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_and_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                                                       'Уровень_симптома_Эмоционально_нравственная_дезориентация',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_rsaa_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                                                       'Уровень_симптома_Расширение_сферы_экономии_эмоций',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_rpo_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                                                       'Уровень_симптома_Редукция_профессиональных_обязанностей',
-                                                                       lst_reindex_sub_level_cols)
-        # 3 phase
-        svod_count_one_level_ad_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Эмоциональный_дефицит',
-                                                                       'Уровень_симптома_Эмоциональный_дефицит',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_ao_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Эмоциональная_отстраненность',
-                                                                       'Уровень_симптома_Эмоциональная_отстраненность',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_lo_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Личностная_отстраненность',
-                                                                       'Уровень_симптома_Личностная_отстраненность',
-                                                                       lst_reindex_sub_level_cols)
-        svod_count_one_level_ppn_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                                       'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                                       lst_reindex_sub_level_cols)
-
-        # очищаем название колонки по которой делали свод
-        name_one = lst_svod_cols[0]
-        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
-        name_one = name_one[:15]
-
-        # Считаем среднее по субшкалам
-        svod_mean_df = pd.pivot_table(base_df,
-                                      index=[lst_svod_cols[0]],
-                                      values=['Итоговое_значение_эмоционального_выгорания','Значение_фазы_Напряжение','Значение_фазы_Резистенция','Значение_фазы_Истощение',
-                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств','Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия',
-                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование','Значение_симптома_Эмоционально_нравственная_дезориентация','Значение_симптома_Расширение_сферы_экономии_эмоций','Значение_симптома_Редукция_профессиональных_обязанностей',
-                                              'Значение_симптома_Эмоциональный_дефицит','Значение_симптома_Эмоциональная_отстраненность','Значение_симптома_Личностная_отстраненность','Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
-                                              ],
-                                      aggfunc=round_mean)
-        svod_mean_df.reset_index(inplace=True)
-        # упорядочиваем колонки
-        new_order_cols = lst_svod_cols.copy()
-        new_order_cols.extend(['Итоговое_значение_эмоционального_выгорания','Значение_фазы_Напряжение','Значение_фазы_Резистенция','Значение_фазы_Истощение',
-                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств','Значение_симптома_Неудовлетворенность_собой','Значение_симптома_Загнанность_в_клетку','Значение_симптома_Тревога_и_депрессия',
-                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование','Значение_симптома_Эмоционально_нравственная_дезориентация','Значение_симптома_Расширение_сферы_экономии_эмоций','Значение_симптома_Редукция_профессиональных_обязанностей',
-                                              'Значение_симптома_Эмоциональный_дефицит','Значение_симптома_Эмоциональная_отстраненность','Значение_симптома_Личностная_отстраненность','Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
-        svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
-        dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания':'Ср. эмоционального выгорания',
-                                'Значение_фазы_Напряжение':'Ср. фазы Напряжение','Значение_фазы_Резистенция':'Ср. фазы Резистенция','Значение_фазы_Истощение':'Ср. фазы Истощение',
-                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств':'Ср. ППО','Значение_симптома_Неудовлетворенность_собой':'Ср. НС',
-                                'Значение_симптома_Загнанность_в_клетку':'Ср. ЗК','Значение_симптома_Тревога_и_депрессия':'Ср. ТД',
-
-                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование':'Ср. НИЭР','Значение_симптома_Эмоционально_нравственная_дезориентация':'Ср. ЭНД',
-                                'Значение_симптома_Расширение_сферы_экономии_эмоций':'Ср. РСЭЭ','Значение_симптома_Редукция_профессиональных_обязанностей':'Ср. РПО',
-
-                                              'Значение_симптома_Эмоциональный_дефицит':'Ср. ЭД','Значение_симптома_Эмоциональная_отстраненность':'Ср. ЭО',
-                                'Значение_симптома_Личностная_отстраненность':'Ср. ЛО','Значение_симптома_Психосоматические_и_психовегетативные_нарушения':'Ср. ППН'}
-        svod_mean_df.rename(columns=dct_rename_cols_mean,inplace=True)
-
-
-        out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
-                        f'Ср. {name_one}': svod_mean_df,
-                        f'Свод Напряжение {name_one[:10]}': svod_count_one_phase_stress_df,
-                        f'Свод Резистенция {name_one[:10]}': svod_count_one_phase_resistance_df,
-                        f'Свод Истощение {name_one[:10]}': svod_count_one_phase_exhaustion_df,
-
-
-                        f'Свод ППО {name_one}': svod_count_one_level_ppo_df,
-                        f'Свод НС {name_one}': svod_count_one_level_ns_df,
-                        f'Свод ЗК {name_one}': svod_count_one_level_zk_df,
-                        f'Свод ТД {name_one}': svod_count_one_level_td_df,
-
-                        f'Свод НИЭР {name_one}': svod_count_one_level_niar_df,
-                        f'Свод ЭНД {name_one}': svod_count_one_level_and_df,
-                        f'Свод РСЭЭ {name_one}': svod_count_one_level_rsaa_df,
-                        f'Свод РПО {name_one}': svod_count_one_level_rpo_df,
-
-                        f'Свод ЭД {name_one}': svod_count_one_level_ad_df,
-                        f'Свод ЭО {name_one}': svod_count_one_level_ao_df,
-                        f'Свод ЛО {name_one}': svod_count_one_level_lo_df,
-                        f'Свод ППН {name_one}': svod_count_one_level_ppn_df,
-
-                        })
-
-        return out_dct, part_df
-
-
-    elif len(lst_svod_cols) == 2:
+    # elif len(lst_svod_cols) == 2:
         # 2 колонки
-        lst_reindex_main_level_cols = [lst_svod_cols[0], lst_svod_cols[1], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
-        lst_reindex_main_phase_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
-        lst_reindex_main_sub_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
-
-        # 1 колонка
-        lst_reindex_first_level_cols = [lst_svod_cols[0], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
-        lst_reindex_first_phase_level_cols = [lst_svod_cols[0], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
-        lst_reindex_first_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
-
-        # 2 колонка
-        lst_reindex_second_level_cols = [lst_svod_cols[1], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
-        lst_reindex_second_phase_level_cols = [lst_svod_cols[1], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
-        lst_reindex_second_sub_level_cols = [lst_svod_cols[1], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
-
-        # основная шкала
-        svod_count_two_level_df = calc_count_main_level(base_df, lst_svod_cols,
-                                                        'Итоговое_значение_эмоционального_выгорания',
-                                                        'Диапазон_эмоционального_выгорания',
-                                                        lst_reindex_main_level_cols)
-
-        # Фазы
-        svod_count_two_phase_stress_df = calc_count_level_phase(base_df, lst_svod_cols,
-                                                                'Значение_фазы_Напряжение',
-                                                                'Уровень_фазы_Напряжение',
-                                                                lst_reindex_main_phase_level_cols)
-
-        svod_count_two_phase_resistance_df = calc_count_level_phase(base_df, lst_svod_cols,
-                                                                    'Значение_фазы_Резистенция',
-                                                                    'Уровень_фазы_Резистенция',
-                                                                    lst_reindex_main_phase_level_cols)
-        svod_count_two_phase_exhaustion_df = calc_count_level_phase(base_df, lst_svod_cols,
-                                                                    'Значение_фазы_Истощение',
-                                                                    'Уровень_фазы_Истощение',
-                                                                    lst_reindex_main_phase_level_cols)
-
-        # Симптомы
-        # 1 phase
-        svod_count_two_level_ppo_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                           'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                           'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                           lst_reindex_main_sub_level_cols)
-        svod_count_two_level_ns_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                          'Значение_симптома_Неудовлетворенность_собой',
-                                                          'Уровень_симптома_Неудовлетворенность_собой',
-                                                          lst_reindex_main_sub_level_cols)
-        svod_count_two_level_zk_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                          'Значение_симптома_Загнанность_в_клетку',
-                                                          'Уровень_симптома_Загнанность_в_клетку',
-                                                          lst_reindex_main_sub_level_cols)
-        svod_count_two_level_td_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                          'Значение_симптома_Тревога_и_депрессия',
-                                                          'Уровень_симптома_Тревога_и_депрессия',
-                                                          lst_reindex_main_sub_level_cols)
-        # 2 phase
-        svod_count_two_level_niar_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                            'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                            'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                            lst_reindex_main_sub_level_cols)
-        svod_count_two_level_and_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                           'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                                           'Уровень_симптома_Эмоционально_нравственная_дезориентация',
-                                                           lst_reindex_main_sub_level_cols)
-        svod_count_two_level_rsaa_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                            'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                                            'Уровень_симптома_Расширение_сферы_экономии_эмоций',
-                                                            lst_reindex_main_sub_level_cols)
-        svod_count_two_level_rpo_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                           'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                                           'Уровень_симптома_Редукция_профессиональных_обязанностей',
-                                                           lst_reindex_main_sub_level_cols)
-        # 3 phase
-        svod_count_two_level_ad_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                          'Значение_симптома_Эмоциональный_дефицит',
-                                                          'Уровень_симптома_Эмоциональный_дефицит',
-                                                          lst_reindex_main_sub_level_cols)
-        svod_count_two_level_ao_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                          'Значение_симптома_Эмоциональная_отстраненность',
-                                                          'Уровень_симптома_Эмоциональная_отстраненность',
-                                                          lst_reindex_main_sub_level_cols)
-        svod_count_two_level_lo_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                          'Значение_симптома_Личностная_отстраненность',
-                                                          'Уровень_симптома_Личностная_отстраненность',
-                                                          lst_reindex_main_sub_level_cols)
-        svod_count_two_level_ppn_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                           'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                           'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                           lst_reindex_main_sub_level_cols)
-
-        # очищаем название колонки по которой делали свод
-        name_one = lst_svod_cols[0]
-        name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
-        name_one = name_one[:15]
-
-        name_two = lst_svod_cols[1]
-        name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
-        name_two = name_two[:15]
-        # Считаем среднее по субшкалам
-        svod_mean_df = pd.pivot_table(base_df,
-                                      index=lst_svod_cols,
-                                      values=['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение',
-                                              'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
-                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                              'Значение_симптома_Неудовлетворенность_собой',
-                                              'Значение_симптома_Загнанность_в_клетку',
-                                              'Значение_симптома_Тревога_и_депрессия',
-                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                              'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                              'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                              'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                              'Значение_симптома_Эмоциональный_дефицит',
-                                              'Значение_симптома_Эмоциональная_отстраненность',
-                                              'Значение_симптома_Личностная_отстраненность',
-                                              'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
-                                              ],
-                                      aggfunc=round_mean)
-        svod_mean_df.reset_index(inplace=True)
-        # упорядочиваем колонки
-        new_order_cols = lst_svod_cols.copy()
-        new_order_cols.extend(
-            ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
-             'Значение_фазы_Истощение',
-             'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-             'Значение_симптома_Неудовлетворенность_собой',
-             'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
-             'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-             'Значение_симптома_Эмоционально_нравственная_дезориентация',
-             'Значение_симптома_Расширение_сферы_экономии_эмоций',
-             'Значение_симптома_Редукция_профессиональных_обязанностей',
-             'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
-             'Значение_симптома_Личностная_отстраненность',
-             'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
-        svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
-        dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
-                                'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
-                                'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
-                                'Значение_фазы_Истощение': 'Ср. фазы Истощение',
-                                'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
-                                'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
-                                'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
-                                'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
-
-                                'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
-                                'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
-                                'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
-                                'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
-
-                                'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
-                                'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
-                                'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
-                                'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
-        svod_mean_df.rename(columns=dct_rename_cols_mean, inplace=True)
 
 
-        """
-        По колонке один
-        """
-        # основная шкала
-        svod_count_first_level_df = calc_count_main_level(base_df, [lst_svod_cols[0]],
-                                                          'Итоговое_значение_эмоционального_выгорания',
-                                                          'Диапазон_эмоционального_выгорания',
-                                                          lst_reindex_first_level_cols)
-
-        # Фазы
-        svod_count_first_phase_stress_df = calc_count_level_phase(base_df, [lst_svod_cols[0]],
-                                                                  'Значение_фазы_Напряжение',
-                                                                  'Уровень_фазы_Напряжение',
-                                                                  lst_reindex_first_phase_level_cols)
-
-        svod_count_first_phase_resistance_df = calc_count_level_phase(base_df, [lst_svod_cols[0]],
-                                                                      'Значение_фазы_Резистенция',
-                                                                      'Уровень_фазы_Резистенция',
-                                                                      lst_reindex_first_phase_level_cols)
-        svod_count_first_phase_exhaustion_df = calc_count_level_phase(base_df, [lst_svod_cols[0]],
-                                                                      'Значение_фазы_Истощение',
-                                                                      'Уровень_фазы_Истощение',
-                                                                      lst_reindex_first_phase_level_cols)
-
-        # Симптомы
-        # 1 phase
-        svod_count_first_level_ppo_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                             'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                             'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                             lst_reindex_first_sub_level_cols)
-        svod_count_first_level_ns_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                            'Значение_симптома_Неудовлетворенность_собой',
-                                                            'Уровень_симптома_Неудовлетворенность_собой',
-                                                            lst_reindex_first_sub_level_cols)
-        svod_count_first_level_zk_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                            'Значение_симптома_Загнанность_в_клетку',
-                                                            'Уровень_симптома_Загнанность_в_клетку',
-                                                            lst_reindex_first_sub_level_cols)
-        svod_count_first_level_td_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                            'Значение_симптома_Тревога_и_депрессия',
-                                                            'Уровень_симптома_Тревога_и_депрессия',
-                                                            lst_reindex_first_sub_level_cols)
-        # 2 phase
-        svod_count_first_level_niar_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                              'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                              lst_reindex_first_sub_level_cols)
-        svod_count_first_level_and_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                             'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                                             'Уровень_симптома_Эмоционально_нравственная_дезориентация',
-                                                             lst_reindex_first_sub_level_cols)
-        svod_count_first_level_rsaa_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                              'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                                              'Уровень_симптома_Расширение_сферы_экономии_эмоций',
-                                                              lst_reindex_first_sub_level_cols)
-        svod_count_first_level_rpo_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                             'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                                             'Уровень_симптома_Редукция_профессиональных_обязанностей',
-                                                             lst_reindex_first_sub_level_cols)
-        # 3 phase
-        svod_count_first_level_ad_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                            'Значение_симптома_Эмоциональный_дефицит',
-                                                            'Уровень_симптома_Эмоциональный_дефицит',
-                                                            lst_reindex_first_sub_level_cols)
-        svod_count_first_level_ao_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                            'Значение_симптома_Эмоциональная_отстраненность',
-                                                            'Уровень_симптома_Эмоциональная_отстраненность',
-                                                            lst_reindex_first_sub_level_cols)
-        svod_count_first_level_lo_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                            'Значение_симптома_Личностная_отстраненность',
-                                                            'Уровень_симптома_Личностная_отстраненность',
-                                                            lst_reindex_first_sub_level_cols)
-        svod_count_first_level_ppn_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
-                                                             'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                             'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                             lst_reindex_first_sub_level_cols)
-
-
-        # Считаем среднее по субшкалам
-        svod_mean_first_df = pd.pivot_table(base_df,
-                                            index=[[lst_svod_cols[0]][0]],
-                                            values=['Итоговое_значение_эмоционального_выгорания',
-                                                    'Значение_фазы_Напряжение',
-                                                    'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
-                                                    'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                    'Значение_симптома_Неудовлетворенность_собой',
-                                                    'Значение_симптома_Загнанность_в_клетку',
-                                                    'Значение_симптома_Тревога_и_депрессия',
-                                                    'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                    'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                                    'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                                    'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                                    'Значение_симптома_Эмоциональный_дефицит',
-                                                    'Значение_симптома_Эмоциональная_отстраненность',
-                                                    'Значение_симптома_Личностная_отстраненность',
-                                                    'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
-                                                    ],
-                                            aggfunc=round_mean)
-        svod_mean_first_df.reset_index(inplace=True)
-        # упорядочиваем колонки
-        new_order_cols = [lst_svod_cols[0]].copy()
-        new_order_cols.extend(
-            ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
-             'Значение_фазы_Истощение',
-             'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-             'Значение_симптома_Неудовлетворенность_собой',
-             'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
-             'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-             'Значение_симптома_Эмоционально_нравственная_дезориентация',
-             'Значение_симптома_Расширение_сферы_экономии_эмоций',
-             'Значение_симптома_Редукция_профессиональных_обязанностей',
-             'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
-             'Значение_симптома_Личностная_отстраненность',
-             'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
-        svod_mean_first_df = svod_mean_first_df.reindex(columns=new_order_cols)
-        dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
-                                'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
-                                'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
-                                'Значение_фазы_Истощение': 'Ср. фазы Истощение',
-                                'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
-                                'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
-                                'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
-                                'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
-
-                                'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
-                                'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
-                                'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
-                                'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
-
-                                'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
-                                'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
-                                'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
-                                'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
-        svod_mean_first_df.rename(columns=dct_rename_cols_mean, inplace=True)
-
-        """
-        вторая колонка
-        """
-        # основная шкала
-        svod_count_second_level_df = calc_count_main_level(base_df, [lst_svod_cols[1]],
-                                                           'Итоговое_значение_эмоционального_выгорания',
-                                                           'Диапазон_эмоционального_выгорания',
-                                                           lst_reindex_second_level_cols)
-
-        # Фазы
-        svod_count_second_phase_stress_df = calc_count_level_phase(base_df, [lst_svod_cols[1]],
-                                                                   'Значение_фазы_Напряжение',
-                                                                   'Уровень_фазы_Напряжение',
-                                                                   lst_reindex_second_phase_level_cols)
-
-        svod_count_second_phase_resistance_df = calc_count_level_phase(base_df, [lst_svod_cols[1]],
-                                                                       'Значение_фазы_Резистенция',
-                                                                       'Уровень_фазы_Резистенция',
-                                                                       lst_reindex_second_phase_level_cols)
-        svod_count_second_phase_exhaustion_df = calc_count_level_phase(base_df, [lst_svod_cols[1]],
-                                                                       'Значение_фазы_Истощение',
-                                                                       'Уровень_фазы_Истощение',
-                                                                       lst_reindex_second_phase_level_cols)
-
-        # Симптомы
-        # 1 phase
-        svod_count_second_level_ppo_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                              'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                              lst_reindex_second_sub_level_cols)
-        svod_count_second_level_ns_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                             'Значение_симптома_Неудовлетворенность_собой',
-                                                             'Уровень_симптома_Неудовлетворенность_собой',
-                                                             lst_reindex_second_sub_level_cols)
-        svod_count_second_level_zk_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                             'Значение_симптома_Загнанность_в_клетку',
-                                                             'Уровень_симптома_Загнанность_в_клетку',
-                                                             lst_reindex_second_sub_level_cols)
-        svod_count_second_level_td_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                             'Значение_симптома_Тревога_и_депрессия',
-                                                             'Уровень_симптома_Тревога_и_депрессия',
-                                                             lst_reindex_second_sub_level_cols)
-        # 2 phase
-        svod_count_second_level_niar_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                               'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                               'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                               lst_reindex_second_sub_level_cols)
-        svod_count_second_level_and_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                              'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                                              'Уровень_симптома_Эмоционально_нравственная_дезориентация',
-                                                              lst_reindex_second_sub_level_cols)
-        svod_count_second_level_rsaa_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                               'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                                               'Уровень_симптома_Расширение_сферы_экономии_эмоций',
-                                                               lst_reindex_second_sub_level_cols)
-        svod_count_second_level_rpo_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                              'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                                              'Уровень_симптома_Редукция_профессиональных_обязанностей',
-                                                              lst_reindex_second_sub_level_cols)
-        # 3 phase
-        svod_count_second_level_ad_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                             'Значение_симптома_Эмоциональный_дефицит',
-                                                             'Уровень_симптома_Эмоциональный_дефицит',
-                                                             lst_reindex_second_sub_level_cols)
-        svod_count_second_level_ao_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                             'Значение_симптома_Эмоциональная_отстраненность',
-                                                             'Уровень_симптома_Эмоциональная_отстраненность',
-                                                             lst_reindex_second_sub_level_cols)
-        svod_count_second_level_lo_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                             'Значение_симптома_Личностная_отстраненность',
-                                                             'Уровень_симптома_Личностная_отстраненность',
-                                                             lst_reindex_second_sub_level_cols)
-        svod_count_second_level_ppn_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
-                                                              'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                              'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
-                                                              lst_reindex_second_sub_level_cols)
-
-        # Считаем среднее по субшкалам
-        svod_mean_second_df = pd.pivot_table(base_df,
-                                             index=[[lst_svod_cols[1]][0]],
-                                             values=['Итоговое_значение_эмоционального_выгорания',
-                                                     'Значение_фазы_Напряжение',
-                                                     'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
-                                                     'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-                                                     'Значение_симптома_Неудовлетворенность_собой',
-                                                     'Значение_симптома_Загнанность_в_клетку',
-                                                     'Значение_симптома_Тревога_и_депрессия',
-                                                     'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-                                                     'Значение_симптома_Эмоционально_нравственная_дезориентация',
-                                                     'Значение_симптома_Расширение_сферы_экономии_эмоций',
-                                                     'Значение_симптома_Редукция_профессиональных_обязанностей',
-                                                     'Значение_симптома_Эмоциональный_дефицит',
-                                                     'Значение_симптома_Эмоциональная_отстраненность',
-                                                     'Значение_симптома_Личностная_отстраненность',
-                                                     'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
-                                                     ],
-                                             aggfunc=round_mean)
-        svod_mean_second_df.reset_index(inplace=True)
-        # упорядочиваем колонки
-        new_order_cols = [lst_svod_cols[1]].copy()
-        new_order_cols.extend(
-            ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
-             'Значение_фазы_Истощение',
-             'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
-             'Значение_симптома_Неудовлетворенность_собой',
-             'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
-             'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
-             'Значение_симптома_Эмоционально_нравственная_дезориентация',
-             'Значение_симптома_Расширение_сферы_экономии_эмоций',
-             'Значение_симптома_Редукция_профессиональных_обязанностей',
-             'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
-             'Значение_симптома_Личностная_отстраненность',
-             'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
-        svod_mean_second_df = svod_mean_second_df.reindex(columns=new_order_cols)
-        dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
-                                'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
-                                'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
-                                'Значение_фазы_Истощение': 'Ср. фазы Истощение',
-                                'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
-                                'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
-                                'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
-                                'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
-
-                                'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
-                                'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
-                                'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
-                                'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
-
-                                'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
-                                'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
-                                'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
-                                'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
-        svod_mean_second_df.rename(columns=dct_rename_cols_mean, inplace=True)
-
-
-
-
-
-
-        out_dct.update({f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
-                        f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df,
-                        f'Свод Напряжение {name_one[:10]}_{name_two[:10]}': svod_count_two_phase_stress_df,
-                        f'Свод Резистенция {name_one[:10]}_{name_two[:10]}': svod_count_two_phase_resistance_df,
-                        f'Свод Истощение {name_one[:10]}_{name_two[:10]}': svod_count_two_phase_exhaustion_df,
-
-                        f'Свод ППО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ppo_df,
-                        f'Свод НС {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ns_df,
-                        f'Свод ЗК {name_one[:10]}_{name_two[:10]}': svod_count_two_level_zk_df,
-                        f'Свод ТД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_td_df,
-
-                        f'Свод НИЭР {name_one[:10]}_{name_two[:10]}': svod_count_two_level_niar_df,
-                        f'Свод ЭНД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_and_df,
-                        f'Свод РСЭЭ {name_one[:10]}_{name_two[:10]}': svod_count_two_level_rsaa_df,
-                        f'Свод РПО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_rpo_df,
-
-                        f'Свод ЭД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ad_df,
-                        f'Свод ЭО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ao_df,
-                        f'Свод ЛО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_lo_df,
-                        f'Свод ППН {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ppn_df,
-
-
-                        f'Свод {name_one}': svod_count_first_level_df,
-                        f'Ср. {name_one}': svod_mean_first_df,
-                        f'Свод Напряжение {name_one[:10]}': svod_count_first_phase_stress_df,
-                        f'Свод Резистенция {name_one[:10]}': svod_count_first_phase_resistance_df,
-                        f'Свод Истощение {name_one[:10]}': svod_count_first_phase_exhaustion_df,
-
-                        f'Свод ППО {name_one}': svod_count_first_level_ppo_df,
-                        f'Свод НС {name_one}': svod_count_first_level_ns_df,
-                        f'Свод ЗК {name_one}': svod_count_first_level_zk_df,
-                        f'Свод ТД {name_one}': svod_count_first_level_td_df,
-
-                        f'Свод НИЭР {name_one}': svod_count_first_level_niar_df,
-                        f'Свод ЭНД {name_one}': svod_count_first_level_and_df,
-                        f'Свод РСЭЭ {name_one}': svod_count_first_level_rsaa_df,
-                        f'Свод РПО {name_one}': svod_count_first_level_rpo_df,
-
-                        f'Свод ЭД {name_one}': svod_count_first_level_ad_df,
-                        f'Свод ЭО {name_one}': svod_count_first_level_ao_df,
-                        f'Свод ЛО {name_one}': svod_count_first_level_lo_df,
-                        f'Свод ППН {name_one}': svod_count_first_level_ppn_df,
-
-                        f'Свод {name_two}': svod_count_second_level_df,
-                        f'Ср. {name_two}': svod_mean_second_df,
-                        f'Свод Напряжение {name_two[:10]}': svod_count_second_phase_stress_df,
-                        f'Свод Резистенция {name_two[:10]}': svod_count_second_phase_resistance_df,
-                        f'Свод Истощение {name_two[:10]}': svod_count_second_phase_exhaustion_df,
-
-                        f'Свод ППО {name_two}': svod_count_second_level_ppo_df,
-                        f'Свод НС {name_two}': svod_count_second_level_ns_df,
-                        f'Свод ЗК {name_two}': svod_count_second_level_zk_df,
-                        f'Свод ТД {name_two}': svod_count_second_level_td_df,
-
-                        f'Свод НИЭР {name_two}': svod_count_second_level_niar_df,
-                        f'Свод ЭНД {name_two}': svod_count_second_level_and_df,
-                        f'Свод РСЭЭ {name_two}': svod_count_second_level_rsaa_df,
-                        f'Свод РПО {name_two}': svod_count_second_level_rpo_df,
-
-                        f'Свод ЭД {name_two}': svod_count_second_level_ad_df,
-                        f'Свод ЭО {name_two}': svod_count_second_level_ao_df,
-                        f'Свод ЛО {name_two}': svod_count_second_level_lo_df,
-                        f'Свод ППН {name_two}': svod_count_second_level_ppn_df,
-
-                        })
-
-
-
-
+        # lst_reindex_main_level_cols = [lst_svod_cols[0], lst_svod_cols[1], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
+        # lst_reindex_main_phase_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
+        # lst_reindex_main_sub_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
+        #
+        # # 1 колонка
+        # lst_reindex_first_level_cols = [lst_svod_cols[0], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
+        # lst_reindex_first_phase_level_cols = [lst_svod_cols[0], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
+        # lst_reindex_first_sub_level_cols = [lst_svod_cols[0], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
+        #
+        # # 2 колонка
+        # lst_reindex_second_level_cols = [lst_svod_cols[1], '0-99','100-149','150-199','200-249','250-299','300 и более', 'Итого']  # Основная шкала
+        # lst_reindex_second_phase_level_cols = [lst_svod_cols[1], 'фаза не сформировалась','фаза в стадии формирования','сформировавшаяся фаза', 'Итого']  # Фазы
+        # lst_reindex_second_sub_level_cols = [lst_svod_cols[1], 'не сложившийся симптом','складывающийся симптом','сложившийся симптом','доминирующий симптом', 'Итого']  # Субшкалы
+        #
+        # # основная шкала
+        # svod_count_two_level_df = calc_count_main_level(base_df, lst_svod_cols,
+        #                                                 'Итоговое_значение_эмоционального_выгорания',
+        #                                                 'Диапазон_эмоционального_выгорания',
+        #                                                 lst_reindex_main_level_cols)
+        #
+        # # Фазы
+        # svod_count_two_phase_stress_df = calc_count_level_phase(base_df, lst_svod_cols,
+        #                                                         'Значение_фазы_Напряжение',
+        #                                                         'Уровень_фазы_Напряжение',
+        #                                                         lst_reindex_main_phase_level_cols)
+        #
+        # svod_count_two_phase_resistance_df = calc_count_level_phase(base_df, lst_svod_cols,
+        #                                                             'Значение_фазы_Резистенция',
+        #                                                             'Уровень_фазы_Резистенция',
+        #                                                             lst_reindex_main_phase_level_cols)
+        # svod_count_two_phase_exhaustion_df = calc_count_level_phase(base_df, lst_svod_cols,
+        #                                                             'Значение_фазы_Истощение',
+        #                                                             'Уровень_фазы_Истощение',
+        #                                                             lst_reindex_main_phase_level_cols)
+        #
+        # # Симптомы
+        # # 1 phase
+        # svod_count_two_level_ppo_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                    'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                    'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                    lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_ns_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                   'Значение_симптома_Неудовлетворенность_собой',
+        #                                                   'Уровень_симптома_Неудовлетворенность_собой',
+        #                                                   lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_zk_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                   'Значение_симптома_Загнанность_в_клетку',
+        #                                                   'Уровень_симптома_Загнанность_в_клетку',
+        #                                                   lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_td_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                   'Значение_симптома_Тревога_и_депрессия',
+        #                                                   'Уровень_симптома_Тревога_и_депрессия',
+        #                                                   lst_reindex_main_sub_level_cols)
+        # # 2 phase
+        # svod_count_two_level_niar_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                     'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                     'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                     lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_and_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                    'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                    'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                    lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_rsaa_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                     'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                     'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                     lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_rpo_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                    'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                                    'Уровень_симптома_Редукция_профессиональных_обязанностей',
+        #                                                    lst_reindex_main_sub_level_cols)
+        # # 3 phase
+        # svod_count_two_level_ad_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                   'Значение_симптома_Эмоциональный_дефицит',
+        #                                                   'Уровень_симптома_Эмоциональный_дефицит',
+        #                                                   lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_ao_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                   'Значение_симптома_Эмоциональная_отстраненность',
+        #                                                   'Уровень_симптома_Эмоциональная_отстраненность',
+        #                                                   lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_lo_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                   'Значение_симптома_Личностная_отстраненность',
+        #                                                   'Уровень_симптома_Личностная_отстраненность',
+        #                                                   lst_reindex_main_sub_level_cols)
+        # svod_count_two_level_ppn_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                    'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                    'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                    lst_reindex_main_sub_level_cols)
+        #
+        # # очищаем название колонки по которой делали свод
+        # name_one = lst_svod_cols[0]
+        # name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        # name_one = name_one[:15]
+        #
+        # name_two = lst_svod_cols[1]
+        # name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
+        # name_two = name_two[:15]
+        # # Считаем среднее по субшкалам
+        # svod_mean_df = pd.pivot_table(base_df,
+        #                               index=lst_svod_cols,
+        #                               values=['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение',
+        #                                       'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
+        #                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                       'Значение_симптома_Неудовлетворенность_собой',
+        #                                       'Значение_симптома_Загнанность_в_клетку',
+        #                                       'Значение_симптома_Тревога_и_депрессия',
+        #                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                       'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                       'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                       'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                       'Значение_симптома_Эмоциональный_дефицит',
+        #                                       'Значение_симптома_Эмоциональная_отстраненность',
+        #                                       'Значение_симптома_Личностная_отстраненность',
+        #                                       'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+        #                                       ],
+        #                               aggfunc=round_mean)
+        # svod_mean_df.reset_index(inplace=True)
+        # # упорядочиваем колонки
+        # new_order_cols = lst_svod_cols.copy()
+        # new_order_cols.extend(
+        #     ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
+        #      'Значение_фазы_Истощение',
+        #      'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #      'Значение_симптома_Неудовлетворенность_собой',
+        #      'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
+        #      'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #      'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #      'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #      'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #      'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
+        #      'Значение_симптома_Личностная_отстраненность',
+        #      'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+        # svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+        # dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
+        #                         'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
+        #                         'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
+        #                         'Значение_фазы_Истощение': 'Ср. фазы Истощение',
+        #                         'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
+        #                         'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
+        #                         'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
+        #                         'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
+        #
+        #                         'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
+        #                         'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
+        #                         'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
+        #                         'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
+        #
+        #                         'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
+        #                         'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
+        #                         'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
+        #                         'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
+        # svod_mean_df.rename(columns=dct_rename_cols_mean, inplace=True)
+        #
+        #
+        # """
+        # По колонке один
+        # """
+        # # основная шкала
+        # svod_count_first_level_df = calc_count_main_level(base_df, [lst_svod_cols[0]],
+        #                                                   'Итоговое_значение_эмоционального_выгорания',
+        #                                                   'Диапазон_эмоционального_выгорания',
+        #                                                   lst_reindex_first_level_cols)
+        #
+        # # Фазы
+        # svod_count_first_phase_stress_df = calc_count_level_phase(base_df, [lst_svod_cols[0]],
+        #                                                           'Значение_фазы_Напряжение',
+        #                                                           'Уровень_фазы_Напряжение',
+        #                                                           lst_reindex_first_phase_level_cols)
+        #
+        # svod_count_first_phase_resistance_df = calc_count_level_phase(base_df, [lst_svod_cols[0]],
+        #                                                               'Значение_фазы_Резистенция',
+        #                                                               'Уровень_фазы_Резистенция',
+        #                                                               lst_reindex_first_phase_level_cols)
+        # svod_count_first_phase_exhaustion_df = calc_count_level_phase(base_df, [lst_svod_cols[0]],
+        #                                                               'Значение_фазы_Истощение',
+        #                                                               'Уровень_фазы_Истощение',
+        #                                                               lst_reindex_first_phase_level_cols)
+        #
+        # # Симптомы
+        # # 1 phase
+        # svod_count_first_level_ppo_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                      'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                      'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                      lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_ns_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_симптома_Неудовлетворенность_собой',
+        #                                                     'Уровень_симптома_Неудовлетворенность_собой',
+        #                                                     lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_zk_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_симптома_Загнанность_в_клетку',
+        #                                                     'Уровень_симптома_Загнанность_в_клетку',
+        #                                                     lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_td_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_симптома_Тревога_и_депрессия',
+        #                                                     'Уровень_симптома_Тревога_и_депрессия',
+        #                                                     lst_reindex_first_sub_level_cols)
+        # # 2 phase
+        # svod_count_first_level_niar_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                       'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                       'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                       lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_and_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                      'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                      'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                      lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_rsaa_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                       'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                       'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                       lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_rpo_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                      'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                                      'Уровень_симптома_Редукция_профессиональных_обязанностей',
+        #                                                      lst_reindex_first_sub_level_cols)
+        # # 3 phase
+        # svod_count_first_level_ad_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_симптома_Эмоциональный_дефицит',
+        #                                                     'Уровень_симптома_Эмоциональный_дефицит',
+        #                                                     lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_ao_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_симптома_Эмоциональная_отстраненность',
+        #                                                     'Уровень_симптома_Эмоциональная_отстраненность',
+        #                                                     lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_lo_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_симптома_Личностная_отстраненность',
+        #                                                     'Уровень_симптома_Личностная_отстраненность',
+        #                                                     lst_reindex_first_sub_level_cols)
+        # svod_count_first_level_ppn_df = calc_count_level_sub(base_df, [lst_svod_cols[0]],
+        #                                                      'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                      'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                      lst_reindex_first_sub_level_cols)
+        #
+        #
+        # # Считаем среднее по субшкалам
+        # svod_mean_first_df = pd.pivot_table(base_df,
+        #                                     index=[[lst_svod_cols[0]],
+        #                                     values=['Итоговое_значение_эмоционального_выгорания',
+        #                                             'Значение_фазы_Напряжение',
+        #                                             'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
+        #                                             'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                             'Значение_симптома_Неудовлетворенность_собой',
+        #                                             'Значение_симптома_Загнанность_в_клетку',
+        #                                             'Значение_симптома_Тревога_и_депрессия',
+        #                                             'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                             'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                             'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                             'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                             'Значение_симптома_Эмоциональный_дефицит',
+        #                                             'Значение_симптома_Эмоциональная_отстраненность',
+        #                                             'Значение_симптома_Личностная_отстраненность',
+        #                                             'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+        #                                             ],
+        #                                     aggfunc=round_mean)
+        # svod_mean_first_df.reset_index(inplace=True)
+        # # упорядочиваем колонки
+        # new_order_cols = [lst_svod_cols[0]].copy()
+        # new_order_cols.extend(
+        #     ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
+        #      'Значение_фазы_Истощение',
+        #      'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #      'Значение_симптома_Неудовлетворенность_собой',
+        #      'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
+        #      'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #      'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #      'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #      'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #      'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
+        #      'Значение_симптома_Личностная_отстраненность',
+        #      'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+        # svod_mean_first_df = svod_mean_first_df.reindex(columns=new_order_cols)
+        # dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
+        #                         'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
+        #                         'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
+        #                         'Значение_фазы_Истощение': 'Ср. фазы Истощение',
+        #                         'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
+        #                         'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
+        #                         'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
+        #                         'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
+        #
+        #                         'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
+        #                         'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
+        #                         'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
+        #                         'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
+        #
+        #                         'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
+        #                         'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
+        #                         'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
+        #                         'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
+        # svod_mean_first_df.rename(columns=dct_rename_cols_mean, inplace=True)
+        #
+        # """
+        # вторая колонка
+        # """
+        # # основная шкала
+        # svod_count_second_level_df = calc_count_main_level(base_df, [lst_svod_cols[1]],
+        #                                                    'Итоговое_значение_эмоционального_выгорания',
+        #                                                    'Диапазон_эмоционального_выгорания',
+        #                                                    lst_reindex_second_level_cols)
+        #
+        # # Фазы
+        # svod_count_second_phase_stress_df = calc_count_level_phase(base_df, [lst_svod_cols[1]],
+        #                                                            'Значение_фазы_Напряжение',
+        #                                                            'Уровень_фазы_Напряжение',
+        #                                                            lst_reindex_second_phase_level_cols)
+        #
+        # svod_count_second_phase_resistance_df = calc_count_level_phase(base_df, [lst_svod_cols[1]],
+        #                                                                'Значение_фазы_Резистенция',
+        #                                                                'Уровень_фазы_Резистенция',
+        #                                                                lst_reindex_second_phase_level_cols)
+        # svod_count_second_phase_exhaustion_df = calc_count_level_phase(base_df, [lst_svod_cols[1]],
+        #                                                                'Значение_фазы_Истощение',
+        #                                                                'Уровень_фазы_Истощение',
+        #                                                                lst_reindex_second_phase_level_cols)
+        #
+        # # Симптомы
+        # # 1 phase
+        # svod_count_second_level_ppo_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                       'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                       'Уровень_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                                       lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_ns_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                      'Значение_симптома_Неудовлетворенность_собой',
+        #                                                      'Уровень_симптома_Неудовлетворенность_собой',
+        #                                                      lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_zk_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                      'Значение_симптома_Загнанность_в_клетку',
+        #                                                      'Уровень_симптома_Загнанность_в_клетку',
+        #                                                      lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_td_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                      'Значение_симптома_Тревога_и_депрессия',
+        #                                                      'Уровень_симптома_Тревога_и_депрессия',
+        #                                                      lst_reindex_second_sub_level_cols)
+        # # 2 phase
+        # svod_count_second_level_niar_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                        'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                        'Уровень_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                                        lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_and_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                       'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                       'Уровень_симптома_Эмоционально_нравственная_дезориентация',
+        #                                                       lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_rsaa_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                        'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                        'Уровень_симптома_Расширение_сферы_экономии_эмоций',
+        #                                                        lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_rpo_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                       'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                                       'Уровень_симптома_Редукция_профессиональных_обязанностей',
+        #                                                       lst_reindex_second_sub_level_cols)
+        # # 3 phase
+        # svod_count_second_level_ad_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                      'Значение_симптома_Эмоциональный_дефицит',
+        #                                                      'Уровень_симптома_Эмоциональный_дефицит',
+        #                                                      lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_ao_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                      'Значение_симптома_Эмоциональная_отстраненность',
+        #                                                      'Уровень_симптома_Эмоциональная_отстраненность',
+        #                                                      lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_lo_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                      'Значение_симптома_Личностная_отстраненность',
+        #                                                      'Уровень_симптома_Личностная_отстраненность',
+        #                                                      lst_reindex_second_sub_level_cols)
+        # svod_count_second_level_ppn_df = calc_count_level_sub(base_df, [lst_svod_cols[1]],
+        #                                                       'Значение_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                       'Уровень_симптома_Психосоматические_и_психовегетативные_нарушения',
+        #                                                       lst_reindex_second_sub_level_cols)
+        #
+        # # Считаем среднее по субшкалам
+        # svod_mean_second_df = pd.pivot_table(base_df,
+        #                                      index=[[lst_svod_cols[1]],
+        #                                      values=['Итоговое_значение_эмоционального_выгорания',
+        #                                              'Значение_фазы_Напряжение',
+        #                                              'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
+        #                                              'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #                                              'Значение_симптома_Неудовлетворенность_собой',
+        #                                              'Значение_симптома_Загнанность_в_клетку',
+        #                                              'Значение_симптома_Тревога_и_депрессия',
+        #                                              'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #                                              'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #                                              'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #                                              'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #                                              'Значение_симптома_Эмоциональный_дефицит',
+        #                                              'Значение_симптома_Эмоциональная_отстраненность',
+        #                                              'Значение_симптома_Личностная_отстраненность',
+        #                                              'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'
+        #                                              ],
+        #                                      aggfunc=round_mean)
+        # svod_mean_second_df.reset_index(inplace=True)
+        # # упорядочиваем колонки
+        # new_order_cols = [lst_svod_cols[1]].copy()
+        # new_order_cols.extend(
+        #     ['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение', 'Значение_фазы_Резистенция',
+        #      'Значение_фазы_Истощение',
+        #      'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
+        #      'Значение_симптома_Неудовлетворенность_собой',
+        #      'Значение_симптома_Загнанность_в_клетку', 'Значение_симптома_Тревога_и_депрессия',
+        #      'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование',
+        #      'Значение_симптома_Эмоционально_нравственная_дезориентация',
+        #      'Значение_симптома_Расширение_сферы_экономии_эмоций',
+        #      'Значение_симптома_Редукция_профессиональных_обязанностей',
+        #      'Значение_симптома_Эмоциональный_дефицит', 'Значение_симптома_Эмоциональная_отстраненность',
+        #      'Значение_симптома_Личностная_отстраненность',
+        #      'Значение_симптома_Психосоматические_и_психовегетативные_нарушения'])
+        # svod_mean_second_df = svod_mean_second_df.reindex(columns=new_order_cols)
+        # dct_rename_cols_mean = {'Итоговое_значение_эмоционального_выгорания': 'Ср. эмоционального выгорания',
+        #                         'Значение_фазы_Напряжение': 'Ср. фазы Напряжение',
+        #                         'Значение_фазы_Резистенция': 'Ср. фазы Резистенция',
+        #                         'Значение_фазы_Истощение': 'Ср. фазы Истощение',
+        #                         'Значение_симптома_Переживание_психотравмирующих_обстоятельств': 'Ср. ППО',
+        #                         'Значение_симптома_Неудовлетворенность_собой': 'Ср. НС',
+        #                         'Значение_симптома_Загнанность_в_клетку': 'Ср. ЗК',
+        #                         'Значение_симптома_Тревога_и_депрессия': 'Ср. ТД',
+        #
+        #                         'Значение_симптома_Неадекватное_избирательное_эмоциональное_реагирование': 'Ср. НИЭР',
+        #                         'Значение_симптома_Эмоционально_нравственная_дезориентация': 'Ср. ЭНД',
+        #                         'Значение_симптома_Расширение_сферы_экономии_эмоций': 'Ср. РСЭЭ',
+        #                         'Значение_симптома_Редукция_профессиональных_обязанностей': 'Ср. РПО',
+        #
+        #                         'Значение_симптома_Эмоциональный_дефицит': 'Ср. ЭД',
+        #                         'Значение_симптома_Эмоциональная_отстраненность': 'Ср. ЭО',
+        #                         'Значение_симптома_Личностная_отстраненность': 'Ср. ЛО',
+        #                         'Значение_симптома_Психосоматические_и_психовегетативные_нарушения': 'Ср. ППН'}
+        # svod_mean_second_df.rename(columns=dct_rename_cols_mean, inplace=True)
+        #
+        #
+        #
+        #
+        #
+        #
+        # out_dct.update({f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
+        #                 f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df,
+        #                 f'Свод Напряжение {name_one[:10]}_{name_two[:10]}': svod_count_two_phase_stress_df,
+        #                 f'Свод Резистенция {name_one[:10]}_{name_two[:10]}': svod_count_two_phase_resistance_df,
+        #                 f'Свод Истощение {name_one[:10]}_{name_two[:10]}': svod_count_two_phase_exhaustion_df,
+        #
+        #                 f'Свод ППО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ppo_df,
+        #                 f'Свод НС {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ns_df,
+        #                 f'Свод ЗК {name_one[:10]}_{name_two[:10]}': svod_count_two_level_zk_df,
+        #                 f'Свод ТД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_td_df,
+        #
+        #                 f'Свод НИЭР {name_one[:10]}_{name_two[:10]}': svod_count_two_level_niar_df,
+        #                 f'Свод ЭНД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_and_df,
+        #                 f'Свод РСЭЭ {name_one[:10]}_{name_two[:10]}': svod_count_two_level_rsaa_df,
+        #                 f'Свод РПО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_rpo_df,
+        #
+        #                 f'Свод ЭД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ad_df,
+        #                 f'Свод ЭО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ao_df,
+        #                 f'Свод ЛО {name_one[:10]}_{name_two[:10]}': svod_count_two_level_lo_df,
+        #                 f'Свод ППН {name_one[:10]}_{name_two[:10]}': svod_count_two_level_ppn_df,
+        #
+        #
+        #                 f'Свод {name_one}': svod_count_first_level_df,
+        #                 f'Ср. {name_one}': svod_mean_first_df,
+        #                 f'Свод Напряжение {name_one[:10]}': svod_count_first_phase_stress_df,
+        #                 f'Свод Резистенция {name_one[:10]}': svod_count_first_phase_resistance_df,
+        #                 f'Свод Истощение {name_one[:10]}': svod_count_first_phase_exhaustion_df,
+        #
+        #                 f'Свод ППО {name_one}': svod_count_first_level_ppo_df,
+        #                 f'Свод НС {name_one}': svod_count_first_level_ns_df,
+        #                 f'Свод ЗК {name_one}': svod_count_first_level_zk_df,
+        #                 f'Свод ТД {name_one}': svod_count_first_level_td_df,
+        #
+        #                 f'Свод НИЭР {name_one}': svod_count_first_level_niar_df,
+        #                 f'Свод ЭНД {name_one}': svod_count_first_level_and_df,
+        #                 f'Свод РСЭЭ {name_one}': svod_count_first_level_rsaa_df,
+        #                 f'Свод РПО {name_one}': svod_count_first_level_rpo_df,
+        #
+        #                 f'Свод ЭД {name_one}': svod_count_first_level_ad_df,
+        #                 f'Свод ЭО {name_one}': svod_count_first_level_ao_df,
+        #                 f'Свод ЛО {name_one}': svod_count_first_level_lo_df,
+        #                 f'Свод ППН {name_one}': svod_count_first_level_ppn_df,
+        #
+        #                 f'Свод {name_two}': svod_count_second_level_df,
+        #                 f'Ср. {name_two}': svod_mean_second_df,
+        #                 f'Свод Напряжение {name_two[:10]}': svod_count_second_phase_stress_df,
+        #                 f'Свод Резистенция {name_two[:10]}': svod_count_second_phase_resistance_df,
+        #                 f'Свод Истощение {name_two[:10]}': svod_count_second_phase_exhaustion_df,
+        #
+        #                 f'Свод ППО {name_two}': svod_count_second_level_ppo_df,
+        #                 f'Свод НС {name_two}': svod_count_second_level_ns_df,
+        #                 f'Свод ЗК {name_two}': svod_count_second_level_zk_df,
+        #                 f'Свод ТД {name_two}': svod_count_second_level_td_df,
+        #
+        #                 f'Свод НИЭР {name_two}': svod_count_second_level_niar_df,
+        #                 f'Свод ЭНД {name_two}': svod_count_second_level_and_df,
+        #                 f'Свод РСЭЭ {name_two}': svod_count_second_level_rsaa_df,
+        #                 f'Свод РПО {name_two}': svod_count_second_level_rpo_df,
+        #
+        #                 f'Свод ЭД {name_two}': svod_count_second_level_ad_df,
+        #                 f'Свод ЭО {name_two}': svod_count_second_level_ao_df,
+        #                 f'Свод ЛО {name_two}': svod_count_second_level_lo_df,
+        #                 f'Свод ППН {name_two}': svod_count_second_level_ppn_df,
+        #
+        #                 })
 
 
 
-        return out_dct, part_df
+
+
+
+
 
 
 
