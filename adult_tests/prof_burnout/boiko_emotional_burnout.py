@@ -633,7 +633,7 @@ def calc_dominus_simptom(row:pd.Series,dct_replace:dict):
             if dct_row[name_cols] == 'доминирующий симптом':
                 lst_simptom.append(dct_replace[name_cols])
     if len(lst_simptom) == 0:
-        return 'отсутствуют доминирующие симптомы\n'
+        return 'отсутствуют доминирующие симптомы'
     else:
         return ',\n'.join(lst_simptom)
 
@@ -901,7 +901,6 @@ def processing_boiko_emotional_burnout(base_df: pd.DataFrame, answers_df: pd.Dat
 
     part_df['ЭВБ_Значение_эмоционального_выгорания'] = base_df['Итоговое_значение_эмоционального_выгорания']
     part_df['ЭВБ_Диапазон_эмоционального_выгорания'] = base_df['Диапазон_эмоционального_выгорания']
-    part_df['ЭВБ_Доминирующие_симптомы'] = base_df['Доминирующие_симптомы']
 
     part_df['ЭВБ_Напряжение_Значение'] = base_df['Значение_фазы_Напряжение']
     part_df['ЭВБ_Напряжение_Уровень'] = base_df['Уровень_фазы_Напряжение']
