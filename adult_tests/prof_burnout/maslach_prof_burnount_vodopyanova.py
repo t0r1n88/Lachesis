@@ -247,6 +247,162 @@ def calc_count_level_sub(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_co
     return count_df
 
 
+def create_result_mpbv(base_df:pd.DataFrame,out_dct:dict,lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_reindex_main_level_cols = lst_svod_cols.copy()
+    lst_reindex_main_level_cols.extend( ['крайне низкий уровень', 'низкий уровень',
+                                   'средний уровень', 'высокий уровень', 'крайне высокий уровень',
+                                   'Итого'])  # Основная шкала
+
+    # основная шкала
+    svod_count_one_level_df = calc_count_level(base_df, lst_svod_cols,
+                                               'Значение_уровня_психического_выгорания',
+                                               'Уровень_психического_выгорания',
+                                               lst_reindex_main_level_cols)
+
+    # Субшкалы
+    svod_count_one_level_em_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Психоэмоциональное_истощение',
+                                                      'Уровень_субшкалы_Психоэмоциональное_истощение',
+                                                      lst_reindex_main_level_cols)
+
+    svod_count_one_level_depers_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                          'Значение_субшкалы_Деперсонализация',
+                                                          'Уровень_субшкалы_Деперсонализация',
+                                                          lst_reindex_main_level_cols)
+
+    svod_count_one_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                         'Значение_субшкалы_Редукция_личных_достижений',
+                                                         'Уровень_субшкалы_Редукция_личных_достижений',
+                                                         lst_reindex_main_level_cols)
+
+    # Считаем среднее по субшкалам
+    svod_mean_df = pd.pivot_table(base_df,
+                                  index=lst_svod_cols,
+                                  values=['Значение_уровня_психического_выгорания', 'Значение_субшкалы_Психоэмоциональное_истощение',
+                                          'Значение_субшкалы_Деперсонализация', 'Значение_субшкалы_Редукция_личных_достижений',
+                                                                                   ],
+                                  aggfunc=round_mean)
+    svod_mean_df.reset_index(inplace=True)
+    # упорядочиваем колонки
+    new_order_cols = lst_svod_cols.copy()
+    new_order_cols.extend((['Значение_уровня_психического_выгорания', 'Значение_субшкалы_Психоэмоциональное_истощение',
+                                          'Значение_субшкалы_Деперсонализация', 'Значение_субшкалы_Редукция_личных_достижений',
+                                                                                   ]))
+    svod_mean_df = svod_mean_df.reindex(columns=new_order_cols)
+
+    dct_rename_cols_mean = {'Значение_уровня_психического_выгорания': 'Ср. психическое выгорание',
+                            'Значение_субшкалы_Психоэмоциональное_истощение': 'Ср. Психоэмоциональное истощение',
+                            'Значение_субшкалы_Деперсонализация': 'Ср. Деперсонализация',
+                            'Значение_субшкалы_Редукция_личных_достижений': 'Ср. Редукция личных достижений',}
+    svod_mean_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        if len(lst_svod_cols) == 1:
+            out_name_lst.append(name[:14])
+        elif len(lst_svod_cols) == 2:
+            out_name_lst.append(name[:7])
+        else:
+            out_name_lst.append(name[:4])
+
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+
+    out_dct.update({f'Свод {out_name}': svod_count_one_level_df,
+                    f'Ср {out_name}':svod_mean_df,
+                f'Свод ПЭИ {out_name}': svod_count_one_level_em_df,
+                f'Свод ДП {out_name}': svod_count_one_level_depers_df,
+                f'Свод РЛД {out_name}': svod_count_one_level_reduc_df})
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
+    else:
+        for idx, name_column in enumerate(lst_svod_cols):
+            lst_reindex_column_cols = [lst_svod_cols[idx],'крайне низкий уровень', 'низкий уровень',
+                                   'средний уровень', 'высокий уровень', 'крайне высокий уровень',
+                                   'Итого']  # Основная шкала
+
+            # основная шкала
+            svod_count_column_level_df = calc_count_level(base_df, lst_svod_cols[idx],
+                                                       'Значение_уровня_психического_выгорания',
+                                                       'Уровень_психического_выгорания',
+                                                       lst_reindex_column_cols)
+
+            # Субшкалы
+            svod_count_column_level_em_df = calc_count_level_sub(base_df, lst_svod_cols[idx],
+                                                              'Значение_субшкалы_Психоэмоциональное_истощение',
+                                                              'Уровень_субшкалы_Психоэмоциональное_истощение',
+                                                              lst_reindex_column_cols)
+
+            svod_count_column_level_depers_df = calc_count_level_sub(base_df, lst_svod_cols[idx],
+                                                                  'Значение_субшкалы_Деперсонализация',
+                                                                  'Уровень_субшкалы_Деперсонализация',
+                                                                  lst_reindex_column_cols)
+
+            svod_count_column_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols[idx],
+                                                                 'Значение_субшкалы_Редукция_личных_достижений',
+                                                                 'Уровень_субшкалы_Редукция_личных_достижений',
+                                                                 lst_reindex_column_cols)
+            # Считаем среднее по субшкалам
+            svod_mean_column_df = pd.pivot_table(base_df,
+                                          index=[lst_svod_cols[idx]],
+                                          values=['Значение_уровня_психического_выгорания',
+                                                  'Значение_субшкалы_Психоэмоциональное_истощение',
+                                                  'Значение_субшкалы_Деперсонализация',
+                                                  'Значение_субшкалы_Редукция_личных_достижений',
+                                                  ],
+                                          aggfunc=round_mean)
+            svod_mean_column_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = [lst_svod_cols[idx]].copy()
+            new_order_cols.extend(
+                (['Значение_уровня_психического_выгорания', 'Значение_субшкалы_Психоэмоциональное_истощение',
+                  'Значение_субшкалы_Деперсонализация', 'Значение_субшкалы_Редукция_личных_достижений',
+                  ]))
+            svod_mean_column_df = svod_mean_column_df.reindex(columns=new_order_cols)
+
+            dct_rename_cols_mean = {'Значение_уровня_психического_выгорания': 'Ср. психическое выгорание',
+                                    'Значение_субшкалы_Психоэмоциональное_истощение': 'Ср. Психоэмоциональное истощение',
+                                    'Значение_субшкалы_Деперсонализация': 'Ср. Деперсонализация',
+                                    'Значение_субшкалы_Редукция_личных_достижений': 'Ср. Редукция личных достижений', }
+            svod_mean_column_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+            name_column = lst_svod_cols[idx]
+            name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)
+            name_column = name_column[:15]
+
+            out_dct.update({f'Свод {name_column}': svod_count_column_level_df,
+                    f'Ср {name_column}':svod_mean_column_df,
+                f'Свод ПЭИ {name_column}': svod_count_column_level_em_df,
+                f'Свод ДП {name_column}': svod_count_column_level_depers_df,
+                f'Свод РЛД {name_column}': svod_count_column_level_reduc_df})
+
+        return out_dct
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -367,6 +523,14 @@ def processing_maslach_prof_burnout_vod(base_df: pd.DataFrame, answers_df: pd.Da
         base_df.sort_values(by='Значение_уровня_психического_выгорания', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
+        new_order_cols = lst_svod_cols.copy()
+        new_order_cols.extend(['Значение_уровня_психического_выгорания','Уровень_психического_выгорания'
+                                  ,'Значение_субшкалы_Психоэмоциональное_истощение','Уровень_субшкалы_Психоэмоциональное_истощение',
+                               'Значение_субшкалы_Деперсонализация','Уровень_субшкалы_Деперсонализация',
+                               'Значение_субшкалы_Редукция_личных_достижений','Уровень_субшкалы_Редукция_личных_достижений',
+                               ])
+        base_df = base_df.reindex(columns=new_order_cols)
+
         # Общий свод по уровням общей шкалы всего в процентном соотношении
         base_svod_all_df = pd.DataFrame(
             index=['крайне низкий уровень', 'низкий уровень',
@@ -437,185 +601,189 @@ def processing_maslach_prof_burnout_vod(base_df: pd.DataFrame, answers_df: pd.Da
             """
         if len(lst_svod_cols) == 0:
             return out_dct, part_df
-
-        elif len(lst_svod_cols) == 1:
-            lst_reindex_main_level_cols = [lst_svod_cols[0], 'крайне низкий уровень', 'низкий уровень',
-                                           'средний уровень','высокий уровень','крайне высокий уровень', 'Итого']  # Основная шкала
-
-
-
-            # основная шкала
-            svod_count_one_level_df = calc_count_level(base_df, lst_svod_cols,
-                                                            'Значение_уровня_психического_выгорания',
-                                                            'Уровень_психического_выгорания',
-                                                       lst_reindex_main_level_cols)
-
-            # Субшкалы
-            svod_count_one_level_em_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                   'Значение_субшкалы_Психоэмоциональное_истощение',
-                                                                   'Уровень_субшкалы_Психоэмоциональное_истощение',
-                                                              lst_reindex_main_level_cols)
-
-            svod_count_one_level_depers_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_субшкалы_Деперсонализация',
-                                                                       'Уровень_субшкалы_Деперсонализация',
-                                                                  lst_reindex_main_level_cols)
-
-            svod_count_one_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                      'Значение_субшкалы_Редукция_личных_достижений',
-                                                                      'Уровень_субшкалы_Редукция_личных_достижений',
-                                                                 lst_reindex_main_level_cols)
-
-            # очищаем название колонки по которой делали свод
-            name_one = lst_svod_cols[0]
-            name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
-            name_one = name_one[:15]
-
-            # Считаем среднее по субшкалам
-            svod_mean_em_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение')
-            svod_mean_depers_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Деперсонализация')
-            svod_mean_reduc_df = calc_mean(base_df, [lst_svod_cols[0]],
-                                           'Значение_субшкалы_Редукция_личных_достижений')
-
-            out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
-                            f'Свод ПЭИ {name_one}': svod_count_one_level_em_df,
-                            f'Свод ДП {name_one}': svod_count_one_level_depers_df,
-                            f'Свод РЛД {name_one}': svod_count_one_level_reduc_df,
-                            f'Ср. ПЭИ {name_one}': svod_mean_em_df,
-                            f'Ср. ДП {name_one}': svod_mean_depers_df,
-                            f'Ср. РЛД {name_one}': svod_mean_reduc_df, })
+        else:
+            out_dct = create_result_mpbv(base_df, out_dct, lst_svod_cols)
 
             return out_dct, part_df
 
-        elif len(lst_svod_cols) == 2:
-            lst_reindex_main_level_cols = [lst_svod_cols[0],lst_svod_cols[1],  'крайне низкий уровень', 'низкий уровень',
-                                           'средний уровень','высокий уровень','крайне высокий уровень', 'Итого']  # Основная шкала
-
-
-
-            # первая колонка
-            lst_reindex_first_main_level_cols = [lst_svod_cols[0], 'крайне низкий уровень', 'низкий уровень',
-                                           'средний уровень','высокий уровень','крайне высокий уровень','Итого'] # Основная шкала
-
-
-            # вторая колонка
-            lst_reindex_second_main_level_cols = [lst_svod_cols[1], 'крайне низкий уровень', 'низкий уровень',
-                                           'средний уровень','высокий уровень','крайне высокий уровень','Итого'] # Основная шкала
-
-
-
-
-
-            # основная шкала
-            svod_count_two_level_df = calc_count_level(base_df, lst_svod_cols,
-                                                            'Значение_уровня_психического_выгорания',
-                                                            'Уровень_психического_выгорания',
-                                                       lst_reindex_main_level_cols)
-
-            # Субшкалы
-            svod_count_two_level_em_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                   'Значение_субшкалы_Психоэмоциональное_истощение',
-                                                                   'Уровень_субшкалы_Психоэмоциональное_истощение',
-                                                              lst_reindex_main_level_cols)
-
-            svod_count_two_level_depers_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                       'Значение_субшкалы_Психоэмоциональное_истощение',
-                                                                       'Уровень_субшкалы_Деперсонализация',
-                                                                  lst_reindex_main_level_cols)
-
-            svod_count_two_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                                      'Значение_субшкалы_Психоэмоциональное_истощение',
-                                                                      'Уровень_субшкалы_Редукция_личных_достижений',
-                                                                 lst_reindex_main_level_cols)
-
-
-            # первая колонка
-            # основная шкала
-            svod_count_first_level_df = calc_count_level(base_df, [lst_svod_cols[0]], 'Значение_уровня_психического_выгорания', 'Уровень_психического_выгорания',
-                                                         lst_reindex_first_main_level_cols)
-
-            # Субшкалы
-            svod_count_first_level_em_df = calc_count_level_sub(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Психоэмоциональное_истощение',
-                                                                lst_reindex_first_main_level_cols)
-
-            svod_count_first_level_depers_df = calc_count_level_sub(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Деперсонализация',
-                                                                    lst_reindex_first_main_level_cols)
-
-            svod_count_first_level_reduc_df = calc_count_level_sub(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Редукция_личных_достижений',
-                                                                   lst_reindex_first_main_level_cols)
-
-
-
-            # Вторая колонка
-            svod_count_second_level_df = calc_count_level(base_df, [lst_svod_cols[1]], 'Значение_уровня_психического_выгорания', 'Уровень_психического_выгорания',
-                                                          lst_reindex_second_main_level_cols)
-
-            # Субшкалы
-            svod_count_second_level_em_df = calc_count_level_sub(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Психоэмоциональное_истощение',
-                                                                 lst_reindex_second_main_level_cols)
-
-            svod_count_second_level_depers_df = calc_count_level_sub(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Деперсонализация',
-                                                                     lst_reindex_second_main_level_cols)
-
-            svod_count_second_level_reduc_df = calc_count_level_sub(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Редукция_личных_достижений',
-                                                                    lst_reindex_second_main_level_cols)
-
-
-            # Считаем среднее по субшкалам
-            svod_mean_em_df = calc_mean(base_df, lst_svod_cols, 'Значение_субшкалы_Психоэмоциональное_истощение')
-            svod_mean_depers_df = calc_mean(base_df, lst_svod_cols, 'Значение_субшкалы_Деперсонализация')
-            svod_mean_reduc_df = calc_mean(base_df, lst_svod_cols, 'Значение_субшкалы_Редукция_личных_достижений')
-
-            # Считаем среднее по субшкалам
-            svod_mean_first_em_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение')
-            svod_mean_first_depers_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Деперсонализация')
-            svod_mean_first_reduc_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Редукция_личных_достижений')
-
-            svod_mean_second_em_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение')
-            svod_mean_second_depers_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Деперсонализация')
-            svod_mean_second_reduc_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Редукция_личных_достижений')
-
-
-            # очищаем название колонки по которой делали свод
-            name_one = lst_svod_cols[0]
-            name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
-            name_one = name_one[:15]
-
-            name_two = lst_svod_cols[1]
-            name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
-            name_two = name_two[:15]
-
-
-
-            out_dct.update({f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
-                            f'Свод ПЭИ {name_one[:10]}_{name_two[:10]}': svod_count_two_level_em_df,
-                            f'Свод ДП {name_one[:10]}_{name_two[:10]}': svod_count_two_level_depers_df,
-                            f'Свод РЛД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_reduc_df,
-
-                            f'Ср. ПЭИ {name_one[:10]}_{name_two[:10]}':svod_mean_em_df,
-                            f'Ср. ДП {name_one[:10]}_{name_two[:10]}':svod_mean_depers_df,
-                            f'Ср. РЛД {name_one[:10]}_{name_two[:10]}':svod_mean_reduc_df,
-
-
-                            f'Свод {name_one}':svod_count_first_level_df,
-                            f'Свод ПЭИ {name_one}':svod_count_first_level_em_df,
-                            f'Свод ДП {name_one}':svod_count_first_level_depers_df,
-                            f'Свод РЛД {name_one}':svod_count_first_level_reduc_df,
-
-                            f'Ср. ПЭИ {name_one}': svod_mean_first_em_df,
-                            f'Ср. ДП {name_one}': svod_mean_first_depers_df,
-                            f'Ср. РЛД {name_one}': svod_mean_first_reduc_df,
-
-                            f'Свод {name_two}': svod_count_second_level_df,
-                            f'Свод ПЭИ {name_two}': svod_count_second_level_em_df,
-                            f'Свод ДП {name_two}': svod_count_second_level_depers_df,
-                            f'Свод РЛД {name_two}': svod_count_second_level_reduc_df,
-
-                            f'Ср. ПЭИ {name_two}': svod_mean_second_em_df,
-                            f'Ср. ДП {name_two}': svod_mean_second_depers_df,
-                            f'Ср. РЛД {name_two}': svod_mean_second_reduc_df,
-
-                            })
+        # elif len(lst_svod_cols) == 1:
+        #     lst_reindex_main_level_cols = [lst_svod_cols[0], 'крайне низкий уровень', 'низкий уровень',
+        #                                    'средний уровень','высокий уровень','крайне высокий уровень', 'Итого']  # Основная шкала
+        #
+        #
+        #
+        #     # основная шкала
+        #     svod_count_one_level_df = calc_count_level(base_df, lst_svod_cols,
+        #                                                     'Значение_уровня_психического_выгорания',
+        #                                                     'Уровень_психического_выгорания',
+        #                                                lst_reindex_main_level_cols)
+        #
+        #     # Субшкалы
+        #     svod_count_one_level_em_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                            'Значение_субшкалы_Психоэмоциональное_истощение',
+        #                                                            'Уровень_субшкалы_Психоэмоциональное_истощение',
+        #                                                       lst_reindex_main_level_cols)
+        #
+        #     svod_count_one_level_depers_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_субшкалы_Деперсонализация',
+        #                                                                'Уровень_субшкалы_Деперсонализация',
+        #                                                           lst_reindex_main_level_cols)
+        #
+        #     svod_count_one_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                               'Значение_субшкалы_Редукция_личных_достижений',
+        #                                                               'Уровень_субшкалы_Редукция_личных_достижений',
+        #                                                          lst_reindex_main_level_cols)
+        #
+        #     # очищаем название колонки по которой делали свод
+        #     name_one = lst_svod_cols[0]
+        #     name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        #     name_one = name_one[:15]
+        #
+        #     # Считаем среднее по субшкалам
+        #     svod_mean_em_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение')
+        #     svod_mean_depers_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Деперсонализация')
+        #     svod_mean_reduc_df = calc_mean(base_df, [lst_svod_cols[0]],
+        #                                    'Значение_субшкалы_Редукция_личных_достижений')
+        #
+        #     out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+        #                     f'Свод ПЭИ {name_one}': svod_count_one_level_em_df,
+        #                     f'Свод ДП {name_one}': svod_count_one_level_depers_df,
+        #                     f'Свод РЛД {name_one}': svod_count_one_level_reduc_df,
+        #                     f'Ср. ПЭИ {name_one}': svod_mean_em_df,
+        #                     f'Ср. ДП {name_one}': svod_mean_depers_df,
+        #                     f'Ср. РЛД {name_one}': svod_mean_reduc_df, })
+        #
+        #     return out_dct, part_df
+        #
+        # elif len(lst_svod_cols) == 2:
+        #     lst_reindex_main_level_cols = [lst_svod_cols[0],lst_svod_cols[1],  'крайне низкий уровень', 'низкий уровень',
+        #                                    'средний уровень','высокий уровень','крайне высокий уровень', 'Итого']  # Основная шкала
+        #
+        #
+        #
+        #     # первая колонка
+        #     lst_reindex_first_main_level_cols = [lst_svod_cols[0], 'крайне низкий уровень', 'низкий уровень',
+        #                                    'средний уровень','высокий уровень','крайне высокий уровень','Итого'] # Основная шкала
+        #
+        #
+        #     # вторая колонка
+        #     lst_reindex_second_main_level_cols = [lst_svod_cols[1], 'крайне низкий уровень', 'низкий уровень',
+        #                                    'средний уровень','высокий уровень','крайне высокий уровень','Итого'] # Основная шкала
+        #
+        #
+        #
+        #
+        #
+        #     # основная шкала
+        #     svod_count_two_level_df = calc_count_level(base_df, lst_svod_cols,
+        #                                                     'Значение_уровня_психического_выгорания',
+        #                                                     'Уровень_психического_выгорания',
+        #                                                lst_reindex_main_level_cols)
+        #
+        #     # Субшкалы
+        #     svod_count_two_level_em_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                            'Значение_субшкалы_Психоэмоциональное_истощение',
+        #                                                            'Уровень_субшкалы_Психоэмоциональное_истощение',
+        #                                                       lst_reindex_main_level_cols)
+        #
+        #     svod_count_two_level_depers_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                                'Значение_субшкалы_Психоэмоциональное_истощение',
+        #                                                                'Уровень_субшкалы_Деперсонализация',
+        #                                                           lst_reindex_main_level_cols)
+        #
+        #     svod_count_two_level_reduc_df = calc_count_level_sub(base_df, lst_svod_cols,
+        #                                                               'Значение_субшкалы_Психоэмоциональное_истощение',
+        #                                                               'Уровень_субшкалы_Редукция_личных_достижений',
+        #                                                          lst_reindex_main_level_cols)
+        #
+        #
+        #     # первая колонка
+        #     # основная шкала
+        #     svod_count_first_level_df = calc_count_level(base_df, [lst_svod_cols[0]], 'Значение_уровня_психического_выгорания', 'Уровень_психического_выгорания',
+        #                                                  lst_reindex_first_main_level_cols)
+        #
+        #     # Субшкалы
+        #     svod_count_first_level_em_df = calc_count_level_sub(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Психоэмоциональное_истощение',
+        #                                                         lst_reindex_first_main_level_cols)
+        #
+        #     svod_count_first_level_depers_df = calc_count_level_sub(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Деперсонализация',
+        #                                                             lst_reindex_first_main_level_cols)
+        #
+        #     svod_count_first_level_reduc_df = calc_count_level_sub(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Редукция_личных_достижений',
+        #                                                            lst_reindex_first_main_level_cols)
+        #
+        #
+        #
+        #     # Вторая колонка
+        #     svod_count_second_level_df = calc_count_level(base_df, [lst_svod_cols[1]], 'Значение_уровня_психического_выгорания', 'Уровень_психического_выгорания',
+        #                                                   lst_reindex_second_main_level_cols)
+        #
+        #     # Субшкалы
+        #     svod_count_second_level_em_df = calc_count_level_sub(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Психоэмоциональное_истощение',
+        #                                                          lst_reindex_second_main_level_cols)
+        #
+        #     svod_count_second_level_depers_df = calc_count_level_sub(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Деперсонализация',
+        #                                                              lst_reindex_second_main_level_cols)
+        #
+        #     svod_count_second_level_reduc_df = calc_count_level_sub(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение', 'Уровень_субшкалы_Редукция_личных_достижений',
+        #                                                             lst_reindex_second_main_level_cols)
+        #
+        #
+        #     # Считаем среднее по субшкалам
+        #     svod_mean_em_df = calc_mean(base_df, lst_svod_cols, 'Значение_субшкалы_Психоэмоциональное_истощение')
+        #     svod_mean_depers_df = calc_mean(base_df, lst_svod_cols, 'Значение_субшкалы_Деперсонализация')
+        #     svod_mean_reduc_df = calc_mean(base_df, lst_svod_cols, 'Значение_субшкалы_Редукция_личных_достижений')
+        #
+        #     # Считаем среднее по субшкалам
+        #     svod_mean_first_em_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Психоэмоциональное_истощение')
+        #     svod_mean_first_depers_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Деперсонализация')
+        #     svod_mean_first_reduc_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_субшкалы_Редукция_личных_достижений')
+        #
+        #     svod_mean_second_em_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Психоэмоциональное_истощение')
+        #     svod_mean_second_depers_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Деперсонализация')
+        #     svod_mean_second_reduc_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_субшкалы_Редукция_личных_достижений')
+        #
+        #
+        #     # очищаем название колонки по которой делали свод
+        #     name_one = lst_svod_cols[0]
+        #     name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        #     name_one = name_one[:15]
+        #
+        #     name_two = lst_svod_cols[1]
+        #     name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
+        #     name_two = name_two[:15]
+        #
+        #
+        #
+        #     out_dct.update({f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
+        #                     f'Свод ПЭИ {name_one[:10]}_{name_two[:10]}': svod_count_two_level_em_df,
+        #                     f'Свод ДП {name_one[:10]}_{name_two[:10]}': svod_count_two_level_depers_df,
+        #                     f'Свод РЛД {name_one[:10]}_{name_two[:10]}': svod_count_two_level_reduc_df,
+        #
+        #                     f'Ср. ПЭИ {name_one[:10]}_{name_two[:10]}':svod_mean_em_df,
+        #                     f'Ср. ДП {name_one[:10]}_{name_two[:10]}':svod_mean_depers_df,
+        #                     f'Ср. РЛД {name_one[:10]}_{name_two[:10]}':svod_mean_reduc_df,
+        #
+        #
+        #                     f'Свод {name_one}':svod_count_first_level_df,
+        #                     f'Свод ПЭИ {name_one}':svod_count_first_level_em_df,
+        #                     f'Свод ДП {name_one}':svod_count_first_level_depers_df,
+        #                     f'Свод РЛД {name_one}':svod_count_first_level_reduc_df,
+        #
+        #                     f'Ср. ПЭИ {name_one}': svod_mean_first_em_df,
+        #                     f'Ср. ДП {name_one}': svod_mean_first_depers_df,
+        #                     f'Ср. РЛД {name_one}': svod_mean_first_reduc_df,
+        #
+        #                     f'Свод {name_two}': svod_count_second_level_df,
+        #                     f'Свод ПЭИ {name_two}': svod_count_second_level_em_df,
+        #                     f'Свод ДП {name_two}': svod_count_second_level_depers_df,
+        #                     f'Свод РЛД {name_two}': svod_count_second_level_reduc_df,
+        #
+        #                     f'Ср. ПЭИ {name_two}': svod_mean_second_em_df,
+        #                     f'Ср. ДП {name_two}': svod_mean_second_depers_df,
+        #                     f'Ср. РЛД {name_two}': svod_mean_second_reduc_df,
+        #
+        #                     })
 
             return out_dct, part_df
 
