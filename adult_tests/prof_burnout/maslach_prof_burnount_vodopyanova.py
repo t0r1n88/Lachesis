@@ -407,15 +407,15 @@ def create_result_mpbv(base_df:pd.DataFrame,out_dct:dict,lst_svod_cols:list):
 
 
 
-def processing_maslach_prof_burnout_vod(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
+def processing_maslach_prof_burnout_vod(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки
-    :param base_df: часть датафрейма с описательными колонками
+    :param result_df: часть датафрейма с описательными колонками
     :param answers_df: часть датафрейма с ответами
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
     try:
-        out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+        out_answer_df = result_df.copy()  # делаем копию для последующего соединения с сырыми ответами
         if len(answers_df.columns) != 22:  # проверяем количество колонок с вопросами
             raise BadCountColumnsMPBV
 
@@ -484,6 +484,7 @@ def processing_maslach_prof_burnout_vod(base_df: pd.DataFrame, answers_df: pd.Da
             raise BadValueMPBV
 
         # Субшкала Эмоциональное истощение
+        base_df = pd.DataFrame()
         base_df['Значение_субшкалы_Психоэмоциональное_истощение'] = answers_df.apply(calc_sub_value_em_attrition, axis=1)
         base_df['Норма_Психоэмоциональное_истощение'] = '0-30 баллов'
         base_df['Уровень_субшкалы_Психоэмоциональное_истощение'] = base_df['Значение_субшкалы_Психоэмоциональное_истощение'].apply(
@@ -520,16 +521,20 @@ def processing_maslach_prof_burnout_vod(base_df: pd.DataFrame, answers_df: pd.Da
         part_df['МПВВ_РЛД_Значение'] = base_df['Значение_субшкалы_Редукция_личных_достижений']
         part_df['МПВВ_РЛД_Уровень'] = base_df['Уровень_субшкалы_Редукция_личных_достижений']
 
-        base_df.sort_values(by='Значение_уровня_психического_выгорания', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
-        new_order_cols = lst_svod_cols.copy()
-        new_order_cols.extend(['Значение_уровня_психического_выгорания','Уровень_психического_выгорания'
+        new_order_cols = ['Значение_уровня_психического_выгорания','Уровень_психического_выгорания'
                                   ,'Значение_субшкалы_Психоэмоциональное_истощение','Уровень_субшкалы_Психоэмоциональное_истощение',
                                'Значение_субшкалы_Деперсонализация','Уровень_субшкалы_Деперсонализация',
                                'Значение_субшкалы_Редукция_личных_достижений','Уровень_субшкалы_Редукция_личных_достижений',
-                               ])
+                               ]
         base_df = base_df.reindex(columns=new_order_cols)
+
+
+        # Соединяем анкетную часть с результатной
+        base_df = pd.concat([result_df, base_df], axis=1)
+        base_df.sort_values(by='Значение_уровня_психического_выгорания', ascending=False, inplace=True)  # сортируем
+
 
         # Общий свод по уровням общей шкалы всего в процентном соотношении
         base_svod_all_df = pd.DataFrame(
