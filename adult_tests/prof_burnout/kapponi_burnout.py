@@ -91,6 +91,80 @@ def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
 
 
 
+def create_result_bkn(base_df:pd.DataFrame,out_dct:dict,lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_reindex_main_level_cols = lst_svod_cols.copy()
+    lst_reindex_main_level_cols.extend(['выгорание отсутствует', 'средний уровень выгорания',
+                               'высокий уровень выгорания', 'критический уровень выгорания',
+                               'Итого'])  # Основная шкала
+
+    svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
+                                                    'Значение_уровня_выгорания',
+                                                    'Уровень_выгорания',
+                                                    lst_reindex_main_level_cols)
+
+    # Считаем среднее
+    svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_уровня_выгорания')
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        if len(lst_svod_cols) == 1:
+            out_name_lst.append(name[:14])
+        elif len(lst_svod_cols) == 2:
+            out_name_lst.append(name[:7])
+        else:
+            out_name_lst.append(name[:4])
+
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+    out_dct.update({f'Свод {out_name}':svod_count_one_level_df,
+                    f'Ср. {out_name}': svod_mean_df})
+
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
+    else:
+        for idx, name_column in enumerate(lst_svod_cols):
+            lst_reindex_main_level_cols = [lst_svod_cols[idx],'выгорание отсутствует', 'средний уровень выгорания',
+                               'высокий уровень выгорания', 'критический уровень выгорания',
+                               'Итого']
+
+            svod_count_column_level_df = calc_count_main_level(base_df, [lst_svod_cols[idx]],
+                                                            'Значение_уровня_выгорания',
+                                                            'Уровень_выгорания',
+                                                            lst_reindex_main_level_cols)
+
+            # Считаем среднее
+            svod_mean_column_df = calc_mean(base_df, [lst_svod_cols[idx]], 'Значение_уровня_выгорания')
+            # Готовим наименование
+            name_column = lst_svod_cols[idx]
+            name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)
+            name_column = name_column[:15]
+            out_dct.update({f'Свод {name_column}': svod_count_column_level_df,
+                            f'Ср. {name_column}': svod_mean_column_df})
+
+        return out_dct
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -210,92 +284,97 @@ def processing_kapponi_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,l
         if len(lst_svod_cols) == 0:
             return out_dct, part_df
 
-        elif len(lst_svod_cols) == 1:
-            lst_reindex_main_level_cols = [lst_svod_cols[0], 'выгорание отсутствует', 'средний уровень выгорания',
-                                           'высокий уровень выгорания', 'критический уровень выгорания',
-                                           'Итого']  #
-
-            svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
-                                                            'Значение_уровня_выгорания',
-                                                            'Уровень_выгорания',
-                                                            lst_reindex_main_level_cols)
-
-            # очищаем название колонки по которой делали свод
-            name_one = lst_svod_cols[0]
-            name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
-            name_one = name_one[:15]
-
-            # Считаем среднее
-            svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
-
-            out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
-                            f'Ср. {name_one}': svod_mean_df,})
+        else:
+            out_dct = create_result_bkn(base_df, out_dct, lst_svod_cols)
 
             return out_dct, part_df
 
-        elif len(lst_svod_cols) == 2:
-            lst_reindex_main_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'выгорание отсутствует', 'средний уровень выгорания',
-                                           'высокий уровень выгорания', 'критический уровень выгорания',
-                                           'Итого']  #
-
-            # первая колонка
-            lst_reindex_first_main_level_cols = [lst_svod_cols[0], 'выгорание отсутствует', 'средний уровень выгорания',
-                                           'высокий уровень выгорания', 'критический уровень выгорания',
-                                           'Итого']
-            # вторая колонка
-            lst_reindex_second_main_level_cols = [lst_svod_cols[1], 'выгорание отсутствует', 'средний уровень выгорания',
-                                           'высокий уровень выгорания', 'критический уровень выгорания',
-                                           'Итого']  #
-
-
-
-
-            svod_count_two_level_df = calc_count_main_level(base_df, lst_svod_cols,
-                                                            'Значение_уровня_выгорания',
-                                                            'Уровень_выгорания',
-                                                            lst_reindex_main_level_cols)
-            # Считаем среднее по субшкалам
-            svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_уровня_выгорания')
-
-
-            # Первая колонка
-            svod_count_first_level_df = calc_count_main_level(base_df, [lst_svod_cols[0]],
-                                                            'Значение_уровня_выгорания',
-                                                            'Уровень_выгорания',
-                                                            lst_reindex_first_main_level_cols)
-
-            # Считаем среднее
-            svod_mean_first_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
-
-            # Вторая колонка
-            svod_count_second_level_df = calc_count_main_level(base_df, [lst_svod_cols[1]],
-                                                              'Значение_уровня_выгорания',
-                                                              'Уровень_выгорания',
-                                                              lst_reindex_second_main_level_cols)
-
-            # Считаем среднее
-            svod_mean_second_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_уровня_выгорания')
-
-            # очищаем название колонки по которой делали свод
-            name_one = lst_svod_cols[0]
-            name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
-            name_one = name_one[:15]
-
-            name_two = lst_svod_cols[1]
-            name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
-            name_two = name_two[:15]
-
-
-            out_dct.update({f'Свод {name_one}': svod_count_first_level_df,
-                            f'Ср. {name_one}': svod_mean_first_df,
-
-                            f'Свод {name_two}': svod_count_second_level_df,
-                            f'Ср. {name_two}': svod_mean_second_df,
-
-                            f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
-                            f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df})
-
-            return out_dct, part_df
+        # elif len(lst_svod_cols) == 1:
+        #     lst_reindex_main_level_cols = [lst_svod_cols[0], 'выгорание отсутствует', 'средний уровень выгорания',
+        #                                    'высокий уровень выгорания', 'критический уровень выгорания',
+        #                                    'Итого']  #
+        #
+        #     svod_count_one_level_df = calc_count_main_level(base_df, lst_svod_cols,
+        #                                                     'Значение_уровня_выгорания',
+        #                                                     'Уровень_выгорания',
+        #                                                     lst_reindex_main_level_cols)
+        #
+        #     # очищаем название колонки по которой делали свод
+        #     name_one = lst_svod_cols[0]
+        #     name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        #     name_one = name_one[:15]
+        #
+        #     # Считаем среднее
+        #     svod_mean_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
+        #
+        #     out_dct.update({f'Свод {name_one}': svod_count_one_level_df,
+        #                     f'Ср. {name_one}': svod_mean_df,})
+        #
+        #     return out_dct, part_df
+        #
+        # elif len(lst_svod_cols) == 2:
+        #     lst_reindex_main_level_cols = [lst_svod_cols[0], lst_svod_cols[1], 'выгорание отсутствует', 'средний уровень выгорания',
+        #                                    'высокий уровень выгорания', 'критический уровень выгорания',
+        #                                    'Итого']  #
+        #
+        #     # первая колонка
+        #     lst_reindex_first_main_level_cols = [lst_svod_cols[0], 'выгорание отсутствует', 'средний уровень выгорания',
+        #                                    'высокий уровень выгорания', 'критический уровень выгорания',
+        #                                    'Итого']
+        #     # вторая колонка
+        #     lst_reindex_second_main_level_cols = [lst_svod_cols[1], 'выгорание отсутствует', 'средний уровень выгорания',
+        #                                    'высокий уровень выгорания', 'критический уровень выгорания',
+        #                                    'Итого']  #
+        #
+        #
+        #
+        #
+        #     svod_count_two_level_df = calc_count_main_level(base_df, lst_svod_cols,
+        #                                                     'Значение_уровня_выгорания',
+        #                                                     'Уровень_выгорания',
+        #                                                     lst_reindex_main_level_cols)
+        #     # Считаем среднее по субшкалам
+        #     svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_уровня_выгорания')
+        #
+        #
+        #     # Первая колонка
+        #     svod_count_first_level_df = calc_count_main_level(base_df, [lst_svod_cols[0]],
+        #                                                     'Значение_уровня_выгорания',
+        #                                                     'Уровень_выгорания',
+        #                                                     lst_reindex_first_main_level_cols)
+        #
+        #     # Считаем среднее
+        #     svod_mean_first_df = calc_mean(base_df, [lst_svod_cols[0]], 'Значение_уровня_выгорания')
+        #
+        #     # Вторая колонка
+        #     svod_count_second_level_df = calc_count_main_level(base_df, [lst_svod_cols[1]],
+        #                                                       'Значение_уровня_выгорания',
+        #                                                       'Уровень_выгорания',
+        #                                                       lst_reindex_second_main_level_cols)
+        #
+        #     # Считаем среднее
+        #     svod_mean_second_df = calc_mean(base_df, [lst_svod_cols[1]], 'Значение_уровня_выгорания')
+        #
+        #     # очищаем название колонки по которой делали свод
+        #     name_one = lst_svod_cols[0]
+        #     name_one = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_one)
+        #     name_one = name_one[:15]
+        #
+        #     name_two = lst_svod_cols[1]
+        #     name_two = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_two)
+        #     name_two = name_two[:15]
+        #
+        #
+        #     out_dct.update({f'Свод {name_one}': svod_count_first_level_df,
+        #                     f'Ср. {name_one}': svod_mean_first_df,
+        #
+        #                     f'Свод {name_two}': svod_count_second_level_df,
+        #                     f'Ср. {name_two}': svod_mean_second_df,
+        #
+        #                     f'Свод {name_one[:10]}_{name_two[:10]}': svod_count_two_level_df,
+        #                     f'Ср. {name_one[:10]}_{name_two[:10]}': svod_mean_df})
+        #
+        #     return out_dct, part_df
 
     except BadOrderBKN:
         messagebox.showerror('Лахеcис',
