@@ -737,7 +737,7 @@ def create_result_beb(base_df:pd.DataFrame,out_dct:dict,lst_svod_cols:list):
 
     # Считаем среднее по субшкалам
     svod_mean_df = pd.pivot_table(base_df,
-                                  index=[lst_svod_cols[0]],
+                                  index=lst_svod_cols,
                                   values=['Итоговое_значение_эмоционального_выгорания', 'Значение_фазы_Напряжение',
                                           'Значение_фазы_Резистенция', 'Значение_фазы_Истощение',
                                           'Значение_симптома_Переживание_психотравмирующих_обстоятельств',
