@@ -7,6 +7,7 @@ from adult_tests.prof_burnout.boiko_ilin_emotional_burnout import processing_boi
 from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
 from adult_tests.prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_prof_burnout_vod # Профессиональное выгорание Маслач Водопьянова
 from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Профессиональное выгорание Бойко
+from adult_tests.prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 
@@ -111,6 +112,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Выгорание Каппони Новак': (processing_kapponi_burnout, 10),
                      'Профессиональное выгорание Маслач Водопьянова': (processing_maslach_prof_burnout_vod, 22),
                      'Эмоциональное выгорание Бойко': (processing_boiko_emotional_burnout, 84),
+                     'BAT краткая версия Демкин': (processing_short_bat_demkin, 12),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -118,11 +120,13 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Выгорание Каппони Новак': 'Экспресс-оценка выгорания Каппони Новак',
                               'Профессиональное выгорание Маслач Водопьянова': 'Профессиональное выгорание Маслач Водопьянова',
                               'Эмоциональное выгорание Бойко': 'Эмоциональное выгорание Бойко',
+                              'BAT краткая версия Демкин': 'BAT краткая версия Демкин',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
         lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин',
-                           'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко']
+                           'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко',
+                           'BAT краткая версия Демкин']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
@@ -385,7 +389,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
-    main_svod_cols = '1,2,3'
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
