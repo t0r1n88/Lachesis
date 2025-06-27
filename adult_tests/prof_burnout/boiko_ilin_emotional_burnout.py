@@ -537,6 +537,14 @@ def processing_boiko_ilin_emotional_burnout(result_df: pd.DataFrame, answers_df:
         if len(answers_df.columns) != 35:  # проверяем количество колонок с вопросами
             raise BadCountColumnsBOIEB
 
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
+
         lst_check_cols = ['Сегодня я доволен своей профессией не меньше, чем в начале карьеры.',
                           'Я ошибся в выборе профессии или профиля деятельности (занимаю не свое место).',
                           'Когда я чувствую усталость или напряжение, то стараюсь поскорее “свернуть” дело.',

@@ -181,6 +181,14 @@ def processing_kapponi_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,l
         if len(answers_df.columns) != 10:  # проверяем количество колонок с вопросами
             raise BadCountColumnsBKN
 
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
+
         lst_check_cols = ['Когда в воскресенье пополудни я вспоминаю о том, что завтра снова идти на работу, то остаток выходного дня уже испорчен',
                           'Если бы у меня была возможность уйти на пенсию (по выслуге лет, инвалидности), я сделал (а) бы это без промедления',
                           'Коллеги на работе раздражают меня. Невозможно терпеть их одни и те же разговоры',

@@ -407,6 +407,14 @@ def processing_vod_ped_prof_burnout(result_df: pd.DataFrame, answers_df: pd.Data
         if len(answers_df.columns) != 22:  # проверяем количество колонок с вопросами
             raise BadCountColumnsVODPB
 
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
+
         lst_check_cols = ['К концу рабочей недели я чувствую себя эмоционально опустошенным(ой).',
                           'К концу рабочего дня я чувствую себя как выжатый лимон.',
                           'Я чувствую себя усталым(ой), когда встаю утром и должен (должна) идти на работу.',

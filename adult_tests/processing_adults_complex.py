@@ -152,6 +152,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
         # Проверяем датафрейм на количество колонок
         df = pd.read_excel(data_adults, dtype=str)  # считываем датафрейм
+        df.columns = list(map(str,df.columns)) # делаем строковыми названия колонок
         lst_name_cols = [col for col in df.columns if 'Unnamed' not in col]  # отбрасываем колонки без названия
         df = df[lst_name_cols]
 
