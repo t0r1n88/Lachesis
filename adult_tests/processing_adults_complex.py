@@ -8,6 +8,7 @@ from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout 
 from adult_tests.prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_prof_burnout_vod # Профессиональное выгорание Маслач Водопьянова
 from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Профессиональное выгорание Бойко
 from adult_tests.prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
+from adult_tests.prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 
@@ -113,6 +114,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Профессиональное выгорание Маслач Водопьянова': (processing_maslach_prof_burnout_vod, 22),
                      'Эмоциональное выгорание Бойко': (processing_boiko_emotional_burnout, 84),
                      'BAT краткая версия Демкин': (processing_short_bat_demkin, 12),
+                     'Опросник психологического выгорания Рукавишников': (processing_rukav_psych_burnout, 72),
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -121,12 +123,13 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Профессиональное выгорание Маслач Водопьянова': 'Профессиональное выгорание Маслач Водопьянова',
                               'Эмоциональное выгорание Бойко': 'Эмоциональное выгорание Бойко',
                               'BAT краткая версия Демкин': 'BAT краткая версия Демкин',
+                              'Опросник психологического выгорания Рукавишников': 'Опросник психологического выгорания Рукавишников',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
         lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин',
                            'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко',
-                           'BAT краткая версия Демкин']
+                           'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников']
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
