@@ -10,6 +10,13 @@ from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_em
 from adult_tests.prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
 from adult_tests.prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
+
+# Тесты психологическое состояние
+from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников
+
+
+
+
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
 
 import pandas as pd
@@ -115,6 +122,9 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Эмоциональное выгорание Бойко': (processing_boiko_emotional_burnout, 84),
                      'BAT краткая версия Демкин': (processing_short_bat_demkin, 12),
                      'Опросник психологического выгорания Рукавишников': (processing_rukav_psych_burnout, 72),
+
+                     'Экспресс-диагностика адаптации первокурсников Гончарова': (processing_goncharova_adoptation_first_course, 11),
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -124,12 +134,17 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Эмоциональное выгорание Бойко': 'Эмоциональное выгорание Бойко',
                               'BAT краткая версия Демкин': 'BAT краткая версия Демкин',
                               'Опросник психологического выгорания Рукавишников': 'Опросник психологического выгорания Рукавишников',
+
+                              'Экспресс-диагностика адаптации первокурсников Гончарова': 'Экспресс-диагностика адаптации первокурсников Гончарова',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
         lst_alert_tests = ['Профессиональное выгорание педагогов Водопьянова','Эмоциональное выгорание Бойко Ильин',
                            'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко',
-                           'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников']
+                           'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников',
+
+                           'Экспресс-диагностика адаптации первокурсников Гончарова',
+                           ]
         lst_check_alert_tests = []
 
         # Списки для проверки наличия профориентационных тестов
@@ -230,7 +245,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         # Сохраняем в удобном виде
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
-            set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень','250-299','300 и более','очень высокий уровень'] # особое внимание
+            set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень','250-299','300 и более','очень высокий уровень','низкий уровень адаптации'] # особое внимание
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом'] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
 
@@ -387,13 +402,15 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2,3'
+    main_svod_cols = '1,2'
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 

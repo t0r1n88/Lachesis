@@ -237,6 +237,7 @@ def processing_kapponi_burnout(base_df: pd.DataFrame, answers_df: pd.DataFrame,l
             error_message = ';'.join(lst_error_answers)
             raise BadValueBKN
 
+
         base_df['Значение_уровня_выгорания'] = answers_df.sum(axis=1)
         base_df['Норма_выгорания'] = '0-1 баллов'
         base_df['Уровень_выгорания'] = base_df['Значение_уровня_выгорания'].apply(calc_level_attrition)
