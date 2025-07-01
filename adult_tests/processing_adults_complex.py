@@ -14,6 +14,7 @@ from adult_tests.prof_burnout.rukavishnikov_psych_burnout import processing_ruka
 # Тесты психологическое состояние
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
 from mental_state.aizenk_self_mental_state import processing_aizenk_self_mental_state # Самодиагностика психического состояния Айзенк
+from mental_state.rodjers_daimond_sneg_soc_psych_adapt import processing_rodjers_daimond_sneg_soc_psych_adapt # Шкала социально психологического состояния Роджерс Даймонд Снегирева
 
 
 
@@ -126,6 +127,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
                      'Экспресс-диагностика адаптации первокурсников Гончарова': (processing_goncharova_adoptation_first_course, 11),
                      'Самооценка психических состояний Айзенк': (processing_aizenk_self_mental_state, 40),
+                     'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': (processing_rodjers_daimond_sneg_soc_psych_adapt, 101),
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -139,6 +141,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
                               'Экспресс-диагностика адаптации первокурсников Гончарова': 'Экспресс-диагностика адаптации первокурсников Гончарова',
                               'Самооценка психических состояний Айзенк': 'Самооценка психических состояний Айзенк',
+                              'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': 'Социально-психологическая адаптированность Роджерс Даймонд Снегирева',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -146,7 +149,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                            'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко',
                            'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников',
 
-                           'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк'
+                           'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
+                           'Социально-психологическая адаптированность Роджерс Даймонд Снегирева'
                            ]
         lst_check_alert_tests = []
 
@@ -413,7 +417,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
-    main_svod_cols = '1,2,3'
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
