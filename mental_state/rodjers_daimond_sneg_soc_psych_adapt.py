@@ -338,16 +338,279 @@ def calc_other_accept(row:pd.Series):
 
 
 
+def calc_sub_value_em_comfort(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [23,29,30,41,44,47,78]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_em_comfort(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 13:
+        return 'очень низкий уровень'
+    elif 14 <= value <= 35:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_sub_value_em_discomfort(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [6,42,43,49,50,83,85]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_em_discomfort(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 13:
+        return 'очень низкий уровень'
+    elif 14 <= value <= 35:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+
+def calc_comfort(row:pd.Series):
+    """
+    Функция для подсчета значения интегрального показателя
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_row = row.tolist()
+    a = lst_row[0]
+    b = lst_row[1]
+    if a == 0 and b == 0:
+        return 0
+    else:
+        return round((a / (a+b)) * 100,2)
+
+
+
+def calc_sub_value_self_control(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [4,5,11,12,13,19,27,37,51,63,68,79,91,98]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_self_control(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 25:
+        return 'очень низкий уровень'
+    elif 26 <= value <= 65:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_sub_value_outer_control(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [25,36,52,57,70,71,73,77]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_outer_control(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 17:
+        return 'очень низкий уровень'
+    elif 18 <= value <= 45:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_control(row:pd.Series):
+    """
+    Функция для подсчета значения интегрального показателя
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_row = row.tolist()
+    a = lst_row[0]
+    b = lst_row[1]
+    if a == 0 and b == 0:
+        return 0
+    else:
+        return round((a / (a+(1.4*b))) * 100,2)
 
 
 
 
 
+def calc_sub_value_dominating(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [58,61,66]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
 
 
 
+def calc_level_sub_dominating(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 5:
+        return 'очень низкий уровень'
+    elif 6 <= value <= 15:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
 
 
+def calc_sub_value_not_domin(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [16,32,38,69,84,87]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_not_domin(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 11:
+        return 'очень низкий уровень'
+    elif 12 <= value <= 30:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_dominating(row:pd.Series):
+    """
+    Функция для подсчета значения интегрального показателя
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_row = row.tolist()
+    a = lst_row[0]
+    b = lst_row[1]
+    if a == 0 and b == 0:
+        return 0
+    else:
+        return round((2*a / ((2*a)+b)) * 100,2)
+
+
+
+def calc_sub_value_escape(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [17,18,54,64,86]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_escape(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 9:
+        return 'очень низкий уровень'
+    elif 10 <= value <= 25:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
 
 
 
@@ -516,6 +779,43 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     base_df['Уровень_субшкалы_Непринятие_других'] = base_df['Значение_субшкалы_Непринятие_других'].apply(calc_level_sub_not_other_accept)
 
     base_df['Интегральный_показатель_Принятие_других'] = base_df[['Значение_субшкалы_Принятие_других','Значение_субшкалы_Непринятие_других']].apply(calc_other_accept,axis=1)
+
+    # Эмоциональный_комфорт
+    base_df['Значение_субшкалы_Эмоциональный_комфорт'] = answers_df.apply(calc_sub_value_em_comfort, axis=1)
+    base_df['Зона_неопределенности_Эмоциональный_комфорт_Подростки'] = '14-35 баллов'
+    base_df['Уровень_субшкалы_Эмоциональный_комфорт'] = base_df['Значение_субшкалы_Эмоциональный_комфорт'].apply(calc_level_sub_em_comfort)
+    # Эмоциональный_дискомфорт
+    base_df['Значение_субшкалы_Эмоциональный_дискомфорт'] = answers_df.apply(calc_sub_value_em_discomfort, axis=1)
+    base_df['Зона_неопределенности_Эмоциональный_дискомфорт_Подростки'] = '14-35 баллов'
+    base_df['Уровень_субшкалы_Эмоциональный_дискомфорт'] = base_df['Значение_субшкалы_Эмоциональный_дискомфорт'].apply(calc_level_sub_em_discomfort)
+
+    base_df['Интегральный_показатель_Эмоциональный_комфорт'] = base_df[['Значение_субшкалы_Эмоциональный_комфорт','Значение_субшкалы_Эмоциональный_дискомфорт']].apply(calc_comfort,axis=1)
+
+    # Внутренний_контроль
+    base_df['Значение_субшкалы_Внутренний_контроль'] = answers_df.apply(calc_sub_value_self_control, axis=1)
+    base_df['Зона_неопределенности_Внутренний_контроль_Подростки'] = '26-65 баллов'
+    base_df['Уровень_субшкалы_Внутренний_контроль'] = base_df['Значение_субшкалы_Внутренний_контроль'].apply(calc_level_sub_self_control)
+    # Внешний_контроль
+    base_df['Значение_субшкалы_Внешний_контроль'] = answers_df.apply(calc_sub_value_outer_control, axis=1)
+    base_df['Зона_неопределенности_Внешний_контроль_Подростки'] = '18-45 баллов'
+    base_df['Уровень_субшкалы_Внешний_контроль'] = base_df['Значение_субшкалы_Внешний_контроль'].apply(calc_level_sub_outer_control)
+    base_df['Интегральный_показатель_Интернальность'] = base_df[['Значение_субшкалы_Внутренний_контроль','Значение_субшкалы_Внешний_контроль']].apply(calc_control,axis=1)
+
+    # Доминирование
+    base_df['Значение_субшкалы_Доминирование'] = answers_df.apply(calc_sub_value_dominating, axis=1)
+    base_df['Зона_неопределенности_Доминирование_Подростки'] = '6-15 баллов'
+    base_df['Уровень_субшкалы_Доминирование'] = base_df['Значение_субшкалы_Доминирование'].apply(calc_level_sub_dominating)
+    # Ведомость
+    base_df['Значение_субшкалы_Ведомость'] = answers_df.apply(calc_sub_value_not_domin, axis=1)
+    base_df['Зона_неопределенности_Ведомость_Подростки'] = '12-30 баллов'
+    base_df['Уровень_субшкалы_Ведомость'] = base_df['Значение_субшкалы_Ведомость'].apply(calc_level_sub_not_domin)
+    base_df['Интегральный_показатель_Стремление_к_доминированию'] = base_df[['Значение_субшкалы_Доминирование','Значение_субшкалы_Ведомость']].apply(calc_dominating,axis=1)
+
+    # Эскапизм
+    base_df['Значение_субшкалы_Эскапизм'] = answers_df.apply(calc_sub_value_escape, axis=1)
+    base_df['Зона_неопределенности_Эскапизм_Подростки'] = '10-25 баллов'
+    base_df['Уровень_субшкалы_Эскапизм'] = base_df['Значение_субшкалы_Эскапизм'].apply(calc_level_sub_escape)
+
 
 
 
