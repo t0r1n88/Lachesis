@@ -111,6 +111,244 @@ def calc_adapt(row:pd.Series):
 
 
 
+def calc_sub_value_lie_minus(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [34,45,48,81,89]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_lie_minus(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 17:
+        return 'очень низкий уровень'
+    elif 18 <= value <= 45:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_sub_value_lie_plus(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [8,82,92,101]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_lie_plus(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 17:
+        return 'очень низкий уровень'
+    elif 18 <= value <= 45:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_sub_value_self_accept(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [33,35,55,67,72,74,75,80,88,94,96]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_self_accept(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 21:
+        return 'очень низкий уровень'
+    elif 22 <= value <= 52:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_sub_value_not_self_accept(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [7,59,62,65,90,95,99]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_not_self_accept(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 13:
+        return 'очень низкий уровень'
+    elif 14 <= value <= 35:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_self_accept(row:pd.Series):
+    """
+    Функция для подсчета значения интегрального показателя
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_row = row.tolist()
+    a = lst_row[0]
+    b = lst_row[1]
+    if a == 0 and b == 0:
+        return 0
+    else:
+        return round((a / (a+(1.6*b))) * 100,2)
+
+
+
+
+
+def calc_sub_value_other_accept(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [9,14,22,26,53,97]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_other_accept(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 11:
+        return 'очень низкий уровень'
+    elif 12 <= value <= 30:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_sub_value_not_other_accept(row):
+    """
+    Функция для подсчета значения субшкалы
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_pr = [2,10,21,28,40,60,76]
+
+    value_forward = 0 # счетчик прямых ответов
+
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    return value_forward
+
+
+
+def calc_level_sub_not_other_accept(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 0 <= value <= 13:
+        return 'очень низкий уровень'
+    elif 14 <= value <= 35:
+        return 'зона неопределенности'
+    else:
+        return 'очень высокий уровень'
+
+
+def calc_other_accept(row:pd.Series):
+    """
+    Функция для подсчета значения интегрального показателя
+    :param row: строка с ответами
+    :return: число
+    """
+    lst_row = row.tolist()
+    a = lst_row[0]
+    b = lst_row[1]
+    if a == 0 and b == 0:
+        return 0
+    else:
+        return round(((1.2*a) / ((1.2*a)+b)) * 100,2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -230,20 +468,57 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     base_df = pd.DataFrame()
     # для копирования
     # base_df['Значение_субшкалы_Шаблон'] = answers_df.apply(calc_sub_value_shablon, axis=1)
-    # base_df['Норма_Шаблон_Подростки'] = '68-170 баллов'
+    # base_df['Зона_неопределенности_Шаблон_Подростки'] = '68-170 баллов'
     # base_df['Уровень_субшкалы_Шаблон'] = base_df['Значение_субшкалы_Шаблон'].apply(calc_level_sub_shablon)
 
     # Субшкала адаптивность
     base_df['Значение_субшкалы_Адаптивность'] = answers_df.apply(calc_sub_value_adapt, axis=1)
-    base_df['Норма_Адаптивность_Подростки'] = '68-170 баллов'
+    base_df['Зона_неопределенности_Адаптивность_Подростки'] = '68-170 баллов'
     base_df['Уровень_субшкалы_Адаптивность'] = base_df['Значение_субшкалы_Адаптивность'].apply(calc_level_sub_adapt)
 
     # Субшкала Дезадаптивность
     base_df['Значение_субшкалы_Дезадаптивность'] = answers_df.apply(calc_sub_value_desadapt, axis=1)
-    base_df['Норма_Дезадаптивность_Подростки'] = '68-170 баллов'
+    base_df['Зона_неопределенности_Дезадаптивность_Подростки'] = '68-170 баллов'
     base_df['Уровень_субшкалы_Дезадаптивность'] = base_df['Значение_субшкалы_Дезадаптивность'].apply(calc_level_sub_desadapt)
 
-    base_df['Значение_Адаптация'] = base_df[['Значение_субшкалы_Адаптивность','Значение_субшкалы_Дезадаптивность']].apply(calc_adapt,axis=1)
+    base_df['Интегральный_показатель_Адаптация'] = base_df[['Значение_субшкалы_Адаптивность','Значение_субшкалы_Дезадаптивность']].apply(calc_adapt,axis=1)
+
+
+    # Лживость -
+    base_df['Значение_субшкалы_Лживость_c_минусом'] = answers_df.apply(calc_sub_value_lie_minus, axis=1)
+    base_df['Зона_неопределенности_Лживость_c_минусом_Подростки'] = '18-45 баллов'
+    base_df['Уровень_субшкалы_Лживость_c_минусом'] = base_df['Значение_субшкалы_Лживость_c_минусом'].apply(calc_level_sub_lie_minus)
+
+    # Лживость +
+    base_df['Значение_субшкалы_Лживость_с_плюсом'] = answers_df.apply(calc_sub_value_lie_plus, axis=1)
+    base_df['Зона_неопределенности_Лживость_с_плюсом_Подростки'] = '18-45 баллов'
+    base_df['Уровень_субшкалы_Лживость_с_плюсом'] = base_df['Значение_субшкалы_Лживость_с_плюсом'].apply(calc_level_sub_lie_plus)
+
+
+    # Принятие себя
+    base_df['Значение_субшкалы_Принятие_себя'] = answers_df.apply(calc_sub_value_self_accept, axis=1)
+    base_df['Зона_неопределенности_Принятие_себя_Подростки'] = '22-52 балла'
+    base_df['Уровень_субшкалы_Принятие_себя'] = base_df['Значение_субшкалы_Принятие_себя'].apply(calc_level_sub_self_accept)
+    # Непринятие_себя
+    base_df['Значение_субшкалы_Непринятие_себя'] = answers_df.apply(calc_sub_value_not_self_accept, axis=1)
+    base_df['Зона_неопределенности_Непринятие_себя_Подростки'] = '14-35 баллов'
+    base_df['Уровень_субшкалы_Непринятие_себя'] = base_df['Значение_субшкалы_Непринятие_себя'].apply(calc_level_sub_not_self_accept)
+
+    base_df['Интегральный_показатель_Самопринятие'] = base_df[['Значение_субшкалы_Принятие_себя','Значение_субшкалы_Непринятие_себя']].apply(calc_self_accept,axis=1)
+
+    # Принятие_других
+    base_df['Значение_субшкалы_Принятие_других'] = answers_df.apply(calc_sub_value_other_accept, axis=1)
+    base_df['Зона_неопределенности_Принятие_других_Подростки'] = '12-30 баллов'
+    base_df['Уровень_субшкалы_Принятие_других'] = base_df['Значение_субшкалы_Принятие_других'].apply(calc_level_sub_other_accept)
+    # Непринятие_других
+    base_df['Значение_субшкалы_Непринятие_других'] = answers_df.apply(calc_sub_value_not_other_accept, axis=1)
+    base_df['Зона_неопределенности_Непринятие_других_Подростки'] = '14-35 баллов'
+    base_df['Уровень_субшкалы_Непринятие_других'] = base_df['Значение_субшкалы_Непринятие_других'].apply(calc_level_sub_not_other_accept)
+
+    base_df['Интегральный_показатель_Принятие_других'] = base_df[['Значение_субшкалы_Принятие_других','Значение_субшкалы_Непринятие_других']].apply(calc_other_accept,axis=1)
+
+
+
 
     base_df.to_excel('res.xlsx')
 
