@@ -612,6 +612,36 @@ def calc_level_sub_escape(value):
     else:
         return 'очень высокий уровень'
 
+def calc_count_level_sub(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по субшкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% очень низкий уровень от общего'] = round(
+        count_df['очень низкий уровень'] / count_df['Итого'], 2) * 100
+    count_df['% зона неопределенности от общего'] = round(
+        count_df['зона неопределенности'] / count_df['Итого'], 2) * 100
+    count_df['% очень высокий уровень от общего'] = round(
+        count_df['очень высокий уровень'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+
 
 def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
@@ -623,7 +653,192 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
     """
     lst_reindex_sub_level_cols = lst_svod_cols.copy()
     lst_reindex_sub_level_cols.extend( ['очень низкий уровень','зона неопределенности','очень высокий уровень',
-                                   'Итого'])  # Основная шкала
+                                   'Итого'])  # Субшкалы
+
+    # Субшкалы
+    svod_count_one_level_adapt_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Адаптивность',
+                                                      'Уровень_субшкалы_Адаптивность',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_desadapt_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Дезадаптивность',
+                                                      'Уровень_субшкалы_Дезадаптивность',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_lie_minus_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Лживость_c_минусом',
+                                                      'Уровень_субшкалы_Лживость_c_минусом',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_lie_plus_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Лживость_с_плюсом',
+                                                      'Уровень_субшкалы_Лживость_с_плюсом',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_self_accept_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Принятие_себя',
+                                                      'Уровень_субшкалы_Принятие_себя',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_not_self_accept_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Непринятие_себя',
+                                                      'Уровень_субшкалы_Непринятие_себя',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_other_accept_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Принятие_других',
+                                                      'Уровень_субшкалы_Принятие_других',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_not_other_accept_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Непринятие_других',
+                                                      'Уровень_субшкалы_Непринятие_других',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_em_comfort_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Эмоциональный_комфорт',
+                                                      'Уровень_субшкалы_Эмоциональный_комфорт',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_em_discomfort_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Эмоциональный_дискомфорт',
+                                                      'Уровень_субшкалы_Эмоциональный_дискомфорт',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_self_control_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Внутренний_контроль',
+                                                      'Уровень_субшкалы_Внутренний_контроль',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_outer_control_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Внешний_контроль',
+                                                      'Уровень_субшкалы_Внешний_контроль',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_dominating_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Доминирование',
+                                                      'Уровень_субшкалы_Доминирование',
+                                                      lst_reindex_sub_level_cols)
+    svod_count_one_level_not_domin_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Ведомость',
+                                                      'Уровень_субшкалы_Ведомость',
+                                                      lst_reindex_sub_level_cols)
+
+    svod_count_one_level_escape_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_субшкалы_Эскапизм',
+                                                      'Уровень_субшкалы_Эскапизм',
+                                                      lst_reindex_sub_level_cols)
+
+    # Считаем среднее по субшкалам
+    svod_mean_one_df = pd.pivot_table(base_df,
+                                  index=lst_svod_cols,
+                                  values=['Интегральный_показатель_Адаптация',
+                                          'Интегральный_показатель_Самопринятие',
+                                          'Интегральный_показатель_Принятие_других',
+                                          'Интегральный_показатель_Эмоциональный_комфорт',
+                                          'Интегральный_показатель_Интернальность',
+                                          'Интегральный_показатель_Стремление_к_доминированию',
+                                          'Значение_субшкалы_Адаптивность',
+                                          'Значение_субшкалы_Дезадаптивность',
+                                          'Значение_субшкалы_Лживость_c_минусом',
+                                          'Значение_субшкалы_Лживость_с_плюсом',
+                                          'Значение_субшкалы_Принятие_себя',
+                                          'Значение_субшкалы_Непринятие_себя',
+                                          'Значение_субшкалы_Принятие_других',
+                                          'Значение_субшкалы_Непринятие_других',
+                                          'Значение_субшкалы_Эмоциональный_комфорт',
+                                          'Значение_субшкалы_Эмоциональный_дискомфорт',
+                                          'Значение_субшкалы_Внутренний_контроль',
+                                          'Значение_субшкалы_Внешний_контроль',
+                                          'Значение_субшкалы_Доминирование',
+                                          'Значение_субшкалы_Ведомость',
+                                          'Значение_субшкалы_Эскапизм'
+                                          ],
+                                  aggfunc=round_mean)
+    svod_mean_one_df.reset_index(inplace=True)
+    # упорядочиваем колонки
+    new_order_cols = lst_svod_cols.copy()
+    new_order_cols.extend((['Интегральный_показатель_Адаптация',
+                                          'Интегральный_показатель_Самопринятие',
+                                          'Интегральный_показатель_Принятие_других',
+                                          'Интегральный_показатель_Эмоциональный_комфорт',
+                                          'Интегральный_показатель_Интернальность',
+                                          'Интегральный_показатель_Стремление_к_доминированию',
+                                          'Значение_субшкалы_Адаптивность',
+                                          'Значение_субшкалы_Дезадаптивность',
+                                          'Значение_субшкалы_Лживость_c_минусом',
+                                          'Значение_субшкалы_Лживость_с_плюсом',
+                                          'Значение_субшкалы_Принятие_себя',
+                                          'Значение_субшкалы_Непринятие_себя',
+                                          'Значение_субшкалы_Принятие_других',
+                                          'Значение_субшкалы_Непринятие_других',
+                                          'Значение_субшкалы_Эмоциональный_комфорт',
+                                          'Значение_субшкалы_Эмоциональный_дискомфорт',
+                                          'Значение_субшкалы_Внутренний_контроль',
+                                          'Значение_субшкалы_Внешний_контроль',
+                                          'Значение_субшкалы_Доминирование',
+                                          'Значение_субшкалы_Ведомость',
+                                          'Значение_субшкалы_Эскапизм'
+                            ]))
+    svod_mean_one_df = svod_mean_one_df.reindex(columns=new_order_cols)
+
+    dct_rename_cols_mean = {'Интегральный_показатель_Адаптация': 'Ср. Адаптация',
+                            'Интегральный_показатель_Самопринятие': 'Ср. Самопринятие',
+                            'Интегральный_показатель_Принятие_других': 'Ср. Принятие других',
+                            'Интегральный_показатель_Эмоциональный_комфорт': 'Ср. Эмоциональный комфорт',
+                            'Интегральный_показатель_Интернальность': 'Ср. Интернальность',
+                            'Интегральный_показатель_Стремление_к_доминированию': 'Ср. Стремление к доминированию',
+
+                            'Значение_субшкалы_Адаптивность': 'Ср. Адаптивность',
+                            'Значение_субшкалы_Дезадаптивность': 'Ср. Дезадаптивность',
+                            'Значение_субшкалы_Лживость_c_минусом': 'Ср. Лживость -',
+                            'Значение_субшкалы_Лживость_с_плюсом': 'Ср. Лживость +',
+                            'Значение_субшкалы_Принятие_себя': 'Ср. Принятие себя',
+                            'Значение_субшкалы_Непринятие_себя': 'Ср. Непринятие себя',
+                            'Значение_субшкалы_Принятие_других': 'Ср. Принятие других',
+                            'Значение_субшкалы_Непринятие_других': 'Ср. Непринятие других',
+                            'Значение_субшкалы_Эмоциональный_комфорт': 'Ср. Эмоциональный комфорт',
+                            'Значение_субшкалы_Эмоциональный_дискомфорт': 'Ср. Эмоциональный дискомфорт',
+                            'Значение_субшкалы_Внутренний_контроль': 'Ср. Внутренний контроль',
+                            'Значение_субшкалы_Внешний_контроль': 'Ср. Внешний контроль',
+                            'Значение_субшкалы_Доминирование': 'Ср. Доминирование',
+                            'Значение_субшкалы_Ведомость': 'Ср. Ведомость',
+                            'Значение_субшкалы_Эскапизм': 'Ср. Эскапизм',
+}
+    svod_mean_one_df.rename(columns=dct_rename_cols_mean, inplace=True)
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        if len(lst_svod_cols) == 1:
+            out_name_lst.append(name[:14])
+        elif len(lst_svod_cols) == 2:
+            out_name_lst.append(name[:7])
+        else:
+            out_name_lst.append(name[:4])
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+
+    out_dct.update({f'Ср {out_name}':svod_mean_one_df,
+                f'Свод А {out_name}': svod_count_one_level_adapt_df,
+                f'Свод ДА {out_name}': svod_count_one_level_desadapt_df,
+                f'Свод ЛМ {out_name}': svod_count_one_level_lie_minus_df,
+                f'Свод ЛП {out_name}': svod_count_one_level_lie_plus_df,
+                f'Свод ПС {out_name}': svod_count_one_level_self_accept_df,
+                f'Свод НС {out_name}': svod_count_one_level_not_self_accept_df,
+                f'Свод ПД {out_name}': svod_count_one_level_other_accept_df,
+                f'Свод НД {out_name}': svod_count_one_level_not_other_accept_df,
+                f'Свод ЭК {out_name}': svod_count_one_level_em_comfort_df,
+                f'Свод ЭД {out_name}': svod_count_one_level_em_discomfort_df,
+                f'Свод ВнутрК {out_name}': svod_count_one_level_self_control_df,
+                f'Свод ВнешК {out_name}': svod_count_one_level_outer_control_df,
+                f'Свод Д {out_name}': svod_count_one_level_dominating_df,
+                f'Свод В {out_name}': svod_count_one_level_not_domin_df,
+                f'Свод Э {out_name}': svod_count_one_level_escape_df,
+                    })
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
+
 
 
 
