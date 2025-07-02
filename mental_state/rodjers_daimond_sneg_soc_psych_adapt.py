@@ -5,7 +5,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,create_svod_sub, create_union_svod
+from lachesis_support_functions import round_mean,create_list_on_level, create_union_svod
 
 
 class BadOrderRDSSPA(Exception):
@@ -1267,6 +1267,33 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
                     'Свод Субшкалы': base_svod_sub_df,
                     'Среднее': avg_df}
                    )
+
+    # Создаем листы со списками по интегральным показателям
+    dct_level = dict()
+    for level in lst_sub_level:
+        temp_df = base_df[base_df['Уровень_шкалы_искренности'] == level]
+        if temp_df.shape[0] != 0:
+            dct_level[f'Искр. {level}'] = temp_df
+
+    out_dct.update(dct_level)
+    dct_prefix ={'Уровень_ИП_Адаптация':'Ад',
+                 'Уровень_ИП_Самопринятие':'СП',
+                 'Уровень_ИП_Принятие_других':'ПД',
+                 'Уровень_ИП_Эмоциональный_комфорт':'ЭК',
+                 'Уровень_ИП_Интернальность':'И',
+                 'Уровень_ИП_Стремление_к_доминированию':'СКД',
+                 }
+
+
+    out_dct = create_list_on_level(base_df,out_dct,lst_integral,dct_prefix)
+
+    # Создаем листы со списками по интегральным показателям
+    dct_esk = dict()
+    for level in lst_sub_level:
+        temp_df = base_df[base_df['Уровень_субшкалы_Эскапизм'] == level]
+        if temp_df.shape[0] != 0:
+            dct_esk[f'Э. {level}'] = temp_df
+    out_dct.update(dct_esk)
 
     """
         Сохраняем в зависимости от необходимости делать своды по определенным колонкам

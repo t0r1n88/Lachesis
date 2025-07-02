@@ -207,6 +207,28 @@ def create_union_svod(base_df:pd.DataFrame,dct_svod_integral:dict,dct_rename_svo
     return base_svod_df
 
 
+def create_list_on_level(base_df:pd.DataFrame,out_dct:dict,lst_level:list,dct_prefix:dict):
+    """
+    Функция для создания списков по уровням шкал
+    :param base_df: датафрейм с результатами
+    :param out_dct: словарь с датафреймами
+    :param lst_level: список уровней по которым нужно сделать списки
+    :param dct_prefix: префиксы для названий листов
+    :return: обновлейнный out dct
+    """
+    for key,value in dct_prefix.items():
+        dct_level = dict()
+        for level in lst_level:
+            temp_df = base_df[base_df[key] == level]
+            if temp_df.shape[0] != 0:
+                dct_level[f'{dct_prefix[key]}. {level}'] = temp_df
+        out_dct.update(dct_level)
+
+    return out_dct
+
+
+
+
 
 
 
