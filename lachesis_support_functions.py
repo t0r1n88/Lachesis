@@ -170,3 +170,44 @@ def create_svod_sub(df:pd.DataFrame,lst_index:list,col_index:str,col_value:str,f
     base_svod.rename(columns={'index': 'Уровень', col_value: 'Количество'},
                            inplace=True)
     return base_svod
+
+
+
+def create_union_svod(base_df:pd.DataFrame,dct_svod_integral:dict,dct_rename_svod_integral:dict,lst_integral:list):
+    """
+    Функция для создания объединенного свода по шкалам с одинаковыми названиями уровней
+    :param base_df: датафрейм с результатам подсчетов
+    :param dct_svod_integral: словарь где ключ это название колонки с значением шкалы а значение это название колонки с уровнем значения шкалы
+    :param dct_rename_svod_integral: словарь для переименования колонок ключ это значение шкалы а значение это то как будет называться колонка в своде
+    :param lst_integral:  список уровней
+    :return: датафрейм
+    """
+    # общий датафрейм
+    base_svod_df = pd.DataFrame(
+        index=lst_integral)
+
+    for key,value in dct_svod_integral.items():
+        svod_level_df = pd.pivot_table(base_df, index=value,
+                                       values=key,
+                                       aggfunc='count')
+
+        svod_level_df[f'{dct_rename_svod_integral[key]} % от общего'] = round(
+            svod_level_df[key] / svod_level_df[
+                key].sum(), 3) * 100
+
+        base_svod_df = base_svod_df.join(svod_level_df)
+
+        # # Создаем суммирующую строку
+    base_svod_df.loc['Итого'] = base_svod_df.sum()
+    base_svod_df.reset_index(inplace=True)
+    # Переименовываем
+    base_svod_df.rename(columns=dct_rename_svod_integral,inplace=True)
+    base_svod_df.rename(columns={'index': 'Уровень'},inplace=True)
+
+    return base_svod_df
+
+
+
+
+
+
