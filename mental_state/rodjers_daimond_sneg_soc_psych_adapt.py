@@ -613,6 +613,21 @@ def calc_level_sub_escape(value):
         return 'очень высокий уровень'
 
 
+def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_reindex_sub_level_cols = lst_svod_cols.copy()
+    lst_reindex_sub_level_cols.extend( ['очень низкий уровень','зона неопределенности','очень высокий уровень',
+                                   'Итого'])  # Основная шкала
+
+
+
+
 
 
 
@@ -974,7 +989,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
                'Среднее значение интегрального показателя Интернальность': avg_integral_internal,
                'Среднее значение интегрального показателя Стремление к доминированию': avg_integral_dominating,
 
-                'Среднее значение субшкалы Адаптивность': avg_adapt,
+               'Среднее значение субшкалы Адаптивность': avg_adapt,
                'Среднее значение субшкалы Дезадаптивность': avg_desadapt,
                'Среднее значение субшкалы Лживость -': avg_lie_minus,
                'Среднее значение субшкалы Лживость +': avg_lie_plus,
@@ -994,6 +1009,34 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
     avg_df = avg_df.reset_index()
     avg_df.columns = ['Показатель', 'Среднее значение']
+
+    out_dct.update({'Свод А': base_svod_adapt_df,
+                    'Свод ДА': base_svod_desadapt_df,
+                    'Свод ЛМ': base_svod_lie_minus_df,
+                    'Свод ЛП': base_svod_lie_plus_df,
+                    'Свод ПС': base_svod_self_accept_df,
+                    'Свод НС': base_svod_not_self_accept_df,
+                    'Свод ПД': base_svod_other_accept_df,
+                    'Свод НД': base_svod_not_other_accept_df,
+                    'Свод ЭК': base_svod_em_comfort_df,
+                    'Свод ЭД': base_svod_em_discomfort_df,
+                    'Свод ВнутрК': base_svod_self_control_df,
+                    'Свод ВнешК': base_svod_outer_control_df,
+                    'Свод Д': base_svod_dominating_df,
+                    'Свод В': base_svod_not_domin_df,
+                    'Свод Э': base_svod_escape_df,
+                    'Среднее': avg_df}
+                   )
+
+    """
+        Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+        """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+    else:
+        out_dct = create_result_rdsspa(base_df, out_dct, lst_svod_cols)
+
+        return out_dct, part_df
 
 
 

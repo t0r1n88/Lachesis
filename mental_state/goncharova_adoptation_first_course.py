@@ -224,8 +224,8 @@ def processing_goncharova_adoptation_first_course(base_df: pd.DataFrame, answers
         # Создаем датафрейм для создания части в общий датафрейм
         part_df = pd.DataFrame()
 
-        part_df['ГАП_Значение_выгорания'] = base_df['Значение_уровня_адаптации']
-        part_df['ГАП_Уровень_выгорания'] = base_df['Уровень_адаптации']
+        part_df['ГАП_Значение_уровня_адаптации'] = base_df['Значение_уровня_адаптации']
+        part_df['ГАП_Уровень_адаптации'] = base_df['Уровень_адаптации']
 
         base_df.sort_values(by='Значение_уровня_адаптации', ascending=True, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
