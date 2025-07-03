@@ -15,7 +15,7 @@ from adult_tests.prof_burnout.rukavishnikov_psych_burnout import processing_ruka
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
 from mental_state.aizenk_self_mental_state import processing_aizenk_self_mental_state # Самодиагностика психического состояния Айзенк
 from mental_state.rodjers_daimond_sneg_soc_psych_adapt import processing_rodjers_daimond_sneg_soc_psych_adapt # Шкала социально психологического состояния Роджерс Даймонд Снегирева
-
+from mental_state.doskin_san import processing_doskin_san # Опросник Самочувствие Активность Настроение Доскин Мирошниченко
 
 
 
@@ -128,6 +128,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Экспресс-диагностика адаптации первокурсников Гончарова': (processing_goncharova_adoptation_first_course, 11),
                      'Самооценка психических состояний Айзенк': (processing_aizenk_self_mental_state, 40),
                      'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': (processing_rodjers_daimond_sneg_soc_psych_adapt, 101),
+                     'САН Доскин Мирошников': (processing_doskin_san, 30),
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -142,6 +143,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Экспресс-диагностика адаптации первокурсников Гончарова': 'Экспресс-диагностика адаптации первокурсников Гончарова',
                               'Самооценка психических состояний Айзенк': 'Самооценка психических состояний Айзенк',
                               'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': 'Социально-психологическая адаптированность Роджерс Даймонд Снегирева',
+                              'САН Доскин Мирошников': 'САН Доскин Мирошников',
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -150,7 +152,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                            'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников',
 
                            'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
-                           'Социально-психологическая адаптированность Роджерс Даймонд Снегирева'
+                           'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников'
                            ]
         lst_check_alert_tests = []
 
