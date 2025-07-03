@@ -643,6 +643,33 @@ def calc_count_level_sub(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_co
     return count_df
 
 
+def calc_count_level_integral(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по субшкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% низкий уровень от общего'] = round(
+        count_df['низкий уровень'] / count_df['Итого'], 2) * 100
+    count_df['% средний уровень от общего'] = round(
+        count_df['средний уровень'] / count_df['Итого'], 2) * 100
+    count_df['% высокий уровень от общего'] = round(
+        count_df['высокий уровень'] / count_df['Итого'], 2) * 100
+
+    return count_df
 
 
 def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
@@ -653,9 +680,42 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
     :param lst_svod_cols: список сводных колонок
     :return: словарь
     """
+    lst_reindex_main_level_cols = lst_svod_cols.copy()
+    lst_reindex_main_level_cols.extend( ['низкий уровень','средний уровень','высокий уровень',
+                                   'Итого'])  # Основная шкала
+
+
     lst_reindex_sub_level_cols = lst_svod_cols.copy()
     lst_reindex_sub_level_cols.extend( ['очень низкий уровень','зона неопределенности','очень высокий уровень',
                                    'Итого'])  # Субшкалы
+
+    # Интегральные показатели
+    svod_count_one_level_integral_adapt_df = calc_count_level_integral(base_df, lst_svod_cols,
+                                                      'Значение_ИП_Адаптация',
+                                                      'Уровень_ИП_Адаптация',
+                                                      lst_reindex_main_level_cols)
+    svod_count_one_level_integral_self_df = calc_count_level_integral(base_df, lst_svod_cols,
+                                                      'Значение_ИП_Самопринятие',
+                                                      'Уровень_ИП_Самопринятие',
+                                                      lst_reindex_main_level_cols)
+    svod_count_one_level_integral_other_df = calc_count_level_integral(base_df, lst_svod_cols,
+                                                      'Значение_ИП_Принятие_других',
+                                                      'Уровень_ИП_Принятие_других',
+                                                      lst_reindex_main_level_cols)
+    svod_count_one_level_integral_em_comfort_df = calc_count_level_integral(base_df, lst_svod_cols,
+                                                      'Значение_ИП_Эмоциональный_комфорт',
+                                                      'Уровень_ИП_Эмоциональный_комфорт',
+                                                      lst_reindex_main_level_cols)
+    svod_count_one_level_integral_internal_df = calc_count_level_integral(base_df, lst_svod_cols,
+                                                      'Значение_ИП_Интернальность',
+                                                      'Уровень_ИП_Интернальность',
+                                                      lst_reindex_main_level_cols)
+    svod_count_one_level_integral_domin_df = calc_count_level_integral(base_df, lst_svod_cols,
+                                                      'Значение_ИП_Стремление_к_доминированию',
+                                                      'Уровень_ИП_Стремление_к_доминированию',
+                                                      lst_reindex_main_level_cols)
+
+
 
     # Субшкалы
     svod_count_one_level_adapt_df = calc_count_level_sub(base_df, lst_svod_cols,
@@ -666,14 +726,9 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
                                                       'Значение_субшкалы_Дезадаптивность',
                                                       'Уровень_субшкалы_Дезадаптивность',
                                                       lst_reindex_sub_level_cols)
-
-    svod_count_one_level_lie_minus_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                      'Значение_субшкалы_Лживость_c_минусом',
-                                                      'Уровень_субшкалы_Лживость_c_минусом',
-                                                      lst_reindex_sub_level_cols)
-    svod_count_one_level_lie_plus_df = calc_count_level_sub(base_df, lst_svod_cols,
-                                                      'Значение_субшкалы_Лживость_с_плюсом',
-                                                      'Уровень_субшкалы_Лживость_с_плюсом',
+    svod_count_one_level_lie_df = calc_count_level_sub(base_df, lst_svod_cols,
+                                                      'Значение_шкалы_Искренность',
+                                                      'Уровень_шкалы_Искренность',
                                                       lst_reindex_sub_level_cols)
 
     svod_count_one_level_self_accept_df = calc_count_level_sub(base_df, lst_svod_cols,
@@ -729,7 +784,8 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
     # Считаем среднее по субшкалам
     svod_mean_one_df = pd.pivot_table(base_df,
                                   index=lst_svod_cols,
-                                  values=['Значение_ИП_Адаптация',
+                                  values=['Значение_шкалы_Искренность',
+                                          'Значение_ИП_Адаптация',
                                           'Значение_ИП_Самопринятие',
                                           'Значение_ИП_Принятие_других',
                                           'Значение_ИП_Эмоциональный_комфорт',
@@ -755,7 +811,7 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
     svod_mean_one_df.reset_index(inplace=True)
     # упорядочиваем колонки
     new_order_cols = lst_svod_cols.copy()
-    new_order_cols.extend((['Значение_ИП_Адаптация',
+    new_order_cols.extend((['Значение_шкалы_Искренность','Значение_ИП_Адаптация',
                                           'Значение_ИП_Самопринятие',
                                           'Значение_ИП_Принятие_других',
                                           'Значение_ИП_Эмоциональный_комфорт',
@@ -779,7 +835,8 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
                             ]))
     svod_mean_one_df = svod_mean_one_df.reindex(columns=new_order_cols)
 
-    dct_rename_cols_mean = {'Значение_ИП_Адаптация': 'Ср. Адаптация',
+    dct_rename_cols_mean = {'Значение_шкалы_Искренность': 'Ср. Искренность',
+                             'Значение_ИП_Адаптация': 'Ср. Адаптация',
                             'Значение_ИП_Самопринятие': 'Ср. Самопринятие',
                             'Значение_ИП_Принятие_других': 'Ср. Принятие других',
                             'Значение_ИП_Эмоциональный_комфорт': 'Ср. Эмоциональный комфорт',
@@ -821,10 +878,16 @@ def create_result_rdsspa(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list)
 
 
     out_dct.update({f'Ср {out_name}':svod_mean_one_df,
+                f'Свод Ад {out_name}': svod_count_one_level_integral_adapt_df,
+                f'Свод СП {out_name}': svod_count_one_level_integral_self_df,
+                f'Свод ПрД {out_name}': svod_count_one_level_integral_other_df,
+                f'Свод ЭмК {out_name}': svod_count_one_level_integral_em_comfort_df,
+                f'Свод И {out_name}': svod_count_one_level_integral_internal_df,
+                f'Свод СКД {out_name}': svod_count_one_level_integral_domin_df,
+
+                f'Свод Искр {out_name}': svod_count_one_level_lie_df,
                 f'Свод А {out_name}': svod_count_one_level_adapt_df,
                 f'Свод ДА {out_name}': svod_count_one_level_desadapt_df,
-                f'Свод ЛМ {out_name}': svod_count_one_level_lie_minus_df,
-                f'Свод ЛП {out_name}': svod_count_one_level_lie_plus_df,
                 f'Свод ПС {out_name}': svod_count_one_level_self_accept_df,
                 f'Свод НС {out_name}': svod_count_one_level_not_self_accept_df,
                 f'Свод ПД {out_name}': svod_count_one_level_other_accept_df,
@@ -980,9 +1043,9 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     base_df['Значение_субшкалы_Лживость_c_минусом'] = answers_df.apply(calc_sub_value_lie_minus, axis=1)
     # Лживость +
     base_df['Значение_субшкалы_Лживость_с_плюсом'] = answers_df.apply(calc_sub_value_lie_plus, axis=1)
-    # Шкала искренности
-    base_df['Значение_шкалы_искренности'] = base_df[['Значение_субшкалы_Лживость_c_минусом','Значение_субшкалы_Лживость_с_плюсом']].sum(axis=1)
-    base_df['Уровень_шкалы_искренности'] = base_df['Значение_шкалы_искренности'].apply(calc_sincerity)
+    # Шкала Искренность
+    base_df['Значение_шкалы_Искренность'] = base_df[['Значение_субшкалы_Лживость_c_минусом','Значение_субшкалы_Лживость_с_плюсом']].sum(axis=1)
+    base_df['Уровень_шкалы_Искренность'] = base_df['Значение_шкалы_Искренность'].apply(calc_sincerity)
 
 
     # Принятие себя
@@ -1055,8 +1118,8 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     # Создаем датафрейм для создания части в общий датафрейм
     part_df = pd.DataFrame()
 
-    part_df['РДССПА_Искренность_Значение'] = base_df['Значение_шкалы_искренности']
-    part_df['РДССПА_Искренность_Уровень'] = base_df['Уровень_шкалы_искренности']
+    part_df['РДССПА_Искренность_Значение'] = base_df['Значение_шкалы_Искренность']
+    part_df['РДССПА_Искренность_Уровень'] = base_df['Уровень_шкалы_Искренность']
 
 
     part_df['РДССПА_Адаптация_Значение'] = base_df['Значение_ИП_Адаптация']
@@ -1117,7 +1180,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
 
     out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
-    new_order_cols = ['Значение_шкалы_искренности','Уровень_шкалы_искренности','Значение_ИП_Адаптация','Уровень_ИП_Адаптация',
+    new_order_cols = ['Значение_шкалы_Искренность','Уровень_шкалы_Искренность','Значение_ИП_Адаптация','Уровень_ИП_Адаптация',
                       'Значение_ИП_Самопринятие','Уровень_ИП_Самопринятие',
                       'Значение_ИП_Принятие_других','Уровень_ИП_Принятие_других',
                       'Значение_ИП_Эмоциональный_комфорт','Уровень_ИП_Эмоциональный_комфорт',
@@ -1173,7 +1236,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
 
     # Делаем свод по субшкалам
     lst_sub_level = ['очень низкий уровень','зона неопределенности','очень высокий уровень']
-    dct_svod_sub = {'Значение_шкалы_искренности':'Уровень_шкалы_искренности',
+    dct_svod_sub = {'Значение_шкалы_Искренность':'Уровень_шкалы_Искренность',
                     'Значение_субшкалы_Адаптивность':'Уровень_субшкалы_Адаптивность',
                     'Значение_субшкалы_Дезадаптивность':'Уровень_субшкалы_Дезадаптивность',
                     'Значение_субшкалы_Принятие_себя':'Уровень_субшкалы_Принятие_себя',
@@ -1189,7 +1252,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
                     'Значение_субшкалы_Эскапизм':'Уровень_субшкалы_Эскапизм'
                     }
 
-    dct_rename_svod_sub = {'Значение_шкалы_искренности':'Искренность',
+    dct_rename_svod_sub = {'Значение_шкалы_Искренность':'Искренность',
                     'Значение_субшкалы_Адаптивность':'Адаптивность',
                     'Значение_субшкалы_Дезадаптивность':'Дезадаптивность',
                     'Значение_субшкалы_Принятие_себя':'Принятие себя',
@@ -1207,7 +1270,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     base_svod_sub_df = create_union_svod(base_df,dct_svod_sub,dct_rename_svod_sub,lst_sub_level)
 
     # Интегоральные показатели
-    avg_lie = round(base_df['Значение_шкалы_искренности'].mean(), 2)
+    avg_lie = round(base_df['Значение_шкалы_Искренность'].mean(), 2)
     avg_integral_adapt = round(base_df['Значение_ИП_Адаптация'].mean(), 2)
     avg_integral_self = round(base_df['Значение_ИП_Самопринятие'].mean(), 2)
     avg_integral_other = round(base_df['Значение_ИП_Принятие_других'].mean(), 2)
@@ -1271,7 +1334,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     # Создаем листы со списками по интегральным показателям
     dct_level = dict()
     for level in lst_sub_level:
-        temp_df = base_df[base_df['Уровень_шкалы_искренности'] == level]
+        temp_df = base_df[base_df['Уровень_шкалы_Искренность'] == level]
         if temp_df.shape[0] != 0:
             dct_level[f'Искр. {level}'] = temp_df
 
