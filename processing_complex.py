@@ -2,13 +2,13 @@
 Скрипт для обработки тестов для взрослых
 """
 # Тесты Профессиональное выгорание
-from adult_tests.prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание педагогов Водопьянова
-from adult_tests.prof_burnout.boiko_ilin_emotional_burnout import processing_boiko_ilin_emotional_burnout # Эмоциональное выгорание Бойко Ильин
-from adult_tests.prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
-from adult_tests.prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_prof_burnout_vod # Профессиональное выгорание Маслач Водопьянова
-from adult_tests.prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Профессиональное выгорание Бойко
-from adult_tests.prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
-from adult_tests.prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
+from prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание педагогов Водопьянова
+from prof_burnout.boiko_ilin_emotional_burnout import processing_boiko_ilin_emotional_burnout # Эмоциональное выгорание Бойко Ильин
+from prof_burnout.kapponi_burnout import processing_kapponi_burnout # Выгорание Каппони Новак
+from prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_prof_burnout_vod # Профессиональное выгорание Маслач Водопьянова
+from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Профессиональное выгорание Бойко
+from prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
+from prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
 
 # Тесты психологическое состояние

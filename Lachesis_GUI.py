@@ -6,7 +6,7 @@ from create_result_docs import generate_result_docs # импортируем ф�
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
 from spo.processing_spo_complex import generate_result_spo # импортируем функцию по созданию результатов СПО
 from school.processing_school_complex import generate_result_school_anxiety # функция для обработки тестов тревожности школ
-from adult_tests.processing_adults_complex import generate_result_adults # функция для обработки взрослых тестов
+from processing_complex import generate_result_adults # функция для обработки взрослых тестов
 
 import pandas as pd
 import os
@@ -14,12 +14,10 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
-import datetime
 import warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 pd.options.mode.chained_assignment = None
 import sys
-import locale
 import logging
 logging.basicConfig(
     level=logging.WARNING,
