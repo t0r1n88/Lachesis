@@ -10,12 +10,14 @@ from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burn
 from prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
 from prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
-
 # Тесты психологическое состояние
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
 from mental_state.aizenk_self_mental_state import processing_aizenk_self_mental_state # Самодиагностика психического состояния Айзенк
 from mental_state.rodjers_daimond_sneg_soc_psych_adapt import processing_rodjers_daimond_sneg_soc_psych_adapt # Шкала социально психологического состояния Роджерс Даймонд Снегирева
 from mental_state.doskin_san import processing_doskin_san # Опросник Самочувствие Активность Настроение Доскин Мирошниченко
+
+# Тесты Лидерство, эмоциональный интеллект
+from ei_leadership.lusin_ei import processing_lusin_ei # Эмоциональный интеллект Люсин
 
 
 
@@ -130,6 +132,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': (processing_rodjers_daimond_sneg_soc_psych_adapt, 101),
                      'САН Доскин Мирошников': (processing_doskin_san, 30),
 
+                     'Эмоциональный интеллект Люсин': (processing_lusin_ei, 46),
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -144,6 +148,9 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Самооценка психических состояний Айзенк': 'Самооценка психических состояний Айзенк',
                               'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': 'Социально-психологическая адаптированность Роджерс Даймонд Снегирева',
                               'САН Доскин Мирошников': 'САН Доскин Мирошников',
+
+                              'Эмоциональный интеллект Люсин': 'Эмоциональный интеллект Люсин',
+
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -417,13 +424,15 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство СПО.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = '1,2,3'
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
