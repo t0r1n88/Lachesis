@@ -4,7 +4,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,create_svod_sub
+from lachesis_support_functions import round_mean,create_union_svod
 
 
 
@@ -565,20 +565,19 @@ def processing_vod_ped_prof_burnout(result_df: pd.DataFrame, answers_df: pd.Data
 
         lst_sub_level = ['низкий уровень', 'средний уровень',
                    'высокий уровень']
-        # Свод по уровням субшкалы Эмоциональное истощение всего в процентном соотношении
+        # Делаем свод  по  шкалам
+        dct_svod_sub = {'Значение_субшкалы_Эмоциональное_истощение': 'Уровень_субшкалы_Эмоциональное_истощение',
+                        'Значение_субшкалы_Деперсонализация': 'Уровень_субшкалы_Деперсонализация',
+                        'Значение_субшкалы_Редукция_персональных_достижений': 'Уровень_субшкалы_Редукция_персональных_достижений',
+                        }
 
-        base_svod_em_df=create_svod_sub(base_df, lst_sub_level, 'Уровень_субшкалы_Эмоциональное_истощение',
-                        'Значение_субшкалы_Эмоциональное_истощение', 'count')
+        dct_rename_svod_sub = {'Значение_субшкалы_Эмоциональное_истощение': 'Эмоциональное истощение',
+                               'Значение_субшкалы_Деперсонализация': 'Деперсонализация',
+                               'Значение_субшкалы_Редукция_персональных_достижений': 'Редукция персональных достижений',
+                               }
 
+        base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub_level)
 
-        # Свод по уровням субшкалы Деперсонализация всего в процентном соотношении
-        base_svod_depers_df = create_svod_sub(base_df, lst_sub_level, 'Уровень_субшкалы_Деперсонализация',
-                        'Значение_субшкалы_Эмоциональное_истощение', 'count')
-
-
-        # Свод по уровням субшкалы Редукция_персональных_достижений всего в процентном соотношении
-        base_svod_reduc_df = create_svod_sub(base_df, lst_sub_level, 'Уровень_субшкалы_Редукция_персональных_достижений',
-                        'Значение_субшкалы_Эмоциональное_истощение', 'count')
 
 
         # считаем среднее значение по субшкалам
@@ -595,7 +594,7 @@ def processing_vod_ped_prof_burnout(result_df: pd.DataFrame, answers_df: pd.Data
         avg_df = avg_df.reset_index()
         avg_df.columns = ['Показатель','Среднее значение']
 
-        out_dct.update({'Свод ЭИ':base_svod_em_df,'Свод ДП':base_svod_depers_df,'Свод РПД':base_svod_reduc_df,
+        out_dct.update({'Свод по субшкалам':base_svod_sub_df,
                         'Среднее по субшкалам':avg_df}
                        )
 

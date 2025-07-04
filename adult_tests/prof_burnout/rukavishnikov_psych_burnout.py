@@ -5,7 +5,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,create_svod_sub
+from lachesis_support_functions import round_mean,create_union_svod
 
 
 
@@ -489,18 +489,20 @@ def processing_rukav_psych_burnout(result_df: pd.DataFrame, answers_df: pd.DataF
 
         out_dct.update(dct_level)
 
-        # Свод по уровням субшкалы Психоэмоциональное истощение всего в процентном соотношении
+        # Делаем свод  по  шкалам
+        dct_svod_sub = {'Значение_субшкалы_Психоэмоциональное_истощение': 'Уровень_субшкалы_Психоэмоциональное_истощение',
+                        'Значение_субшкалы_Личностное_отдаление': 'Уровень_субшкалы_Личностное_отдаление',
+                        'Значение_субшкалы_Профессиональная_мотивация': 'Уровень_субшкалы_Профессиональная_мотивация',
+                        }
 
-        base_svod_pia_df = create_svod_sub(base_df, lst_level, 'Уровень_субшкалы_Психоэмоциональное_истощение',
-                                           'Значение_субшкалы_Психоэмоциональное_истощение', 'count')
+        dct_rename_svod_sub = {'Значение_субшкалы_Психоэмоциональное_истощение': 'Психоэмоциональное истощение',
+                               'Значение_субшкалы_Личностное_отдаление': 'Личностное отдаление',
+                               'Значение_субшкалы_Профессиональная_мотивация': 'Профессиональная мотивация',
+                               }
 
-        # Свод по уровням субшкалы Личностное отдаление всего в процентном соотношении
-        base_svod_lo_df = create_svod_sub(base_df, lst_level, 'Уровень_субшкалы_Личностное_отдаление',
-                                              'Значение_субшкалы_Личностное_отдаление', 'count')
+        base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_level)
 
-        # Свод по уровням субшкалы Профессиональная мотивация всего в процентном соотношении
-        base_svod_pm_df = create_svod_sub(base_df, lst_level, 'Уровень_субшкалы_Профессиональная_мотивация',
-                                             'Значение_субшкалы_Профессиональная_мотивация', 'count')
+
 
         # считаем среднее значение по субшкалам
         avg_all = round(base_df['Значение_индекса_Психического_выгорания'].mean(), 2)
@@ -518,7 +520,7 @@ def processing_rukav_psych_burnout(result_df: pd.DataFrame, answers_df: pd.DataF
         avg_df = avg_df.reset_index()
         avg_df.columns = ['Показатель', 'Среднее значение']
 
-        out_dct.update({'Свод ПЭИ': base_svod_pia_df, 'Свод ЛО': base_svod_lo_df, 'Свод ПМ': base_svod_pm_df,
+        out_dct.update({'Свод по субшкалам': base_svod_sub_df,
                         'Среднее по субшкалам': avg_df}
                        )
 

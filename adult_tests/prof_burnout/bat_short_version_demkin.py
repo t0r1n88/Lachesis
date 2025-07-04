@@ -5,7 +5,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,create_svod_sub
+from lachesis_support_functions import round_mean,create_union_svod
 
 class BadOrderSBATD(Exception):
     """
@@ -445,15 +445,21 @@ def processing_short_bat_demkin(result_df: pd.DataFrame, answers_df: pd.DataFram
 
         out_dct.update(dct_level)
 
-        # Свод по шкалам
-        base_svod_exhaustion = create_svod_sub(base_df, lst_level, 'Уровень_Истощение',
-                            'Значение_Истощение', 'count')
-        base_svod_distance = create_svod_sub(base_df, lst_level, 'Уровень_Дистанцирование',
-                            'Значение_Дистанцирование', 'count')
-        base_svod_cog_problem = create_svod_sub(base_df, lst_level, 'Уровень_Когнитивные_проблемы',
-                            'Значение_Когнитивные_проблемы', 'count')
-        base_svod_emo_problem = create_svod_sub(base_df, lst_level, 'Уровень_профессионального_выгорания',
-                            'Значение_Эмоциональные_проблемы', 'count')
+        # Делаем свод  по  шкалам
+        dct_svod_sub = {'Значение_Истощение': 'Уровень_Истощение',
+                        'Значение_Дистанцирование': 'Уровень_Дистанцирование',
+                        'Значение_Когнитивные_проблемы': 'Уровень_Когнитивные_проблемы',
+                        'Значение_Эмоциональные_проблемы': 'Уровень_Эмоциональные_проблемы',
+                        }
+
+        dct_rename_svod_sub = {'Значение_Истощение': 'Истощение',
+                               'Значение_Дистанцирование': 'Дистанцирование',
+                               'Значение_Когнитивные_проблемы': 'Когнитивные проблемы',
+                               'Значение_Эмоциональные_проблемы': 'Эмоциональные проблемы',
+                               }
+
+
+        base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_level)
 
 
      # считаем среднее значение по  шкале субшкалам
@@ -475,10 +481,7 @@ def processing_short_bat_demkin(result_df: pd.DataFrame, answers_df: pd.DataFram
         avg_df = avg_df.reset_index()
         avg_df.columns = ['Показатель','Среднее значение']
 
-        out_dct.update({'Свод Истощение':base_svod_exhaustion,
-                        'Свод Дистанцирование': base_svod_distance,
-                        'Свод Когнитивные проблемы':base_svod_cog_problem,
-                        'Свод Эмоциональные проблемы':base_svod_emo_problem,
+        out_dct.update({'Свод по субшкалам':base_svod_sub_df,
                         'Среднее по субшкалам':avg_df}
                        )
 
