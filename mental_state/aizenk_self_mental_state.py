@@ -443,6 +443,9 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
         part_df['АСПС_Ригидность_Значение'] = base_df['Значение_шкалы_Ригидность']
         part_df['АСПС_Ригидность_Уровень'] = base_df['Уровень_шкалы_Ригидность']
 
+        out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+
         # Соединяем анкетную часть с результатной
         base_df = pd.concat([result_df, base_df], axis=1)
         base_df.sort_values(by='Значение_шкалы_Тревожность', ascending=False, inplace=True)  # сортируем
