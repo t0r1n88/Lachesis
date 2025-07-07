@@ -21,6 +21,10 @@ from ei_leadership.lusin_ei import processing_lusin_ei # Эмоциональн�
 from ei_leadership.kovalev_level_self_assesment import processing_usk # Уровень самооценки Ковалев
 from ei_leadership.fedor_kos_one import processing_kos_one # КОС-1 Федоришин
 
+# Тесты остракизм, буллинг
+from ostrakizm.boykina_shnpo import processing_boykina_shnpo # Шкала нарушенных потребностей, Остракизм Бойкина
+
+
 
 
 from lachesis_support_functions import write_df_to_excel, del_sheet, count_attention # функции для создания итогового файла
@@ -138,6 +142,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Уровень самооценки Ковалев': (processing_usk, 32),
                      'КОС-1': (processing_kos_one, 40),
 
+                     'ШНПО ПМ Бойкина':(processing_boykina_shnpo,20)
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -157,6 +163,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Уровень самооценки Ковалев': 'Уровень самооценки Ковалев',
                               'КОС-1': 'КОС-1 Федоришин',
 
+                              'ШНПО ПМ Бойкина': 'Шкала нарушенных потребностей остракизм Бойкина',
+
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -166,7 +174,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
                            'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
-                           'низкий уровень самооценки'
+                           'ШНПО ПМ Бойкина'
 
                            ]
         lst_check_alert_tests = []
@@ -270,7 +278,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
-                               '250-299','300 и более','очень высокий уровень','низкий уровень адаптации'] # особое внимание
+                               '250-299','300 и более','очень высокий уровень','низкий уровень адаптации',
+                               'высокий уровень социального остракизма'] # особое внимание
 
 
 
@@ -550,15 +559,15 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры лидерство.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Остракизм.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/лидерство СПО.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Остракизм.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
+    main_quantity_descr_cols = 3
     main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
