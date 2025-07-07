@@ -201,6 +201,14 @@ def processing_usk(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_c
         if len(answers_df.columns) != 32:  # проверяем количество колонок с вопросами
             raise BadCountColumnsUSK
 
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
+
         # Словарь с проверочными данными
         lst_check_cols = ['Мне хочется, чтобы мои друзья подбадривали меня',
                           'Постоянно чувствую свою ответственность за работу (учебу)',

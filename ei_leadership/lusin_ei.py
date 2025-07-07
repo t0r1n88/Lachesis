@@ -793,6 +793,14 @@ def processing_lusin_ei(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_s
         if len(answers_df.columns) != 46:  # проверяем количество колонок с вопросами
             raise BadCountColumnsLEI
 
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
+
         lst_check_cols = ['Я замечаю, когда близкий человек переживает, даже если он (она) пытается это скрыть',
                           'Если человек на меня обижается, я не знаю, как восстановить с ним хорошие отношения',
                           'Мне легко догадаться о чувствах человека по выражению его лица',
