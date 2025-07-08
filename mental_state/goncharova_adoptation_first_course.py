@@ -227,8 +227,9 @@ def processing_goncharova_adoptation_first_course(base_df: pd.DataFrame, answers
         part_df['ГАП_Значение_уровня_адаптации'] = base_df['Значение_уровня_адаптации']
         part_df['ГАП_Уровень_адаптации'] = base_df['Уровень_адаптации']
 
-        base_df.sort_values(by='Значение_уровня_адаптации', ascending=True, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+        base_df.sort_values(by='Значение_уровня_адаптации', ascending=True, inplace=True)  # сортируем
 
         # Общий свод по уровням общей шкалы всего в процентном соотношении
         base_svod_all_df = pd.DataFrame(

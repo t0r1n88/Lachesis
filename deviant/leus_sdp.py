@@ -415,10 +415,12 @@ def processing_leus_sdp(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_s
         part_df['СДП_СП_Значение'] = base_df['Значение_шкалы_СП']
         part_df['СДП_СП_Уровень'] = base_df['Уровень_шкалы_СП']
 
-
-        base_df.sort_values(by='Значение_шкалы_СОП', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
         base_df = pd.concat([result_df, base_df], axis=1)
+
+
+        base_df.sort_values(by='Значение_шкалы_СОП', ascending=False, inplace=True)  # сортируем
+
 
         # Делаем свод  по  шкалам
         dct_svod_sub = {'Значение_шкалы_СОП': 'Уровень_шкалы_СОП',

@@ -10,11 +10,15 @@ from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burn
 from prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
 from prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
-# Тесты психологическое состояние
+# Тесты ментальное и психологическое состояние
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
 from mental_state.aizenk_self_mental_state import processing_aizenk_self_mental_state # Самодиагностика психического состояния Айзенк
 from mental_state.rodjers_daimond_sneg_soc_psych_adapt import processing_rodjers_daimond_sneg_soc_psych_adapt # Шкала социально психологического состояния Роджерс Даймонд Снегирева
 from mental_state.doskin_san import processing_doskin_san # Опросник Самочувствие Активность Настроение Доскин Мирошниченко
+
+from mental_state.voz_well_being import processing_voz_well_being # Индекс общего самочувствия ВОЗ 1999
+
+
 
 # Тесты Лидерство, эмоциональный интеллект
 from ei_leadership.lusin_ei import processing_lusin_ei # Эмоциональный интеллект Люсин
@@ -144,6 +148,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Самооценка психических состояний Айзенк': (processing_aizenk_self_mental_state, 40),
                      'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': (processing_rodjers_daimond_sneg_soc_psych_adapt, 101),
                      'САН Доскин Мирошников': (processing_doskin_san, 30),
+                     'Индекс общего самочувствия ВОЗ 1999': (processing_voz_well_being, 5),
+
 
                      'Эмоциональный интеллект Люсин': (processing_lusin_ei, 46),
                      'Уровень самооценки Ковалев': (processing_usk, 32),
@@ -170,6 +176,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Самооценка психических состояний Айзенк': 'Самооценка психических состояний Айзенк',
                               'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': 'Социально-психологическая адаптированность Роджерс Даймонд Снегирева',
                               'САН Доскин Мирошников': 'САН Доскин Мирошников',
+                              'Индекс общего самочувствия ВОЗ 1999': 'Индекс общего самочувствия ВОЗ 1999',
 
                               'Эмоциональный интеллект Люсин': 'Эмоциональный интеллект Люсин',
                               'Уровень самооценки Ковалев': 'Уровень самооценки Ковалев',
@@ -191,6 +198,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
                            'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
+                           'Индекс общего самочувствия ВОЗ 1999',
 
                            'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина',
 
@@ -305,7 +313,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом',
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
-                                   'легкая степень социально-психологической дезадаптации'] # обратить внимание
+                                   'легкая степень социально-психологической дезадаптации','0-19'] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
 
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
@@ -580,11 +588,11 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Тревожность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО data девиантность.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа тревожность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
