@@ -23,6 +23,7 @@ from ei_leadership.fedor_kos_one import processing_kos_one # КОС-1 Федор
 
 # Тесты остракизм, буллинг
 from ostrakizm.boykina_shnpo import processing_boykina_shnpo # Шкала нарушенных потребностей, Остракизм Бойкина
+from ostrakizm.boykina_shso import processing_boykina_shso # Шкала субъективного остракизма Бойкина
 
 
 
@@ -142,7 +143,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Уровень самооценки Ковалев': (processing_usk, 32),
                      'КОС-1': (processing_kos_one, 40),
 
-                     'ШНПО ПМ Бойкина':(processing_boykina_shnpo,20)
+                     'ШНПО ПМ Бойкина':(processing_boykina_shnpo,20),
+                     'Шкала субъективного остракизма Бойкина':(processing_boykina_shso,14),
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -164,6 +166,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'КОС-1': 'КОС-1 Федоришин',
 
                               'ШНПО ПМ Бойкина': 'Шкала нарушенных потребностей остракизм Бойкина',
+                              'Шкала субъективного остракизма Бойкина': 'Шкала субъективного остракизма Бойкина',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -174,7 +177,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
                            'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
-                           'ШНПО ПМ Бойкина'
+                           'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина'
 
                            ]
         lst_check_alert_tests = []
