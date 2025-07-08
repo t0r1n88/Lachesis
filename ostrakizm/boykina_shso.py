@@ -465,9 +465,6 @@ def processing_boykina_shso(result_df: pd.DataFrame, answers_df: pd.DataFrame,ls
         base_df = pd.concat([result_df, base_df], axis=1)
         base_df.sort_values(by='Значение_субшкалы_Игнорирование', ascending=False, inplace=True)  # сортируем
 
-        # формируем основной словарь
-        out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
-                   }
 
         # Делаем свод  по  шкалам
         dct_svod_sub = {'Значение_субшкалы_Игнорирование': 'Уровень_субшкалы_Игнорирование',

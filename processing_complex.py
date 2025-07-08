@@ -27,6 +27,10 @@ from ostrakizm.boykina_shso import processing_boykina_shso # Шкала субъ
 from ostrakizm.norkina_vbs_school import processing_norkina_vbs_school # Выявление буллинг структуры Норкина Школьники
 from ostrakizm.norkina_vbs_student import processing_norkina_vbs_student # Выявление буллинг структуры Норкина Студенты
 
+# Тесты девиантное поведение
+from deviant.leus_sdp import processing_leus_sdp # Склонность к девиантному поведению Леус
+
+
 
 
 
@@ -150,6 +154,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Выявление буллинг-структуры Норкина Школьники':(processing_norkina_vbs_school,25),
                      'Выявление буллинг-структуры Норкина Студенты':(processing_norkina_vbs_student,25),
 
+                     'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -174,6 +180,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Выявление буллинг-структуры Норкина Школьники': 'Выявление буллинг-структуры Норкина Школьники',
                               'Выявление буллинг-структуры Норкина Студенты': 'Выявление буллинг-структуры Норкина Студенты',
 
+                              'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
+
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -185,6 +193,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
 
                            'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина',
+
+                           'Склонность к девиантному поведению Леус',
 
                            ]
         lst_check_alert_tests = []
@@ -288,13 +298,14 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
         if len(lst_check_alert_tests) != 0:
             # Отбираем тех кто требует внимания.
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
-                               '250-299','300 и более','очень высокий уровень','низкий уровень адаптации',
+                               '250-299','300 и более','очень высокий уровень','низкий уровень адаптации','выраженная социально-психологическая дезадаптация',
                                ] # особое внимание
 
 
 
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом',
-                                   'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма'] # обратить внимание
+                                   'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
+                                   'легкая степень социально-психологической дезадаптации'] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
 
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
@@ -569,15 +580,15 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Остракизм.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры девиантность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Остракизм.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО data девиантность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
