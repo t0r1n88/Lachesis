@@ -25,6 +25,7 @@ from ei_leadership.fedor_kos_one import processing_kos_one # КОС-1 Федор
 from ostrakizm.boykina_shnpo import processing_boykina_shnpo # Шкала нарушенных потребностей, Остракизм Бойкина
 from ostrakizm.boykina_shso import processing_boykina_shso # Шкала субъективного остракизма Бойкина
 from ostrakizm.norkina_vbs_school import processing_norkina_vbs_school # Выявление буллинг структуры Норкина Школьники
+from ostrakizm.norkina_vbs_student import processing_norkina_vbs_student # Выявление буллинг структуры Норкина Студенты
 
 
 
@@ -147,6 +148,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'ШНПО ПМ Бойкина':(processing_boykina_shnpo,20),
                      'Шкала субъективного остракизма Бойкина':(processing_boykina_shso,14),
                      'Выявление буллинг-структуры Норкина Школьники':(processing_norkina_vbs_school,25),
+                     'Выявление буллинг-структуры Норкина Студенты':(processing_norkina_vbs_student,25),
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -170,6 +172,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'ШНПО ПМ Бойкина': 'Шкала нарушенных потребностей остракизм Бойкина',
                               'Шкала субъективного остракизма Бойкина': 'Шкала субъективного остракизма Бойкина',
                               'Выявление буллинг-структуры Норкина Школьники': 'Выявление буллинг-структуры Норкина Школьники',
+                              'Выявление буллинг-структуры Норкина Студенты': 'Выявление буллинг-структуры Норкина Студенты',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -181,7 +184,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                            'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
 
-                           'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина','Выявление буллинг-структуры Норкина Школьники'
+                           'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина',
 
                            ]
         lst_check_alert_tests = []
@@ -570,12 +573,12 @@ if __name__ == '__main__':
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Школа Остракизм.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО Остракизм.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2,3'
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
