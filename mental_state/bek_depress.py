@@ -91,7 +91,7 @@ def calc_count_level(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:l
 
 
 
-def create_result_bed_depress(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+def create_result_bek_depress(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
     Функция для подсчета результата если указаны колонки по которым нужно провести свод
     :param df: датафрейм с результатами
@@ -201,6 +201,14 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_s
         out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
         if len(answers_df.columns) != 52:
             raise BadCountColumnsBekDepress
+
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
 
         count_descr_cols = base_df.shape[1]  # получаем количество описательных колонок в начале
 
@@ -312,12 +320,13 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_s
         base_df = base_df[lst_out_cols]
 
         # Создаем датафрейм для создания части в общий датафрейм
-        part_df = pd.DataFrame(columns=['Значение_уровня_депрессии_Бек', 'Уровень_депрессии_Бек'])
+        part_df = pd.DataFrame()
         part_df['ШДБ_Депрессия_Значение'] = base_df['Значение_уровня_депрессии']
         part_df['ШДБ_Депрессия_Уровень'] = base_df['Уровень_депрессии']
 
-        base_df.sort_values(by='Значение_уровня_депрессии', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)
+
+        base_df.sort_values(by='Значение_уровня_депрессии', ascending=False, inplace=True)  # сортируем
 
         # Делаем свод  по  шкалам
         dct_svod_sub = {'Значение_уровня_депрессии': 'Уровень_депрессии',
@@ -362,7 +371,7 @@ def processing_bek_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_s
         if len(lst_svod_cols) == 0:
             return out_dct, part_df
         else:
-            out_dct = create_result_bed_depress(base_df, out_dct, lst_svod_cols)
+            out_dct = create_result_bek_depress(base_df, out_dct, lst_svod_cols)
 
             return out_dct, part_df
 

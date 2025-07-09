@@ -20,6 +20,7 @@ from mental_state.voz_well_being import processing_voz_well_being # Индекс
 from mental_state.kondash_anxiety_school import processing_kondash_anxiety_school # Шкала тревожности Кондаша Школьники
 from mental_state.kondash_anxiety_student import processing_kondash_anxiety_student # Шкала тревожности Кондаша Студенты
 from mental_state.bek_depress import processing_bek_depress # Шкала депрессии Бека
+from mental_state.bek_hopelessness import processing_bek_hopelessness # Шкала безнадежности Бека
 
 
 
@@ -153,6 +154,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Шкала тревожности Кондаша Школьники': (processing_kondash_anxiety_school, 30),
                      'Шкала тревожности Кондаша Студенты': (processing_kondash_anxiety_student, 30),
                      'Шкала депрессии Бека': (processing_bek_depress, 52),
+                     'Шкала безнадежности Бека': (processing_bek_hopelessness, 20),
 
 
                      'Эмоциональный интеллект Люсин': (processing_lusin_ei, 46),
@@ -185,6 +187,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Шкала тревожности Кондаша Школьники': 'Шкала тревожности Кондаша Школьники',
                               'Шкала тревожности Кондаша Студенты': 'Шкала тревожности Кондаша Студенты',
                               'Шкала депрессии Бека': 'Шкала депрессии Бека',
+                              'Шкала безнадежности Бека': 'Шкала безнадежности Бека',
 
                               'Эмоциональный интеллект Люсин': 'Эмоциональный интеллект Люсин',
                               'Уровень самооценки Ковалев': 'Уровень самооценки Ковалев',
@@ -208,7 +211,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
 
                            'Индекс общего самочувствия ВОЗ 1999','Шкала тревожности Кондаша Школьники','Шкала тревожности Кондаша Студенты',
-                           'Шкала депрессии Бека',
+                           'Шкала депрессии Бека','Шкала безнадежности Бека',
 
                            'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина',
 
@@ -317,14 +320,14 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
             # Отбираем тех кто требует внимания.
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
                                '250-299','300 и более','очень высокий уровень','низкий уровень адаптации','выраженная социально-психологическая дезадаптация',
-                               'очень высокий уровень тревожности','тяжелая депрессия',
+                               'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая',
                                ] # особое внимание
 
 
 
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом',
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
-                                   'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия',
+                                   'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
 
@@ -609,7 +612,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
-    main_svod_cols = ''
+    main_svod_cols = '1,2,3'
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
