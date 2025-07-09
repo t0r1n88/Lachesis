@@ -39,6 +39,7 @@ from deviant.leus_sdp import processing_leus_sdp # Склонность к де�
 
 # Профориентационные тесты
 from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
+from career_guidance.holland_ptl import processing_holland_ptl # Профессиональный тип личности Голланд
 
 
 
@@ -171,6 +172,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
 
                      'ЦОК':(processing_shein_cok,41),
+                     'ПТЛ':(processing_holland_ptl,30),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -207,6 +209,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
 
                               'ЦОК': 'Якоря карьеры ЦОК',
+                              'ПТЛ': 'Профессиональный тип личности',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -740,7 +743,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
-    main_svod_cols = '1,2,3'
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
