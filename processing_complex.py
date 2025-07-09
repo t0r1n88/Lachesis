@@ -456,8 +456,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
             if len(lst_check_career_tests) != 0:
 
                 with pd.ExcelWriter(f'{end_folder}/Общий результат.xlsx', engine='xlsxwriter') as writer:
-                    for sheet_name, dataframe in {'Свод по всем тестам': main_itog_df}:
-                        dataframe.to_excel(writer, sheet_name=sheet_name,index=False)
+                    main_itog_df.to_excel(writer,sheet_name='Свод по всем тестам',index=False)
             else:
                 # Сохраняем в зависимости от количества сводных колонок
                 if len(lst_svod_cols) == 0:
