@@ -147,7 +147,6 @@ def create_result_bek_depress(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:
         return out_dct
     else:
         for idx, name_column in enumerate(lst_svod_cols):
-            # Тревожность
             lst_reindex_column_level_cols = [lst_svod_cols[idx],'удовлетворительное эмоциональное состояние', 'легкая депрессия', 'умеренная депрессия',
                                         'тяжелая депрессия',
                                              'Итого']
