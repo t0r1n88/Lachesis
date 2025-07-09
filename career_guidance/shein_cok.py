@@ -226,6 +226,80 @@ def processing_result_cok(row):
 
     return begin_str
 
+def calc_count_level(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по шкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% не выраженная карьерная ориентация от общего'] = round(
+        count_df['не выраженная карьерная ориентация'] / count_df['Итого'], 2) * 100
+    count_df['% выраженная карьерная ориентация от общего'] = round(
+        count_df['выраженная карьерная ориентация'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+
+def calc_count_sphere(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list):
+    """
+    Функция для создания сводных датафреймов по шкалам
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формироваться свод
+    :param col_cat: колонка по которой будет формироваться свод
+    :param lst_cols: список с колонками
+    :return:датафрейм
+    """
+    count_df = pd.pivot_table(df, index=lst_cat,
+                                             columns=col_cat,
+                                             values=val_cat,
+                                             aggfunc='count', margins=True, margins_name='Итого')
+
+
+    count_df.reset_index(inplace=True)
+    count_df = count_df.reindex(columns=lst_cols)
+    count_df['% Профессиональная компетентность от общего'] = round(
+        count_df['Профессиональная компетентность'] / count_df['Итого'], 2) * 100
+    count_df['% Менеджмент от общего'] = round(
+        count_df['Менеджмент'] / count_df['Итого'], 2) * 100
+    count_df['% Автономия (независимость) от общего'] = round(
+        count_df['Автономия (независимость)'] / count_df['Итого'], 2) * 100
+    count_df['% Стабильность работы от общего'] = round(
+        count_df['Стабильность работы'] / count_df['Итого'], 2) * 100
+    count_df['% Стабильность места жительства от общего'] = round(
+        count_df['Стабильность места жительства'] / count_df['Итого'], 2) * 100
+    count_df['% Служение от общего'] = round(
+        count_df['Служение'] / count_df['Итого'], 2) * 100
+    count_df['% Вызов от общего'] = round(
+        count_df['Вызов'] / count_df['Итого'], 2) * 100
+    count_df['% Интеграция стилей жизни от общего'] = round(
+        count_df['Интеграция стилей жизни'] / count_df['Итого'], 2) * 100
+    count_df['% Предпринимательство от общего'] = round(
+        count_df['Предпринимательство'] / count_df['Итого'], 2) * 100
+
+    return count_df
+
+
+
+
+
+
+
 def create_result_shein_cok(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
     Функция для подсчета результата если указаны колонки по которым нужно провести свод
@@ -242,6 +316,112 @@ def create_result_shein_cok(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:li
     lst_reindex_one_sphere_cols.extend( ['Профессиональная компетентность', 'Менеджмент','Автономия (независимость)','Стабильность работы',
                  'Стабильность места жительства','Служение','Вызов','Интеграция стилей жизни','Предпринимательство',
                                                       'Итого'])
+
+    svod_count_one_level_df = calc_count_level(base_df, lst_svod_cols,
+                                                      'Значение_ведущая_карьерная_ориентация',
+                                                      'Уровень_выраженности',
+                                                      lst_reindex_one_level_cols)
+
+    svod_count_one_sphere_df = calc_count_sphere(base_df, lst_svod_cols,
+                                                      'Значение_ведущая_карьерная_ориентация',
+                                                      'Ведущая_карьерная_ориентация',
+                                                      lst_reindex_one_sphere_cols)
+
+    # Считаем среднее по субшкалам
+    svod_mean_one_df = pd.pivot_table(base_df,
+                                      index=lst_svod_cols,
+                                      values=['Значение_ведущая_карьерная_ориентация',
+                                              ],
+                                      aggfunc=round_mean)
+    svod_mean_one_df.reset_index(inplace=True)
+    # упорядочиваем колонки
+    new_order_cols = lst_svod_cols.copy()
+    new_order_cols.extend((['Значение_ведущая_карьерная_ориентация',
+                            ]))
+    svod_mean_one_df = svod_mean_one_df.reindex(columns=new_order_cols)
+
+    dct_rename_cols_mean = {'Значение_ведущая_карьерная_ориентация': 'Среднее значение ведущей карьерной ориентации',
+                            }
+    svod_mean_one_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        if len(lst_svod_cols) == 1:
+            out_name_lst.append(name[:14])
+        elif len(lst_svod_cols) == 2:
+            out_name_lst.append(name[:7])
+        else:
+            out_name_lst.append(name[:4])
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+    out_dct.update({f'Ср {out_name}': svod_mean_one_df,
+                    f'Уровень {out_name}': svod_count_one_level_df,
+                    f'Ориентация {out_name}': svod_count_one_sphere_df,
+                    })
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
+    else:
+        for idx, name_column in enumerate(lst_svod_cols):
+            lst_reindex_column_level_cols = [lst_svod_cols[idx], 'не выраженная карьерная ориентация', 'выраженная карьерная ориентация',
+                                             'Итого']
+
+            lst_reindex_column_sphere_cols = [lst_svod_cols[idx], 'Профессиональная компетентность', 'Менеджмент','Автономия (независимость)','Стабильность работы',
+                 'Стабильность места жительства','Служение','Вызов','Интеграция стилей жизни','Предпринимательство',
+                                             'Итого']
+
+            svod_count_column_level_df = calc_count_level(base_df, lst_svod_cols[idx],
+                                                       'Значение_ведущая_карьерная_ориентация',
+                                                       'Уровень_выраженности',
+                                                       lst_reindex_column_level_cols)
+
+            svod_count_column_sphere_df = calc_count_sphere(base_df, lst_svod_cols[idx],
+                                                         'Значение_ведущая_карьерная_ориентация',
+                                                         'Ведущая_карьерная_ориентация',
+                                                         lst_reindex_column_sphere_cols)
+
+            # Считаем среднее по субшкалам
+            svod_mean_column_df = pd.pivot_table(base_df,
+                                              index=[lst_svod_cols[idx]],
+                                              values=['Значение_ведущая_карьерная_ориентация',
+                                                      ],
+                                              aggfunc=round_mean)
+            svod_mean_column_df.reset_index(inplace=True)
+            # упорядочиваем колонки
+            new_order_cols = [lst_svod_cols[idx]].copy()
+            new_order_cols.extend((['Значение_ведущая_карьерная_ориентация',
+                                    ]))
+            svod_mean_column_df = svod_mean_column_df.reindex(columns=new_order_cols)
+
+            dct_rename_cols_mean = {'Значение_ведущая_карьерная_ориентация': 'Среднее значение ведущей карьерной ориентации',
+                                    }
+            svod_mean_column_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+            name_column = lst_svod_cols[idx]
+            name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)
+            name_column = name_column[:15]
+
+            out_dct.update({f'Ср {name_column}': svod_mean_column_df,
+                            f'Уровень {name_column}': svod_count_column_level_df,
+                            f'Ориентация {name_column}': svod_count_column_sphere_df,
+                            })
+        return out_dct
+
+
+
+
+
+
+
+
+
+
 
 
 
