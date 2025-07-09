@@ -23,9 +23,6 @@ from mental_state.bek_depress import processing_bek_depress # Шкала деп�
 from mental_state.bek_hopelessness import processing_bek_hopelessness # Шкала безнадежности Бека
 from mental_state.zung_depress import processing_zung_depress # Шкала депресси Цунга
 
-
-
-
 # Тесты Лидерство, эмоциональный интеллект
 from ei_leadership.lusin_ei import processing_lusin_ei # Эмоциональный интеллект Люсин
 from ei_leadership.kovalev_level_self_assesment import processing_usk # Уровень самооценки Ковалев
@@ -39,6 +36,9 @@ from ostrakizm.norkina_vbs_student import processing_norkina_vbs_student # Вы�
 
 # Тесты девиантное поведение
 from deviant.leus_sdp import processing_leus_sdp # Склонность к девиантному поведению Леус
+
+# Профориентационные тесты
+from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
 
 
 
@@ -170,6 +170,9 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
                      'Склонность к девиантному поведению Леус': (processing_leus_sdp, 75),
 
+                     'ЦОК':(processing_shein_cok,41),
+
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -202,6 +205,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Выявление буллинг-структуры Норкина Студенты': 'Выявление буллинг-структуры Норкина Студенты',
 
                               'Склонность к девиантному поведению Леус': 'Склонность к девиантному поведению Леус',
+
+                              'ЦОК': 'Якоря карьеры ЦОК',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -607,11 +612,11 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Тревожность.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/СПО тревожность.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профориентация.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
