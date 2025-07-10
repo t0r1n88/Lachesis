@@ -43,6 +43,7 @@ from career_guidance.holland_ptl import processing_holland_ptl # Професс�
 from career_guidance.rezapkina_spp import processing_rezapkina_spp # Сфера профессиональных предпочтений Резапкина
 from career_guidance.klimov_azbel_ddo import processing_ddo # Дифференциально-диагностический опросник Климов Азбель
 from career_guidance.golomshtok_azbel_map_interests import processing_gol_azb_map_interest # Карта интересов Голомшток Азбель
+from career_guidance.azbel_prof_identity import processing_azbel_prof_identity # Профессиональная идентичность Азбель
 
 
 
@@ -179,6 +180,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'СПП':(processing_rezapkina_spp,24),
                      'ДДО':(processing_ddo,30),
                      'Карта интересов Голомшток Азбель':(processing_gol_azb_map_interest,144),
+                     'Профессиональная идентичность Азбель':(processing_azbel_prof_identity,20),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -219,6 +221,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'СПП': 'Сфера профессиональных предпочтений',
                               'ДДО': 'Дифференциально-диагностический опросник',
                               'Карта интересов Голомшток Азбель': 'Карта интересов Голомшток Азбель',
+                              'Профессиональная идентичность Азбель': 'Профессиональная идентичность Азбель',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -357,6 +360,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 
             # Сохраняем в зависимости от количества сводных колонок
             if len(lst_svod_cols) == 0:
+                if len(base_df) != 0:
+                    main_itog_df.sort_values(by=base_df.columns[0],inplace=True)
                 temp_wb = write_df_to_excel({'Свод по всем тестам':main_itog_df,'Особое внимание':alert_df,'Зона риска':attention_df}, write_index=False)
                 temp_wb = del_sheet(temp_wb, ['Sheet', 'Sheet1', 'Для подсчета'])
                 temp_wb.save(f'{end_folder}/Общий результат.xlsx')
@@ -467,6 +472,8 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
             # Если есть профориентационные тесты, то сохраняем через пандас
             if len(lst_check_career_tests) != 0:
                 if len(lst_svod_cols) == 0:
+                    if len(base_df) != 0:
+                        main_itog_df.sort_values(by=base_df.columns[0], inplace=True)
                     with pd.ExcelWriter(f'{end_folder}/Общий результат.xlsx', engine='xlsxwriter') as writer:
                         main_itog_df.to_excel(writer,sheet_name='Свод по всем тестам',index=False)
                 elif len(lst_svod_cols) == 1:
@@ -743,11 +750,11 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация вариант 2.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профориентация.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профориентация вариант 2.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
