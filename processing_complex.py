@@ -41,6 +41,7 @@ from deviant.leus_sdp import processing_leus_sdp # Склонность к де�
 from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
 from career_guidance.holland_ptl import processing_holland_ptl # Профессиональный тип личности Голланд
 from career_guidance.rezapkina_spp import processing_rezapkina_spp # Сфера профессиональных предпочтений Резапкина
+from career_guidance.klimov_azbel_ddo import processing_ddo # Дифференциально- диагностический опросник Климов Азбель
 
 
 
@@ -175,6 +176,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'ЦОК':(processing_shein_cok,41),
                      'ПТЛ':(processing_holland_ptl,30),
                      'СПП':(processing_rezapkina_spp,24),
+                     'ДДО':(processing_ddo,30),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -213,6 +215,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'ЦОК': 'Якоря карьеры ЦОК',
                               'ПТЛ': 'Профессиональный тип личности',
                               'СПП': 'Сфера профессиональных предпочтений',
+                              'ДДО': 'Дифференциально-диагностический опросник',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 

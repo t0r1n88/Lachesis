@@ -4,7 +4,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,create_union_svod
+from lachesis_support_functions import round_mean,create_union_svod,calc_count_scale
 
 class BadOrderSPP(Exception):
     """
@@ -378,31 +378,7 @@ def processing_result_spp(row):
         # добавляем описание
         return begin_str
 
-def calc_count_scale(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:list,lst_new_cols:list):
-    """
-    Функция для создания сводных датафреймов по шкалам
 
-    :param df: датафрейм с данными
-    :param lst_cat:список колонок по которым будет формироваться свод
-    :param val_cat:значение по которому будет формироваться свод
-    :param col_cat: колонка по которой будет формироваться свод
-    :param lst_cols: список с колонками
-    :param lst_new_cols: список колонок которые нужно создать
-    :return:датафрейм
-    """
-    count_df = pd.pivot_table(df, index=lst_cat,
-                                             columns=col_cat,
-                                             values=val_cat,
-                                             aggfunc='count', margins=True, margins_name='Итого')
-
-
-    count_df.reset_index(inplace=True)
-    count_df = count_df.reindex(columns=lst_cols)
-    for name_column in lst_new_cols:
-        count_df[f'% {name_column} от общего'] = round(
-        count_df[f'{name_column}'] / count_df['Итого'], 2) * 100
-
-    return count_df
 
 
 
