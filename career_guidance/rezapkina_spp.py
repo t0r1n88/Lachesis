@@ -530,6 +530,14 @@ def processing_rezapkina_spp(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst
         if len(answers_df.columns) != 24:
             raise BadCountColumnsSPP
 
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
+
         lst_check_cols = ['Мне хотелось бы в своей профессиональной деятельности',
                           'В книге или кинофильме меня больше всего привлекает',
                           'Меня обрадует Нобелевская премия', 'Я скорее соглашусь стать',

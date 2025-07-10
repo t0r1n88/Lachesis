@@ -41,7 +41,8 @@ from deviant.leus_sdp import processing_leus_sdp # Склонность к де�
 from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
 from career_guidance.holland_ptl import processing_holland_ptl # Профессиональный тип личности Голланд
 from career_guidance.rezapkina_spp import processing_rezapkina_spp # Сфера профессиональных предпочтений Резапкина
-from career_guidance.klimov_azbel_ddo import processing_ddo # Дифференциально- диагностический опросник Климов Азбель
+from career_guidance.klimov_azbel_ddo import processing_ddo # Дифференциально-диагностический опросник Климов Азбель
+from career_guidance.golomshtok_azbel_map_interests import processing_gol_azb_map_interest # Карта интересов Голомшток Азбель
 
 
 
@@ -177,6 +178,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'ПТЛ':(processing_holland_ptl,30),
                      'СПП':(processing_rezapkina_spp,24),
                      'ДДО':(processing_ddo,30),
+                     'Карта интересов Голомшток Азбель':(processing_gol_azb_map_interest,144),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -216,6 +218,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'ПТЛ': 'Профессиональный тип личности',
                               'СПП': 'Сфера профессиональных предпочтений',
                               'ДДО': 'Дифференциально-диагностический опросник',
+                              'Карта интересов Голомшток Азбель': 'Карта интересов Голомшток Азбель',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -749,7 +752,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 4
-    main_svod_cols = '1,2,3'
+    main_svod_cols = ''
 
     generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
 
