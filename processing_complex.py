@@ -44,6 +44,7 @@ from career_guidance.rezapkina_spp import processing_rezapkina_spp # Сфера 
 from career_guidance.klimov_azbel_ddo import processing_ddo # Дифференциально-диагностический опросник Климов Азбель
 from career_guidance.golomshtok_azbel_map_interests import processing_gol_azb_map_interest # Карта интересов Голомшток Азбель
 from career_guidance.azbel_prof_identity import processing_azbel_prof_identity # Профессиональная идентичность Азбель
+from career_guidance.rezapkina_hp import processing_rezapkina_hp # Характер профессия Резапкина
 
 
 
@@ -181,6 +182,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'ДДО':(processing_ddo,30),
                      'Карта интересов Голомшток Азбель':(processing_gol_azb_map_interest,144),
                      'Профессиональная идентичность Азбель':(processing_azbel_prof_identity,20),
+                     'Характер и профессия Резапкина':(processing_rezapkina_hp,24),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -222,6 +224,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'ДДО': 'Дифференциально-диагностический опросник',
                               'Карта интересов Голомшток Азбель': 'Карта интересов Голомшток Азбель',
                               'Профессиональная идентичность Азбель': 'Профессиональная идентичность Азбель',
+                              'Характер и профессия Резапкина': 'Характер и профессия Резапкина',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
