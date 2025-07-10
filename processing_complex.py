@@ -46,6 +46,7 @@ from career_guidance.golomshtok_azbel_map_interests import processing_gol_azb_ma
 from career_guidance.azbel_prof_identity import processing_azbel_prof_identity # Профессиональная идентичность Азбель
 from career_guidance.rezapkina_hp import processing_rezapkina_hp # Характер профессия Резапкина
 from career_guidance.azbel_sitt import processing_azbel_sitt # Склонность к исполнительскому или творческому труду Азбель
+from career_guidance.grezov_ntfp import processing_grezov_ntfp # Наемный труд фриланс предпринимательство Грецов
 
 
 
@@ -185,6 +186,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                      'Профессиональная идентичность Азбель':(processing_azbel_prof_identity,20),
                      'Характер и профессия Резапкина':(processing_rezapkina_hp,24),
                      'СИТТ Азбель':(processing_azbel_sitt,12),
+                     'НТФП Грецов':(processing_grezov_ntfp,24),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -228,6 +230,7 @@ def generate_result_adults(params_adults: str, data_adults: str, end_folder: str
                               'Профессиональная идентичность Азбель': 'Профессиональная идентичность Азбель',
                               'Характер и профессия Резапкина': 'Характер и профессия Резапкина',
                               'СИТТ Азбель': 'Склонность к исполнительскому или творческому труду',
+                              'НТФП Грецов': 'Наемный труд, фриланс, предпринимательство',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
