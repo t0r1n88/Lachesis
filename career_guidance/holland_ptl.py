@@ -428,7 +428,7 @@ def calc_count_sphere(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_cols:
     return count_df
 
 
-def create_result_shein_cok(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+def create_result_holland_ptl(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
     Функция для подсчета результата если указаны колонки по которым нужно провести свод
     :param df: датафрейм с результатами
@@ -674,7 +674,7 @@ def processing_holland_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_s
         # Делаем свод по уровню
         dct_svod_level = {'Значение_ведущий_тип_личности': 'Уровень_выраженности',
                           }
-        dct_rename_svod_level = {'Значение_ведущий_тип_личности': 'Уровень выраженности',
+        dct_rename_svod_level = {'Значение_ведущий_тип_личности': 'Количество',
                                  }
         # Списки для шкал
         lst_level = ['слабо выраженный тип', 'средне выраженный тип','ярко выраженный тип'
@@ -685,7 +685,7 @@ def processing_holland_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_s
         dct_svod_sphere = {'Значение_ведущий_тип_личности': 'Ведущий_тип_личности',
                            }
 
-        dct_rename_svod_sphere = {'Значение_ведущий_тип_личности': 'Ведущий тип личности',
+        dct_rename_svod_sphere = {'Значение_ведущий_тип_личности': 'Количество',
                                   }
 
         # Списки для шкал
@@ -743,7 +743,7 @@ def processing_holland_ptl(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_s
         if len(lst_svod_cols) == 0:
             return out_dct, part_df
         else:
-            out_dct = create_result_shein_cok(base_df, out_dct, lst_svod_cols)
+            out_dct = create_result_holland_ptl(base_df, out_dct, lst_svod_cols)
 
             return out_dct, part_df
 
