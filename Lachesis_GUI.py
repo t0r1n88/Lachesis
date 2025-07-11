@@ -4,7 +4,7 @@
 """
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов по профориентации
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
-from processing_complex import generate_result_adults # функция для обработки взрослых тестов
+from processing_complex import generate_result_all_age # функция для обработки тестов
 
 import pandas as pd
 import os
@@ -108,66 +108,54 @@ def processing_generate_docs():
 
 
 """
-Функции для обработки взрослых тестов
+Функции для обработки тестов
 """
 
-def select_file_params_adults():
+def select_file_params_all_age():
     """
     Функция для выбора файла с данными на основе которых будет генерироваться документ
     :return: Путь к файлу с данными
     """
-    global file_params_adults
+    global file_params_all_age
     # Получаем путь к файлу
-    file_params_adults = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+    file_params_all_age = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
 
-def select_file_data_xlsx_adults():
+def select_file_data_xlsx_all_age():
     """
     Функция для выбора файла с данными на основе которых будет генерироваться документ
     :return: Путь к файлу с данными
     """
-    global file_data_xlsx_adults
+    global file_data_xlsx_all_age
     # Получаем путь к файлу
-    file_data_xlsx_adults = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+    file_data_xlsx_all_age = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
 
-def select_end_folder_adults():
+def select_end_folder_all_age():
     """
     Функция для выбора конечной папки куда будут складываться итоговые файлы
     :return:
     """
-    global path_to_end_folder_adults
-    path_to_end_folder_adults = filedialog.askdirectory()
+    global path_to_end_folder_all_age
+    path_to_end_folder_all_age = filedialog.askdirectory()
 
 
-def processing_adults():
+def processing_all_age():
     """
     Функция для генерации результатов комплексного тестирования на тревожность школьников
     """
     try:
-        start_threshold = var_entry_threshold_adults.get() # получаем количество колонок
+        start_threshold = var_entry_threshold_all_age.get() # получаем количество колонок
         start_threshold = int(start_threshold)
 
 
-        svod_cols = var_entry_svod_adults.get() # получаем строку
+        svod_cols = var_entry_svod_all_age.get() # получаем строку
 
-        generate_result_adults(file_params_adults,file_data_xlsx_adults,path_to_end_folder_adults,start_threshold,svod_cols)
+        generate_result_all_age(file_params_all_age, file_data_xlsx_all_age, path_to_end_folder_all_age, start_threshold, svod_cols)
     except ValueError:
         messagebox.showerror('Лахеcис',
                              f'Введите целое число начиная с 1 !!!')
     except NameError:
         messagebox.showerror('Лахеcис',
                              f'Выберите файлы с данными и папку куда будет генерироваться файл')
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -484,85 +472,85 @@ if __name__ == '__main__':
     Обработка результатов тестов
     """
     # Создаем вкладку обработки данных
-    tab_report_adults = ttk.Frame(tab_control)
-    tab_control.add(tab_report_adults, text='Взрослые\nОбработка результатов')
+    tab_report_all_age = ttk.Frame(tab_control)
+    tab_control.add(tab_report_all_age, text='Обработка результатов\nтестов')
     tab_control.pack(expand=1, fill='both')
     # Добавляем виджеты на вкладку
     # Создаем метку для описания назначения программы
-    lbl_hello_adults = Label(tab_report_adults,
-                             text='Центр опережающей профессиональной подготовки Республики Бурятия\nКомплексный тест для взрослых \n'
+    lbl_hello_all_age = Label(tab_report_all_age,
+                             text='Центр опережающей профессиональной подготовки Республики Бурятия\nОбработка результатов комплексных психологических и профориентационных тестов \n'
                              )
-    lbl_hello_adults.grid(column=0, row=0, padx=10, pady=25)
+    lbl_hello_all_age.grid(column=0, row=0, padx=10, pady=25)
 
     # Картинка
-    path_to_img_adults = resource_path('logo.png')
+    path_to_img_all_age = resource_path('logo.png')
 
-    img_adults = PhotoImage(file=path_to_img_adults)
-    Label(tab_report_adults,
-          image=img_adults
+    img_all_age = PhotoImage(file=path_to_img_all_age)
+    Label(tab_report_all_age,
+          image=img_all_age
           ).grid(column=1, row=0, padx=10, pady=25)
 
     # Создаем кнопку Выбрать файл с параметрами
-    btn_choose_data_adults = Button(tab_report_adults, text='1) Выберите файл с параметрами',
+    btn_choose_data_all_age = Button(tab_report_all_age, text='1) Выберите файл с параметрами',
                                     font=('Arial Bold', 14),
-                                    command=select_file_params_adults
+                                    command=select_file_params_all_age
                                     )
-    btn_choose_data_adults.grid(column=0, row=2, padx=10, pady=10)
+    btn_choose_data_all_age.grid(column=0, row=2, padx=10, pady=10)
 
     # Создаем кнопку Выбрать файл с данными
-    btn_choose_data_adults = Button(tab_report_adults, text='2) Выберите файл с результатами',
+    btn_choose_data_all_age = Button(tab_report_all_age, text='2) Выберите файл с результатами',
                                     font=('Arial Bold', 14),
-                                    command=select_file_data_xlsx_adults
+                                    command=select_file_data_xlsx_all_age
                                     )
-    btn_choose_data_adults.grid(column=0, row=3, padx=10, pady=10)
+    btn_choose_data_all_age.grid(column=0, row=3, padx=10, pady=10)
 
     # Создаем кнопку для выбора папки куда будут генерироваться файлы
 
-    btn_choose_end_folder_adults = Button(tab_report_adults, text='3) Выберите конечную папку',
+    btn_choose_end_folder_all_age = Button(tab_report_all_age, text='3) Выберите конечную папку',
                                           font=('Arial Bold', 14),
-                                          command=select_end_folder_adults
+                                          command=select_end_folder_all_age
                                           )
-    btn_choose_end_folder_adults.grid(column=0, row=4, padx=10, pady=10)
+    btn_choose_end_folder_all_age.grid(column=0, row=4, padx=10, pady=10)
 
     # Создаем поле для ввода количества колонок без вопросов(анкетные данные)
     # Определяем переменную
-    var_entry_threshold_adults = StringVar()
+    var_entry_threshold_all_age = StringVar()
     # Описание поля
-    label_name_threshold_adults = Label(tab_report_adults,
-                                        text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам теста\nНапример 2')
-    label_name_threshold_adults.grid(column=0, row=5, padx=10, pady=5)
+    label_name_threshold_all_age = Label(tab_report_all_age,
+                                        text='4) Введите количество колонок в начале таблицы\n не относящихся к вопросам тестов\nНапример 2')
+    label_name_threshold_all_age.grid(column=0, row=5, padx=10, pady=5)
     # поле ввода
-    entry_threshold_adults = Entry(tab_report_adults, textvariable=var_entry_threshold_adults,
+    entry_threshold_all_age = Entry(tab_report_all_age, textvariable=var_entry_threshold_all_age,
                                    width=30)
-    entry_threshold_adults.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
+    entry_threshold_all_age.grid(column=0, row=6, padx=5, pady=5, ipadx=30, ipady=4)
 
 
     # Создаем поле для ввода количества колонок по которым нужно сделать свод
     # Определяем переменную
-    var_entry_svod_adults = StringVar()
+    var_entry_svod_all_age = StringVar()
     # Описание поля
-    label_name_svod_adults = Label(tab_report_adults,
+    label_name_svod_all_age = Label(tab_report_all_age,
                                         text='5) Введите через запятую порядковые номера колонок по которым нужно сделать свод.\n'
-                                             'Например 1,2 или 2\n'
+                                             'Например 1,2 или 2 или 3,1,2\n'
                                              'или оставьте это поле пустым\n'
                                              ' если вам не надо делать своды по организациям, категориям и т.п.\n'
-                                             'Можно ввести не более 2 целых цифр разделенных запятой')
-    label_name_svod_adults.grid(column=0, row=7, padx=10, pady=5)
+                                             'Можно ввести не более 3 целых цифр разделенных запятой')
+    label_name_svod_all_age.grid(column=0, row=7, padx=10, pady=5)
     # поле ввода
-    entry_svod_adults = Entry(tab_report_adults, textvariable=var_entry_svod_adults,
+    entry_svod_all_age = Entry(tab_report_all_age, textvariable=var_entry_svod_all_age,
                                    width=30)
-    entry_svod_adults.grid(column=0, row=8, padx=5, pady=5, ipadx=30, ipady=4)
+    entry_svod_all_age.grid(column=0, row=8, padx=5, pady=5, ipadx=30, ipady=4)
 
 
 
 
     # Создаем кнопку обработки данных
 
-    btn_proccessing_data_adults = Button(tab_report_adults, text='6) Обработать данные',
+    btn_proccessing_data_all_age = Button(tab_report_all_age, text='6) Обработать данные',
                                          font=('Arial Bold', 14),
-                                         command=processing_adults
+                                         command=processing_all_age
                                          )
-    btn_proccessing_data_adults.grid(column=0, row=9, padx=10, pady=10)
+    btn_proccessing_data_all_age.grid(column=0, row=9, padx=10, pady=10)
 
 
 

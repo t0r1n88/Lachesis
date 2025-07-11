@@ -137,7 +137,7 @@ def check_svod_cols(df:pd.DataFrame,str_svod_cols:str,threshold:int):
 
 
 
-def generate_result_adults(params_adults: str, data_adults: str, end_folder: str, threshold_base: int,svod_cols:str):
+def generate_result_all_age(params_adults: str, data_adults: str, end_folder: str, threshold_base: int, svod_cols:str):
     """
     Функция для генерации результатов комплексного теста для взрослых
     :param params_adults: какие тесты используются и в каком порядке
@@ -776,6 +776,6 @@ if __name__ == '__main__':
     main_quantity_descr_cols = 4
     main_svod_cols = ''
 
-    generate_result_adults(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols,main_svod_cols)
+    generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
     print('Lindy Booth')
