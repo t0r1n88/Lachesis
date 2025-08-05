@@ -631,6 +631,12 @@ def processing_shein_cok(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svo
                              f'{error_message}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
+    except BadOrderCOK:
+        messagebox.showerror('Лахеcис',
+                             f'При обработке вопросов теста Ценностные ориентиры карьеры обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
+                             f'{error_order_message}\n'
+                             f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
+
 
     except BadCountColumnsCOK:
         messagebox.showerror('Лахеcис',

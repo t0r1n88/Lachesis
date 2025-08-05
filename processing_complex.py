@@ -50,6 +50,9 @@ from career_guidance.grezov_ntfp import processing_grezov_ntfp # Наемный 
 from career_guidance.andreeva_pup import processing_andreeva_pup # Профессиональные установки подростков Андреева
 from career_guidance.godlinik_nvid import processing_godlinik_nvid # Направленность на вид инженерной деятельности Годлиник
 
+# ПТСР
+from ptsr.misisip_scale_military_option import processing_misisip_scale_military_option # Миссипская шкала ПТСР военный вариант
+
 
 
 
@@ -193,6 +196,11 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'НВИД Годлиник':(processing_godlinik_nvid,24),
 
 
+                     'Миссисипская шкала ПТСР-В':(processing_misisip_scale_military_option,35),
+
+
+
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -238,6 +246,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Профессиональные установки подростков Андреева': 'Профессиональные установки подростков Андреева',
                               'НВИД Годлиник': 'Направленность на вид инженерной деятельности',
 
+                              'Миссисипская шкала ПТСР-В': 'Миссисипская шкала ПТСР военный вариант',
+
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -254,6 +264,10 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина',
 
                            'Склонность к девиантному поведению Леус',
+
+                           'Миссисипская шкала ПТСР-В',
+
+
 
                            ]
         lst_check_alert_tests = []
@@ -328,6 +342,13 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
             # получаем колонки относящиеся к тесту
             temp_df = df.iloc[:, threshold_finshed:threshold_finshed + dct_tests[name_test][1]]
+            # Очищаем от лишних пробельных символов в начале и в конце
+            lst_temp_cols = temp_df.columns
+            lst_temp_cols = list(map(str,lst_temp_cols))
+            lst_temp_cols = list(map(str.strip, lst_temp_cols))
+            temp_df.columns = lst_temp_cols
+
+
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
             temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df,lst_svod_cols)
 
@@ -359,6 +380,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
                                '250-299','300 и более','очень высокий уровень','низкий уровень адаптации','выраженная социально-психологическая дезадаптация',
                                'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая','истинное депрессивное состояние',
+                               'посттравматическое стрессовое расстройство'
                                ] # особое внимание
 
 
@@ -367,6 +389,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
                                    'субдепрессивное состояние или маскированная депрессия',
+                                   'нарушение адаптации'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
 
@@ -763,17 +786,13 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
 if __name__ == '__main__':
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Выгорание.xlsx'
-    # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Адаптация первокурсников.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Профориентация вариант 2.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры ПТСР.xlsx'
 
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профессиональное выгорание.xlsx'
-    # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Адаптация первокурсников.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Профориентация вариант 2.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/ПТСР.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
+    main_quantity_descr_cols = 3
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
