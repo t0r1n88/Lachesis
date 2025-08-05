@@ -218,7 +218,7 @@ def processing_misisip_scale_military_option(result_df: pd.DataFrame, answers_df
 
         # словарь для замены слов на числа
         dct_replace_value = {'совершенно неверно': 1,
-                             'иногда неверно': 2,
+                             'иногда верно': 2,
                              'до некоторой степени верно': 3,
                              'верно': 4,
                              'совершенно верно': 5}
