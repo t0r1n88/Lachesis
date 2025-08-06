@@ -55,6 +55,7 @@ from ptsr.military_missisip_scale import processing_misisip_scale_military_optio
 from ptsr.civil_missisip_scale import processing_misisip_scale_civil_option # Миссисипская шкала ПТСР гражданский вариант
 from ptsr.shovts_tarabrina import processing_shovts_tarabrina # Шкала оценки влияния травматического события (ШОВТС) Тарабрина
 from ptsr.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Симптоматический опросник SCL-K-9 Золотарева
+from ptsr.scale_intensity_war_exp import processing_scale_intensity_war_exp # Шкала оценки интенсивности боевого опыта Тарабрина
 
 
 
@@ -67,7 +68,6 @@ import pandas as pd
 pd.options.mode.chained_assignment = None
 from tkinter import messagebox
 import re
-import time
 
 
 class NotSameSize(Exception):
@@ -203,7 +203,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Миссисипская шкала ПТСР-В':(processing_misisip_scale_military_option,35),
                      'Миссисипская шкала ПТСР-Г':(processing_misisip_scale_civil_option,39),
                      'ШОВТС Тарабрина':(processing_shovts_tarabrina,22),
-                     'SCL-K-9 Золотарева':(processing_scl_k_nine_zolotareva,9)
+                     'SCL-K-9 Золотарева':(processing_scl_k_nine_zolotareva,9),
+                     'Шкала оценки интенсивности боевого опыта':(processing_scale_intensity_war_exp,7),
 
 
 
@@ -257,6 +258,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Миссисипская шкала ПТСР-Г': 'Миссисипская шкала ПТСР гражданский вариант',
                               'ШОВТС Тарабрина': 'Шкала оценки влияния травматического события Тарабрина',
                               'SCL-K-9 Золотарева': 'Симптоматический опросник SCL-K-9 Золотарева',
+                              'Шкала оценки интенсивности боевого опыта': 'Шкала оценки интенсивности боевого опыта Тарабрина',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -276,6 +278,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Склонность к девиантному поведению Леус',
 
                            'Миссисипская шкала ПТСР-В','Миссисипская шкала ПТСР-Г','ШОВТС Тарабрина','SCL-K-9 Золотарева',
+                           'Шкала оценки интенсивности боевого опыта',
 
 
 
