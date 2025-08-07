@@ -1,5 +1,5 @@
 """
-Скрипт для обработки тестов для взрослых
+Скрипт для обработки тестов
 """
 # Тесты Профессиональное выгорание
 from prof_burnout.vodopyanova_pedagog_prof_burnout import processing_vod_ped_prof_burnout # Профессиональное выгорание педагогов Водопьянова
@@ -58,6 +58,7 @@ from ptsr.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Сим
 from ptsr.scale_intensity_war_exp import processing_scale_intensity_war_exp # Шкала оценки интенсивности боевого опыта Тарабрина
 from ptsr.screening_ptsr import processing_scrining_ptsr # Скрининнг ПТСР Brewin
 from ptsr.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
+from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Методика оценки нервно-психической устойчивости «Прогноз-2» В.Ю. Рыбников
 
 
 
@@ -209,6 +210,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Шкала оценки интенсивности боевого опыта':(processing_scale_intensity_war_exp,7),
                      'Опросник на скрининг ПТСР':(processing_scrining_ptsr,10),
                      'SCL-90-R Тарабрина':(processing_scl_r_nineteen_tarabrina,90),
+                     'Прогноз-2 Рыбников':(processing_forecast_two_rybnikov,86),
 
 
 
@@ -265,6 +267,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Шкала оценки интенсивности боевого опыта': 'Шкала оценки интенсивности боевого опыта Тарабрина',
                               'Опросник на скрининг ПТСР': 'Опросник на скрининг ПТСР',
                               'SCL-90-R Тарабрина': 'Симптоматический опросник SCL-90-R Тарабрина',
+                              'Прогноз-2 Рыбников': 'Оценка нервно-психической устойчивости «Прогноз-2',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -284,7 +287,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Склонность к девиантному поведению Леус',
 
                            'Миссисипская шкала ПТСР-В','Миссисипская шкала ПТСР-Г','ШОВТС Тарабрина','SCL-K-9 Золотарева',
-                           'Шкала оценки интенсивности боевого опыта','Опросник на скрининг ПТСР','SCL-90-R Тарабрина'
+                           'Шкала оценки интенсивности боевого опыта','Опросник на скрининг ПТСР','SCL-90-R Тарабрина',
+                           'Прогноз-2 Рыбников'
 
                            ]
         lst_check_alert_tests = []
@@ -397,7 +401,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
                                '250-299','300 и более','очень высокий уровень','низкий уровень адаптации','выраженная социально-психологическая дезадаптация',
                                'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая','истинное депрессивное состояние',
-                               'посттравматическое стрессовое расстройство','151-175','176-195','81-110','27-36','8-10'
+                               'посттравматическое стрессовое расстройство','151-175','176-195','81-110','27-36','8-10','неблагоприятный'
                                ] # особое внимание
 
 
