@@ -291,6 +291,23 @@ def calc_level_add(value):
     else:
         return '21-28'
 
+def create_result_scl_r_nineteen_tarabrina(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    # Тревожность
+    lst_reindex_one_level_cols = lst_svod_cols.copy()
+    lst_reindex_one_level_cols.extend( ['низкий уровень', 'средний уровень', 'высокий уровень',
+                                   'Итого'])
+
+
+
+
+
 
 
 
@@ -440,12 +457,154 @@ def processing_scl_r_nineteen_tarabrina(result_df: pd.DataFrame, answers_df: pd.
     base_df['Значение_ADD'] = answers_df.apply(calc_value_add, axis=1)
     base_df['Диапазон_ADD'] = base_df['Значение_ADD'].apply(calc_level_add)
 
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+
+    part_df['СЦЛ_Р_Т_GSI_Значение'] = base_df['Значение_GSI']
+    part_df['СЦЛ_Р_Т_GSI_Диапазон'] = base_df['Диапазон_GSI']
+
+    part_df['СЦЛ_Р_Т_PST_Значение'] = base_df['Значение_PST']
+    part_df['СЦЛ_Р_Т_PST_Диапазон'] = base_df['Диапазон_PST']
+
+    part_df['СЦЛ_Р_Т_PSDI_Значение'] = base_df['Значение_PSDI']
+    part_df['СЦЛ_Р_Т_PSDI_Диапазон'] = base_df['Диапазон_PSDI']
+
+    part_df['СЦЛ_Р_Т_SOM_Значение'] = base_df['Значение_SOM']
+    part_df['СЦЛ_Р_Т_SOM_Диапазон'] = base_df['Диапазон_SOM']
+
+    part_df['СЦЛ_Р_Т_OC_Значение'] = base_df['Значение_OC']
+    part_df['СЦЛ_Р_Т_OC_Диапазон'] = base_df['Диапазон_OC']
+
+    part_df['СЦЛ_Р_Т_INT_Значение'] = base_df['Значение_INT']
+    part_df['СЦЛ_Р_Т_INT_Диапазон'] = base_df['Диапазон_INT']
+
+    part_df['СЦЛ_Р_Т_DEP_Значение'] = base_df['Значение_DEP']
+    part_df['СЦЛ_Р_Т_DEP_Диапазон'] = base_df['Диапазон_DEP']
+
+    part_df['СЦЛ_Р_Т_ANX_Значение'] = base_df['Значение_ANX']
+    part_df['СЦЛ_Р_Т_ANX_Диапазон'] = base_df['Диапазон_ANX']
+
+    part_df['СЦЛ_Р_Т_HOS_Значение'] = base_df['Значение_HOS']
+    part_df['СЦЛ_Р_Т_HOS_Диапазон'] = base_df['Диапазон_HOS']
+
+    part_df['СЦЛ_Р_Т_PHOB_Значение'] = base_df['Значение_PHOB']
+    part_df['СЦЛ_Р_Т_PHOB_Диапазон'] = base_df['Диапазон_PHOB']
+
+    part_df['СЦЛ_Р_Т_PAR_Значение'] = base_df['Значение_PAR']
+    part_df['СЦЛ_Р_Т_PAR_Диапазон'] = base_df['Диапазон_PAR']
+
+    part_df['СЦЛ_Р_Т_PSY_Значение'] = base_df['Значение_PSY']
+    part_df['СЦЛ_Р_Т_PSY_Диапазон'] = base_df['Диапазон_PSY']
+
+    part_df['СЦЛ_Р_Т_ADD_Значение'] = base_df['Значение_ADD']
+    part_df['СЦЛ_Р_Т_ADD_Диапазон'] = base_df['Диапазон_ADD']
+
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    # Соединяем анкетную часть с результатной
+    base_df = pd.concat([result_df, base_df], axis=1)
+    base_df.sort_values(by='Значение_GSI', ascending=False, inplace=True)  # сортируем
+
+    # считаем среднее значение по шкалам
+    avg_gsi = round(base_df['Значение_GSI'].mean(), 2)
+    avg_pst = round(base_df['Значение_PST'].mean(), 2)
+    avg_psdi = round(base_df['Значение_PSDI'].mean(), 2)
+
+    avg_som = round(base_df['Значение_SOM'].mean(), 2)
+    avg_oc = round(base_df['Значение_OC'].mean(), 2)
+    avg_int = round(base_df['Значение_INT'].mean(), 2)
+    avg_dep = round(base_df['Значение_DEP'].mean(), 2)
+    avg_anx = round(base_df['Значение_ANX'].mean(), 2)
+    avg_hos = round(base_df['Значение_HOS'].mean(), 2)
+    avg_phob = round(base_df['Значение_PHOB'].mean(), 2)
+    avg_par = round(base_df['Значение_PAR'].mean(), 2)
+    avg_psy = round(base_df['Значение_PSY'].mean(), 2)
+    avg_add = round(base_df['Значение_ADD'].mean(), 2)
+
+    avg_dct = {'Среднее значение индекса GSI': avg_gsi,
+               'Среднее значение индекса PST': avg_pst,
+               'Среднее значение индекса PSDI': avg_psdi,
+
+               'Среднее значение шкалы SOM': avg_som,
+               'Среднее значение шкалы OC': avg_oc,
+               'Среднее значение шкалы INT': avg_int,
+               'Среднее значение шкалы DEP': avg_dep,
+               'Среднее значение шкалы ANX': avg_anx,
+               'Среднее значение шкалы HOS': avg_hos,
+               'Среднее значение шкалы PHOB': avg_phob,
+               'Среднее значение шкалы PAR': avg_par,
+               'Среднее значение шкалы PSY': avg_psy,
+               'Среднее значение шкалы ADD': avg_add,
+               }
+
+    avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+    avg_df = avg_df.reset_index()
+    avg_df.columns = ['Показатель', 'Среднее значение']
+
+    # Делаем свод  по  индикаторам
+    dct_svod_sub = {'Значение_GSI': 'Диапазон_GSI',
+                    'Значение_PSDI': 'Диапазон_PSDI',
+                    }
+
+    dct_rename_svod_sub = {'Значение_GSI': 'общий индекс тяжести симптомов (GSI)',
+                           'Значение_PSDI': 'индекс наличного симптоматического дистресса (PTSD)',
+                           }
+
+    # Списки для шкал
+    lst_level = ['0-0.25','0.26-0.5','0.51-0.75','0.76-1','1.01-1.25','1.26-1.50','1.51-1.75','1.76-2','2.01-2.50','2.51-3','3.01-3.50','3.51-4']
+
+    base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_level)
+
+    # Делаем свод  PST
+    dct_svod_pst = {'Значение_PST': 'Диапазон_PST',
+                    }
+
+    dct_rename_svod_pst = {'Значение_PST': 'общее число утвердительных ответов (PST)',
+                           }
+
+    # Списки для шкал
+    lst_pst = ['0-25','26-50','51-75','76-90']
+
+    base_svod_pst_df = create_union_svod(base_df, dct_svod_pst, dct_rename_svod_pst, lst_pst)
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               'Свод по GSI,PSDI': base_svod_sub_df,
+               'Свод по PST': base_svod_pst_df,
+               'Среднее по шкалам': avg_df,
+               }
+
+    dct_prefix = {'Диапазон_GSI': 'GSI',
+                  'Диапазон_PSDI': 'PSDI',
+                  }
+
+    out_dct = create_list_on_level(base_df, out_dct, lst_level, dct_prefix)
+
+    dct_prefix_pst = {'Диапазон_PST': 'PST',
+                  }
+
+    out_dct = create_list_on_level(base_df, out_dct, lst_pst, dct_prefix_pst)
+
+
+
+    """
+        Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+        """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+    else:
+        out_dct = create_result_scl_r_nineteen_tarabrina(base_df, out_dct, lst_svod_cols)
+
+        return out_dct, part_df
 
 
 
 
 
-    base_df.to_excel('data.xlsx')
+
+
+
+
 
 
 
