@@ -77,12 +77,12 @@ def create_result_scl_k_nine_zolotareva(base_df:pd.DataFrame, out_dct:dict, lst_
                                'Итого'])  # Основная шкала
 
     svod_count_one_level_df = calc_count_scale(base_df, lst_svod_cols,
-                                                    'Значение_СЦЛ_К_9',
-                                                    'Диапазон_СЦЛ_К_9',
+                                                    'Значение_СЦЛ_К_З',
+                                                    'Диапазон_СЦЛ_К_З',
                                                     lst_reindex_main_level_cols,lst_level)
 
     # Считаем среднее
-    svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_СЦЛ_К_9')
+    svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_СЦЛ_К_З')
     # очищаем название колонки по которой делали свод
     out_name_lst = []
 
@@ -111,8 +111,8 @@ def create_result_scl_k_nine_zolotareva(base_df:pd.DataFrame, out_dct:dict, lst_
                                'Итого']
 
             svod_count_column_level_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                       'Значение_СЦЛ_К_9',
-                                                       'Диапазон_СЦЛ_К_9',
+                                                       'Значение_СЦЛ_К_З',
+                                                       'Диапазон_СЦЛ_К_З',
                                                        lst_reindex_column_level_cols, lst_level)
 
             # Считаем среднее
@@ -203,39 +203,39 @@ def processing_scl_k_nine_zolotareva(result_df: pd.DataFrame, answers_df: pd.Dat
 
         base_df = pd.DataFrame()
 
-        base_df['Значение_СЦЛ_К_9'] = answers_df.sum(axis=1)
-        base_df['Диапазон_СЦЛ_К_9'] = base_df['Значение_СЦЛ_К_9'].apply(
+        base_df['Значение_СЦЛ_К_З'] = answers_df.sum(axis=1)
+        base_df['Диапазон_СЦЛ_К_З'] = base_df['Значение_СЦЛ_К_З'].apply(
             calc_level)
 
         # Создаем датафрейм для создания части в общий датафрейм
         part_df = pd.DataFrame()
-        part_df['СЦЛ_К_9_З_Значение'] = base_df['Значение_СЦЛ_К_9']
-        part_df['СЦЛ_К_9_З_Диапазон'] = base_df['Диапазон_СЦЛ_К_9']
+        part_df['СЦЛ_К_З_Значение'] = base_df['Значение_СЦЛ_К_З']
+        part_df['СЦЛ_К_З_Диапазон'] = base_df['Диапазон_СЦЛ_К_З']
 
         # Соединяем анкетную часть с результатной
         base_df = pd.concat([result_df, base_df], axis=1)
 
-        base_df.sort_values(by='Значение_СЦЛ_К_9', ascending=False, inplace=True)  # сортируем
+        base_df.sort_values(by='Значение_СЦЛ_К_З', ascending=False, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
         # Общий свод по уровням общей шкалы всего в процентном соотношении
         base_svod_all_df = pd.DataFrame(
             index=['0-5','6-12','13-19','20-26','27-36'])
 
-        svod_level_df = pd.pivot_table(base_df, index='Диапазон_СЦЛ_К_9',
-                                       values='Значение_СЦЛ_К_9',
+        svod_level_df = pd.pivot_table(base_df, index='Диапазон_СЦЛ_К_З',
+                                       values='Значение_СЦЛ_К_З',
                                        aggfunc='count')
 
         svod_level_df['% от общего'] = round(
-            svod_level_df['Значение_СЦЛ_К_9'] / svod_level_df[
-                'Значение_СЦЛ_К_9'].sum(), 3) * 100
+            svod_level_df['Значение_СЦЛ_К_З'] / svod_level_df[
+                'Значение_СЦЛ_К_З'].sum(), 3) * 100
 
         base_svod_all_df = base_svod_all_df.join(svod_level_df)
 
         # # Создаем суммирующую строку
         base_svod_all_df.loc['Итого'] = svod_level_df.sum()
         base_svod_all_df.reset_index(inplace=True)
-        base_svod_all_df.rename(columns={'index': 'Уровень', 'Значение_СЦЛ_К_9': 'Количество'},
+        base_svod_all_df.rename(columns={'index': 'Уровень', 'Значение_СЦЛ_К_З': 'Количество'},
                                 inplace=True)
         # формируем основной словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
@@ -246,7 +246,7 @@ def processing_scl_k_nine_zolotareva(result_df: pd.DataFrame, answers_df: pd.Dat
         dct_level = dict()
 
         for level in lst_level:
-            temp_df = base_df[base_df['Диапазон_СЦЛ_К_9'] == level]
+            temp_df = base_df[base_df['Диапазон_СЦЛ_К_З'] == level]
             if temp_df.shape[0] != 0:
                 dct_level[level] = temp_df
 

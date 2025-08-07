@@ -57,6 +57,7 @@ from ptsr.shovts_tarabrina import processing_shovts_tarabrina # Шкала оц�
 from ptsr.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Симптоматический опросник SCL-K-9 Золотарева
 from ptsr.scale_intensity_war_exp import processing_scale_intensity_war_exp # Шкала оценки интенсивности боевого опыта Тарабрина
 from ptsr.screening_ptsr import processing_scrining_ptsr # Скрининнг ПТСР Brewin
+from ptsr.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
 
 
 
@@ -207,6 +208,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'SCL-K-9 Золотарева':(processing_scl_k_nine_zolotareva,9),
                      'Шкала оценки интенсивности боевого опыта':(processing_scale_intensity_war_exp,7),
                      'Опросник на скрининг ПТСР':(processing_scrining_ptsr,10),
+                     'SCL-90-R Тарабрина':(processing_scl_r_nineteen_tarabrina,90),
 
 
 
@@ -262,6 +264,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'SCL-K-9 Золотарева': 'Симптоматический опросник SCL-K-9 Золотарева',
                               'Шкала оценки интенсивности боевого опыта': 'Шкала оценки интенсивности боевого опыта Тарабрина',
                               'Опросник на скрининг ПТСР': 'Опросник на скрининг ПТСР',
+                              'SCL-90-R Тарабрина': 'Симптоматический опросник SCL-90-R Тарабрина',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -281,9 +284,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Склонность к девиантному поведению Леус',
 
                            'Миссисипская шкала ПТСР-В','Миссисипская шкала ПТСР-Г','ШОВТС Тарабрина','SCL-K-9 Золотарева',
-                           'Шкала оценки интенсивности боевого опыта','Опросник на скрининг ПТСР'
-
-
+                           'Шкала оценки интенсивности боевого опыта','Опросник на скрининг ПТСР','SCL-90-R Тарабрина'
 
                            ]
         lst_check_alert_tests = []
@@ -803,12 +804,14 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры ПТСР.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры одинарный ПТСР.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/ПТСР.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Одинарный ПТСР.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
+    main_quantity_descr_cols = 3
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
