@@ -59,6 +59,7 @@ from ptsr.scale_intensity_war_exp import processing_scale_intensity_war_exp # Ш
 from ptsr.screening_ptsr import processing_scrining_ptsr # Скрининнг ПТСР Brewin
 from ptsr.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
 from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Методика оценки нервно-психической устойчивости «Прогноз-2» В.Ю. Рыбников
+from ptsr.dass_twenty_one_zolotareva import processing_dass_twenty_one_zolotareva # Шкала депрессии, тревоги и стресса, DASS-21 Золотарева
 
 
 
@@ -211,6 +212,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Опросник на скрининг ПТСР':(processing_scrining_ptsr,10),
                      'SCL-90-R Тарабрина':(processing_scl_r_nineteen_tarabrina,90),
                      'Прогноз-2 Рыбников':(processing_forecast_two_rybnikov,86),
+                     'DASS 21 Золотарева':(processing_dass_twenty_one_zolotareva,21),
 
 
 
@@ -268,6 +270,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Опросник на скрининг ПТСР': 'Опросник на скрининг ПТСР',
                               'SCL-90-R Тарабрина': 'Симптоматический опросник SCL-90-R Тарабрина',
                               'Прогноз-2 Рыбников': 'Оценка нервно-психической устойчивости «Прогноз-2',
+                              'DASS 21 Золотарева': 'Шкала депрессии, тревоги и стресса, DASS-21',
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -288,7 +291,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                            'Миссисипская шкала ПТСР-В','Миссисипская шкала ПТСР-Г','ШОВТС Тарабрина','SCL-K-9 Золотарева',
                            'Шкала оценки интенсивности боевого опыта','Опросник на скрининг ПТСР','SCL-90-R Тарабрина',
-                           'Прогноз-2 Рыбников'
+                           'Прогноз-2 Рыбников','DASS 21 Золотарева'
 
                            ]
         lst_check_alert_tests = []
@@ -401,7 +404,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
                                '250-299','300 и более','очень высокий уровень','низкий уровень адаптации','выраженная социально-психологическая дезадаптация',
                                'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая','истинное депрессивное состояние',
-                               'посттравматическое стрессовое расстройство','151-175','176-195','81-110','27-36','8-10','неблагоприятный'
+                               'посттравматическое стрессовое расстройство','151-175','176-195','81-110','27-36','8-10','неблагоприятный','высокий уровень DASS'
                                ] # особое внимание
 
 
