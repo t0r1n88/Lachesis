@@ -6,7 +6,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,calc_count_scale,create_list_on_level
+from lachesis_support_functions import round_mean,calc_count_scale,create_union_svod
 
 
 class BadOrderBHDI(Exception):
@@ -70,7 +70,7 @@ def calc_value_ka(row):
                 if value == 'нет':
                     value_forward += 1
 
-    return value_forward * 8
+    return value_forward * 11
 
 
 def calc_value_r(row):
@@ -92,7 +92,7 @@ def calc_value_r(row):
                 if value == 'нет':
                     value_forward += 1
 
-    return value_forward * 11
+    return value_forward * 9
 
 
 def calc_value_n(row):
@@ -131,7 +131,7 @@ def calc_value_o(row):
                 if value == 'нет':
                     value_forward += 1
 
-    return value_forward * 9
+    return value_forward * 13
 
 
 def calc_value_p(row):
@@ -175,10 +175,10 @@ def calc_value_va(row):
                 if value == 'нет':
                     value_forward += 1
 
-    return value_forward * 13
+    return value_forward * 8
 
 
-def calc_value_us(row):
+def calc_value_chv(row):
     """
     Функция для подсчета значения шкалы Угрызение совести
     :return: число
@@ -197,7 +197,7 @@ def calc_value_us(row):
 
 def calc_sten_first(value):
     """
-    Функция для подсчета стена для КА ВА Н ЧВ
+    Функция для подсчета стена для ФА, ВА, Н, ЧВ
     :param value:
     :return:
     """
@@ -220,29 +220,85 @@ def calc_sten_first(value):
     else:
         return 9
 
-def calc_level_first(value):
+def calc_level(value):
     """
     Функция для подсчета уровня
     :param value:
     :return:
     """
     if 1 <= value <= 2:
-        return 'низкий'
+        return 'низкий уровень'
     elif 3 <= value <= 4:
-        return 'средний'
+        return 'средний уровень'
     elif 5 <= value <= 6:
-        return 'повышенный'
+        return 'повышенный уровень'
     elif value == 7:
-        return 'высокий'
+        return 'высокий уровень'
     else:
-        return 'очень высокий'
+        return 'очень высокий уровень'
+
+
+def calc_sten_second(value):
+    """
+    Функция для подсчета стена для КА, Р, П, О
+    :param value:
+    :return:
+    """
+    if value == 0:
+        return 1
+    elif 1 <= value <= 14:
+        return 2
+    elif 15 <= value <= 25:
+        return 3
+    elif 26 <= value <= 36:
+        return 4
+    elif 37 <= value <= 47:
+        return 5
+    elif 48 <= value <= 58:
+        return 6
+    elif 59 <= value <= 69:
+        return 7
+    elif 70 <= value <= 80:
+        return 8
+    elif 81 <= value <= 92:
+        return 9
+    else:
+        return 10
+
+
+
+def calc_sten_aggr(value):
+    """
+    Функция для подсчета стена Агрессивность
+    :param value:
+    :return:
+    """
+    if 0<= value == 17.99:
+        return 1
+    elif 18 <= value <= 27.99:
+        return 2
+    elif 28 <= value <= 38.99:
+        return 3
+    elif 39 <= value <= 49.99:
+        return 4
+    elif 50 <= value <= 60.99:
+        return 5
+    elif 61 <= value <= 71.99:
+        return 6
+    elif 72 <= value <= 82.99:
+        return 7
+    elif 83 <= value <= 93.99:
+        return 8
+    else:
+        return 9
+
 
 
 
 
 def calc_sten_host(value):
     """
-    Функция для подсчета стена для Враждебность
+    Функция для подсчета стена Враждебность
     :param value:
     :return:
     """
@@ -267,22 +323,67 @@ def calc_sten_host(value):
     else:
         return 10
 
-def calc_level_host(value):
+def calc_level_main(value):
     """
     Функция для подсчета уровня
     :param value:
     :return:
     """
     if 1 <= value <= 2:
-        return 'низкий'
+        return 'низкий уровень'
     elif 3 <= value <= 4:
-        return 'средний'
+        return 'средний уровень'
     elif 5 <= value <= 6:
-        return 'повышенный'
+        return 'повышенный уровень'
     elif value == 7:
-        return 'высокий'
+        return 'высокий уровень'
     else:
-        return 'очень высокий'
+        return 'очень высокий уровень'
+
+
+def create_list_on_level_bhdi(base_df:pd.DataFrame,out_dct:dict,lst_level:list,dct_prefix:dict):
+    """
+    Функция для создания списков по уровням шкал
+    :param base_df: датафрейм с результатами
+    :param out_dct: словарь с датафреймами
+    :param lst_level: список уровней по которым нужно сделать списки
+    :param dct_prefix: префиксы для названий листов
+    :return: обновлейнный out dct
+    """
+    for key,value in dct_prefix.items():
+        dct_level = dict()
+        for level in lst_level:
+            temp_df = base_df[base_df[key] == level]
+            if temp_df.shape[0] != 0:
+                if level == 'низкий уровень':
+                    level = 'низкий'
+                elif level == 'средний уровень':
+                    level = 'средний'
+                elif level == 'повышенный уровень':
+                    level = 'повышенный'
+                elif level == 'высокий уровень':
+                    level = 'высокий'
+                else:
+                    level = 'очень высокий'
+                dct_level[f'{dct_prefix[key]}. {level}'] = temp_df
+        out_dct.update(dct_level)
+
+    return out_dct
+
+
+def create_result_bass_darki_hvan(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_level = ['неудовлетворительная','удовлетворительная','хорошая','высокая']
+    lst_sten = ['1','2','3','4','5','6','7','8','9','10']
+    lst_forecast = ['неблагоприятный', 'благоприятный']
+    lst_sinc = ['0-4', '5-7', '8-9', '10-12', '13-15']
+
 
 
 
@@ -382,36 +483,206 @@ def processing_bass_darki_hvan_hostility(result_df: pd.DataFrame, answers_df: pd
 
     base_df['ФА_Значение'] = answers_df.apply(calc_value_fa, axis=1)
     base_df['ФА_Стен'] = base_df['ФА_Значение'].apply(calc_sten_first)
-    base_df['ФА_Уровень'] = base_df['ФА_Стен'].apply(calc_level_first)
+    base_df['ФА_Уровень'] = base_df['ФА_Стен'].apply(calc_level)
 
 
     base_df['КА_Значение'] = answers_df.apply(calc_value_ka, axis=1)
+    base_df['КА_Стен'] = base_df['КА_Значение'].apply(calc_sten_second)
+    base_df['КА_Уровень'] = base_df['КА_Стен'].apply(calc_level)
+
+
     base_df['Р_Значение'] = answers_df.apply(calc_value_r, axis=1)
+    base_df['Р_Стен'] = base_df['Р_Значение'].apply(calc_sten_second)
+    base_df['Р_Уровень'] = base_df['Р_Стен'].apply(calc_level)
+
 
     base_df['Н_Значение'] = answers_df.apply(calc_value_n, axis=1)
     base_df['Н_Стен'] = base_df['Н_Значение'].apply(calc_sten_first)
-    base_df['Н_Уровень'] = base_df['Н_Стен'].apply(calc_level_first)
+    base_df['Н_Уровень'] = base_df['Н_Стен'].apply(calc_level)
 
     base_df['О_Значение'] = answers_df.apply(calc_value_o, axis=1)
+    base_df['О_Стен'] = base_df['О_Значение'].apply(calc_sten_second)
+    base_df['О_Уровень'] = base_df['О_Стен'].apply(calc_level)
+
     base_df['П_Значение'] = answers_df.apply(calc_value_p, axis=1)
+    base_df['П_Стен'] = base_df['П_Значение'].apply(calc_sten_second)
+    base_df['П_Уровень'] = base_df['П_Стен'].apply(calc_level)
 
     base_df['ВА_Значение'] = answers_df.apply(calc_value_va, axis=1)
     base_df['ВА_Стен'] = base_df['ВА_Значение'].apply(calc_sten_first)
-    base_df['ВА_Уровень'] = base_df['ВА_Стен'].apply(calc_level_first)
+    base_df['ВА_Уровень'] = base_df['ВА_Стен'].apply(calc_level)
 
-    base_df['ЧВ_Значение'] = answers_df.apply(calc_value_us, axis=1)
+    base_df['ЧВ_Значение'] = answers_df.apply(calc_value_chv, axis=1)
     base_df['ЧВ_Стен'] = base_df['ЧВ_Значение'].apply(calc_sten_first)
-    base_df['ЧВ_Уровень'] = base_df['ЧВ_Стен'].apply(calc_level_first)
+    base_df['ЧВ_Уровень'] = base_df['ЧВ_Стен'].apply(calc_level)
+
+    base_df['Агрессивность_Значение'] = round(base_df[['ФА_Значение', 'КА_Значение','ВА_Значение']].sum(axis=1) / 3, 2)
+    base_df['Агрессивность_Стен'] = base_df['Агрессивность_Значение'].apply(calc_sten_aggr)
+    base_df['Агрессивность_Уровень'] = base_df['Агрессивность_Стен'].apply(calc_level_main)
 
     base_df['Враждебность_Значение'] = round(base_df[['О_Значение','П_Значение']].sum(axis=1) / 2,2)
     base_df['Враждебность_Стен'] = base_df['Враждебность_Значение'].apply(calc_sten_host)
-    base_df['Враждебность_Уровень'] = base_df['Враждебность_Стен'].apply(calc_level_host)
+    base_df['Враждебность_Уровень'] = base_df['Враждебность_Стен'].apply(calc_level_main)
+
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+    part_df['УАБД_Х_Агр_Значение'] = base_df['Агрессивность_Значение']
+    part_df['УАБД_Х_Агр_Стен'] = base_df['Агрессивность_Стен']
+    part_df['УАБД_Х_Агр_Уровень'] = base_df['Агрессивность_Уровень']
+
+    part_df['УАБД_Х_Вр_Значение'] = base_df['Враждебность_Значение']
+    part_df['УАБД_Х_Вр_Стен'] = base_df['Враждебность_Стен']
+    part_df['УАБД_Х_Вр_Уровень'] = base_df['Враждебность_Уровень']
+
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    new_order_cols = ['Агрессивность_Значение', 'Агрессивность_Стен','Агрессивность_Уровень',
+                      'Враждебность_Значение','Враждебность_Стен','Враждебность_Уровень',
+                      'ФА_Значение','ФА_Стен','ФА_Уровень',
+                      'КА_Значение','КА_Стен','КА_Уровень',
+                      'Р_Значение','Р_Стен','Р_Уровень',
+                      'Н_Значение','Н_Стен','Н_Уровень',
+                      'О_Значение','О_Стен','О_Уровень',
+                      'П_Значение','П_Стен','П_Уровень',
+                      'ВА_Значение','ВА_Стен','ВА_Уровень',
+                      'ЧВ_Значение','ЧВ_Стен','ЧВ_Уровень'
+                      ]
+    base_df = base_df.reindex(columns=new_order_cols)
+
+    # Соединяем анкетную часть с результатной
+    base_df = pd.concat([result_df, base_df], axis=1)
+    base_df.sort_values(by='Агрессивность_Значение', ascending=False, inplace=True)  # сортируем
+
+
+    # Делаем свод  по  шкалам
+    dct_svod_sub = {'Агрессивность_Значение': 'Агрессивность_Уровень',
+                    'Враждебность_Значение': 'Враждебность_Уровень',
+                    'ФА_Значение': 'ФА_Уровень',
+                    'КА_Значение':'КА_Уровень',
+                    'Р_Значение':'Р_Уровень',
+                    'Н_Значение':'Н_Уровень',
+                    'О_Значение':'О_Уровень',
+                    'П_Значение':'П_Уровень',
+                    'ВА_Значение':'ВА_Уровень',
+                    'ЧВ_Значение':'ЧВ_Уровень',
+                    }
+
+    dct_rename_svod_sub = {'Агрессивность_Значение': 'Агрессивность',
+                           'Враждебность_Значение': 'Враждебность',
+                           'ФА_Значение': 'Физическая агрессия',
+                           'КА_Значение':'Косвенная агрессия',
+                           'Р_Значение':'Раздражение',
+                           'Н_Значение':'Негативизм',
+                           'О_Значение':'Обида',
+                           'П_Значение':'Подозрительность',
+                           'ВА_Значение':'Вербальная агрессия',
+                           'ЧВ_Значение':'Чувство вины',
+                           }
+
+    lst_sub = ['низкий уровень','средний уровень','повышенный уровень','высокий уровень','очень высокий уровень']
+
+    base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
+
+
+    # Делаем свод по стенам
+    dct_svod_sten = {'Агрессивность_Значение': 'Агрессивность_Стен',
+                    'Враждебность_Значение': 'Враждебность_Стен',
+                    'ФА_Значение': 'ФА_Стен',
+                    'КА_Значение':'КА_Стен',
+                    'Р_Значение':'Р_Стен',
+                    'Н_Значение':'Н_Стен',
+                    'О_Значение':'О_Стен',
+                    'П_Значение':'П_Стен',
+                    'ВА_Значение':'ВА_Стен',
+                    'ЧВ_Значение':'ЧВ_Стен',
+                    }
+
+    dct_rename_svod_sten = {'Агрессивность_Значение': 'Агрессивность',
+                           'Враждебность_Значение': 'Враждебность',
+                           'ФА_Значение': 'Физическая агрессия',
+                           'КА_Значение':'Косвенная агрессия',
+                           'Р_Значение':'Раздражение',
+                           'Н_Значение':'Негативизм',
+                           'О_Значение':'Обида',
+                           'П_Значение':'Подозрительность',
+                           'ВА_Значение':'Вербальная агрессия',
+                           'ЧВ_Значение':'Чувство вины',
+                           }
+
+    lst_sten = [1,2,3,4,5,6,7,8,9,10]
+
+    base_svod_sten_df = create_union_svod(base_df, dct_svod_sten, dct_rename_svod_sten, lst_sten)
+
+    # считаем среднее значение по шкалам
+    avg_aggr = round(base_df['Агрессивность_Значение'].mean(), 2)
+    avg_hos = round(base_df['Враждебность_Значение'].mean(), 2)
+    avg_fa = round(base_df['ФА_Значение'].mean(), 2)
+    avg_ka = round(base_df['КА_Значение'].mean(), 2)
+    avg_r = round(base_df['Р_Значение'].mean(), 2)
+    avg_n = round(base_df['Н_Значение'].mean(), 2)
+    avg_o = round(base_df['О_Значение'].mean(), 2)
+    avg_p = round(base_df['П_Значение'].mean(), 2)
+    avg_va = round(base_df['ВА_Значение'].mean(), 2)
+    avg_chv = round(base_df['ЧВ_Значение'].mean(), 2)
+
+    avg_dct = {'Среднее значение индекса Агрессивность': avg_aggr,
+               'Среднее значение индекса Враждебность': avg_hos,
+               'Среднее значение шкалы Физическая агрессия': avg_fa,
+               'Среднее значение шкалы Косвенная агрессия': avg_ka,
+               'Среднее значение шкалы Раздражение': avg_r,
+               'Среднее значение шкалы Негативизм': avg_n,
+               'Среднее значение шкалы Обида': avg_o,
+               'Среднее значение шкалы Подозрительность': avg_p,
+               'Среднее значение шкалы Вербальная агрессия': avg_va,
+               'Среднее значение шкалы Чувство вины': avg_chv,
+               }
+
+    avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+    avg_df = avg_df.reset_index()
+    avg_df.columns = ['Показатель', 'Среднее значение']
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df,
+               'Список для проверки': out_answer_df,
+               'Свод Шкалы':base_svod_sub_df,
+               'Свод Стены':base_svod_sten_df,
+               'Среднее':avg_df,
+               }
+
+    dct_prefix = {'Агрессивность_Уровень': 'Агр',
+                  'Враждебность_Уровень': 'Вр',
+                  'ФА_Уровень': 'Н',
+                  'КА_Уровень':'КА',
+                  'Р_Уровень':'Р',
+                  'Н_Уровень':'Н',
+                  'О_Уровень':'О',
+                  'П_Уровень':'П',
+                  'ВА_Уровень':'ВА',
+                  'ЧВ_Уровень':'ЧВ',
+                  }
+
+    out_dct = create_list_on_level_bhdi(base_df, out_dct, lst_sub, dct_prefix)
+
+    """
+                    Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+                    """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+
+    else:
+        out_dct = create_result_bass_darki_hvan(base_df, out_dct, lst_svod_cols)
 
 
 
 
 
-    base_df.to_excel('data.xlsx')
+
+
+
+
+
+
+
 
 
 
