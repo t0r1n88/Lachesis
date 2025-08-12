@@ -422,8 +422,6 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                'ярко выраженный признак'
                                ] # особое внимание
 
-
-
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом',
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
@@ -431,10 +429,12 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'нарушение адаптации','126-150','61-80','20-26','6-7'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
+            if len(alert_df) == 0:
+                alert_df = pd.DataFrame(columns=main_itog_df.columns)
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
+            attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
             if len(attention_df) == 0:
                 attention_df = pd.DataFrame(columns=main_itog_df.columns)
-            attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
 
 
             # Сохраняем в зависимости от количества сводных колонок
