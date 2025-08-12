@@ -22,6 +22,12 @@ from mental_state.kondash_anxiety_student import processing_kondash_anxiety_stud
 from mental_state.bek_depress import processing_bek_depress # Шкала депрессии Бека
 from mental_state.bek_hopelessness import processing_bek_hopelessness # Шкала безнадежности Бека
 from mental_state.zung_depress import processing_zung_depress # Шкала депресси Цунга
+from mental_state.dass_twenty_one_zolotareva import processing_dass_twenty_one_zolotareva # Шкала депрессии, тревоги и стресса, DASS-21 Золотарева
+from mental_state.psm_twenty_five_vodopyanova import processing_psm_twenty_five_vodopyanova # Шкала психологического стресса PSM-25 Водопьянова
+from mental_state.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Симптоматический опросник SCL-K-9 Золотарева
+from mental_state.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
+
+
 
 # Тесты Лидерство, эмоциональный интеллект
 from ei_leadership.lusin_ei import processing_lusin_ei # Эмоциональный интеллект Люсин
@@ -56,13 +62,10 @@ from career_guidance.godlinik_nvid import processing_godlinik_nvid # Напра�
 from ptsr.military_missisip_scale import processing_misisip_scale_military_option # Миссисипская шкала ПТСР военный вариант
 from ptsr.civil_missisip_scale import processing_misisip_scale_civil_option # Миссисипская шкала ПТСР гражданский вариант
 from ptsr.shovts_tarabrina import processing_shovts_tarabrina # Шкала оценки влияния травматического события (ШОВТС) Тарабрина
-from ptsr.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Симптоматический опросник SCL-K-9 Золотарева
 from ptsr.scale_intensity_war_exp import processing_scale_intensity_war_exp # Шкала оценки интенсивности боевого опыта Тарабрина
 from ptsr.screening_ptsr import processing_scrining_ptsr # Скрининнг ПТСР Brewin
-from ptsr.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
 from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Методика оценки нервно-психической устойчивости «Прогноз-2» В.Ю. Рыбников
-from ptsr.dass_twenty_one_zolotareva import processing_dass_twenty_one_zolotareva # Шкала депрессии, тревоги и стресса, DASS-21 Золотарева
-from ptsr.psm_twenty_five_vodopyanova import processing_psm_twenty_five_vodopyanova # Шкала психологического стресса PSM-25 Водопьянова
+
 
 
 
@@ -425,12 +428,14 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
                                    'субдепрессивное состояние или маскированная депрессия',
-                                   'нарушение адаптации','126-150','61-80','20-26','6-7',
+                                   'нарушение адаптации','126-150','61-80','20-26','6-7'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
-
             attention_df = main_itog_df[~main_itog_df.isin(set_alert_value).any(axis=1)] # получаем оставшихся
+            if len(attention_df) == 0:
+                attention_df = pd.DataFrame(columns=main_itog_df.columns)
             attention_df = attention_df[attention_df.apply(lambda x:count_attention(x,set_attention_value),axis=1)]
+
 
             # Сохраняем в зависимости от количества сводных колонок
             if len(lst_svod_cols) == 0:
@@ -822,16 +827,16 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
 if __name__ == '__main__':
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры ПТСР.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 3.1.xlsx'
+    # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/ПТСР.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Данные 3.1.xlsx'
+    # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
-    main_svod_cols = ''
+    main_quantity_descr_cols = 4
+    main_svod_cols = '3,1,2'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 

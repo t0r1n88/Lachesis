@@ -5,7 +5,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,calc_count_scale
+from lachesis_support_functions import round_mean_two,calc_count_scale
 
 
 
@@ -57,7 +57,7 @@ def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
     """
     calc_mean_df = pd.pivot_table(df, index=lst_cat,
                                        values=val_cat,
-                                       aggfunc=round_mean)
+                                       aggfunc=round_mean_two)
     calc_mean_df.reset_index(inplace=True)
     calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
     return calc_mean_df
@@ -116,7 +116,7 @@ def create_result_scl_k_nine_zolotareva(base_df:pd.DataFrame, out_dct:dict, lst_
                                                        lst_reindex_column_level_cols, lst_level)
 
             # Считаем среднее
-            svod_mean_column_df = calc_mean(base_df, [lst_svod_cols[idx]], 'Значение_СЦЛ_К_9')
+            svod_mean_column_df = calc_mean(base_df, [lst_svod_cols[idx]], 'Значение_СЦЛ_К_З')
             # Готовим наименование
             name_column = lst_svod_cols[idx]
             name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)

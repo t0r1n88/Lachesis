@@ -446,7 +446,7 @@ def open_list_pioneers():
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов психологических тестов ver 3.0')
+    window.title('Лахеcис Обработка результатов психологических тестов ver 3.1')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
@@ -862,7 +862,7 @@ if __name__ == '__main__':
 
     lbl_about = Label(about_frame_description,
                       text="""Лахесис Обработка результатов психологических тестов.
-                              Версия 3.0
+                              Версия 3.1
                               Язык программирования - Python 3\n
                               Используемая лицензия BSD-2-Clause\n
                               Copyright (c) <2025> <Будаев Олег Тимурович>\n
