@@ -27,6 +27,9 @@ from mental_state.psm_twenty_five_vodopyanova import processing_psm_twenty_five_
 from mental_state.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Симптоматический опросник SCL-K-9 Золотарева
 from mental_state.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
 
+# Тесты предложенные РЦО
+from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
+
 
 
 # Тесты Лидерство, эмоциональный интеллект
@@ -187,6 +190,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Шкала безнадежности Бека': (processing_bek_hopelessness, 20),
                      'Шкала депрессии Цунга': (processing_zung_depress, 20),
 
+                     'Школьная тревожность Филлипс': (processing_philips_school_anxiety, 58),
+
 
                      'Эмоциональный интеллект Люсин': (processing_lusin_ei, 46),
                      'Уровень самооценки Ковалев': (processing_usk, 32),
@@ -249,6 +254,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Шкала депрессии Бека': 'Шкала депрессии Бека',
                               'Шкала безнадежности Бека': 'Шкала безнадежности Бека',
                               'Шкала депрессии Цунга': 'Шкала депрессии Цунга',
+                              'Школьная тревожность Филлипс': 'Школьная тревожность Филлипс',
 
                               'Эмоциональный интеллект Люсин': 'Эмоциональный интеллект Люсин',
                               'Уровень самооценки Ковалев': 'Уровень самооценки Ковалев',
@@ -298,6 +304,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                            'Индекс общего самочувствия ВОЗ 1999','Шкала тревожности Кондаша Школьники','Шкала тревожности Кондаша Студенты',
                            'Шкала депрессии Бека','Шкала безнадежности Бека','Шкала депрессии Цунга',
+                           'Школьная тревожность Филлипс',
 
                            'ШНПО ПМ Бойкина','Шкала субъективного остракизма Бойкина',
 
@@ -827,16 +834,16 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
 if __name__ == '__main__':
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 3.1.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры РЦО 5-6 кл.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Данные 3.1.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
-    main_svod_cols = '3,1,2'
+    main_quantity_descr_cols = 3
+    main_svod_cols = '1,2'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
