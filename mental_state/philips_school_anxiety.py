@@ -258,6 +258,69 @@ def calc_level_snsoo(value:int):
 
 
 
+def calc_nfss_value(row):
+    """
+    Фнукция подсчета Низкая физиологическая сопротивляемость стрессу
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет', 'нет',
+               'нет'
+]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_nfss(value:int):
+    """
+    :param value: значение
+    :return:
+    """
+    if value >= 4:
+        return 'высокий уровень ШТФ'
+    elif value > 2:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+
+def calc_psou_value(row):
+    """
+    Фнукция подсчета Проблемы и страхи в отношениях с учителями
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'да', 'нет',
+               'да', 'да',
+               'да', 'нет'
+]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_psou(value:int):
+    """
+    :param value: значение
+    :return:
+    """
+    if value > 6:
+        return 'высокий уровень ШТФ'
+    elif value > 4:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+
+
+
+
+
 
 
 def processing_philips_school_anxiety(result_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
@@ -403,6 +466,17 @@ def processing_philips_school_anxiety(result_df: pd.DataFrame, answers_df: pd.Da
     lst_snsoo = list(map(lambda x:x-1,lst_snsoo))
     base_df['СНСОО_Значение'] =answers_df.take(lst_snsoo,axis=1).apply(calc_snsoo_value,axis=1)
     base_df['СНСОО_Уровень'] = base_df['СНСОО_Значение'].apply(calc_level_snsoo) # Страх не соответствовать ожиданиям окружающих
+
+    lst_nfss = [9,14,18,23,28]
+    lst_nfss = list(map(lambda x:x-1,lst_nfss))
+    base_df['НФСС_Значение'] =answers_df.take(lst_nfss,axis=1).apply(calc_nfss_value,axis=1)
+    base_df['НФСС_Уровень'] = base_df['НФСС_Значение'].apply(calc_level_nfss) # Низкая физиологическая сопротивляемость стрессу
+
+
+    lst_psou = [2,6,11,32,35,41,44,47]
+    lst_psou = list(map(lambda x:x-1,lst_psou))
+    base_df['ПСОУ_Значение'] =answers_df.take(lst_psou,axis=1).apply(calc_psou_value,axis=1)
+    base_df['ПСОУ_Уровень'] = base_df['ПСОУ_Значение'].apply(calc_level_psou) # Проблемы и страхи в отношениях с учителями
 
 
 
