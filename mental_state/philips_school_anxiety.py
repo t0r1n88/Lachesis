@@ -27,15 +27,247 @@ class BadCountColumnsPHSA(Exception):
     pass
 
 
+def calc_all_value(row):
+    """
+    Функция для подсчета значения общей тревожности
+    :param row: строка с ответами
+    :return: число
+    """
+    key_lst = ['нет','нет','нет','нет','нет',
+               'нет','нет','нет','нет','нет',
 
-def processing_philips_school_anxiety(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
+               'да','нет','нет','нет','нет',
+               'нет','нет','нет','нет','да',
+
+               'нет','да','нет','да','да',
+               'нет','нет','нет','нет','да',
+
+               'нет','нет','нет','нет','да',
+               'да','нет','да','да','нет',
+
+               'да','нет','да','да','нет',
+               'нет','нет','нет','нет','нет',
+
+               'нет','нет','нет','нет','нет',
+               'нет','нет','нет'
+               ]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_anxiety(value:int):
+    """
+    Уровень общей тревожности
+    :param value: значение
+    :return:
+    """
+    if value >= 44:
+        return 'высокий уровень ШТФ'
+    elif value > 29:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+def calc_oth_value(row):
+    """
+    Фнукция подсчета общей тревожности в школе
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               'нет','нет',
+               ]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_oth(value:int):
+    """
+    Уровень общей тревожности в школе
+    :param value: значение
+    :return:
+    """
+    if value >= 16:
+        return 'высокий уровень ШТФ'
+    elif value > 11:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+
+def calc_pss_value(row):
+    """
+    Фнукция подсчета переживания социального стресса
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет', 'да',
+               'да', 'да',
+               'нет', 'да',
+               'да', 'нет',
+               'да'
+               ]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_pss(value:int):
+    """
+    Уровень общей тревожности в школе
+    :param value: значение
+    :return:
+    """
+    if value >= 9:
+        return 'высокий уровень ШТФ'
+    elif value > 5:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+def calc_fpvdu_value(row):
+    """
+    Фнукция подсчета Фрустрация потребности в достижении успеха
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет', 'да',
+               'нет', 'нет',
+               'да', 'нет',
+               'нет', 'да',
+               'да', 'да',
+               'да' ]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_fpvdu(value:int):
+    """
+    :param value: значение
+    :return:
+    """
+    if value >= 10:
+        return 'высокий уровень ШТФ'
+    elif value > 6:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+
+def calc_ss_value(row):
+    """
+    Фнукция подсчета Фрустрация потребности в достижении успеха
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет', 'нет',
+               'нет', 'нет'
+]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_ss(value:int):
+    """
+    :param value: значение
+    :return:
+    """
+    if value >= 5:
+        return 'высокий уровень ШТФ'
+    elif value > 3:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+def calc_sspz_value(row):
+    """
+    Фнукция подсчета Страх ситуации проверки знаний
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет', 'нет',
+               'нет', 'нет'
+]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_sspz(value:int):
+    """
+    :param value: значение
+    :return:
+    """
+    if value >= 5:
+        return 'высокий уровень ШТФ'
+    elif value > 3:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+
+def calc_snsoo_value(row):
+    """
+    Фнукция подсчета Страх не соответствовать ожиданиям окружающих
+    :param row:
+    :return:
+    """
+    key_lst = ['нет','нет',
+               'нет', 'нет',
+               'да'
+]
+
+    differences_count = sum(x != y for x, y in zip(list(row), key_lst)) # считаем количество отличий
+    return differences_count
+
+
+def calc_level_snsoo(value:int):
+    """
+    :param value: значение
+    :return:
+    """
+    if value >= 4:
+        return 'высокий уровень ШТФ'
+    elif value > 2:
+        return 'повышенный уровень ШТФ'
+    else:
+        return 'нормальный уровень ШТФ'
+
+
+
+
+
+def processing_philips_school_anxiety(result_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
     """
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
     :param answers_df: часть датафрейма с ответами
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
-    out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+    out_answer_df = result_df.copy()  # делаем копию для последующего соединения с сырыми ответами
     if len(answers_df.columns) != 58:  # проверяем количество колонок с вопросами
         raise BadCountColumnsPHSA
 
@@ -136,6 +368,55 @@ def processing_philips_school_anxiety(base_df: pd.DataFrame, answers_df: pd.Data
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValuePHSA
+
+    base_df = pd.DataFrame()
+    # Основные шкалы
+    base_df['Значение_Тревожность'] = answers_df.apply(calc_all_value, axis=1) # Общая тревожность Значение
+    base_df['Уровень_Тревожность'] = base_df['Значение_Тревожность'].apply(calc_level_anxiety) # Уровень общая тревожность
+
+    lst_oth = [2,4,7,12,16,21,23,26,28,46,47,48,49,50,51,52,53,54,55,56,57,58]
+    lst_oth = list(map(lambda x:x-1,lst_oth))
+    base_df['ОТШ_Значение'] =answers_df.take(lst_oth,axis=1).apply(calc_oth_value,axis=1)
+    base_df['ОТШ_Уровень'] = base_df['ОТШ_Значение'].apply(calc_level_oth) # Уровень общая тревожность в школе
+
+    lst_pss = [5,10,15,20,24,30,33,36,39,42,44]
+    lst_pss = list(map(lambda x:x-1,lst_pss))
+    base_df['ПСС_Значение'] =answers_df.take(lst_pss,axis=1).apply(calc_pss_value,axis=1)
+    base_df['ПСС_Уровень'] = base_df['ПСС_Значение'].apply(calc_level_pss) # Уровень переживание социального стресса
+
+    lst_fpvdu = [1,3,6,11,17,19,25,29,32,35,38,41,43]
+    lst_fpvdu = list(map(lambda x:x-1,lst_fpvdu))
+    base_df['ФПВДУ_Значение'] =answers_df.take(lst_fpvdu,axis=1).apply(calc_fpvdu_value,axis=1)
+    base_df['ФПВДУ_Уровень'] = base_df['ФПВДУ_Значение'].apply(calc_level_fpvdu) # Фрустрация потребности в достижении успеха
+
+    lst_ss = [27,31,34,37,40,45]
+    lst_ss = list(map(lambda x:x-1,lst_ss))
+    base_df['СС_Значение'] =answers_df.take(lst_ss,axis=1).apply(calc_ss_value,axis=1)
+    base_df['СС_Уровень'] = base_df['СС_Значение'].apply(calc_level_ss) # Страх самовыражения
+
+    lst_sspz = [2,7,12,16,21,26]
+    lst_sspz = list(map(lambda x:x-1,lst_sspz))
+    base_df['ССПЗ_Значение'] =answers_df.take(lst_sspz,axis=1).apply(calc_sspz_value,axis=1)
+    base_df['ССПЗ_Уровень'] = base_df['ССПЗ_Значение'].apply(calc_level_sspz) # Страх ситуации проверки знаний
+
+    lst_snsoo = [3,8,13,17,22]
+    lst_snsoo = list(map(lambda x:x-1,lst_snsoo))
+    base_df['СНСОО_Значение'] =answers_df.take(lst_snsoo,axis=1).apply(calc_snsoo_value,axis=1)
+    base_df['СНСОО_Уровень'] = base_df['СНСОО_Значение'].apply(calc_level_snsoo) # Страх не соответствовать ожиданиям окружающих
+
+
+
+
+
+
+
+
+
+
+    base_df.to_excel('data/fgd.xlsx')
+
+
+
 
 
 
