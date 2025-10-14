@@ -433,7 +433,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
                                    'субдепрессивное состояние или маскированная депрессия',
-                                   'нарушение адаптации','126-150','61-80','20-26','6-7'
+                                   'нарушение адаптации','126-150','61-80','20-26','6-7','высокий уровень ШТФ'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             if len(alert_df) == 0:
@@ -843,7 +843,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
