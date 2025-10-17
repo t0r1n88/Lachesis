@@ -70,6 +70,8 @@ from ptsr.screening_ptsr import processing_scrining_ptsr # Скрининнг П
 from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Методика оценки нервно-психической устойчивости «Прогноз-2» В.Ю. Рыбников
 
 
+# Мотивация, риск, избегание неудач
+from motivation.kotik_motiv_target import processing_kotik_motiv_target # Опросник мотивации к достижению цели, к успеху Элерс Котик
 
 
 
@@ -230,6 +232,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'DASS 21 Золотарева':(processing_dass_twenty_one_zolotareva,21),
                      'PSM-25 Водопьянова':(processing_psm_twenty_five_vodopyanova,25),
 
+                     'Опросник мотивации к достижению цели, к успеху Элерс Котик': (processing_kotik_motiv_target, 41)
+
 
 
 
@@ -291,6 +295,10 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Прогноз-2 Рыбников': 'Оценка нервно-психической устойчивости «Прогноз-2',
                               'DASS 21 Золотарева': 'Шкала депрессии, тревоги и стресса, DASS-21',
                               'PSM-25 Водопьянова': 'Шкала психологического стресса PSM-25',
+
+
+                              'Опросник мотивации к достижению цели, к успеху Элерс Котик': 'Опросник мотивации к достижению цели, к успеху Элерс Котик',
+
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -835,9 +843,11 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры РЦО 5-6 кл.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
