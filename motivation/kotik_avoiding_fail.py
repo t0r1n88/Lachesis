@@ -165,6 +165,88 @@ def calc_level_avoid_fail(value:int):
         return 'слишком высокий уровень мотивации к избеганию неудач'
 
 
+def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
+    """
+    Функция для создания сводных датафреймов
+
+    :param df: датафрейм с данными
+    :param lst_cat:список колонок по которым будет формироваться свод
+    :param val_cat:значение по которому будет формиваться свод
+    :return:датафрейм
+    """
+    calc_mean_df = pd.pivot_table(df, index=lst_cat,
+                                       values=val_cat,
+                                       aggfunc=round_mean)
+    calc_mean_df.reset_index(inplace=True)
+    calc_mean_df.rename(columns={val_cat:'Среднее значение'},inplace=True)
+    return calc_mean_df
+
+
+def create_result_kaf(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_level = ['низкий уровень мотивации к избеганию неудач','средний уровень мотивации к избеганию неудач','высокий уровень мотивации к избеганию неудач',
+                 'слишком высокий уровень мотивации к избеганию неудач']
+    lst_reindex_main_level_cols = lst_svod_cols.copy()
+    lst_reindex_main_level_cols.extend(['низкий уровень мотивации к избеганию неудач','средний уровень мотивации к избеганию неудач','высокий уровень мотивации к избеганию неудач',
+                 'слишком высокий уровень мотивации к избеганию неудач',
+                               'Итого'])  # Основная шкала
+
+    svod_count_one_level_df = calc_count_scale(base_df, lst_svod_cols,
+                                               'Значение_Избегание',
+                                               'Уровень_Избегание',
+                                               lst_reindex_main_level_cols, lst_level)
+
+    # Считаем среднее
+    svod_mean_df = calc_mean(base_df, lst_svod_cols, 'Значение_Избегание')
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        if len(lst_svod_cols) == 1:
+            out_name_lst.append(name[:14])
+        elif len(lst_svod_cols) == 2:
+            out_name_lst.append(name[:7])
+        else:
+            out_name_lst.append(name[:4])
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+    out_dct.update({f'Свод {out_name}': svod_count_one_level_df,
+                    f'Ср. {out_name}': svod_mean_df})
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
+    else:
+        for idx, name_column in enumerate(lst_svod_cols):
+            lst_reindex_column_level_cols = [lst_svod_cols[idx],'низкий уровень мотивации к избеганию неудач','средний уровень мотивации к избеганию неудач','высокий уровень мотивации к избеганию неудач',
+                 'слишком высокий уровень мотивации к избеганию неудач',
+                               'Итого']
+
+            svod_count_column_level_df = calc_count_scale(base_df, lst_svod_cols[idx],
+                                                       'Значение_Избегание',
+                                                       'Уровень_Избегание',
+                                                       lst_reindex_column_level_cols, lst_level)
+
+            # Считаем среднее
+            svod_mean_column_df = calc_mean(base_df, [lst_svod_cols[idx]], 'Значение_Избегание')
+            # Готовим наименование
+            name_column = lst_svod_cols[idx]
+            name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)
+            name_column = name_column[:15]
+            out_dct.update({f'Свод {name_column}': svod_count_column_level_df,
+                            f'Ср. {name_column}': svod_mean_column_df})
+
+        return out_dct
+
 
 
 
@@ -177,65 +259,143 @@ def processing_kotik_avoiding_fail(base_df: pd.DataFrame, answers_df: pd.DataFra
     :param answers_df: часть датафрейма с ответами
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
-    out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
-    if len(answers_df.columns) != 30:  # проверяем количество колонок с вопросами
-        raise BadCountColumnsKAF
+    try:
+        out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+        if len(answers_df.columns) != 30:  # проверяем количество колонок с вопросами
+            raise BadCountColumnsKAF
 
-    answers_df.columns = [f'Вопрос {i}' for i in range(1, 31)]
+        answers_df.columns = [f'Вопрос {i}' for i in range(1, 31)]
 
-    # делаем список списков
-    valid_values = [['смелый','бдительный','предприимчивый'],
-                    ['кроткий','робкий','упрямый'],
-                    ['осторожный','решительный','пессимистичный'],
-                    ['непостоянный','бесцеремонный','внимательный'],
-                    ['неумный','трусливый','не думающий'],
-                    ['ловкий','бойкий','предусмотрительный'],
-                    ['хладнокровный','колеблющийся','удалой'],
-                    ['стремительный','легкомысленный','боязливый'],
-                    ['не задумывающийся','жеманный','непредусмотрительный'],
-                    ['оптимистичный','добросовестный','чуткий'],
-                    ['меланхоличный','сомневающийся','неустойчивый'],
-                    ['трусливый','небрежный','взволнованный'],
-                    ['опрометчивый','тихий','боязливый'],
-                    ['внимательный','неблагоразумный','смелый'],
-                    ['рассудительный','быстрый','мужественный'],
-                    ['предприимчивый','осторожный','предусмотрительный'],
-                    ['взволнованный','рассеянный','робкий'],
-                    ['малодушный','неосторожный','бесцеремонный'],
-                    ['пугливый','нерешительный','нервный'],
-                    ['исполнительный','преданный','авантюрный'],
-                    ['предусмотрительный','бойкий','отчаянный'],
-                    ['укрощенный','безразличный','небрежный'],
-                    ['осторожный','беззаботный','терпеливый'],
-                    ['разумный','заботливый','храбрый'],
-                    ['предвидящий','неустрашимый','добросовестный'],
-                    ['поспешный','пугливый','беззаботный'],
-                    ['рассеянный','опрометчивый','пессимистичный'],
-                    ['осмотрительный','рассудительный','предприимчивый'],
-                    ['тихий','неорганизованный','боязливый'],
-                    ['оптимистичный','бдительный','беззаботный'],
-                    ]
+        # делаем список списков
+        valid_values = [['смелый','бдительный','предприимчивый'],
+                        ['кроткий','робкий','упрямый'],
+                        ['осторожный','решительный','пессимистичный'],
+                        ['непостоянный','бесцеремонный','внимательный'],
+                        ['неумный','трусливый','не думающий'],
+                        ['ловкий','бойкий','предусмотрительный'],
+                        ['хладнокровный','колеблющийся','удалой'],
+                        ['стремительный','легкомысленный','боязливый'],
+                        ['не задумывающийся','жеманный','непредусмотрительный'],
+                        ['оптимистичный','добросовестный','чуткий'],
+                        ['меланхоличный','сомневающийся','неустойчивый'],
+                        ['трусливый','небрежный','взволнованный'],
+                        ['опрометчивый','тихий','боязливый'],
+                        ['внимательный','неблагоразумный','смелый'],
+                        ['рассудительный','быстрый','мужественный'],
+                        ['предприимчивый','осторожный','предусмотрительный'],
+                        ['взволнованный','рассеянный','робкий'],
+                        ['малодушный','неосторожный','бесцеремонный'],
+                        ['пугливый','нерешительный','нервный'],
+                        ['исполнительный','преданный','авантюрный'],
+                        ['предусмотрительный','бойкий','отчаянный'],
+                        ['укрощенный','безразличный','небрежный'],
+                        ['осторожный','беззаботный','терпеливый'],
+                        ['разумный','заботливый','храбрый'],
+                        ['предвидящий','неустрашимый','добросовестный'],
+                        ['поспешный','пугливый','беззаботный'],
+                        ['рассеянный','опрометчивый','пессимистичный'],
+                        ['осмотрительный','рассудительный','предприимчивый'],
+                        ['тихий','неорганизованный','боязливый'],
+                        ['оптимистичный','бдительный','беззаботный'],
+                        ]
 
-    lst_error_answers = []  # список для хранения строк где найдены неправильные ответы
+        lst_error_answers = []  # список для хранения строк где найдены неправильные ответы
 
-    for idx, lst_values in enumerate(valid_values):
-        mask = ~answers_df.iloc[:, idx].isin(lst_values)  # проверяем на допустимые значения
-        # Получаем строки с отличающимися значениями
-        result_check = answers_df.iloc[:, idx][mask]
+        for idx, lst_values in enumerate(valid_values):
+            mask = ~answers_df.iloc[:, idx].isin(lst_values)  # проверяем на допустимые значения
+            # Получаем строки с отличающимися значениями
+            result_check = answers_df.iloc[:, idx][mask]
 
-        if len(result_check) != 0:
-            error_row = list(map(lambda x: x + 2, result_check.index))
-            error_row = list(map(str, error_row))
-            error_row_lst = [f'В {idx + 1} вопросной колонке на строке {value}' for value in error_row]
-            error_in_column = ','.join(error_row_lst)
-            lst_error_answers.append(error_in_column)
+            if len(result_check) != 0:
+                error_row = list(map(lambda x: x + 2, result_check.index))
+                error_row = list(map(str, error_row))
+                error_row_lst = [f'В {idx + 1} вопросной колонке на строке {value}' for value in error_row]
+                error_in_column = ','.join(error_row_lst)
+                lst_error_answers.append(error_in_column)
 
-    if len(lst_error_answers) != 0:
-        error_message = ';'.join(lst_error_answers)
-        raise BadValueKAF
+        if len(lst_error_answers) != 0:
+            error_message = ';'.join(lst_error_answers)
+            raise BadValueKAF
 
-    base_df[f'Значение_Избегание'] = answers_df.apply(calc_value_avoid_fail, axis=1)
-    base_df['Уровень_Избегание'] = base_df['Значение_Избегание'].apply(calc_level_avoid_fail)  # Уровень Избегание
+        base_df[f'Значение_Избегание'] = answers_df.apply(calc_value_avoid_fail, axis=1)
+        base_df['Уровень_Избегание'] = base_df['Значение_Избегание'].apply(calc_level_avoid_fail)  # Уровень Избегание
+
+        # Создаем датафрейм для создания части в общий датафрейм
+        part_df = pd.DataFrame()
+        # Общая тревожность
+        part_df['МИН_Избегание_Значение'] = base_df['Значение_Избегание']
+        part_df['МИН_Избегание_Уровень'] = base_df['Уровень_Избегание']
+
+        out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+        base_df.sort_values(by='Значение_Избегание', ascending=False, inplace=True)  # сортируем
+
+        # Общий свод по уровням общей шкалы всего в процентном соотношении
+        base_svod_all_df = pd.DataFrame(
+            index=['низкий уровень мотивации к избеганию неудач', 'средний уровень мотивации к избеганию неудач',
+                   'высокий уровень мотивации к избеганию неудач', 'слишком высокий уровень мотивации к избеганию неудач'])
+
+        svod_level_df = pd.pivot_table(base_df, index='Уровень_Избегание',
+                                       values='Значение_Избегание',
+                                       aggfunc='count')
+
+        svod_level_df['% от общего'] = round(
+            svod_level_df['Значение_Избегание'] / svod_level_df[
+                'Значение_Избегание'].sum(), 3) * 100
+
+        base_svod_all_df = base_svod_all_df.join(svod_level_df)
+        # # Создаем суммирующую строку
+        base_svod_all_df.loc['Итого'] = svod_level_df.sum()
+        base_svod_all_df.reset_index(inplace=True)
+        base_svod_all_df.rename(columns={'index': 'Уровень', 'Значение_Избегание': 'Количество'},
+                                inplace=True)
+
+        # формируем основной словарь
+        out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+                   'Свод Общий': base_svod_all_df,
+                   }
+
+        lst_level = ['низкий уровень мотивации к избеганию неудач', 'средний уровень мотивации к избеганию неудач',
+                   'высокий уровень мотивации к избеганию неудач', 'слишком высокий уровень мотивации к избеганию неудач']
+        dct_level = dict()
+
+        for level in lst_level:
+            temp_df = base_df[base_df['Уровень_Избегание'] == level]
+            if temp_df.shape[0] != 0:
+                if level == 'низкий уровень мотивации к избеганию неудач':
+                    level = 'низкий'
+                elif level == 'средний уровень мотивации к избеганию неудач':
+                    level = 'средний'
+                elif level == 'высокий уровень мотивации к избеганию неудач':
+                    level = 'умеренно высокий'
+                else:
+                    level = 'слишком высокий'
+
+                dct_level[level] = temp_df
+
+        out_dct.update(dct_level)
+
+        """
+                Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+                """
+        if len(lst_svod_cols) == 0:
+            return out_dct, part_df
+
+        else:
+            out_dct = create_result_kaf(base_df, out_dct, lst_svod_cols)
+
+            return out_dct, part_df
+    except BadValueKAF:
+        messagebox.showerror('Лахеcис',
+                             f'При обработке вопросов теста Опросник мотивации к избеганию неудач Элерс Котик обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
+                             f'{error_message}\n'
+                             f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
+
+
+    except BadCountColumnsKAF:
+        messagebox.showerror('Лахеcис',
+                             f'Проверьте количество колонок с ответами на тест Опросник мотивации к избеганию неудач Элерс Котик\n'
+                             f'Должно быть 30 колонок с ответами')
 
 
 
@@ -243,7 +403,8 @@ def processing_kotik_avoiding_fail(base_df: pd.DataFrame, answers_df: pd.DataFra
 
 
 
-    base_df.to_excel('data/dgfd.xlsx')
+
+
 
 
 
