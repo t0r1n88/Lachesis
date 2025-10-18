@@ -72,6 +72,7 @@ from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Мет
 
 # Мотивация, риск, избегание неудач
 from motivation.kotik_motiv_target import processing_kotik_motiv_target # Опросник мотивации к достижению цели, к успеху Элерс Котик
+from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Опросник мотивации к избеганию неудач Элерс Котик
 
 
 
@@ -232,7 +233,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'DASS 21 Золотарева':(processing_dass_twenty_one_zolotareva,21),
                      'PSM-25 Водопьянова':(processing_psm_twenty_five_vodopyanova,25),
 
-                     'Опросник мотивации к достижению цели, к успеху Элерс Котик': (processing_kotik_motiv_target, 41)
+                     'Опросник мотивации к достижению цели, к успеху Элерс Котик': (processing_kotik_motiv_target, 41),
+                     'Опросник мотивации к избеганию неудач Элерс Котик': (processing_kotik_avoiding_fail, 30)
 
 
 
@@ -298,6 +300,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
                               'Опросник мотивации к достижению цели, к успеху Элерс Котик': 'Опросник мотивации к достижению цели, к успеху Элерс Котик',
+                              'Опросник мотивации к избеганию неудач Элерс Котик': 'Опросник мотивации к избеганию неудач Элерс Котик',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок

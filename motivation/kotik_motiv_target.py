@@ -170,6 +170,13 @@ def processing_kotik_motiv_target(result_df: pd.DataFrame, answers_df: pd.DataFr
         out_answer_df = result_df.copy()  # делаем копию для последующего соединения с сырыми ответами
         if len(answers_df.columns) != 41:  # проверяем количество колонок с вопросами
             raise BadCountColumnsKMT
+        # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
+        clean_df_lst = []
+        for name_column in answers_df.columns:
+            clean_name = re.sub(r'.\d+$', '', name_column)
+            clean_df_lst.append(clean_name)
+
+        answers_df.columns = clean_df_lst
 
         lst_check_cols = ['Когда имеется выбор между двумя вариантами, его лучше сделать быстрее, чем отложить на определенное время',
                           'Я легко раздражаюсь, когда замечаю, что не могу на все 100% выполнить задание',
