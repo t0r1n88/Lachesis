@@ -73,6 +73,7 @@ from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Мет
 # Мотивация, риск, избегание неудач
 from motivation.kotik_motiv_target import processing_kotik_motiv_target # Опросник мотивации к достижению цели, к успеху Элерс Котик
 from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Опросник мотивации к избеганию неудач Элерс Котик
+from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Опросник оценки склонности к риску, RSK (Г. Шуберт)
 
 
 
@@ -234,7 +235,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'PSM-25 Водопьянова':(processing_psm_twenty_five_vodopyanova,25),
 
                      'Опросник мотивации к достижению цели, к успеху Элерс Котик': (processing_kotik_motiv_target, 41),
-                     'Опросник мотивации к избеганию неудач Элерс Котик': (processing_kotik_avoiding_fail, 30)
+                     'Опросник мотивации к избеганию неудач Элерс Котик': (processing_kotik_avoiding_fail, 30),
+                     'Опросник оценки склонности к риску Шуберт Котик': (processing_kotik_risk_appetite, 25)
 
 
 
@@ -301,6 +303,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                               'Опросник мотивации к достижению цели, к успеху Элерс Котик': 'Опросник мотивации к достижению цели, к успеху Элерс Котик',
                               'Опросник мотивации к избеганию неудач Элерс Котик': 'Опросник мотивации к избеганию неудач Элерс Котик',
+                              'Опросник оценки склонности к риску Шуберт Котик': 'Опросник оценки склонности к риску Шуберт Котик',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -856,7 +859,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
