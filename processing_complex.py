@@ -75,7 +75,8 @@ from motivation.kotik_motiv_target import processing_kotik_motiv_target # Опр
 from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Опросник мотивации к избеганию неудач Элерс Котик
 from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Опросник оценки склонности к риску, RSK (Г. Шуберт)
 
-
+# Структура личности
+from personality_structure.kettel_pf_fourteen_rukav_sokolova import
 
 
 
