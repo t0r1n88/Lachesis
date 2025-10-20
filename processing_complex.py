@@ -76,7 +76,7 @@ from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Оп
 from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Опросник оценки склонности к риску, RSK (Г. Шуберт)
 
 # Структура личности
-from personality_structure.kettel_pf_fourteen_rukav_sokolova import
+from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok
 
 
 
@@ -237,7 +237,11 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                      'Опросник мотивации к достижению цели, к успеху Элерс Котик': (processing_kotik_motiv_target, 41),
                      'Опросник мотивации к избеганию неудач Элерс Котик': (processing_kotik_avoiding_fail, 30),
-                     'Опросник оценки склонности к риску Шуберт Котик': (processing_kotik_risk_appetite, 25)
+                     'Опросник оценки склонности к риску Шуберт Котик': (processing_kotik_risk_appetite, 25),
+
+                     'Кеттел 14-PF Рукавишников Соколова': (processing_kettel_pf_ruk_sok, 142),
+
+
 
 
 
@@ -305,6 +309,9 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Опросник мотивации к достижению цели, к успеху Элерс Котик': 'Опросник мотивации к достижению цели, к успеху Элерс Котик',
                               'Опросник мотивации к избеганию неудач Элерс Котик': 'Опросник мотивации к избеганию неудач Элерс Котик',
                               'Опросник оценки склонности к риску Шуберт Котик': 'Опросник оценки склонности к риску Шуберт Котик',
+
+
+                              'Кеттел 14-PF Рукавишников Соколова': 'Опросник Кеттела 14PF/HSPQ (подростковый вариант) Рукавишников Соколова',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -851,10 +858,12 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры РЦО 5-6 кл.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
