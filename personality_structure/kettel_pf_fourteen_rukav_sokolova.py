@@ -28,6 +28,18 @@ class BadCountColumnsKPFRS(Exception):
     """
     pass
 
+class NotReqColumn(Exception):
+    """
+    Исключение для обработки случая когда нет обязательных колонок Пол
+    """
+    pass
+
+class BadValueSex(Exception):
+    """
+    Исключение для обработки случая когда в колонке Пол есть значения отличающиеся от Мужской или Женский
+    """
+    pass
+
 def processing_kettel_pf_ruk_sok(result_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
     """
     Функция для обработки
@@ -35,6 +47,16 @@ def processing_kettel_pf_ruk_sok(result_df: pd.DataFrame, answers_df: pd.DataFra
     :param answers_df: часть датафрейма с ответами
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
+    # Проверяем наличие колонок Пол
+    diff_req_cols = {'Пол'}.difference(set(result_df.columns))
+    if len(diff_req_cols) != 0:
+        raise NotReqColumn
+
+    # Проверяем на пол
+    diff_sex = set(result_df['Пол'].unique()).difference({'Мужской', 'Женский'})
+    if len(diff_sex) != 0:
+        raise BadValueSex
+
     out_answer_df = result_df.copy()  # делаем копию для последующего соединения с сырыми ответами
     if len(answers_df.columns) != 142:  # проверяем количество колонок с вопросами
         raise BadCountColumnsKPFRS
@@ -390,4 +412,9 @@ def processing_kettel_pf_ruk_sok(result_df: pd.DataFrame, answers_df: pd.DataFra
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueKPFRS
+
+    base_df = pd.DataFrame() # базовый датафрейм
+
+
+
 
