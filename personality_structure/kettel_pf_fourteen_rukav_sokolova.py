@@ -558,6 +558,278 @@ def calc_d_sten(ser: pd.Series):
         else:
             return 10
 
+# E
+def calc_e_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'да':
+        value += 0
+    elif row[0] == 'иногда':
+        value += 1
+    elif row[0] == 'нет':
+        value += 2
+    # 2
+    if row[1] == 'редко':
+        value += 2
+    elif row[1] == 'иногда':
+        value += 1
+    elif row[1] == 'часто':
+        value += 0
+    # 3
+    if row[2] == 'уступаете и даете ему высказаться':
+        value += 0
+    elif row[2] == 'трудно решить':
+        value += 1
+    elif row[2] == 'даете понять, что это невежливо, и не позволяете прерывать себя':
+        value += 2
+    # 4
+    if row[3] == 'своим обычным голосом':
+        value += 2
+    elif row[3] == 'нечто среднее':
+        value += 1
+    elif row[3] == 'как можно тише':
+        value += 0
+    # 5
+    if row[4] == 'да':
+        value += 0
+    elif row[4] == 'может быть':
+        value += 1
+    elif row[4] == 'нет':
+        value += 2
+    # 6
+    if row[5] == 'архитектором-проектировщиком':
+        value += 2
+    elif row[5] == 'трудно решить':
+        value += 1
+    elif row[5] == 'певцом или музыкантом в эстрадном оркестре':
+        value += 0
+    # 7
+    if row[6] == 'да':
+        value += 0
+    elif row[6] == 'может быть':
+        value += 1
+    elif row[6] == 'нет':
+        value += 2
+    # 8
+    if row[7] == 'часто':
+        value += 2
+    elif row[7] == 'иногда':
+        value += 1
+    elif row[7] == 'никогда не думал':
+        value += 0
+    # 9
+    if row[8] == 'учителем':
+        value += 0
+    elif row[8] == 'трудно решить':
+        value += 1
+    elif row[8] == 'ученым':
+        value += 2
+    # 10
+    if row[9] == 'чтобы вас заранее спросили, какой подарок вам хочется':
+        value += 2
+    elif row[9] == 'трудно сказать':
+        value += 1
+    elif row[9] == 'чтобы подарок был для вас сюрпризом':
+        value += 0
+
+    return value
+
+def calc_e_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 2:
+            return 1
+        elif value == 3:
+            return 2
+        elif value == 4:
+            return 3
+        elif 5 <= value <= 6:
+            return 4
+        elif value == 7:
+            return 5
+        elif value == 8:
+            return 6
+        elif 9 <= value <= 10:
+            return 7
+        elif value == 11:
+            return 8
+        elif 12 <= value <= 13:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 4:
+            return 1
+        elif 5 <= value <= 6:
+            return 2
+        elif value == 7:
+            return 3
+        elif value == 8:
+            return 4
+        elif value == 9:
+            return 5
+        elif value == 10:
+            return 6
+        elif value == 11:
+            return 7
+        elif value == 12:
+            return 8
+        elif value == 13:
+            return 9
+        else:
+            return 10
+
+# F
+def calc_f_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'в шумных забавах':
+        value += 2
+    elif row[0] == 'трудно сказать':
+        value += 1
+    elif row[0] == 'в серьезной беседе о своих увлечениях':
+        value += 0
+    # 2
+    if row[1] == 'да':
+        value += 0
+    elif row[1] == 'иногда':
+        value += 1
+    elif row[1] == 'редко':
+        value += 2
+    # 3
+    if row[2] == 'да':
+        value += 2
+    elif row[2] == 'иногда':
+        value += 1
+    elif row[2] == 'нет':
+        value += 0
+    # 4
+    if row[3] == 'быть самым популярным человеком в школе':
+        value += 2
+    elif row[3] == 'трудно сказать':
+        value += 1
+    elif row[3] == 'иметь самые лучшие оценки':
+        value += 0
+    # 5
+    if row[4] == 'да':
+        value += 2
+    elif row[4] == 'иногда':
+        value += 1
+    elif row[4] == 'нет':
+        value += 0
+    # 6
+    if row[5] == 'безопасную и с размеренным ритмом, хотя и требующую напряжения':
+        value += 0
+    elif row[5] == 'не уверен':
+        value += 1
+    elif row[5] == 'связанную с разъездами и встречами с новыми людьми':
+        value += 2
+    # 7
+    if row[6] == 'да':
+        value += 2
+    elif row[6] == 'иногда':
+        value += 1
+    elif row[6] == 'нет':
+        value += 0
+    # 8
+    if row[7] == 'вероятно, не стали бы этого делать':
+        value += 0
+    elif row[7] == 'не уверен':
+        value += 1
+    elif row[7] == 'определенно сделали бы':
+        value += 2
+    # 9
+    if row[8] == 'думает':
+        value += 0
+    elif row[8] == 'трудно сказать':
+        value += 1
+    elif row[8] == 'действует':
+        value += 2
+    # 10
+    if row[9] == 'да':
+        value += 0
+    elif row[9] == 'может быть':
+        value += 1
+    elif row[9] == 'нет':
+        value += 2
+
+    return value
+
+def calc_f_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 5:
+            return 1
+        elif value == 6:
+            return 2
+        elif 7 <= value <= 8:
+            return 3
+        elif 9 <= value <= 10:
+            return 4
+        elif 11<= value <= 12:
+            return 5
+        elif 13 <= value <= 14:
+            return 6
+        elif 15 <= value <= 16:
+            return 7
+        elif value == 17:
+            return 8
+        elif 18 <= value <= 19:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 4:
+            return 1
+        elif 5 <= value <= 6:
+            return 2
+        elif 7 <= value <= 8:
+            return 3
+        elif 9 <= value <= 10:
+            return 4
+        elif 11 <=value <= 12:
+            return 5
+        elif 13 <= value <= 14:
+            return 6
+        elif value == 15:
+            return 7
+        elif 16 <= value <= 17:
+            return 8
+        elif 18 <= value <= 19:
+            return 9
+        else:
+            return 10
+
+
+
 
 
 
@@ -965,6 +1237,18 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     lst_d = list(map(lambda x: x - 1, lst_d))
     base_df['D_Значение'] = answers_df.take(lst_d,axis=1).apply(calc_d_value,axis=1)
     base_df['D_Стен'] = base_df[['Пол','D_Значение']].apply(calc_d_sten,axis=1)
+
+    # 5 Шкала E
+    lst_e = [8,9,28,48,68,88,107,108,127,128]
+    lst_e = list(map(lambda x: x - 1, lst_e))
+    base_df['E_Значение'] = answers_df.take(lst_e,axis=1).apply(calc_e_value,axis=1)
+    base_df['E_Стен'] = base_df[['Пол','E_Значение']].apply(calc_e_sten,axis=1)
+
+    # 6 Шкала F
+    lst_f = [10,29,30,49,50,69,70,89,109,129]
+    lst_f = list(map(lambda x: x - 1, lst_f))
+    base_df['F_Значение'] = answers_df.take(lst_f,axis=1).apply(calc_f_value,axis=1)
+    base_df['F_Стен'] = base_df[['Пол','F_Значение']].apply(calc_f_sten,axis=1)
 
 
 
