@@ -963,10 +963,275 @@ def calc_g_sten(ser: pd.Series):
         else:
             return 10
 
+# H
+def calc_h_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'да':
+        value += 0
+    elif row[0] == 'возможно':
+        value += 1
+    elif row[0] == 'нет':
+        value += 2
+    # 2
+    if row[1] == 'да':
+        value += 2
+    elif row[1] == 'может быть':
+        value += 1
+    elif row[1] == 'нет':
+        value += 0
+    # 3
+    if row[2] == 'да':
+        value += 0
+    elif row[2] == 'может быть':
+        value += 1
+    elif row[2] == 'нет':
+        value += 2
+    # 4
+    if row[3] == 'да':
+        value += 2
+    elif row[3] == 'возможно':
+        value += 1
+    elif row[3] == 'нет':
+        value += 0
+    # 5
+    if row[4] == 'почти всегда':
+        value += 0
+    elif row[4] == 'иногда':
+        value += 1
+    elif row[4] == 'никогда':
+        value += 2
+    # 6
+    if row[5] == 'показать лично':
+        value += 2
+    elif row[5] == 'трудно сказать':
+        value += 1
+    elif row[5] == 'чтоб ее показал кто-то другой без вашего личного присутствия':
+        value += 0
+    # 7
+    if row[6] == 'склонным к унынию и переменам настроения':
+        value += 0
+    elif row[6] == 'трудно решить':
+        value += 1
+    elif row[6] == 'вовсе не унылым':
+        value += 2
+    # 8
+    if row[7] == 'очень часто':
+        value += 2
+    elif row[7] == 'иногда':
+        value += 1
+    elif row[7] == 'почти никогда':
+        value += 0
+    # 9
+    if row[8] == 'часто':
+        value += 0
+    elif row[8] == 'иногда':
+        value += 1
+    elif row[8] == 'никогда':
+        value += 2
+    # 10
+    if row[9] == 'да':
+        value += 2
+    elif row[9] == 'может быть':
+        value += 1
+    elif row[9] == 'нет':
+        value += 0
+    return value
 
 
+def calc_h_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
 
+    if sex == 'Женский':
+        if 0 <= value <= 3:
+            return 1
+        elif 4 <= value <= 5:
+            return 2
+        elif 6 <= value <= 7:
+            return 3
+        elif 8 <= value <= 9:
+            return 4
+        elif 10 <= value <= 11:
+            return 5
+        elif value == 12:
+            return 6
+        elif 13 <= value <= 14:
+            return 7
+        elif 15 <= value <= 16:
+            return 8
+        elif 17 <= value <= 18:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 4:
+            return 1
+        elif 5 <= value <= 6:
+            return 2
+        elif value == 7:
+            return 3
+        elif 8 <= value <= 9:
+            return 4
+        elif 10 <= value <= 11:
+            return 5
+        elif value == 12:
+            return 6
+        elif value == 13:
+            return 7
+        elif 14 <= value <= 15:
+            return 8
+        elif 16 <= value <= 17:
+            return 9
+        else:
+            return 10
 
+# I
+def calc_i_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'да':
+        value += 0
+    elif row[0] == 'может быть':
+        value += 1
+    elif row[0] == 'нет':
+        value += 2
+    # 2
+    if row[1] == 'да':
+        value += 2
+    elif row[1] == 'нечто среднее':
+        value += 1
+    elif row[1] == 'нет':
+        value += 0
+    # 3
+    if row[2] == 'да':
+        value += 0
+    elif row[2] == 'трудно сказать':
+        value += 1
+    elif row[2] == 'нет':
+        value += 2
+    # 4
+    if row[3] == 'подождать их':
+        value += 2
+    elif row[3] == 'трудно решить':
+        value += 1
+    elif row[3] == 'поторопить их':
+        value += 0
+    # 5
+    if row[4] == 'знаменитым спортсменом':
+        value += 0
+    elif row[4] == 'трудно решить':
+        value += 1
+    elif row[4] == 'знаменитым поэтом':
+        value += 2
+    # 6
+    if row[5] == 'в живописном парке':
+        value += 2
+    elif row[5] == 'не уверен':
+        value += 1
+    elif row[5] == 'на стадионе':
+        value += 0
+    # 7
+    if row[6] == 'смотреть рискованные лодочные гонки':
+        value += 0
+    elif row[6] == 'не уверен':
+        value += 1
+    elif row[6] == 'прогуливаться красивым берегом с другом':
+        value += 2
+    # 8
+    if row[7] == 'посмотреть мотогонки':
+        value += 0
+    elif row[7] == 'трудно сказать':
+        value += 1
+    elif row[7] == 'послушать музыку на открытой эстраде':
+        value += 2
+    # 9
+    if row[8] == 'музыкальные':
+        value += 2
+    elif row[8] == 'трудно сказать':
+        value += 1
+    elif row[8] == 'о войне':
+        value += 0
+    # 10
+    if row[9] == 'да, часто':
+        value += 2
+    elif row[9] == 'иногда':
+        value += 1
+    elif row[9] == 'нет, никогда':
+        value += 0
+
+    return value
+
+def calc_i_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 5:
+            return 1
+        elif 6 <= value <= 7:
+            return 2
+        elif 8 <= value <= 9:
+            return 3
+        elif value == 10:
+            return 4
+        elif 11 <= value <= 12:
+            return 5
+        elif 13 <= value <= 14:
+            return 6
+        elif 15 <= value <= 16:
+            return 7
+        elif value == 17:
+            return 8
+        elif 18 <= value <= 19:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 1:
+            return 1
+        elif value == 2:
+            return 2
+        elif 3 <= value <= 4:
+            return 3
+        elif 5 <= value <= 6:
+            return 4
+        elif 7 <= value <= 8:
+            return 5
+        elif 9 <= value <= 10:
+            return 6
+        elif value == 11:
+            return 7
+        elif 12 <= value <= 13:
+            return 8
+        elif 14 <= value <= 15:
+            return 9
+        else:
+            return 10
 
 
 
@@ -1391,6 +1656,18 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     lst_g = list(map(lambda x: x - 1, lst_g))
     base_df['G_Значение'] = answers_df.take(lst_g,axis=1).apply(calc_g_value,axis=1)
     base_df['G_Стен'] = base_df[['Пол','G_Значение']].apply(calc_g_sten,axis=1)
+
+    # 8 Шкала H
+    lst_h = [12,32,52,72,92,93,112,113,132,133]
+    lst_h = list(map(lambda x: x - 1, lst_h))
+    base_df['H_Значение'] = answers_df.take(lst_h,axis=1).apply(calc_h_value,axis=1)
+    base_df['H_Стен'] = base_df[['Пол','H_Значение']].apply(calc_h_sten,axis=1)
+
+    # 9 Шкала I
+    lst_i = [13,33,34,53,54,73,74,94,114,134]
+    lst_i = list(map(lambda x: x - 1, lst_i))
+    base_df['I_Значение'] = answers_df.take(lst_i,axis=1).apply(calc_i_value,axis=1)
+    base_df['I_Стен'] = base_df[['Пол','I_Значение']].apply(calc_i_sten,axis=1)
 
 
 
