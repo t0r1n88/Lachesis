@@ -179,6 +179,199 @@ def calc_a_sten(ser:pd.Series):
 
 
 
+# B
+def calc_b_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'могущественный':
+        value += 1
+    else:
+        value += 0
+    # 2
+    if row[1] == 'ложь':
+        value += 1
+    else:
+        value += 0
+    # 3
+    if row[2] == 'продавать':
+        value += 1
+    else:
+        value += 0
+    # 4
+    if row[3] == 'голодный':
+        value += 1
+    else:
+        value += 0
+    # 5
+    if row[4] == 'дядей':
+        value += 1
+    else:
+        value += 0
+    # 6
+    if row[5] == 'нога':
+        value += 1
+    else:
+        value += 0
+    # 7
+    if row[6] == 'как правило':
+        value += 1
+    else:
+        value += 0
+    # 8
+    if row[7] == 'моя мать':
+        value += 1
+    else:
+        value += 0
+    # 9
+    if row[8] == 'бумага':
+        value += 1
+    else:
+        value += 0
+    # 10
+    if row[9] == 'между':
+        value += 1
+    else:
+        value += 0
+    return value
+
+
+def calc_b_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 2:
+            return 1
+        elif value == 3:
+            return 2
+        elif value == 4:
+            return 4
+        elif value == 5:
+            return 5
+        elif value == 6:
+            return 7
+        elif value == 7:
+            return 8
+        elif value == 8:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 2:
+            return 1
+        elif value == 3:
+            return 2
+        elif value == 4:
+            return 3
+        elif value == 5:
+            return 4
+        elif value == 6:
+            return 5
+        elif value == 7:
+            return 6
+        elif value == 8:
+            return 7
+        elif value == 9:
+            return 8
+        else:
+            return 10
+
+# C
+def calc_c_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+    # 1
+    if row[0] == 'да':
+        value += 0
+    elif row[0] == 'может быть':
+        value += 1
+    elif row[0] == 'нет':
+        value += 2
+    # 2
+    if row[1] == 'да':
+        value += 2
+    elif row[1] == 'иногда':
+        value += 1
+    elif row[1] == 'нет':
+        value += 0
+    # 3
+    if row[2] == 'сомневаетесь – вдруг захочется изменить свое решение':
+        value += 0
+    elif row[2] == 'верно нечто среднее':
+        value += 1
+    elif row[2] == 'чувствуете уверенность, что решение останется в силе':
+        value += 2
+    # 4
+    if row[3] == 'да':
+        value += 2
+    elif row[3] == 'обычно':
+        value += 1
+    elif row[3] == 'нет':
+        value += 0
+    # 5
+    if row[4] == 'да':
+        value += 0
+    elif row[4] == 'может быть':
+        value += 1
+    elif row[4] == 'нет':
+        value += 2
+    # 6
+    if row[5] == 'да':
+        value += 2
+    elif row[5] == 'трудно сказать':
+        value += 1
+    elif row[5] == 'нет':
+        value += 0
+    # 7
+    if row[6] == 'да':
+        value += 0
+    elif row[6] == 'иногда':
+        value += 1
+    elif row[6] == 'нет':
+        value += 2
+    # 8
+    if row[7] == 'да':
+        value += 2
+    elif row[7] == 'среднее':
+        value += 1
+    elif row[7] == 'нет':
+        value += 0
+    # 9
+    if row[8] == 'да':
+        value += 0
+    elif row[8] == 'иногда':
+        value += 1
+    elif row[8] == 'нет':
+        value += 2
+    # 10
+    if row[9] == 'рады этому и показываете, на что способны':
+        value += 2
+    elif row[9] == 'трудно сказать':
+        value += 1
+    elif row[9] == 'чувствуете, что не справитесь':
+        value += 0
+
+    return value
+
+
+
+
 
 
 
@@ -568,9 +761,28 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     # 1 Шкала А
     lst_a = [2,3,22,42,62,82,102,103,122,123]
     lst_a = list(map(lambda x: x - 1, lst_a))
-
     base_df['A_Значение'] = answers_df.take(lst_a,axis=1).apply(calc_a_value,axis=1)
     base_df['A_Стен'] = base_df[['Пол','A_Значение']].apply(calc_a_sten,axis=1)
+
+    # 2 Шкала B
+    lst_b = [23,24,43,44,64,63,83,84,104,124]
+    lst_b = list(map(lambda x: x - 1, lst_b))
+    base_df['B_Значение'] = answers_df.take(lst_b,axis=1).apply(calc_b_value,axis=1)
+    base_df['B_Стен'] = base_df[['Пол','B_Значение']].apply(calc_b_sten,axis=1)
+
+    # 3 Шкала C
+    lst_c = [4,5,6,25,26,45,65,85,105,125]
+    lst_c = list(map(lambda x: x - 1, lst_c))
+    base_df['C_Значение'] = answers_df.take(lst_c,axis=1).apply(calc_c_value,axis=1)
+    # base_df['C_Стен'] = base_df[['Пол','C_Значение']].apply(calc_c_sten,axis=1)
+
+
+
+
+
+
+
+
 
     # Соединяем анкетную часть с результатной
     base_df.to_excel('data/res.xlsx',index=False)
