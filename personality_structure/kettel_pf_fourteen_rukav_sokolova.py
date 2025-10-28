@@ -40,7 +40,159 @@ class BadValueSex(Exception):
     """
     pass
 
-def processing_kettel_pf_ruk_sok(result_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
+
+
+
+
+def calc_a_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0
+    # 1
+    if row[0] == 'в одиночку осматривать лес':
+        value += 0
+    elif row[0] == 'трудно сказать':
+        value += 1
+    elif row[0] == 'играть с товарищами вокруг костра':
+        value += 2
+    # 2
+    if row[1] == 'да':
+        value += 2
+    elif row[1] == 'иногда':
+        value += 1
+    elif row[1] == 'нет':
+        value += 0
+    # 3
+    if row[2] == 'да':
+        value += 2
+    elif row[2] == 'не уверен':
+        value += 1
+    elif row[2] == 'нет':
+        value += 0
+    # 4
+    if row[3] == 'да':
+        value += 0
+    elif row[3] == 'иногда':
+        value += 1
+    elif row[3] == 'нет':
+        value += 2
+    # 5
+    if row[4] == 'да':
+        value += 2
+    elif row[4] == 'может быть':
+        value += 1
+    elif row[4] == 'нет':
+        value += 0
+    # 6
+    if row[5] == 'да':
+        value += 0
+    elif row[5] == 'может быть':
+        value += 1
+    elif row[5] == 'нет':
+        value += 2
+    # 7
+    if row[6] == 'да':
+        value += 0
+    elif row[6] == 'иногда':
+        value += 1
+    elif row[6] == 'нет, я не испытываю неприятного чувства':
+        value += 2
+    # 8
+    if row[7] == 'быстро осваиваетесь со всеми':
+        value += 2
+    elif row[7] == 'трудно сказать':
+        value += 1
+    elif row[7] == 'вам нужно много времени, чтобы узнать каждого':
+        value += 0
+    # 9
+    if row[8] == 'в тиши лесов, где слышно только пение птиц':
+        value += 0
+    elif row[8] == 'трудно сказать':
+        value += 1
+    elif row[8] == 'на многолюдной улице, где много происшествий':
+        value += 2
+    # 10
+    if row[9] == 'проводником, имеющим дело с пассажирами':
+        value += 2
+    elif row[9] == 'трудно решить':
+        value += 1
+    elif row[9] == 'машинистом, ведущим поезд':
+        value += 0
+
+    return value
+
+def calc_a_sten(ser:pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 4:
+            return 1
+        elif 5 <= value <= 6:
+            return 2
+        elif 7 <= value <= 8:
+            return 3
+        elif 9 <= value <= 10:
+            return 4
+        elif value == 11:
+            return 5
+        elif 12 <= value <= 13:
+            return 6
+        elif 14 <= value <= 15:
+            return 7
+        elif 16 <= value <= 17:
+            return 8
+        elif 18 <= value <= 19:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 3:
+            return 1
+        elif 4 <= value <= 5:
+            return 2
+        elif value == 6:
+            return 3
+        elif 7 <= value <= 8:
+            return 4
+        elif 9 <= value == 10:
+            return 5
+        elif value == 11:
+            return 6
+        elif value == 12:
+            return 7
+        elif 13 <= value <= 14:
+            return 8
+        elif value == 15:
+            return 9
+        else:
+            return 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
     """
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
@@ -48,16 +200,16 @@ def processing_kettel_pf_ruk_sok(result_df: pd.DataFrame, answers_df: pd.DataFra
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
     # Проверяем наличие колонок Пол
-    diff_req_cols = {'Пол'}.difference(set(result_df.columns))
+    diff_req_cols = {'Пол'}.difference(set(base_df.columns))
     if len(diff_req_cols) != 0:
         raise NotReqColumn
 
     # Проверяем на пол
-    diff_sex = set(result_df['Пол'].unique()).difference({'Мужской', 'Женский'})
+    diff_sex = set(base_df['Пол'].unique()).difference({'Мужской', 'Женский'})
     if len(diff_sex) != 0:
         raise BadValueSex
 
-    out_answer_df = result_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+    out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
     if len(answers_df.columns) != 142:  # проверяем количество колонок с вопросами
         raise BadCountColumnsKPFRS
     # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
@@ -413,7 +565,18 @@ def processing_kettel_pf_ruk_sok(result_df: pd.DataFrame, answers_df: pd.DataFra
         error_message = ';'.join(lst_error_answers)
         raise BadValueKPFRS
 
-    base_df = pd.DataFrame() # базовый датафрейм
+    # 1 Шкала А
+    lst_a = [2,3,22,42,62,82,102,103,122,123]
+    lst_a = list(map(lambda x: x - 1, lst_a))
+
+    base_df['A_Значение'] = answers_df.take(lst_a,axis=1).apply(calc_a_value,axis=1)
+    base_df['A_Стен'] = base_df[['Пол','A_Значение']].apply(calc_a_sten,axis=1)
+
+    # Соединяем анкетную часть с результатной
+    base_df.to_excel('data/res.xlsx',index=False)
+
+
+
 
 
 
