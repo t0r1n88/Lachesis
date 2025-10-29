@@ -1918,6 +1918,20 @@ def create_itog_stens(row):
     lst_out = list(map(str,row))
     return '-'.join(lst_out)
 
+def calc_range(value):
+    """
+    Функция для подсчета диапазонов
+    :param value: значение
+    :return:
+    """
+    if 1 <= value <= 3:
+        return '1-3'
+    elif 4 <=value <= 7:
+        return '4-7'
+    else:
+        return '8-10'
+
+
 
 
 
@@ -2404,6 +2418,26 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     result_df = result_df.reindex(columns=new_order_lst) # изменяем порядок
     base_df = pd.concat([union_base_df,result_df],axis=1) # соединяем и перезаписываем base_df
 
+    # Добавляем колонки с диапазонами
+    base_df['A_Диапазон'] = base_df['A_Стен'].apply(calc_range)
+    base_df['B_Диапазон'] = base_df['B_Стен'].apply(calc_range)
+    base_df['C_Диапазон'] = base_df['C_Стен'].apply(calc_range)
+    base_df['D_Диапазон'] = base_df['D_Стен'].apply(calc_range)
+
+    base_df['E_Диапазон'] = base_df['E_Стен'].apply(calc_range)
+    base_df['F_Диапазон'] = base_df['F_Стен'].apply(calc_range)
+    base_df['G_Диапазон'] = base_df['G_Стен'].apply(calc_range)
+    base_df['H_Диапазон'] = base_df['H_Стен'].apply(calc_range)
+
+    base_df['I_Диапазон'] = base_df['I_Стен'].apply(calc_range)
+    base_df['J_Диапазон'] = base_df['J_Стен'].apply(calc_range)
+    base_df['O_Диапазон'] = base_df['O_Стен'].apply(calc_range)
+    base_df['Q2_Диапазон'] = base_df['Q2_Стен'].apply(calc_range)
+
+    base_df['Q3_Диапазон'] = base_df['Q3_Стен'].apply(calc_range)
+    base_df['Q4_Диапазон'] = base_df['Q4_Стен'].apply(calc_range)
+
+
     # Создаем датафрейм для создания части в общий датафрейм
     part_df = pd.DataFrame()
     # Общая тревожность
@@ -2443,8 +2477,28 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
     part_df['КРС14_Q3_Значение'] = base_df['Q3_Значение']
     part_df['КРС14_Q4_Значение'] = base_df['Q4_Значение']
+    # Диапазон
+    part_df['КРС14_A_Диапазон'] = base_df['A_Диапазон']
+    part_df['КРС14_B_Диапазон'] = base_df['B_Диапазон']
+    part_df['КРС14_C_Диапазон'] = base_df['C_Диапазон']
+    part_df['КРС14_D_Диапазон'] = base_df['D_Диапазон']
 
-    part_df.to_excel('data/part.xlsx')
+    part_df['КРС14_E_Диапазон'] = base_df['E_Диапазон']
+    part_df['КРС14_F_Диапазон'] = base_df['F_Диапазон']
+    part_df['КРС14_G_Диапазон'] = base_df['G_Диапазон']
+    part_df['КРС14_H_Диапазон'] = base_df['H_Диапазон']
+
+    part_df['КРС14_I_Диапазон'] = base_df['I_Диапазон']
+    part_df['КРС14_J_Диапазон'] = base_df['J_Диапазон']
+    part_df['КРС14_O_Диапазон'] = base_df['O_Диапазон']
+    part_df['КРС14_Q2_Диапазон'] = base_df['Q2_Диапазон']
+
+    part_df['КРС14_Q3_Диапазон'] = base_df['Q3_Диапазон']
+    part_df['КРС14_Q4_Диапазон'] = base_df['Q4_Диапазон']
+
+
+
+
 
 
     # Соединяем анкетную часть с результатной
