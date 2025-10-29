@@ -1233,6 +1233,145 @@ def calc_i_sten(ser: pd.Series):
         else:
             return 10
 
+# J
+def calc_j_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'да':
+        value += 0
+    elif row[0] == 'может быть':
+        value += 1
+    elif row[0] == 'нет':
+        value += 2
+    # 2
+    if row[1] == 'да':
+        value += 2
+    elif row[1] == 'трудно сказать':
+        value += 1
+    elif row[1] == 'нет':
+        value += 0
+    # 3
+    if row[2] == 'да':
+        value += 0
+    elif row[2] == 'может быть':
+        value += 1
+    elif row[2] == 'нет':
+        value += 2
+    # 4
+    if row[3] == 'один, с книгой или коллекцией почтовых марок':
+        value += 2
+    elif row[3] == 'трудно решить':
+        value += 1
+    elif row[3] == 'занимаясь под руководством других каким-либо общим делом':
+        value += 0
+    # 5
+    if row[4] == 'общаетесь с друзьями':
+        value += 0
+    elif row[4] == 'трудно сказать':
+        value += 1
+    elif row[4] == 'наблюдаете за происходящим':
+        value += 2
+    # 6
+    if row[5] == 'да':
+        value += 2
+    elif row[5] == 'не уверен':
+        value += 1
+    elif row[5] == 'нет':
+        value += 0
+    # 7
+    if row[6] == 'забудете об этом':
+        value += 0
+    elif row[6] == 'трудно сказать':
+        value += 1
+    elif row[6] == 'не упустите случая припомнить':
+        value += 2
+    # 8
+    if row[7] == 'да':
+        value += 2
+    elif row[7] == 'может быть':
+        value += 1
+    elif row[7] == 'нет':
+        value += 0
+    # 9
+    if row[8] == 'организовать классный пикник':
+        value += 0
+    elif row[8] == 'трудно сказать':
+        value += 1
+    elif row[8] == 'изучать в лесу различные породы деревьев':
+        value += 2
+    # 10
+    if row[9] == 'занимаете особую позицию':
+        value += 2
+    elif row[9] == 'трудно сказать':
+        value += 1
+    elif row[9] == 'соглашаетесь с остальными':
+        value += 0
+
+    return value
+
+
+def calc_j_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 2:
+            return 1
+        elif 3 <= value <= 4:
+            return 2
+        elif value == 5:
+            return 3
+        elif 6 <= value <= 7:
+            return 4
+        elif value == 8:
+            return 5
+        elif 9 <= value <= 10:
+            return 6
+        elif value == 11:
+            return 7
+        elif 12 <= value <= 13:
+            return 8
+        elif 14 <= value <= 15:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 3:
+            return 1
+        elif value == 4:
+            return 2
+        elif 5 <= value <= 6:
+            return 3
+        elif value == 7:
+            return 4
+        elif 8 <=value <= 9:
+            return 5
+        elif value == 10:
+            return 6
+        elif 11 <= value <= 12:
+            return 7
+        elif 13 <= value <= 14:
+            return 8
+        elif 15 <= value <= 16:
+            return 9
+        else:
+            return 10
+
+
+
+
 
 
 
@@ -1668,6 +1807,13 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     lst_i = list(map(lambda x: x - 1, lst_i))
     base_df['I_Значение'] = answers_df.take(lst_i,axis=1).apply(calc_i_value,axis=1)
     base_df['I_Стен'] = base_df[['Пол','I_Значение']].apply(calc_i_sten,axis=1)
+
+    # 10 Шкала J
+    lst_j = [14,15,35,55,75,95,115,116,135,136]
+    lst_j = list(map(lambda x: x - 1, lst_j))
+    base_df['J_Значение'] = answers_df.take(lst_j,axis=1).apply(calc_j_value,axis=1)
+    base_df['J_Стен'] = base_df[['Пол','J_Значение']].apply(calc_j_sten,axis=1)
+
 
 
 
