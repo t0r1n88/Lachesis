@@ -1909,7 +1909,14 @@ def calc_q_four_sten(ser: pd.Series):
         else:
             return 10
 
-
+def create_itog_stens(row):
+    """
+    Функция для создания строки с итоговым стеном
+    :param row: строка с результатами
+    :return:
+    """
+    lst_out = list(map(str,row))
+    return '-'.join(lst_out)
 
 
 
@@ -1923,6 +1930,10 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     :param answers_df: часть датафрейма с ответами
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
+    union_base_df = base_df.copy() # делаем копию анкетной части чтобы потом соединить ее с ответной частью
+    quantity_cols_base_df = base_df.shape[1] # количество колонок в анкетной части
+
+
     # Проверяем наличие колонок Пол
     diff_req_cols = {'Пол','ФИО'}.difference(set(base_df.columns))
     if len(diff_req_cols) != 0:
@@ -2355,8 +2366,8 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     # 11 Шкала Q1
     lst_q_one = [16,36,56,57,76,77,96,97,117,137]
     lst_q_one = list(map(lambda x: x - 1, lst_q_one))
-    base_df['Q1_Значение'] = answers_df.take(lst_q_one,axis=1).apply(calc_q_one_value,axis=1)
-    base_df['Q1_Стен'] = base_df[['Пол','Q1_Значение']].apply(calc_q_one_sten,axis=1)
+    base_df['O_Значение'] = answers_df.take(lst_q_one,axis=1).apply(calc_q_one_value,axis=1)
+    base_df['O_Стен'] = base_df[['Пол','O_Значение']].apply(calc_q_one_sten,axis=1)
 
     # 12 Шкала Q2
     lst_q_two = [17,18,37,38,58,78,98,118,138,139]
@@ -2376,17 +2387,64 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     base_df['Q4_Значение'] = answers_df.take(lst_q_four,axis=1).apply(calc_q_four_value,axis=1)
     base_df['Q4_Стен'] = base_df[['Пол','Q4_Значение']].apply(calc_q_four_sten,axis=1)
 
+    # Упорядочиваем
+    result_df = base_df.iloc[:,quantity_cols_base_df:] # отсекаем часть с результатами чтобы упорядочить
+    lst_stens = [column for column in result_df.columns if 'Стен' in column]
+    result_df['Итоговые_стены'] = result_df[lst_stens].apply(create_itog_stens,axis=1)
+    new_order_lst = ['Итоговые_стены',
+                     'A_Стен','B_Стен','C_Стен','D_Стен',
+                     'E_Стен','F_Стен','G_Стен','H_Стен',
+                     'I_Стен','J_Стен','O_Стен','Q2_Стен',
+                     'Q3_Стен','Q4_Стен',
+                     'A_Значение','B_Значение','C_Значение','D_Значение',
+                     'E_Значение','F_Значение','G_Значение','H_Значение',
+                     'I_Значение','J_Значение','O_Значение','Q2_Значение',
+                     'Q3_Значение','Q4_Значение'
+                     ]
+    result_df = result_df.reindex(columns=new_order_lst) # изменяем порядок
+    base_df = pd.concat([union_base_df,result_df],axis=1) # соединяем и перезаписываем base_df
 
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+    # Общая тревожность
+    part_df['КРС14_Итоговые_стены'] = base_df['Итоговые_стены']
+    part_df['КРС14_A_Стен'] = base_df['A_Стен']
+    part_df['КРС14_B_Стен'] = base_df['B_Стен']
+    part_df['КРС14_C_Стен'] = base_df['C_Стен']
+    part_df['КРС14_D_Стен'] = base_df['D_Стен']
 
+    part_df['КРС14_E_Стен'] = base_df['A_Стен']
+    part_df['КРС14_F_Стен'] = base_df['A_Стен']
+    part_df['КРС14_G_Стен'] = base_df['A_Стен']
+    part_df['КРС14_H_Стен'] = base_df['A_Стен']
 
+    part_df['КРС14_I_Стен'] = base_df['A_Стен']
+    part_df['КРС14_J_Стен'] = base_df['A_Стен']
+    part_df['КРС14_O_Стен'] = base_df['A_Стен']
+    part_df['КРС14_Q2_Стен'] = base_df['A_Стен']
 
+    part_df['КРС14_Q3_Стен'] = base_df['A_Стен']
+    part_df['КРС14_Q4_Стен'] = base_df['A_Стен']
 
+    part_df['КРС14_A_Значение'] = base_df['A_Значение']
+    part_df['КРС14_B_Значение'] = base_df['B_Значение']
+    part_df['КРС14_C_Значение'] = base_df['C_Значение']
+    part_df['КРС14_D_Значение'] = base_df['D_Значение']
 
+    part_df['КРС14_E_Значение'] = base_df['E_Значение']
+    part_df['КРС14_F_Значение'] = base_df['F_Значение']
+    part_df['КРС14_G_Значение'] = base_df['G_Значение']
+    part_df['КРС14_H_Значение'] = base_df['H_Значение']
 
+    part_df['КРС14_I_Значение'] = base_df['I_Значение']
+    part_df['КРС14_J_Значение'] = base_df['J_Значение']
+    part_df['КРС14_O_Значение'] = base_df['O_Значение']
+    part_df['КРС14_Q2_Значение'] = base_df['Q2_Значение']
 
+    part_df['КРС14_Q3_Значение'] = base_df['Q3_Значение']
+    part_df['КРС14_Q4_Значение'] = base_df['Q4_Значение']
 
-
-
+    part_df.to_excel('data/part.xlsx')
 
 
     # Соединяем анкетную часть с результатной
