@@ -1639,10 +1639,275 @@ def calc_q_two_sten(ser: pd.Series):
         else:
             return 10
 
+# Q3
+def calc_q_three_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
 
+    # 1
+    if row[0] == 'актером эстрады':
+        value += 0
+    elif row[0] == 'трудно сказать':
+        value += 1
+    elif row[0] == 'врачом':
+        value += 2
+    # 2
+    if row[1] == 'да':
+        value += 2
+    elif row[1] == 'может быть':
+        value += 1
+    elif row[1] == 'нет':
+        value += 0
+    # 3
+    if row[2] == 'да':
+        value += 0
+    elif row[2] == 'может быть':
+        value += 1
+    elif row[2] == 'нет':
+        value += 2
+    # 4
+    if row[3] == 'стараться не обращать внимания на это, пока не остынешь':
+        value += 2
+    elif row[3] == 'трудно решить':
+        value += 1
+    elif row[3] == 'найти способ разрядиться':
+        value += 0
+    # 5
+    if row[4] == 'да':
+        value += 0
+    elif row[4] == 'может быть':
+        value += 1
+    elif row[4] == 'нет':
+        value += 2
+    # 6
+    if row[5] == 'да':
+        value += 2
+    elif row[5] == 'трудно сказать':
+        value += 1
+    elif row[5] == 'нет':
+        value += 0
+    # 7
+    if row[6] == 'часто':
+        value += 0
+    elif row[6] == 'иногда':
+        value += 1
+    elif row[6] == 'нет':
+        value += 2
+    # 8
+    if row[7] == 'да':
+        value += 2
+    elif row[7] == 'не уверен':
+        value += 1
+    elif row[7] == 'нет':
+        value += 0
+    # 9
+    if row[8] == 'да':
+        value += 0
+    elif row[8] == 'может быть':
+        value += 1
+    elif row[8] == 'нет':
+        value += 2
+    # 10
+    if row[9] == 'да':
+        value += 2
+    elif row[9] == 'нечто среднее':
+        value += 1
+    elif row[9] == 'нет':
+        value += 0
 
+    return value
 
+def calc_q_three_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
 
+    if sex == 'Женский':
+        if 0 <= value <= 4:
+            return 1
+        elif value == 5:
+            return 2
+        elif 6 <= value <= 7:
+            return 3
+        elif value == 8:
+            return 4
+        elif 9<= value <= 10:
+            return 5
+        elif value == 11:
+            return 6
+        elif 12 <= value <= 13:
+            return 7
+        elif value == 14:
+            return 8
+        elif 15 <= value <= 16:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 4:
+            return 1
+        elif 5 <= value <= 6:
+            return 2
+        elif 7 <= value <= 8:
+            return 3
+        elif value == 9:
+            return 4
+        elif value == 10:
+            return 5
+        elif 11 <= value <= 12:
+            return 6
+        elif 13 <= value <= 14:
+            return 7
+        elif value == 15:
+            return 8
+        elif value == 16:
+            return 9
+        else:
+            return 10
+
+# Q4
+def calc_q_four_value(row):
+    """
+    Фнукция подсчета значения
+    :param row:
+    :return:
+    """
+    value = 0 # сумматор
+
+    # 1
+    if row[0] == 'да':
+        value += 0
+    elif row[0] == 'возможно':
+        value += 1
+    elif row[0] == 'нет':
+        value += 2
+    # 2
+    if row[1] == 'да, часто':
+        value += 2
+    elif row[1] == 'иногда':
+        value += 1
+    elif row[1] == 'нет, почти никогда':
+        value += 0
+    # 3
+    if row[2] == 'просто получаете удовольствие':
+        value += 0
+    elif row[2] == 'трудно решить':
+        value += 1
+    elif row[2] == 'волнуетесь, благополучно ли она закончится':
+        value += 2
+    # 4
+    if row[3] == 'да':
+        value += 2
+    elif row[3] == 'нечто среднее':
+        value += 1
+    elif row[3] == 'нет':
+        value += 0
+    # 5
+    if row[4] == 'остаетесь совершенно спокойным и хладнокровным':
+        value += 2
+    elif row[4] == 'нечто среднее':
+        value += 1
+    elif row[4] == 'становитесь очень напряженным и теряете покой':
+        value += 0
+    # 6
+    if row[5] == 'да':
+        value += 2
+    elif row[5] == 'может быть':
+        value += 1
+    elif row[5] == 'нет':
+        value += 0
+    # 7
+    if row[6] == 'говорите «В конце концов, это ведь только игра»':
+        value += 0
+    elif row[6] == 'трудно ответить':
+        value += 1
+    elif row[6] == 'сердитесь или злитесь на себя':
+        value += 2
+    # 8
+    if row[7] == 'да':
+        value += 2
+    elif row[7] == 'иногда':
+        value += 1
+    elif row[7] == 'нет':
+        value += 0
+    # 9
+    if row[8] == 'даете ему высказать всё, что он хочет':
+        value += 0
+    elif row[8] == 'трудно сказать':
+        value += 1
+    elif row[8] == 'обычно перебиваете его раньше, чем он закончит':
+        value += 2
+    # 10
+    if row[9] == 'да':
+        value += 2
+    elif row[9] == 'может быть':
+        value += 1
+    elif row[9] == 'нет':
+        value += 0
+
+    return value
+
+def calc_q_four_sten(ser: pd.Series):
+    """
+    Функция для подсчета Стена
+    :param ser: пол и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    value = row[1] # значение которое нужно обработать
+
+    if sex == 'Женский':
+        if 0 <= value <= 4:
+            return 1
+        elif 5 <= value <= 6:
+            return 2
+        elif value == 7:
+            return 3
+        elif 8 <= value <= 9:
+            return 4
+        elif 10 <= value <= 11:
+            return 5
+        elif value == 12:
+            return 6
+        elif 13 <= value <= 14:
+            return 7
+        elif 15 <= value <= 16:
+            return 8
+        elif 17 <= value <= 18:
+            return 9
+        else:
+            return 10
+    else:
+        if 0 <= value <= 3:
+            return 1
+        elif 4 <= value <= 5:
+            return 2
+        elif value == 6:
+            return 3
+        elif 7 <= value <= 8:
+            return 4
+        elif value == 9:
+            return 5
+        elif value == 10:
+            return 6
+        elif 11 <= value <= 12:
+            return 7
+        elif value == 13:
+            return 8
+        elif 14 <= value <= 15:
+            return 9
+        else:
+            return 10
 
 
 
@@ -2098,6 +2363,19 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     lst_q_two = list(map(lambda x: x - 1, lst_q_two))
     base_df['Q2_Значение'] = answers_df.take(lst_q_two,axis=1).apply(calc_q_two_value,axis=1)
     base_df['Q2_Стен'] = base_df[['Пол','Q2_Значение']].apply(calc_q_two_sten,axis=1)
+
+    # 13 Шкала Q3
+    lst_q_three = [19,39,59,79,80,99,100,119,120,140]
+    lst_q_three = list(map(lambda x: x - 1, lst_q_three))
+    base_df['Q3_Значение'] = answers_df.take(lst_q_three,axis=1).apply(calc_q_three_value,axis=1)
+    base_df['Q3_Стен'] = base_df[['Пол','Q3_Значение']].apply(calc_q_three_sten,axis=1)
+
+    # 14 Шкала Q4
+    lst_q_four = [20,21,40,41,60,61,81,101,121,141]
+    lst_q_four = list(map(lambda x: x - 1, lst_q_four))
+    base_df['Q4_Значение'] = answers_df.take(lst_q_four,axis=1).apply(calc_q_four_value,axis=1)
+    base_df['Q4_Стен'] = base_df[['Пол','Q4_Значение']].apply(calc_q_four_sten,axis=1)
+
 
 
 
