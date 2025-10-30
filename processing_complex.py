@@ -344,6 +344,9 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                             'Характер и профессия Резапкина','СИТТ Азбель','НТФП Грецов','Профессиональные установки подростков Андреева','НВИД Годлиник']
         lst_check_career_tests = []
 
+        # Список тестов для которых нужно создание отдельных файлов
+        lst_create_files_tests =['Кеттел 14-PF Рукавишников Соколова']
+
 
         params_df = pd.read_excel(params_adults, dtype=str, usecols='A',
                                   header=None)  # считываем какие тесты нужно использовать
@@ -417,7 +420,12 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
             # обрабатываем и получаем датафреймы для добавления в основные таблицы
-            temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df,lst_svod_cols)
+            # если тест не относится к Кеттелу или другим тестам для которых надо делать диграммы
+            if name_test not in lst_create_files_tests:
+                temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df,lst_svod_cols)
+            else:
+                temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df,lst_svod_cols,end_folder)
+
 
             base_df_for_func = pd.concat([base_df_for_func, temp_dct['Списочный результат']],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
@@ -864,12 +872,13 @@ if __name__ == '__main__':
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Тест комбинирования.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = ''
+    main_svod_cols = '1'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 

@@ -6,6 +6,11 @@
 
 import pandas as pd
 import re
+import os
+import openpyxl
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import Alignment
+from openpyxl.utils import get_column_letter
 from tkinter import messagebox
 from lachesis_support_functions import create_union_svod,create_list_on_level,round_mean
 
@@ -2311,7 +2316,7 @@ def create_result_krshspq(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list
 
 
 
-def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list):
+def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols:list,end_folder:str):
     """
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
@@ -3001,6 +3006,77 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
         out_dct = create_list_on_level(base_df, out_dct, lst_integral, dct_prefix)
 
+        # Создаем шаблон файла с диаграммой
+        template_df = pd.DataFrame(columns=['-',1,2,3,4,5,6,7,8,9,10,'+','_','Стены'])
+        template_df['-'] = ['A','B','C','D','E','F','G','H','I','J','O','Q2','Q3','Q4']
+        template_df['+'] = ['A','B','C','D','E','F','G','H','I','J','O','Q2','Q3','Q4']
+        # Сохраняем по папкам результаты
+        if len(lst_svod_cols) == 1:
+            # Если нужно создавать одноуровневую структуру
+            # получаем название колонки
+            main_layer_name_column = lst_svod_cols[0]
+            # Заменяем пробелы на Не заполнено
+            base_df[main_layer_name_column] = base_df[main_layer_name_column].apply(
+                lambda x: 'Не заполнено' if x == ' ' else x)
+            lst_unique_value = base_df[main_layer_name_column].unique()  # получаем список уникальных значений
+            for name_folder in lst_unique_value:
+                temp_df = base_df[base_df[main_layer_name_column] == name_folder]  # фильтруем по названию
+                # Создаем название для папки
+                clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                           name_folder)  # очищаем название от лишних символов
+                finish_path = f'{end_folder}/{clean_name_folder}'
+                if not os.path.exists(finish_path):
+                    os.makedirs(finish_path)
+                temp_df = temp_df.applymap(
+                    lambda x: str.replace(x, 'Не заполнено', '') if isinstance(x, str) else x)
+                for idx_row in range(len(temp_df)):
+                    person_df = temp_df.iloc[idx_row].to_frame().transpose() # делаем датафрейм из строки
+                    person_diag_df = template_df.copy() # делаем копию датафрейма с диаграммой
+                    name_lst_person_stens = [column for column in temp_df.columns if 'Стен' in column]
+                    value_lst_person_stens = person_df[name_lst_person_stens].values[0] # делаем список из стенов
+                    person_diag_df['Стены'] = value_lst_person_stens # присваиваем
+                    for idx,value_stens in enumerate(value_lst_person_stens):
+                        person_diag_df.loc[idx,value_stens] = '*'
+
+                    # Сохраняем
+                    name_file = person_df['ФИО'].values[0]
+                    name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                    threshold_name = 200 - (len(finish_path) + 10)
+                    if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                        raise OSError
+                    name_file = name_file[:threshold_name]  # ограничиваем название файла
+                    wb = openpyxl.Workbook()  # создаем файл
+                    none_check = None  # чекбокс для проверки наличия пустой первой строки, такое почему то иногда бывает
+                    for row in dataframe_to_rows(person_diag_df, index=False, header=True):
+                        if len(row) == 1 and not row[0]:  # убираем пустую строку
+                            none_check = True
+                            wb[wb.sheetnames[0]].append(row)
+                        else:
+                            wb[wb.sheetnames[0]].append(row)
+                    if none_check:
+                        wb[wb.sheetnames[0]].delete_rows(2)
+
+                    ws = wb.active
+                    # Устанавливаем минимальную ширину колонок
+                    for column in ws.columns:
+                        column_letter = column[0].column_letter  # Получаем букву колонки
+                        ws.column_dimensions[column_letter].width = 3
+                        if column_letter == 'N':
+                            ws.column_dimensions[column_letter].width = 8
+
+                    wb.save(f'{finish_path}/{name_file}.xlsx')
+
+
+
+
+
+
+
+
+
+
+
+
         """
             Сохраняем в зависимости от необходимости делать своды по определенным колонкам
             """
@@ -3015,6 +3091,11 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Опросник Кеттела PF-14/HSPQ Рукавишников Соколова обнаружено отсутствие обязательных колонок:\n'
                              f'{diff_req_cols}\n В таблице с ответами обязательно должны быть колонки с названием Пол и ФИО'
+                             f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
+    except OSError:
+        messagebox.showerror('Лахеcис',
+                             f'При сохранении результатов теста Опросник Кеттела PF-14/HSPQ Рукавишников Соколова в колонке ФИО обнаружено слишком длинное слово:\n'
+                             f'{name_file}\n выберите более короткий путь сохранения или уменьшите ФИО'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueSex:
         messagebox.showerror('Лахеcис',
