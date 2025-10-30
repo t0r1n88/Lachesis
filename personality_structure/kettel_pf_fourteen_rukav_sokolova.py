@@ -3065,6 +3065,193 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
                             ws.column_dimensions[column_letter].width = 8
 
                     wb.save(f'{finish_path}/{name_file}.xlsx')
+        elif len(lst_svod_cols) == 2:
+            name_first_layer_column = lst_svod_cols[0]
+            name_second_layer_column = lst_svod_cols[1]
+
+            # Заменяем пробелы на Не заполнено
+            base_df[name_first_layer_column] = base_df[name_first_layer_column].apply(lambda x: 'Не заполнено' if x == ' ' else x)
+            base_df[name_second_layer_column] = base_df[name_second_layer_column].apply(
+                lambda x: 'Не заполнено' if x == ' ' else x)
+
+            lst_unique_value_first_layer = base_df[
+                name_first_layer_column].unique()  # получаем список уникальных значений
+            for first_name_folder in lst_unique_value_first_layer:
+                clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                 first_name_folder)  # очищаем название от лишних символов
+
+                # получаем отфильтрованный датафрейм по значениям колонки первого уровня
+                temp_df_first_layer = base_df[base_df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
+                lst_unique_value_second_layer = temp_df_first_layer[
+                    name_second_layer_column].unique()  # получаем список уникальных значений
+                # фильтруем по значениям колонки второго уровня
+                for second_name_folder in lst_unique_value_second_layer:
+                    temp_df_second_layer = temp_df_first_layer[
+                        temp_df_first_layer[name_second_layer_column] == second_name_folder]
+                    clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                      second_name_folder)  # очищаем название от лишних символов
+
+                    finish_path = f'{end_folder}/{clean_first_name_folder}/{clean_second_name_folder}'
+                    if not os.path.exists(finish_path):
+                        os.makedirs(finish_path)
+                    temp_df_second_layer = temp_df_second_layer.applymap(
+                        lambda x: str.replace(x, 'Не заполнено', '') if isinstance(x, str) else x)
+                    for idx_row in range(len(temp_df_second_layer)):
+                        person_df = temp_df_second_layer.iloc[idx_row].to_frame().transpose()  # делаем датафрейм из строки
+                        person_diag_df = template_df.copy()  # делаем копию датафрейма с диаграммой
+                        name_lst_person_stens = [column for column in temp_df_second_layer.columns if 'Стен' in column]
+                        value_lst_person_stens = person_df[name_lst_person_stens].values[0]  # делаем список из стенов
+                        person_diag_df['Стены'] = value_lst_person_stens  # присваиваем
+                        for idx, value_stens in enumerate(value_lst_person_stens):
+                            person_diag_df.loc[idx, value_stens] = '*'
+
+                        # Сохраняем
+                        name_file = person_df['ФИО'].values[0]
+                        name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                        threshold_name = 200 - (len(finish_path) + 10)
+                        if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                            raise OSError
+                        name_file = name_file[:threshold_name]  # ограничиваем название файла
+                        wb = openpyxl.Workbook()  # создаем файл
+                        none_check = None  # чекбокс для проверки наличия пустой первой строки, такое почему то иногда бывает
+                        for row in dataframe_to_rows(person_diag_df, index=False, header=True):
+                            if len(row) == 1 and not row[0]:  # убираем пустую строку
+                                none_check = True
+                                wb[wb.sheetnames[0]].append(row)
+                            else:
+                                wb[wb.sheetnames[0]].append(row)
+                        if none_check:
+                            wb[wb.sheetnames[0]].delete_rows(2)
+
+                        ws = wb.active
+                        # Устанавливаем минимальную ширину колонок
+                        for column in ws.columns:
+                            column_letter = column[0].column_letter  # Получаем букву колонки
+                            ws.column_dimensions[column_letter].width = 3
+                            if column_letter == 'N':
+                                ws.column_dimensions[column_letter].width = 8
+
+                        wb.save(f'{finish_path}/{name_file}.xlsx')
+        elif len(lst_svod_cols) == 3:
+            # Если нужно создавать трехуровневую структуру Например Школа-Класс-буква класса
+            # получаем названия колонок для трех уровней
+            name_first_layer_column = lst_svod_cols[0]
+            name_second_layer_column = lst_svod_cols[1]
+            name_third_layer_column = lst_svod_cols[2]
+
+            # Заменяем пробелы на Не заполнено
+            base_df[name_first_layer_column] = base_df[name_first_layer_column].apply(lambda x: 'Не заполнено' if x == ' ' else x)
+            base_df[name_second_layer_column] = base_df[name_second_layer_column].apply(
+                lambda x: 'Не заполнено' if x == ' ' else x)
+            base_df[name_third_layer_column] = base_df[name_third_layer_column].apply(lambda x: 'Не заполнено' if x == ' ' else x)
+
+            lst_unique_value_first_layer = base_df[
+                name_first_layer_column].unique()  # получаем список уникальных значений
+            for first_name_folder in lst_unique_value_first_layer:
+                clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                 first_name_folder)  # очищаем название от лишних символов
+
+                # получаем отфильтрованный датафрейм по значениям колонки первого уровня
+                temp_df_first_layer = base_df[base_df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
+                lst_unique_value_second_layer = temp_df_first_layer[
+                    name_second_layer_column].unique()  # получаем список уникальных значений второго уровня
+                # фильтруем по значениям колонки второго уровня
+                for second_name_folder in lst_unique_value_second_layer:
+                    temp_df_second_layer = temp_df_first_layer[
+                        temp_df_first_layer[name_second_layer_column] == second_name_folder]
+                    clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                      second_name_folder)  # очищаем название от лишних символов
+                    lst_unique_value_third_layer = temp_df_second_layer[
+                        name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
+                    for third_name_folder in lst_unique_value_third_layer:
+                        clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
+                                                         third_name_folder)  # очищаем название от лишних символов
+                        temp_df_third_layer = temp_df_second_layer[
+                            temp_df_second_layer[name_third_layer_column] == third_name_folder]
+
+                        finish_path = f'{end_folder}/{clean_first_name_folder}/{clean_second_name_folder}/{clean_third_name_folder}'
+                        if not os.path.exists(finish_path):
+                            os.makedirs(finish_path)
+                        # заменяем перед записью документа Не заполнено на пробел
+                        temp_df_third_layer = temp_df_third_layer.applymap(
+                            lambda x: str.replace(x, 'Не заполнено', '') if isinstance(x, str) else x)
+                        for idx_row in range(len(temp_df_third_layer)):
+                            person_df = temp_df_third_layer.iloc[idx_row].to_frame().transpose()  # делаем датафрейм из строки
+                            person_diag_df = template_df.copy()  # делаем копию датафрейма с диаграммой
+                            name_lst_person_stens = [column for column in temp_df_third_layer.columns if 'Стен' in column]
+                            value_lst_person_stens = person_df[name_lst_person_stens].values[
+                                0]  # делаем список из стенов
+                            person_diag_df['Стены'] = value_lst_person_stens  # присваиваем
+                            for idx, value_stens in enumerate(value_lst_person_stens):
+                                person_diag_df.loc[idx, value_stens] = '*'
+
+                            # Сохраняем
+                            name_file = person_df['ФИО'].values[0]
+                            name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                            threshold_name = 200 - (len(finish_path) + 10)
+                            if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                                raise OSError
+                            name_file = name_file[:threshold_name]  # ограничиваем название файла
+                            wb = openpyxl.Workbook()  # создаем файл
+                            none_check = None  # чекбокс для проверки наличия пустой первой строки, такое почему то иногда бывает
+                            for row in dataframe_to_rows(person_diag_df, index=False, header=True):
+                                if len(row) == 1 and not row[0]:  # убираем пустую строку
+                                    none_check = True
+                                    wb[wb.sheetnames[0]].append(row)
+                                else:
+                                    wb[wb.sheetnames[0]].append(row)
+                            if none_check:
+                                wb[wb.sheetnames[0]].delete_rows(2)
+
+                            ws = wb.active
+                            # Устанавливаем минимальную ширину колонок
+                            for column in ws.columns:
+                                column_letter = column[0].column_letter  # Получаем букву колонки
+                                ws.column_dimensions[column_letter].width = 3
+                                if column_letter == 'N':
+                                    ws.column_dimensions[column_letter].width = 8
+
+                            wb.save(f'{finish_path}/{name_file}.xlsx')
+        else:
+            base_df = base_df.applymap(
+                lambda x: str.replace(x, 'Не заполнено', '') if isinstance(x, str) else x)
+            for idx_row in range(len(base_df)):
+                person_df = base_df.iloc[idx_row].to_frame().transpose()  # делаем датафрейм из строки
+                person_diag_df = template_df.copy()  # делаем копию датафрейма с диаграммой
+                name_lst_person_stens = [column for column in base_df.columns if 'Стен' in column]
+                value_lst_person_stens = person_df[name_lst_person_stens].values[0]  # делаем список из стенов
+                person_diag_df['Стены'] = value_lst_person_stens  # присваиваем
+                for idx, value_stens in enumerate(value_lst_person_stens):
+                    person_diag_df.loc[idx, value_stens] = '*'
+
+                # Сохраняем
+                name_file = person_df['ФИО'].values[0]
+                name_file = re.sub(r'[<> :"?*|\\/]', ' ', name_file)
+                threshold_name = 200 - (len(end_folder) + 10)
+                if threshold_name <= 0:  # если путь к папке слишком длинный вызываем исключение
+                    raise OSError
+                name_file = name_file[:threshold_name]  # ограничиваем название файла
+                wb = openpyxl.Workbook()  # создаем файл
+                none_check = None  # чекбокс для проверки наличия пустой первой строки, такое почему то иногда бывает
+                for row in dataframe_to_rows(person_diag_df, index=False, header=True):
+                    if len(row) == 1 and not row[0]:  # убираем пустую строку
+                        none_check = True
+                        wb[wb.sheetnames[0]].append(row)
+                    else:
+                        wb[wb.sheetnames[0]].append(row)
+                if none_check:
+                    wb[wb.sheetnames[0]].delete_rows(2)
+
+                ws = wb.active
+                # Устанавливаем минимальную ширину колонок
+                for column in ws.columns:
+                    column_letter = column[0].column_letter  # Получаем букву колонки
+                    ws.column_dimensions[column_letter].width = 3
+                    if column_letter == 'N':
+                        ws.column_dimensions[column_letter].width = 8
+
+                wb.save(f'{end_folder}/{name_file}.xlsx')
+
 
 
 
