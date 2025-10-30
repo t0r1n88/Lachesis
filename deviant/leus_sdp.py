@@ -382,7 +382,6 @@ def processing_leus_sdp(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_s
 
         base_df = pd.DataFrame()
 
-        base_df['Норма_СДП'] = '0-10 баллов'
         base_df['Значение_шкалы_СОП'] = answers_df.iloc[:, :15].sum(axis=1)
         base_df['Уровень_шкалы_СОП'] = base_df['Значение_шкалы_СОП'].apply(calc_level_sdp)
 

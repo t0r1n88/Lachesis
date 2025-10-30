@@ -7,7 +7,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import calc_count_scale,round_mean
+from lachesis_support_functions import calc_count_scale,round_mean,create_union_svod,create_list_on_level
 
 class BadOrderKPFRS(Exception):
     """
@@ -1370,7 +1370,7 @@ def calc_j_sten(ser: pd.Series):
             return 10
 
 # Q1
-def calc_q_one_value(row):
+def calc_o_value(row):
     """
     Фнукция подсчета значения
     :param row:
@@ -1451,7 +1451,7 @@ def calc_q_one_value(row):
 
     return value
 
-def calc_q_one_sten(ser: pd.Series):
+def calc_o_sten(ser: pd.Series):
     """
     Функция для подсчета Стена
     :param ser: пол и значение
@@ -1933,6 +1933,26 @@ def calc_range(value):
 
 
 
+def create_result_krshspq(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+
+    lst_reindex_main_level_cols = lst_svod_cols.copy()
+    lst_reindex_main_level_cols.extend( ['низкий уровень','средний уровень','высокий уровень',
+                                   'Итого'])  # Основная шкала
+
+
+
+
+
+
+
+
 
 
 
@@ -2377,11 +2397,11 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     base_df['J_Значение'] = answers_df.take(lst_j,axis=1).apply(calc_j_value,axis=1)
     base_df['J_Стен'] = base_df[['Пол','J_Значение']].apply(calc_j_sten,axis=1)
 
-    # 11 Шкала Q1
+    # 11 Шкала O
     lst_q_one = [16,36,56,57,76,77,96,97,117,137]
     lst_q_one = list(map(lambda x: x - 1, lst_q_one))
-    base_df['O_Значение'] = answers_df.take(lst_q_one,axis=1).apply(calc_q_one_value,axis=1)
-    base_df['O_Стен'] = base_df[['Пол','O_Значение']].apply(calc_q_one_sten,axis=1)
+    base_df['O_Значение'] = answers_df.take(lst_q_one,axis=1).apply(calc_o_value, axis=1)
+    base_df['O_Стен'] = base_df[['Пол','O_Значение']].apply(calc_o_sten, axis=1)
 
     # 12 Шкала Q2
     lst_q_two = [17,18,37,38,58,78,98,118,138,139]
@@ -2401,23 +2421,6 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     base_df['Q4_Значение'] = answers_df.take(lst_q_four,axis=1).apply(calc_q_four_value,axis=1)
     base_df['Q4_Стен'] = base_df[['Пол','Q4_Значение']].apply(calc_q_four_sten,axis=1)
 
-    # Упорядочиваем
-    result_df = base_df.iloc[:,quantity_cols_base_df:] # отсекаем часть с результатами чтобы упорядочить
-    lst_stens = [column for column in result_df.columns if 'Стен' in column]
-    result_df['Итоговые_стены'] = result_df[lst_stens].apply(create_itog_stens,axis=1)
-    new_order_lst = ['Итоговые_стены',
-                     'A_Стен','B_Стен','C_Стен','D_Стен',
-                     'E_Стен','F_Стен','G_Стен','H_Стен',
-                     'I_Стен','J_Стен','O_Стен','Q2_Стен',
-                     'Q3_Стен','Q4_Стен',
-                     'A_Значение','B_Значение','C_Значение','D_Значение',
-                     'E_Значение','F_Значение','G_Значение','H_Значение',
-                     'I_Значение','J_Значение','O_Значение','Q2_Значение',
-                     'Q3_Значение','Q4_Значение'
-                     ]
-    result_df = result_df.reindex(columns=new_order_lst) # изменяем порядок
-    base_df = pd.concat([union_base_df,result_df],axis=1) # соединяем и перезаписываем base_df
-
     # Добавляем колонки с диапазонами
     base_df['A_Диапазон'] = base_df['A_Стен'].apply(calc_range)
     base_df['B_Диапазон'] = base_df['B_Стен'].apply(calc_range)
@@ -2436,6 +2439,33 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
     base_df['Q3_Диапазон'] = base_df['Q3_Стен'].apply(calc_range)
     base_df['Q4_Диапазон'] = base_df['Q4_Стен'].apply(calc_range)
+
+
+
+    # Упорядочиваем
+    result_df = base_df.iloc[:,quantity_cols_base_df:] # отсекаем часть с результатами чтобы упорядочить
+    lst_stens = [column for column in result_df.columns if 'Стен' in column]
+    result_df['Итоговые_стены'] = result_df[lst_stens].apply(create_itog_stens,axis=1)
+    new_order_lst = ['Итоговые_стены',
+                     'A_Стен','B_Стен','C_Стен','D_Стен',
+                     'E_Стен','F_Стен','G_Стен','H_Стен',
+                     'I_Стен','J_Стен','O_Стен','Q2_Стен',
+                     'Q3_Стен','Q4_Стен',
+
+                     'A_Диапазон','B_Диапазон','C_Диапазон','D_Диапазон',
+                     'E_Диапазон','F_Диапазон','G_Диапазон','H_Диапазон',
+                     'I_Диапазон','J_Диапазон','O_Диапазон','Q2_Диапазон',
+                     'Q3_Диапазон','Q4_Диапазон',
+
+                     'A_Значение','B_Значение','C_Значение','D_Значение',
+                     'E_Значение','F_Значение','G_Значение','H_Значение',
+                     'I_Значение','J_Значение','O_Значение','Q2_Значение',
+                     'Q3_Значение','Q4_Значение'
+                     ]
+    result_df = result_df.reindex(columns=new_order_lst) # изменяем порядок
+    base_df = pd.concat([union_base_df,result_df],axis=1) # соединяем и перезаписываем base_df
+
+
 
 
     # Создаем датафрейм для создания части в общий датафрейм
@@ -2496,13 +2526,137 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
     part_df['КРС14_Q3_Диапазон'] = base_df['Q3_Диапазон']
     part_df['КРС14_Q4_Диапазон'] = base_df['Q4_Диапазон']
 
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
+               }
+    
+    
+
+    # Делаем свод по шкалам
+    dct_svod_integral = {'A_Стен': 'A_Диапазон',
+                         'B_Стен': 'B_Диапазон',
+                         'C_Стен': 'C_Диапазон',
+                         'D_Стен': 'D_Диапазон',
+
+                         'E_Стен': 'E_Диапазон',
+                         'F_Стен': 'F_Диапазон',
+                         'G_Стен': 'G_Диапазон',
+                         'H_Стен': 'H_Диапазон',
+
+                         'I_Стен': 'I_Диапазон',
+                         'J_Стен': 'J_Диапазон',
+                         'O_Стен': 'O_Диапазон',
+                         'Q2_Стен': 'Q2_Диапазон',
+
+                         'Q3_Стен': 'Q3_Диапазон',
+                         'Q4_Стен': 'Q4_Диапазон',
+                         }
+
+    dct_rename_svod_integral = {'A_Стен': 'Фактор A',
+                                'B_Стен': 'Фактор B',
+                                'C_Стен': 'Фактор C',
+                                'D_Стен': 'Фактор D',
+
+                                'E_Стен': 'Фактор E',
+                                'F_Стен': 'Фактор F',
+                                'G_Стен': 'Фактор G',
+                                'H_Стен': 'Фактор H',
+
+                                'I_Стен': 'Фактор I',
+                                'J_Стен': 'Фактор J',
+                                'O_Стен': 'Фактор O',
+                                'Q2_Стен': 'Фактор Q2',
+
+                                'Q3_Стен': 'Фактор Q3',
+                                'Q4_Стен': 'Фактор Q4',
+                                }
+
+
+    lst_integral = ['1-3', '4-7', '8-10']
+    base_svod_integral_df = create_union_svod(base_df, dct_svod_integral, dct_rename_svod_integral, lst_integral)
+
+    # Считаем среднее по шкалам
+    avg_a = round(base_df['A_Значение'].mean(), 1)
+    avg_b = round(base_df['B_Значение'].mean(), 1)
+    avg_c = round(base_df['C_Значение'].mean(), 1)
+    avg_d = round(base_df['D_Значение'].mean(), 1)
+
+    avg_e = round(base_df['E_Значение'].mean(), 1)
+    avg_f = round(base_df['F_Значение'].mean(), 1)
+    avg_g = round(base_df['G_Значение'].mean(), 1)
+    avg_h = round(base_df['H_Значение'].mean(), 1)
+
+    avg_i = round(base_df['I_Значение'].mean(), 1)
+    avg_j = round(base_df['J_Значение'].mean(), 1)
+    avg_o = round(base_df['O_Значение'].mean(), 1)
+    avg_q_two = round(base_df['Q2_Значение'].mean(), 1)
+
+    avg_q_three = round(base_df['Q3_Значение'].mean(), 1)
+    avg_q_four = round(base_df['Q4_Значение'].mean(), 1)
+
+    avg_dct = {'Среднее сырое значение шкалы A': avg_a,
+               'Среднее сырое значение шкалы B': avg_b,
+               'Среднее сырое значение шкалы C': avg_c,
+               'Среднее сырое значение шкалы D': avg_d,
+               
+               'Среднее сырое значение шкалы E': avg_e,
+               'Среднее сырое значение шкалы F': avg_f,
+               'Среднее сырое значение шкалы G': avg_g,
+               'Среднее сырое значение шкалы H': avg_h,
+               
+               'Среднее сырое значение шкалы I': avg_i,
+               'Среднее сырое значение шкалы J': avg_j,
+               'Среднее сырое значение шкалы O': avg_o,
+               'Среднее сырое значение шкалы Q2': avg_q_two,
+               
+               'Среднее сырое значение шкалы Q3': avg_q_three,
+               'Среднее сырое значение шкалы Q4': avg_q_four,
+               }
+
+    avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+    avg_df = avg_df.reset_index()
+    avg_df.columns = ['Показатель', 'Среднее значение']
+
+    out_dct.update({'Свод Интегральные показатели': base_svod_integral_df,
+                    'Среднее': avg_df}
+                   )
+
+    dct_prefix = {'A_Диапазон': 'A',
+                  'B_Диапазон': 'B',
+                  'C_Диапазон': 'C',
+                  'D_Диапазон': 'D',
+                  
+                  'E_Диапазон': 'E',
+                  'F_Диапазон': 'F',
+                  'G_Диапазон': 'G',
+                  'H_Диапазон': 'H',
+                  
+                  'I_Диапазон': 'I',
+                  'J_Диапазон': 'J',
+                  'O_Диапазон': 'O',
+                  'Q2_Диапазон': 'Q2',
+                  
+                  'Q3_Диапазон': 'Q3',
+                  'Q4_Диапазон': 'Q4',
+                  }
+
+    out_dct = create_list_on_level(base_df, out_dct, lst_integral, dct_prefix)
+
+    """
+        Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+        """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+    else:
+        out_dct = create_result_krshspq(base_df, out_dct, lst_svod_cols)
+
+        return out_dct, part_df
 
 
 
 
-
-    # Соединяем анкетную часть с результатной
-    base_df.to_excel('data/res.xlsx',index=False)
 
 
 
