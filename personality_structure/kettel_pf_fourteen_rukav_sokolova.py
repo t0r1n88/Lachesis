@@ -2828,6 +2828,7 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
 
 
+
         # Создаем датафрейм для создания части в общий датафрейм
         part_df = pd.DataFrame()
         # Общая тревожность
@@ -2837,18 +2838,18 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
         part_df['КРС14_C_Стен'] = base_df['C_Стен']
         part_df['КРС14_D_Стен'] = base_df['D_Стен']
 
-        part_df['КРС14_E_Стен'] = base_df['A_Стен']
-        part_df['КРС14_F_Стен'] = base_df['A_Стен']
-        part_df['КРС14_G_Стен'] = base_df['A_Стен']
-        part_df['КРС14_H_Стен'] = base_df['A_Стен']
+        part_df['КРС14_E_Стен'] = base_df['E_Стен']
+        part_df['КРС14_F_Стен'] = base_df['F_Стен']
+        part_df['КРС14_G_Стен'] = base_df['G_Стен']
+        part_df['КРС14_H_Стен'] = base_df['H_Стен']
 
-        part_df['КРС14_I_Стен'] = base_df['A_Стен']
-        part_df['КРС14_J_Стен'] = base_df['A_Стен']
-        part_df['КРС14_O_Стен'] = base_df['A_Стен']
-        part_df['КРС14_Q2_Стен'] = base_df['A_Стен']
+        part_df['КРС14_I_Стен'] = base_df['I_Стен']
+        part_df['КРС14_J_Стен'] = base_df['J_Стен']
+        part_df['КРС14_O_Стен'] = base_df['O_Стен']
+        part_df['КРС14_Q2_Стен'] = base_df['Q2_Стен']
 
-        part_df['КРС14_Q3_Стен'] = base_df['A_Стен']
-        part_df['КРС14_Q4_Стен'] = base_df['A_Стен']
+        part_df['КРС14_Q3_Стен'] = base_df['Q3_Стен']
+        part_df['КРС14_Q4_Стен'] = base_df['Q4_Стен']
 
         # Диапазон
         part_df['КРС14_A_Диапазон'] = base_df['A_Диапазон']
@@ -3279,6 +3280,9 @@ def processing_kettel_pf_ruk_sok(base_df: pd.DataFrame, answers_df: pd.DataFrame
                              f'При обработке вопросов теста Опросник Кеттела PF-14/HSPQ Рукавишников Соколова обнаружено отсутствие обязательных колонок:\n'
                              f'{diff_req_cols}\n В таблице с ответами обязательно должны быть колонки с названием Пол и ФИО'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
+    except PermissionError:
+        messagebox.showerror('Лахеcис',
+                                 f'Закройте все файлы созданные программой Лахесис и запустите повторно обработку')
     except OSError:
         messagebox.showerror('Лахеcис',
                              f'При сохранении результатов теста Опросник Кеттела PF-14/HSPQ Рукавишников Соколова в колонке ФИО обнаружено слишком длинное слово:\n'

@@ -426,7 +426,6 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
             else:
                 temp_dct,temp_itog_df = dct_tests[name_test][0](temp_base_df, temp_df,lst_svod_cols,end_folder)
 
-
             base_df_for_func = pd.concat([base_df_for_func, temp_dct['Списочный результат']],
                                 axis=1)  # соединяем анкетные данные и вопросы вместе с результатами
             result_df = pd.concat([result_df, temp_dct['Список для проверки']], axis=1)
@@ -878,7 +877,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
