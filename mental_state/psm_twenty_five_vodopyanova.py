@@ -339,7 +339,7 @@ def processing_psm_twenty_five_vodopyanova(result_df: pd.DataFrame, answers_df: 
     except BadValuePSMSTFZ:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала психологического стресса PSM-25 Водопьянова обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
 

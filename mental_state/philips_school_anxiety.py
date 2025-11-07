@@ -861,7 +861,7 @@ def processing_philips_school_anxiety(result_df: pd.DataFrame, answers_df: pd.Da
     except BadValuePHSA:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Школьная тревожность Филлипс обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
 

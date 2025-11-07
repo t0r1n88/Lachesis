@@ -796,7 +796,7 @@ def processing_kondash_anxiety_student(base_df: pd.DataFrame, answers_df: pd.Dat
     except BadValueCondashAnxiety:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала тревожности Кондаш обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
     except BadCountColumnsCondashAnxiety:

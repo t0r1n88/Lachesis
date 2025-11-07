@@ -522,7 +522,7 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
     except BadValueASMS:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Самооценка психических состояний Айзенк обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
 
