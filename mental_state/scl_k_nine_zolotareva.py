@@ -267,7 +267,7 @@ def processing_scl_k_nine_zolotareva(result_df: pd.DataFrame, answers_df: pd.Dat
     except BadOrderSCLKNZ:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Симптоматический опросник SCL-K-9 Золотарева обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueSCLKNZ:
         messagebox.showerror('Лахеcис',

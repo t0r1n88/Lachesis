@@ -388,7 +388,7 @@ def processing_kotik_avoiding_fail(base_df: pd.DataFrame, answers_df: pd.DataFra
     except BadValueKAF:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Опросник мотивации к избеганию неудач Элерс Котик обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
 

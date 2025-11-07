@@ -517,7 +517,7 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
     except BadOrderASMS:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Самооценка психических состояний Айзенк обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueASMS:
         messagebox.showerror('Лахеcис',

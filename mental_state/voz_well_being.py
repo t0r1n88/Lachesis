@@ -307,7 +307,7 @@ def processing_voz_well_being(result_df: pd.DataFrame, answers_df: pd.DataFrame,
     except BadOrderVozWellBeing:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Индекс общего самочувствия ВОЗ 1999 обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueVozWellBeing:
         messagebox.showerror('Лахеcис',

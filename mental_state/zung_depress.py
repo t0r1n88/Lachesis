@@ -365,7 +365,7 @@ def processing_zung_depress(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_
     except BadOrderZungDepress:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала депрессии Цунга обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueZungDepress:
         messagebox.showerror('Лахеcис',

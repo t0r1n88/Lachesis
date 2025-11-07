@@ -927,7 +927,7 @@ def processing_scl_r_nineteen_tarabrina(result_df: pd.DataFrame, answers_df: pd.
     except BadOrderSCLRNT:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Опросник выраженности психопатологической симптоматики SCL-90-R обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueSCLRNT:
         messagebox.showerror('Лахеcис',

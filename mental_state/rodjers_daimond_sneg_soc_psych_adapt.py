@@ -1586,7 +1586,7 @@ def processing_rodjers_daimond_sneg_soc_psych_adapt(result_df: pd.DataFrame, ans
     except BadOrderRDSSPA:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала социально психологической адаптированности Роджерс Даймонд Снегирева обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueRDSSPA:
         messagebox.showerror('Лахеcис',

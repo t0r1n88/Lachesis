@@ -281,7 +281,7 @@ def processing_goncharova_adoptation_first_course(base_df: pd.DataFrame, answers
     except BadOrderGAFC:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Экспресс-диагностика уровня адаптации первокурсников Гончарова обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueGAFC:
         messagebox.showerror('Лахеcис',

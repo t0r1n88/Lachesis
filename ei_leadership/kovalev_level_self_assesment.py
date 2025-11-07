@@ -355,12 +355,12 @@ def processing_usk(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_c
     except BadOrderUSK:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Уровень самооценки Ковалев обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueUSK:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Уровень самооценки Ковалев обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
     except BadCountColumnsUSK:

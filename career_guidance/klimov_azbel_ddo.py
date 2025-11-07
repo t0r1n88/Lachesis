@@ -725,7 +725,7 @@ def processing_ddo(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_svod_cols
     except BadValueDDO:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Дифференциально-диагностический опросник обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
-                             f'{error_message}\n'
+                             f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
 

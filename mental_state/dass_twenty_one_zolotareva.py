@@ -463,7 +463,7 @@ def processing_dass_twenty_one_zolotareva(result_df: pd.DataFrame, answers_df: p
     except BadOrderDTOZ:
         messagebox.showerror('Лахеcис',
                              f'При обработке вопросов теста Шкала депрессии, тревоги и стресса, DASS-21 Золотарева обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
-                             f'{error_order_message}\n'
+                             f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
     except BadValueDTOZ:
         messagebox.showerror('Лахеcис',
