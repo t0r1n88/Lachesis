@@ -57,62 +57,72 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     """
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
-
     dct_df = dict()  # словарь для хранения листовых датафреймов
+    check_set_answer = set()  # множество для проверки есть ли такой вопрос или нет
+
+    count_question = 1 # счетчик вопросов
+
     base_df = pd.read_excel(data_file,dtype=str) # исходный датафрейм
+    # очищаем от лишних пробелов в начале и конце
+    base_df = base_df.applymap(lambda x:x.strip() if isinstance(x,str) else x)
 
     descr_df = base_df.iloc[:,:quantity_descr_cols] # датафрейм с анкетными данными
     df = base_df.iloc[:,quantity_descr_cols:] # датафрейм с ответами
-
-    sev_df = pd.DataFrame() # выходной датафрейм для нескольких вопросов
-
-    check_set_answer = set()  # множество для проверки есть ли такой вопрос или нет
-    count_question = 1
-
-    for idx, name_column in enumerate(df.columns):
-        # получаем последующую колонку
-        if idx +1 == len(df.columns):
-            # проверяем достижение предела
-            cont_name_column = idx
-        else:
-            cont_name_column = idx+1
-
-        lst_union_name_column = [name_column]  # список для хранения названий колонок
+    lst_questions = [] # список для хранения самих вопросов
+    # Находим все уникальные вопросы
+    for name_column in df.columns:
         lst_answer = name_column.split(' / ')
-        # Получаем ответ
         question = lst_answer[0]  # Вопрос
-        if question not in check_set_answer:
-            threshold = len(df.columns[cont_name_column:])  # сколько колонок осталось до конца датафрейма
-            for temp_idx, temp_name_column in enumerate(df.columns[cont_name_column:]):
-                temp_lst_question = temp_name_column.split(' / ')  # сплитим каждую последующую колонку пока вопрос равен предыдущему
-                temp_question = temp_lst_question[0]  # вопрос в следующей колонке
-                if question == temp_question:
-                    lst_union_name_column.append(temp_name_column)  # добавляем название
-                    # для случая если такой вопрос последний в таблице
-                    if temp_idx + 1 == threshold:
-                        sev_df[question] = df[lst_union_name_column].apply(extract_answer_several_option, axis=1)
-                        all_df[question] = df[lst_union_name_column].apply(extract_answer_several_option, axis=1)
-                        # создаем частотную таблицу
-                        counts_df = count_value_in_column(sev_df.copy(), question)
-                        dct_df[idx + 1] = counts_df
-                        break
+        if question not in lst_questions:
+            lst_questions.append(question)
+
+    for idx, name_question in enumerate(lst_questions,1):
+        lst_columns_question = [col for col in df.columns if name_question in col] # список для хранения всех подвопросов
+        descr_df[f'Вопрос_{idx}'] = df[lst_columns_question].apply(extract_answer_several_option, axis=1)
+
+    descr_df.to_excel('data/dfd.xlsx',index=False)
 
 
-                else:
-                    sev_df[question] = df[lst_union_name_column].apply(extract_answer_several_option, axis=1)
-                    all_df[question] = df[lst_union_name_column].apply(extract_answer_several_option, axis=1)
-                    # создаем частотную таблицу
-                    counts_df = count_value_in_column(sev_df.copy(), question)
-                    dct_df[idx + 1] = counts_df
-
-                    check_set_answer.add(question)
-
-                    count_question += 1
 
 
-    with pd.ExcelWriter(f'{end_folder}/Тест {current_time}.xlsx', engine='xlsxwriter') as writer:
-        for name_sheet,out_df in dct_df.items():
-            out_df.to_excel(writer,sheet_name=str(name_sheet),index=False)
+
+    # for idx, name_column in enumerate(df.columns):
+    #     lst_union_name_column = [name_column]  # список для хранения названий колонок относящихся к одному вопросу
+    #
+    #     # получаем последующую колонку
+    #     if idx +1 == len(df.columns):
+    #         # проверяем достижение предела
+    #         cont_name_column = idx
+    #     else:
+    #         cont_name_column = idx+1
+    #
+    #     lst_answer = name_column.split(' / ')
+    #     question = lst_answer[0]  # Вопрос
+    #     if question not in check_set_answer: # если вопроса еще не было
+    #         threshold = len(df.columns[cont_name_column:])  # сколько колонок осталось до конца датафрейма
+    #         print(threshold)
+    #         for temp_idx, temp_name_column in enumerate(df.columns[cont_name_column:]):
+    #             temp_lst_question = temp_name_column.split(' / ')  # сплитим каждую последующую колонку пока вопрос равен предыдущему
+    #             temp_question = temp_lst_question[0]  # вопрос в следующей колонке
+    #             if question == temp_question:
+    #                 lst_union_name_column.append(temp_name_column)  # добавляем название
+    #                 if temp_idx + 1 == threshold:
+    #                     break
+    #             else:
+    #                 check_set_answer.add(question)
+    #                 print(len((lst_union_name_column)))
+    #                 print(lst_union_name_column)
+    #
+    #                 count_question += 1
+    #     else:
+    #         continue
+    #
+
+
+
+
+
+
 
 
 
