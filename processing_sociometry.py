@@ -6,6 +6,7 @@ import openpyxl
 from collections import Counter
 import time
 import copy
+from collections import defaultdict
 
 def extract_answer_several_option(row:pd.Series):
     """
@@ -48,8 +49,9 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     """
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
-    checked_dct_df = dict()  # словарь для хранения проверочных датафреймов по каждому вопросу
-    matrix_dct_df = dict()  # словарь для хранения матриц датафреймов по каждому вопросу
+    checked_dct = dict()  # словарь для хранения проверочных датафреймов по каждому вопросу
+    matrix_dct = dict()  # словарь для хранения матриц датафреймов по каждому вопросу
+    lst_value_dct = [] # список для хранения словарей по каждому вопросу
 
 
 
@@ -61,8 +63,6 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     base_df.sort_values(by='ФИО',inplace=True) # сортируем по алфавиту
     # Создаем шаблон социоматрицы
     template_matrix_df = pd.DataFrame(index=base_df['ФИО'].tolist(),columns=base_df['ФИО'].tolist())
-    # Основа для социоматрицы по всем вопросам
-    base_matrix_df = template_matrix_df.copy()
 
 
 
@@ -71,6 +71,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     template_dct = {}
     for fio in base_df['ФИО'].tolist():
         template_dct[fio] = {key:0 for key in base_df['ФИО'].tolist()}
+
+    result_dct = copy.deepcopy(template_dct) # словарь в котором будут слаживаться результаты по всем вопросам
 
     descr_df = base_df.iloc[:,:quantity_descr_cols] # датафрейм с анкетными данными в который будут записываться данные по всем вопросам
     df = base_df.iloc[:,quantity_descr_cols:] # датафрейм с ответами
@@ -89,32 +91,57 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
         # Создаем датафрейм для обработки отдельного вопроса
         one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
         one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
-        checked_dct_df[idx] = one_qustion_df
+        checked_dct[idx] = one_qustion_df
 
         # считаем отдельную колонку
         one_dct = copy.deepcopy(template_dct)
         one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_anwers(x,one_dct),axis=1)
+        lst_value_dct.append(one_dct) # добавляем в список
+        # заполняем социоматрицу на отдельный вопрос
         one_matrix_df = template_matrix_df.copy()
         for key,value_dct in one_dct.items():
             for subkey,value in value_dct.items():
                 one_matrix_df.loc[key,subkey] = value
 
-        matrix_dct_df[idx] = one_matrix_df # добавляем в словарь для сохранения
+        change_dct = {key:{} for key in one_dct.keys()}
+
+        for fio,value_dct in one_dct.items():
+            for subfio,value in value_dct.items():
+                if fio != subfio:
+                    if one_dct[subfio][fio] == 1 and value_dct[subfio] == 1:
+                        change_dct[fio][subfio] = 1
+                        change_dct[subfio][fio] = 1
+
+        change_row = [len(value) for key,value in change_dct.items()]
+        # считаем количество выборов
+        sum_row = one_matrix_df.sum()
+        one_matrix_df.loc['Кол-во выборов'] = sum_row
+        one_matrix_df.loc['Кол-взаимных выборов'] = change_row
+
+        matrix_dct[idx] = one_matrix_df # добавляем в словарь для сохранения
 
 
 
     with pd.ExcelWriter(f'{end_folder}/Для проверки {current_time}.xlsx', engine='xlsxwriter') as writer:
-        for name_sheet,out_df in checked_dct_df.items():
+        for name_sheet,out_df in checked_dct.items():
             out_df.to_excel(writer,sheet_name=str(name_sheet),index=False)
 
     with pd.ExcelWriter(f'{end_folder}/Социоматрицы отдельные {current_time}.xlsx', engine='xlsxwriter') as writer:
-        for name_sheet,out_df in matrix_dct_df.items():
+        for name_sheet,out_df in matrix_dct.items():
             out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
 
-    lst_matrix = [df for df in matrix_dct_df.values()]
+    # Суммируем словари с ответами на отдельные вопросы для получения общего словаря
+    for dct in lst_value_dct:
+        for fio, value_dct in dct.items():
+            for subfio,value in value_dct.items():
+                result_dct[fio][subfio] +=value
+
+
+    # Суммируем и сохраняем общую социоматрицу
+    lst_matrix = [df for df in matrix_dct.values()]
     result = sum(lst_matrix)
 
-    result.to_excel('data/ba.xlsx',index=True)
+    result.to_excel(f'{end_folder}/Общая социоматрица {current_time}.xlsx',index=True)
 
 
 
