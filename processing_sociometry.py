@@ -48,6 +48,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     """
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
+    checked_dct_df = dict()  # словарь для хранения проверочных датафреймов по каждому вопросу
+    matrix_dct_df = dict()  # словарь для хранения матриц датафреймов по каждому вопросу
 
 
 
@@ -59,6 +61,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     base_df.sort_values(by='ФИО',inplace=True) # сортируем по алфавиту
     # Создаем шаблон социоматрицы
     template_matrix_df = pd.DataFrame(index=base_df['ФИО'].tolist(),columns=base_df['ФИО'].tolist())
+    # Основа для социоматрицы по всем вопросам
+    base_matrix_df = template_matrix_df.copy()
 
 
 
@@ -85,17 +89,33 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
         # Создаем датафрейм для обработки отдельного вопроса
         one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
         one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
+        checked_dct_df[idx] = one_qustion_df
+
         # считаем отдельную колонку
         one_dct = copy.deepcopy(template_dct)
         one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_anwers(x,one_dct),axis=1)
         one_matrix_df = template_matrix_df.copy()
         for key,value_dct in one_dct.items():
-            print(key)
             for subkey,value in value_dct.items():
                 one_matrix_df.loc[key,subkey] = value
 
-        one_matrix_df.to_excel('data/mat.xlsx')
-        raise ZeroDivisionError
+        matrix_dct_df[idx] = one_matrix_df # добавляем в словарь для сохранения
+
+
+
+    with pd.ExcelWriter(f'{end_folder}/Для проверки {current_time}.xlsx', engine='xlsxwriter') as writer:
+        for name_sheet,out_df in checked_dct_df.items():
+            out_df.to_excel(writer,sheet_name=str(name_sheet),index=False)
+
+    with pd.ExcelWriter(f'{end_folder}/Социоматрицы отдельные {current_time}.xlsx', engine='xlsxwriter') as writer:
+        for name_sheet,out_df in matrix_dct_df.items():
+            out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
+
+    lst_matrix = [df for df in matrix_dct_df.values()]
+    result = sum(lst_matrix)
+
+    result.to_excel('data/ba.xlsx',index=True)
+
 
 
 
