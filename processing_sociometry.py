@@ -5,7 +5,7 @@ import pandas as pd
 import openpyxl
 from collections import Counter
 import time
-
+import copy
 
 def extract_answer_several_option(row:pd.Series):
     """
@@ -18,32 +18,23 @@ def extract_answer_several_option(row:pd.Series):
     return ';'.join(temp_lst)
 
 
-def count_value_in_column(df:pd.DataFrame,name_column:str):
+def calc_anwers(row:pd.Series, dct:dict):
     """
-    Функция для подсчета сколько раз то или иное значение встречается в колонке
-    :param col: серия
-    :return: датафрейм
+    Функция для извлечения данных из строки формата Значение1;Значение2 в словарь
+    :param row: колонка ФИО и колонка с ответами
+    :param dct: словарь котороый нужно заполнить
+    :return: словарь
     """
-    lst_count = []  # список для хранения значений которые были разделены точкой с запятой
-    df[name_column] = df[name_column].astype(str)
-    tmp_lst = df[name_column].tolist()
-    for value_str in tmp_lst:
-        lst_count.extend(value_str.split(';'))
-
-    # Делаем частотную таблицу и сохраняем в словарь
-    counts_df = pd.DataFrame.from_dict(dict(Counter(lst_count)), orient='index')
-    counts_df = counts_df.reset_index()
-    counts_df.columns = [name_column, 'Количество']
-    counts_df.sort_values(by='Количество', ascending=False, inplace=True)
-
-    counts_df['Доля в % от общего'] = round(
-        counts_df[f'Количество'] / counts_df['Количество'].sum(), 2) * 100
-
-    counts_df.loc['Итого'] = counts_df.sum(numeric_only=True)
+    fio, value_str = row.tolist()
+    lst_value = value_str.split(';')
+    for value in lst_value:
+        dct[fio][value] += 1
 
 
 
-    return counts_df
+
+
+
 
 
 
@@ -57,16 +48,27 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     """
     t = time.localtime()
     current_time = time.strftime('%H_%M_%S', t)
-    dct_df = dict()  # словарь для хранения листовых датафреймов
-    check_set_answer = set()  # множество для проверки есть ли такой вопрос или нет
 
-    count_question = 1 # счетчик вопросов
+
+
 
     base_df = pd.read_excel(data_file,dtype=str) # исходный датафрейм
     # очищаем от лишних пробелов в начале и конце
     base_df = base_df.applymap(lambda x:x.strip() if isinstance(x,str) else x)
+    base_df.drop_duplicates(subset='ФИО',inplace=True) # удаляем дубликаты
+    base_df.sort_values(by='ФИО',inplace=True) # сортируем по алфавиту
+    # Создаем шаблон социоматрицы
+    template_matrix_df = pd.DataFrame(index=base_df['ФИО'].tolist(),columns=base_df['ФИО'].tolist())
 
-    descr_df = base_df.iloc[:,:quantity_descr_cols] # датафрейм с анкетными данными
+
+
+
+    # создаем словарь где вида {ФИО:{ФИО:0}}
+    template_dct = {}
+    for fio in base_df['ФИО'].tolist():
+        template_dct[fio] = {key:0 for key in base_df['ФИО'].tolist()}
+
+    descr_df = base_df.iloc[:,:quantity_descr_cols] # датафрейм с анкетными данными в который будут записываться данные по всем вопросам
     df = base_df.iloc[:,quantity_descr_cols:] # датафрейм с ответами
     lst_questions = [] # список для хранения самих вопросов
     # Находим все уникальные вопросы
@@ -80,48 +82,20 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
         lst_columns_question = [col for col in df.columns if name_question in col] # список для хранения всех подвопросов
         descr_df[f'Вопрос_{idx}'] = df[lst_columns_question].apply(extract_answer_several_option, axis=1)
 
-    descr_df.to_excel('data/dfd.xlsx',index=False)
+        # Создаем датафрейм для обработки отдельного вопроса
+        one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
+        one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
+        # считаем отдельную колонку
+        one_dct = copy.deepcopy(template_dct)
+        one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_anwers(x,one_dct),axis=1)
+        one_matrix_df = template_matrix_df.copy()
+        for key,value_dct in one_dct.items():
+            print(key)
+            for subkey,value in value_dct.items():
+                one_matrix_df.loc[key,subkey] = value
 
-
-
-
-
-    # for idx, name_column in enumerate(df.columns):
-    #     lst_union_name_column = [name_column]  # список для хранения названий колонок относящихся к одному вопросу
-    #
-    #     # получаем последующую колонку
-    #     if idx +1 == len(df.columns):
-    #         # проверяем достижение предела
-    #         cont_name_column = idx
-    #     else:
-    #         cont_name_column = idx+1
-    #
-    #     lst_answer = name_column.split(' / ')
-    #     question = lst_answer[0]  # Вопрос
-    #     if question not in check_set_answer: # если вопроса еще не было
-    #         threshold = len(df.columns[cont_name_column:])  # сколько колонок осталось до конца датафрейма
-    #         print(threshold)
-    #         for temp_idx, temp_name_column in enumerate(df.columns[cont_name_column:]):
-    #             temp_lst_question = temp_name_column.split(' / ')  # сплитим каждую последующую колонку пока вопрос равен предыдущему
-    #             temp_question = temp_lst_question[0]  # вопрос в следующей колонке
-    #             if question == temp_question:
-    #                 lst_union_name_column.append(temp_name_column)  # добавляем название
-    #                 if temp_idx + 1 == threshold:
-    #                     break
-    #             else:
-    #                 check_set_answer.add(question)
-    #                 print(len((lst_union_name_column)))
-    #                 print(lst_union_name_column)
-    #
-    #                 count_question += 1
-    #     else:
-    #         continue
-    #
-
-
-
-
-
+        one_matrix_df.to_excel('data/mat.xlsx')
+        raise ZeroDivisionError
 
 
 
