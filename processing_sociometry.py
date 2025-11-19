@@ -27,13 +27,36 @@ def calc_anwers(row:pd.Series, dct:dict):
     :return: словарь
     """
     fio, value_str = row.tolist()
-    lst_value = value_str.split(';')
-    for value in lst_value:
-        dct[fio][value] += 1
+    if isinstance(value_str,str):
+        lst_value = value_str.split(';')
+        if lst_value != ['']:
+            for value in lst_value:
+                dct[fio][value] += 1
 
 
+def calc_itog(row:pd.Series):
+    """
+    Функция для подсчета итоговой суммы в колонке Итого
+    :param row: строка
+    :return: значение
+    """
+    lst_value = row.tolist() # превращаем в список
+    return sum([value for value in lst_value if isinstance(value,int)])
 
 
+def calc_quantity_change(value):
+    """
+    Функция для подсчета количества выборов
+    :param value: строка вида Значение1;Значение2
+    """
+    if isinstance(value,str):
+        lst_value = value.split(';')
+        if lst_value != ['']:
+            return len(lst_value)
+        else:
+            return 0
+    else:
+        return 0
 
 
 
@@ -57,12 +80,15 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
 
 
     base_df = pd.read_excel(data_file,dtype=str) # исходный датафрейм
+    base_df = base_df[base_df['ФИО'].notna()] # удаляем незаполенные строки в колонке ФИО
     # очищаем от лишних пробелов в начале и конце
     base_df = base_df.applymap(lambda x:x.strip() if isinstance(x,str) else x)
     base_df.drop_duplicates(subset='ФИО',inplace=True) # удаляем дубликаты
     base_df.sort_values(by='ФИО',inplace=True) # сортируем по алфавиту
     # Создаем шаблон социоматрицы
     template_matrix_df = pd.DataFrame(index=base_df['ФИО'].tolist(),columns=base_df['ФИО'].tolist())
+
+    lst_fio = base_df['ФИО'].tolist() # делаем список ФИО
 
 
 
@@ -95,6 +121,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
         # Создаем датафрейм для обработки отдельного вопроса
         one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
         one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
+        # Добавляем колонку с количеством выборов
+        one_qustion_df['Количество_выборов'] = one_qustion_df[f'Вопрос_{idx}'].apply(calc_quantity_change)
         checked_dct[idx] = one_qustion_df
 
         # считаем отдельную колонку
@@ -130,17 +158,6 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
         index_dct['Индекс групповой сплоченности (Сn)'][f'Вопрос_{idx}'] = cn_index
 
 
-
-
-
-    with pd.ExcelWriter(f'{end_folder}/Для проверки {current_time}.xlsx', engine='xlsxwriter') as writer:
-        for name_sheet,out_df in checked_dct.items():
-            out_df.to_excel(writer,sheet_name=str(name_sheet),index=False)
-
-    with pd.ExcelWriter(f'{end_folder}/Социоматрицы отдельные {current_time}.xlsx', engine='xlsxwriter') as writer:
-        for name_sheet,out_df in matrix_dct.items():
-            out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
-
     # Суммируем словари с ответами на отдельные вопросы для получения общего словаря
     for dct in lst_value_dct:
         for fio, value_dct in dct.items():
@@ -150,11 +167,54 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
 
     # Суммируем и сохраняем общую социоматрицу
     lst_matrix = [df for df in matrix_dct.values()]
-    result = sum(lst_matrix)
-    result.to_excel(f'{end_folder}/Общая социоматрица {current_time}.xlsx',index=True)
+    union_df = sum(lst_matrix)
+    # Заполняем крестиками пересечения одинаковых ФИО
+    for fio in lst_fio:
+        union_df.loc[fio,fio] = 'X'
+
+
+    # Создаем индекс с добавлением цифр
+    lst_index_union = [] # список для хранения индекса с добавлением цифр
+    for idx,value in enumerate(union_df.index,1):
+        if value in  lst_fio:
+            lst_index_union.append(f'{idx}. {value}')
+        else:
+            lst_index_union.append(value)
+
+    union_df.index = lst_index_union
+    # Создаем колонки с добавлением цифр
+    # union_df.columns = range(1,len(lst_fio)+1)
+    # Подсчитываем колонку Итого
+    union_df['Итого'] = union_df.apply(calc_itog,axis=1)
+
+    union_df.to_excel(f'{end_folder}/Общая социоматрица {current_time}.xlsx',index=True)
 
     index_df = pd.DataFrame.from_dict(index_dct, orient='index')
     index_df.to_excel(f'{end_folder}/Индексы {current_time}.xlsx',index=True)
+
+    with pd.ExcelWriter(f'{end_folder}/Для проверки {current_time}.xlsx', engine='xlsxwriter') as writer:
+        for name_sheet,out_df in checked_dct.items():
+            out_df.to_excel(writer,sheet_name=str(name_sheet),index=False)
+
+    with pd.ExcelWriter(f'{end_folder}/Социоматрицы отдельные {current_time}.xlsx', engine='xlsxwriter') as writer:
+        for name_sheet,out_df in matrix_dct.items():
+            # Заполняем крестиками пересечения одинаковых ФИО
+            for fio in lst_fio:
+                out_df.loc[fio, fio] = 'X'
+            # Создаем индекс с добавлением цифр
+            temp_lst_index_union = []  # список для хранения индекса с добавлением цифр
+            for idx, value in enumerate(out_df.index, 1):
+                if value in lst_fio:
+                    temp_lst_index_union.append(f'{idx}. {value}')
+                else:
+                    temp_lst_index_union.append(value)
+
+            # Создаем колонки с добавлением цифр
+            # out_df.columns = range(1,len(lst_fio)+1)
+            # Подсчитываем колонку Итого
+            out_df['Итого'] = out_df.apply(calc_itog, axis=1)
+
+            out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
 
 
 
