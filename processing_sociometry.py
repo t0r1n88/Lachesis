@@ -84,6 +84,10 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
         if question not in lst_questions:
             lst_questions.append(question)
 
+    ind_templ_dct = {f'Вопрос_{number}':0 for number in range(1,len(lst_questions)+1)}
+    index_dct = {'Индекс групповой сплоченности (Сn)':copy.deepcopy(ind_templ_dct)} # словарь для хранения групповых индексов
+
+
     for idx, name_question in enumerate(lst_questions,1):
         lst_columns_question = [col for col in df.columns if name_question in col] # список для хранения всех подвопросов
         descr_df[f'Вопрос_{idx}'] = df[lst_columns_question].apply(extract_answer_several_option, axis=1)
@@ -120,6 +124,13 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
 
         matrix_dct[idx] = one_matrix_df # добавляем в словарь для сохранения
 
+        # Считаем индексы
+        max_sum_mutual_change = (len(base_df)* (len(base_df)-1)) / 2 # максимально возможное число взаимных выборов
+        cn_index = sum(change_row) / max_sum_mutual_change # Индекс групповой сплоченности
+        index_dct['Индекс групповой сплоченности (Сn)'][f'Вопрос_{idx}'] = cn_index
+
+
+
 
 
     with pd.ExcelWriter(f'{end_folder}/Для проверки {current_time}.xlsx', engine='xlsxwriter') as writer:
@@ -140,8 +151,13 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,end_folder:
     # Суммируем и сохраняем общую социоматрицу
     lst_matrix = [df for df in matrix_dct.values()]
     result = sum(lst_matrix)
-
     result.to_excel(f'{end_folder}/Общая социоматрица {current_time}.xlsx',index=True)
+
+    index_df = pd.DataFrame.from_dict(index_dct, orient='index')
+    index_df.to_excel(f'{end_folder}/Индексы {current_time}.xlsx',index=True)
+
+
+
 
 
 
