@@ -204,12 +204,26 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         change_row = [len(value) for key,value in change_dct.items()]
         # считаем количество выборов
         sum_row = one_matrix_df.sum()
+
+
+
         if len(lst_negative_cols) == 0:
             one_matrix_df.loc['Кол-во выборов'] = sum_row
             one_matrix_df.loc['Кол-взаимных выборов'] = change_row
+            # Добавляем колонку с социометрическим индексом
+            lst_soc_index = list(sum_row)
+            lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
+            lst_soc_index.extend([None,None])
+            one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
         elif len(lst_negative_cols) == len(lst_questions):
             one_matrix_df.loc['Кол-во негативных выборов'] = sum_row
             one_matrix_df.loc['Кол-во негативных взаимных выборов'] = change_row
+
+            # Добавляем колонку с социометрическим индексом
+            lst_soc_index = list(sum_row)
+            lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
+            lst_soc_index.extend([None,None])
+            one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
         else:
             print('mix')
 
@@ -257,7 +271,9 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
     union_df.index = lst_index_union
     # Создаем колонки с добавлением цифр
-    union_df.columns = range(1,len(lst_fio)+1)
+    union_df.drop(columns=['Индекс социометрического статуса'],inplace=True)
+    union_df.columns = range(1, len(lst_fio) + 1)
+
     # Подсчитываем колонку Итого
     union_df['Итого выборов'] = union_df.apply(calc_itog,axis=1)
 
@@ -314,7 +330,7 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     main_quantity_descr_cols = 1
-    main_negative_questions = '1,2,3'
+    main_negative_questions = 'dgfg'
     main_end_folder = 'data/Результат'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder)
     print('Lindy Booth')
