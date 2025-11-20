@@ -157,6 +157,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
     # проверяем и обрабатываем строку с колонками по которым нужно делать свод
     lst_negative_cols = check_negative_cols(len(lst_questions), negative_questions)
+    lst_negative_cols.sort() # сортируем чтобы потом все шло по порядку
 
     ind_templ_dct = {f'Вопрос_{number}':0 for number in range(1,len(lst_questions)+1)}
     # В зависимости от того есть ли колонки с негативными ответами
@@ -207,11 +208,10 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         # считаем количество выборов
         sum_row = one_matrix_df.sum()
 
-
-
+        # Обрабатываем в зависимости от количества негативных вопросов
         if len(lst_negative_cols) == 0:
             one_matrix_df.loc['Кол-во выборов'] = sum_row
-            one_matrix_df.loc['Кол-взаимных выборов'] = change_row
+            one_matrix_df.loc['Кол-во взаимных выборов'] = change_row
             # Добавляем колонку с социометрическим индексом
             lst_soc_index = list(sum_row)
             lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
@@ -227,7 +227,17 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             lst_soc_index.extend([None,None])
             one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
         else:
-            print('mix')
+            one_matrix_df.loc['Кол-во выборов'] = sum_row
+            one_matrix_df.loc['Кол-во взаимных выборов'] = change_row
+            # Добавляем колонку с социометрическим индексом
+            lst_soc_index = list(sum_row)
+            lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
+            lst_soc_index.extend([None,None])
+            one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
+            one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
+            one_matrix_df.loc['Кол-во выборов','Индекс эмоциональной экспансивности'] = None
+            one_matrix_df.loc['Кол-во взаимных выборов','Индекс эмоциональной экспансивности'] = None
+
 
 
         matrix_dct[idx] = one_matrix_df # добавляем в словарь для сохранения
@@ -244,6 +254,21 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             conf_index = sum(change_row) / max_sum_mutual_change # Индекс групповой конфликтности
             index_dct['Индекс групповой конфликтности'][f'Вопрос_{idx}'] = round(conf_index,2)
             index_dct['Индекс референтности группы'][f'Вопрос_{idx}'] = round(sum(change_row) / sum(sum_row),2)
+        else:
+            if idx-1 in lst_negative_cols:
+                # Считаем индексы
+                max_sum_mutual_change = (len(base_df) * (len(base_df) - 1)) / 2  # максимально возможное число взаимных выборов
+                conf_index = sum(change_row) / max_sum_mutual_change  # Индекс групповой конфликтности
+                index_dct['Индекс групповой сплоченности'][f'Вопрос_{idx}'] = None
+                index_dct['Индекс групповой конфликтности'][f'Вопрос_{idx}'] = round(conf_index, 2)
+                index_dct['Индекс референтности группы'][f'Вопрос_{idx}'] = round(sum(change_row) / sum(sum_row), 2)
+            else:
+                # Считаем индексы
+                max_sum_mutual_change = (len(base_df) * (len(base_df) - 1)) / 2  # максимально возможное число взаимных выборов
+                cn_index = sum(change_row) / max_sum_mutual_change  # Индекс групповой сплоченности
+                index_dct['Индекс групповой сплоченности'][f'Вопрос_{idx}'] = round(cn_index, 2)
+                index_dct['Индекс групповой конфликтности'][f'Вопрос_{idx}'] = None
+                index_dct['Индекс референтности группы'][f'Вопрос_{idx}'] = round(sum(change_row) / sum(sum_row), 2)
 
 
     # Суммируем словари с ответами на отдельные вопросы для получения общего словаря
@@ -263,16 +288,27 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
 
 
-    union_df.drop(columns=['Индекс социометрического статуса'],inplace=True)
+    union_df.drop(columns=['Индекс социометрического статуса','Индекс эмоциональной экспансивности'],inplace=True)
 
     union_df.columns = range(1, len(lst_fio) +1)
 
     # Подсчитываем колонку Итого
     union_df['Итого выборов'] = union_df.apply(calc_itog,axis=1)
 
-    # Добавляем колонки с социометрическим индексом вопросов
+    # Добавляем колонки с социометрическим индексом
     for idx,one_df in enumerate(lst_matrix,1):
-        union_df[f'ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+        if idx-1 in lst_negative_cols:
+            union_df[f'-ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+        else:
+            union_df[f'+ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+
+    # Добавляем колонки с индексом эмоциональной экспансивности
+    for idx,one_df in enumerate(lst_matrix,1):
+        if idx-1 in lst_negative_cols:
+            union_df[f'-ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
+        else:
+            union_df[f'+ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
+
 
     # Создаем индекс с добавлением цифр
     lst_index_union = [] # список для хранения индекса с добавлением цифр
@@ -309,7 +345,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
             # Создаем колонки с добавлением цифр
             lst_one_cols  = list(range(1,len(lst_fio)+1)) # цифры для названий колонок
-            lst_one_cols.extend(['Индекс социометрического статуса'])
+            lst_one_cols.extend(['Индекс социометрического статуса','Индекс эмоциональной экспансивности'])
             out_df.columns = lst_one_cols
             # Подсчитываем колонку Итого
             out_df['Итого выборов'] = out_df.apply(calc_itog, axis=1)
@@ -339,7 +375,7 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     main_quantity_descr_cols = 1
-    main_negative_questions = ''
+    main_negative_questions = '2,1'
     main_end_folder = 'data/Результат'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder)
     print('Lindy Booth')
