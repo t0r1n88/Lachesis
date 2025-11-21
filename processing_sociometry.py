@@ -218,6 +218,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             lst_soc_index.extend([None,None])
             one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
             one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
+            one_matrix_df.loc['Кол-во выборов','Индекс эмоциональной экспансивности'] = None
+            one_matrix_df.loc['Кол-во взаимных выборов','Индекс эмоциональной экспансивности'] = None
         elif len(lst_negative_cols) == len(lst_questions):
             one_matrix_df.loc['Кол-во выборов'] = sum_row
             one_matrix_df.loc['Кол-во взаимных выборов'] = change_row
