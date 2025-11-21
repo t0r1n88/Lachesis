@@ -350,6 +350,16 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         lst_union_aa.extend([None,None,None,None,None])
         union_df['Общий ИЭЭ'] = lst_union_aa
 
+        # Убираем показатели для строк с количеством выборов
+        union_df.loc['Кол-во выборов','+ИЭЭ'] = None
+        union_df.loc['Кол-во выборов','-ИЭЭ'] = None
+        union_df.loc['Кол-во выборов','Общий ИЭЭ'] = None
+        union_df.loc['Кол-во взаимных выборов','+ИЭЭ'] = None
+        union_df.loc['Кол-во взаимных выборов','-ИЭЭ'] = None
+        union_df.loc['Кол-во взаимных выборов','Общий ИЭЭ'] = None
+
+
+
         # Добавляем колонки с социометрическим индексом
         for idx, one_df in enumerate(lst_matrix, 1):
             if idx - 1 in lst_negative_cols:
@@ -451,7 +461,7 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     main_quantity_descr_cols = 1
-    main_negative_questions = ''
+    main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder)
     print('Lindy Booth')
