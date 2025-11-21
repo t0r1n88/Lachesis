@@ -217,6 +217,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
             lst_soc_index.extend([None,None])
             one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
+            one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
         elif len(lst_negative_cols) == len(lst_questions):
             one_matrix_df.loc['Кол-во выборов'] = sum_row
             one_matrix_df.loc['Кол-во взаимных выборов'] = change_row
@@ -226,6 +227,9 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
             lst_soc_index.extend([None,None])
             one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
+            one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
+            one_matrix_df.loc['Кол-во выборов','Индекс эмоциональной экспансивности'] = None
+            one_matrix_df.loc['Кол-во взаимных выборов','Индекс эмоциональной экспансивности'] = None
         else:
             one_matrix_df.loc['Кол-во выборов'] = sum_row
             one_matrix_df.loc['Кол-во взаимных выборов'] = change_row
@@ -325,36 +329,58 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 lst_neg_cols.append(one_matrix_df[lst_fio].sum(axis=1))
 
 
-        union_df['Сделано положительных выборов'] = sum(lst_pos_cols)
-        union_df['Сделано негативных выборов'] = sum(lst_neg_cols)
+        union_df['+ выборов'] = sum(lst_pos_cols)
+        union_df['- выборов'] = sum(lst_neg_cols)
 
         lst_change_cols = list(range(1, len(lst_fio) + 1))  # цифры для названий колонок
-        lst_change_cols.extend(['Сделано положительных выборов', 'Сделано негативных выборов'])
+        lst_change_cols.extend(['+ выборов', '- выборов'])
         union_df.drop(columns=['Индекс социометрического статуса', 'Индекс эмоциональной экспансивности'], inplace=True)
 
         union_df.columns = lst_change_cols
+        # Подсчитываем колонку Итого
+        union_df['Итого выборов'] = union_df.apply(calc_itog, axis=1)
+
+        # Добавляем подсчет общего экспансивного индекса
+        union_df['+ИЭЭ'] = union_df['+ выборов'] / (len(lst_fio) - 1)
+        union_df['-ИЭЭ'] = union_df['- выборов'] / (len(lst_fio) - 1)
+        union_df['Общий ИЭЭ'] = union_df['Итого выборов'] / (len(lst_fio) - 1)
+        lst_union_aa = union_df['Общий ИЭЭ'].tolist()[:len(lst_fio)+1] # делаем список чтобы потом заменить значения для выборов
+        lst_union_aa.extend([None,None,None,None,None])
+        union_df['Общий ИЭЭ'] = lst_union_aa
+
+        # Добавляем колонки с социометрическим индексом
+        for idx, one_df in enumerate(lst_matrix, 1):
+            if idx - 1 in lst_negative_cols:
+                union_df[f'-ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+            else:
+                union_df[f'+ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+
+        # Добавляем колонки с индексом эмоциональной экспансивности
+        for idx, one_df in enumerate(lst_matrix, 1):
+            if idx - 1 in lst_negative_cols:
+                union_df[f'-ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
+            else:
+                union_df[f'+ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
 
     else:
-        union_df.drop(columns=['Индекс социометрического статуса', 'Индекс эмоциональной экспансивности'], inplace=True)
+        union_df.drop(columns=['Индекс социометрического статуса','Индекс эмоциональной экспансивности'], inplace=True)
 
         union_df.columns = range(1, len(lst_fio) +1)
+        # Подсчитываем колонку Итого
+        union_df['Итого выборов'] = union_df.apply(calc_itog,axis=1)
 
-    # Подсчитываем колонку Итого
-    union_df['Итого выборов'] = union_df.apply(calc_itog,axis=1)
-
-    # Добавляем колонки с социометрическим индексом
-    for idx,one_df in enumerate(lst_matrix,1):
-        if idx-1 in lst_negative_cols:
-            union_df[f'-ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
-        else:
-            union_df[f'+ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
-
-    # Добавляем колонки с индексом эмоциональной экспансивности
-    for idx,one_df in enumerate(lst_matrix,1):
-        if idx-1 in lst_negative_cols:
-            union_df[f'-ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
-        else:
-            union_df[f'+ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
+        # Добавляем колонки с социометрическим индексом
+        for idx,one_df in enumerate(lst_matrix,1):
+            if idx-1 in lst_negative_cols:
+                union_df[f'-ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+            else:
+                union_df[f'+ИСС Вопрос {idx}'] = one_df['Индекс социометрического статуса']
+        # Добавляем колонки с индексом эмоциональной экспансивности
+        for idx, one_df in enumerate(lst_matrix, 1):
+            if idx - 1 in lst_negative_cols:
+                union_df[f'-ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
+            else:
+                union_df[f'+ИЭЭ Вопрос {idx}'] = one_df['Индекс эмоциональной экспансивности']
 
 
     # Создаем индекс с добавлением цифр
@@ -392,8 +418,9 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
             # Создаем колонки с добавлением цифр
             lst_one_cols  = list(range(1,len(lst_fio)+1)) # цифры для названий колонок
-            lst_one_cols.extend(['Индекс социометрического статуса','Индекс эмоциональной экспансивности'])
+            lst_one_cols.extend(['Индекс социометрического статуса', 'Индекс эмоциональной экспансивности'])
             out_df.columns = lst_one_cols
+
             # Подсчитываем колонку Итого
             out_df['Итого выборов'] = out_df.apply(calc_itog, axis=1)
 
@@ -422,7 +449,7 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     main_quantity_descr_cols = 1
-    main_negative_questions = '2'
+    main_negative_questions = ''
     main_end_folder = 'data/Результат'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder)
     print('Lindy Booth')
