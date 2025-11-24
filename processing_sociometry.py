@@ -350,15 +350,15 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 lst_negative_questions.append(one_matrix_df.loc['Получено выборов',lst_fio])
                 lst_change_negative_questions.append(one_matrix_df.loc['Получено взаимных выборов', lst_fio])
 
-        union_df.loc['Кол-во положительных выборов'] = sum(lst_positive_questions)
-        union_df.loc['Кол-во негативных выборов'] = sum(lst_negative_questions)
+        union_df.loc['Получено положительных выборов'] = sum(lst_positive_questions)
+        union_df.loc['Получено негативных выборов'] = sum(lst_negative_questions)
 
-        union_df.loc['Кол-во взаимных положительных выборов'] = sum(lst_change_positive_questions)
-        union_df.loc['Кол-во взаимных негативных выборов'] = sum(lst_change_negative_questions)
+        union_df.loc['Получено взаимных положительных выборов'] = sum(lst_change_positive_questions)
+        union_df.loc['Получено взаимных негативных выборов'] = sum(lst_change_negative_questions)
 
         lst_for_index = lst_fio.copy()
-        lst_for_index.extend(['Получено выборов','Кол-во положительных выборов','Кол-во негативных выборов',
-                              'Получено взаимных выборов','Кол-во взаимных положительных выборов','Кол-во взаимных негативных выборов'])
+        lst_for_index.extend(['Получено выборов','Получено положительных выборов','Получено негативных выборов',
+                              'Получено взаимных выборов','Получено взаимных положительных выборов','Получено взаимных негативных выборов'])
         union_df = union_df.reindex(lst_for_index)
 
 
@@ -423,6 +423,46 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 union_df[f'-КУ Вопрос {idx}'] = one_df['Коэффициент удовлетворенности']
             else:
                 union_df[f'+КУ Вопрос {idx}'] = one_df['Коэффициент удовлетворенности']
+
+        # Создаем список (не матрицу) со всей статистикой
+        stat_df = pd.DataFrame(index=lst_fio)
+        stat_df['Сделано выборов'] = union_df.loc[lst_fio,'Сделано выборов']
+        stat_df['Сделано + выборов'] = union_df.loc[lst_fio,'+ выборов']
+        stat_df['Сделано - выборов'] = union_df.loc[lst_fio,'- выборов']
+
+        stat_df['Получено выборов'] = list(union_df.loc['Получено выборов',list(range(1,len(lst_fio)+1))])
+        stat_df['Получено + выборов'] = list(union_df.loc['Получено положительных выборов',list(range(1,len(lst_fio)+1))])
+        stat_df['Получено - выборов'] = list(union_df.loc['Получено негативных выборов',list(range(1,len(lst_fio)+1))])
+
+        stat_df['Получено взаимных выборов'] = list(union_df.loc['Получено взаимных выборов',list(range(1,len(lst_fio)+1))])
+        stat_df['Получено взаимных + выборов'] = list(union_df.loc['Получено взаимных положительных выборов',list(range(1,len(lst_fio)+1))])
+        stat_df['Получено взаимных - выборов'] = list(union_df.loc['Получено взаимных негативных выборов',list(range(1,len(lst_fio)+1))])
+
+        stat_df['+ИЭЭ'] = union_df['+ИЭЭ']
+        stat_df['-ИЭЭ'] = union_df['-ИЭЭ']
+
+        stat_df.index.name = 'ФИО'
+        union_df.index.name = 'ФИО'
+        stat_df = pd.merge(stat_df,union_df.loc[lst_fio,'Общий ИЭЭ':],how='inner',left_index=True,right_index=True)
+
+        stat_df.loc['Итого'] = 0 # добавляем строку для сумм выборов
+        stat_df.loc['Итого','Сделано выборов'] = sum(stat_df['Сделано выборов'])
+        stat_df.loc['Итого','Сделано + выборов'] = sum(stat_df['Сделано + выборов'])
+        stat_df.loc['Итого','Сделано - выборов'] = sum(stat_df['Сделано - выборов'])
+
+        stat_df.loc['Итого','Получено выборов'] = sum(stat_df['Получено выборов'])
+        stat_df.loc['Итого','Получено + выборов'] = sum(stat_df['Получено + выборов'])
+        stat_df.loc['Итого','Получено - выборов'] = sum(stat_df['Получено - выборов'])
+
+        stat_df.loc['Итого','Получено взаимных выборов'] = sum(stat_df['Получено взаимных выборов'])
+        stat_df.loc['Итого','Получено взаимных + выборов'] = sum(stat_df['Получено взаимных + выборов'])
+        stat_df.loc['Итого','Получено взаимных - выборов'] = sum(stat_df['Получено взаимных - выборов'])
+
+        for name_column in stat_df.columns[9:]:
+            stat_df.loc['Итого',name_column] = None
+
+
+
 
     else:
         union_df.drop(columns=['Индекс социометрического статуса','Индекс эмоциональной экспансивности','Коэффициент удовлетворенности'], inplace=True)
@@ -550,7 +590,7 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     main_quantity_descr_cols = 1
-    main_negative_questions = ''
+    main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder)
     print('Lindy Booth')
