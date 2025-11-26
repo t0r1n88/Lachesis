@@ -4,6 +4,7 @@
 import pandas as pd
 pd.options.mode.chained_assignment = None
 import openpyxl
+import numpy as np
 import time
 import copy
 import re
@@ -124,8 +125,6 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
     lst_value_dct = [] # список для хранения словарей по каждому вопросу
 
 
-
-
     base_df = pd.read_excel(data_file,dtype=str) # исходный датафрейм
     # Проверяем наличие колонки ФИО
     diff_req_cols = {'ФИО'}.difference(set(base_df.columns))
@@ -135,6 +134,15 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
     base_df = base_df[base_df['ФИО'].notna()] # удаляем незаполенные строки в колонке ФИО
     # очищаем от лишних пробелов в начале и конце
     base_df = base_df.applymap(lambda x:x.strip() if isinstance(x,str) else x)
+    # Создаем файл с дубликатами
+    dupl_df = base_df[base_df['ФИО'].duplicated(keep=False)]  # получаем дубликаты
+    dupl_df.insert(0, '№ строки дубликата ', list(map(lambda x: x + 2, list(dupl_df.index))))
+    dupl_df.replace(np.nan, None, inplace=True)  # для того чтобы в пустых ячейках ничего не отображалось
+
+    dupl_df.to_excel(f'{end_folder}/Дубликаты {current_time}.xlsx',index=False)
+
+
+
     base_df.drop_duplicates(subset='ФИО',inplace=True) # удаляем дубликаты
     base_df.sort_values(by='ФИО',inplace=True) # сортируем по алфавиту
     # Создаем шаблон социоматрицы
