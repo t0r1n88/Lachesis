@@ -87,28 +87,33 @@ def calc_itog(row:pd.Series):
     return sum([value for value in lst_value if isinstance(value,int)])
 
 
-def calc_quantity_change(value):
+def calc_quantity_change(row):
     """
     Функция для подсчета количества выборов
-    :param value: строка вида Значение1;Значение2
+    :param row: строка вида Значение1;Значение2
     """
+    fio, value = row
+
     if isinstance(value,str):
         lst_value = value.split(';')
         if lst_value != ['']:
+            lst_value = [name for name in lst_value if name != fio]  # отбрасываем фио если человек выбрал себя
             return len(lst_value)
         else:
             return 0
     else:
         return 0
 
-def calc_quantity_change_not_yandex(value):
+def calc_quantity_change_not_yandex(row):
     """
     Функция для подсчета количества выборов из неяндексовских форм
-    :param value: строка вида Значение1,Значение2
+    :param row: строка ФИО, список значений разделенных запятыми
     """
+    fio,value = row
     if isinstance(value,str):
         lst_value = value.split(',')
         if lst_value != ['']:
+            lst_value = [name for name in lst_value if name != fio] # отбрасываем фио если человек выбрал себя
             return len(lst_value)
         else:
             return 0
@@ -417,34 +422,6 @@ def create_sociograms(lst_graphs:list,end_folder:str):
                         facecolor='white', edgecolor='none',
                         transparent=False)
 
-        print("=" * 70)
-        print("ДЕТАЛЬНАЯ СТАТИСТИКА СОЦИОГРАММЫ")
-        print("=" * 70)
-
-        print(f"\n📊 ОБЩАЯ СТАТИСТИКА:")
-        print(f"   Всего участников: {G.number_of_nodes()}")
-        print(f"   Всего связей: {G.number_of_edges()}")
-
-        print(f"\n🔗 СТАТИСТИКА ПО СВЯЗЯМ:")
-        mutual_count = sum(1 for u, v in G.edges() if G[u][v]['weight'] == 2)
-        single_count = G.number_of_edges() - mutual_count
-        print(f"   Взаимных связей: {mutual_count}")
-        print(f"   Односторонних связей: {single_count}")
-
-        print(f"\n👥 СТАТИСТИКА ПО УЗЛАМ:")
-        print("   Имя                 | Общ. | Вход | Исх. | Взаимн.")
-        print("   " + "-" * 50)
-        for node in G.nodes():
-            degree = G.degree(node)
-            in_degree = G.in_degree(node)
-            out_degree = G.out_degree(node)
-            mutual_edges = sum(1 for neighbor in G.successors(node)
-                               if G.has_edge(neighbor, node))
-
-            print(f"   {node:20} | {degree:4} | {in_degree:4} | {out_degree:4} | {mutual_edges:6}")
-
-
-
 
 
 
@@ -541,7 +518,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
             one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
             # Добавляем колонку с количеством выборов
-            one_qustion_df['Количество_выборов'] = one_qustion_df[f'Вопрос_{idx}'].apply(calc_quantity_change)
+            one_qustion_df['Количество_выборов'] = one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(calc_quantity_change,axis=1)
             checked_dct[idx] = one_qustion_df
 
             # считаем отдельную колонку
@@ -556,7 +533,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             one_qustion_df = base_df.iloc[:, :quantity_descr_cols]
             one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
             # Добавляем колонку с количеством выборов
-            one_qustion_df['Количество_выборов'] = one_qustion_df[f'Вопрос_{idx}'].apply(calc_quantity_change_not_yandex)
+            one_qustion_df['Количество_выборов'] = one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(calc_quantity_change_not_yandex,axis=1)
             checked_dct[idx] = one_qustion_df
 
             # считаем отдельную колонку
@@ -567,8 +544,10 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         one_matrix_df = template_matrix_df.copy()
         for key,value_dct in one_dct.items():
             for subkey,value in value_dct.items():
-                one_matrix_df.loc[key,subkey] = value
+                if key != subkey:
+                    one_matrix_df.loc[key,subkey] = value
 
+        # считаем взаимные выборы
         change_dct = {key:{} for key in one_dct.keys()}
 
         for fio,value_dct in one_dct.items():
@@ -961,12 +940,12 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     # main_file = 'data/Социометрия негатив.xlsx'
-    # main_file = 'data/Социометрия смеш.xlsx'
-    main_file = 'data/Социометрия Гугл.xlsx'
+    main_file = 'data/Социометрия смеш.xlsx'
+    # main_file = 'data/Социометрия Гугл.xlsx'
     main_quantity_descr_cols = 1
     main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
-    main_checkbox_not_yandex = 'Yes'
+    # main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
