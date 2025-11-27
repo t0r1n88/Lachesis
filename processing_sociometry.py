@@ -417,6 +417,32 @@ def create_sociograms(lst_graphs:list,end_folder:str):
                         facecolor='white', edgecolor='none',
                         transparent=False)
 
+        print("=" * 70)
+        print("ДЕТАЛЬНАЯ СТАТИСТИКА СОЦИОГРАММЫ")
+        print("=" * 70)
+
+        print(f"\n📊 ОБЩАЯ СТАТИСТИКА:")
+        print(f"   Всего участников: {G.number_of_nodes()}")
+        print(f"   Всего связей: {G.number_of_edges()}")
+
+        print(f"\n🔗 СТАТИСТИКА ПО СВЯЗЯМ:")
+        mutual_count = sum(1 for u, v in G.edges() if G[u][v]['weight'] == 2)
+        single_count = G.number_of_edges() - mutual_count
+        print(f"   Взаимных связей: {mutual_count}")
+        print(f"   Односторонних связей: {single_count}")
+
+        print(f"\n👥 СТАТИСТИКА ПО УЗЛАМ:")
+        print("   Имя                 | Общ. | Вход | Исх. | Взаимн.")
+        print("   " + "-" * 50)
+        for node in G.nodes():
+            degree = G.degree(node)
+            in_degree = G.in_degree(node)
+            out_degree = G.out_degree(node)
+            mutual_edges = sum(1 for neighbor in G.successors(node)
+                               if G.has_edge(neighbor, node))
+
+            print(f"   {node:20} | {degree:4} | {in_degree:4} | {out_degree:4} | {mutual_edges:6}")
+
 
 
 
@@ -935,12 +961,12 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     # main_file = 'data/Социометрия негатив.xlsx'
-    main_file = 'data/Социометрия смеш.xlsx'
-    # main_file = 'data/Социометрия Гугл.xlsx'
+    # main_file = 'data/Социометрия смеш.xlsx'
+    main_file = 'data/Социометрия Гугл.xlsx'
     main_quantity_descr_cols = 1
     main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
-    # main_checkbox_not_yandex = 'Yes'
+    main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
