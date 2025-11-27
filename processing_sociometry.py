@@ -42,11 +42,11 @@ def extract_answer_several_option(row:pd.Series):
     return ';'.join(temp_lst)
 
 
-def calc_anwers(row:pd.Series, dct:dict):
+def calc_answers(row:pd.Series, dct:dict):
     """
     Функция для извлечения данных из строки формата Значение1;Значение2 в словарь
     :param row: колонка ФИО и колонка с ответами
-    :param dct: словарь котороый нужно заполнить
+    :param dct: словарь который нужно заполнить
     :return: словарь
     """
     fio, value_str = row.tolist()
@@ -55,6 +55,22 @@ def calc_anwers(row:pd.Series, dct:dict):
         if lst_value != ['']:
             for value in lst_value:
                 dct[fio][value] += 1
+
+def calc_answers_not_yandex(row:pd.Series, dct:dict):
+    """
+    Функция для извлечения данных из строки формата Значение1,Значение2 в словарь
+    :param row: колонка ФИО и колонка с ответами
+    :param dct: словарь который нужно заполнить
+    :return: словарь
+    """
+    fio, value_str = row.tolist()
+    if isinstance(value_str,str):
+        lst_value = value_str.split(',')
+        if lst_value != ['']:
+            for value in lst_value:
+                value = value.strip()
+                dct[fio][value] += 1
+
 
 
 def calc_itog(row:pd.Series):
@@ -74,6 +90,20 @@ def calc_quantity_change(value):
     """
     if isinstance(value,str):
         lst_value = value.split(';')
+        if lst_value != ['']:
+            return len(lst_value)
+        else:
+            return 0
+    else:
+        return 0
+
+def calc_quantity_change_not_yandex(value):
+    """
+    Функция для подсчета количества выборов из неяндексовских форм
+    :param value: строка вида Значение1,Значение2
+    """
+    if isinstance(value,str):
+        lst_value = value.split(',')
         if lst_value != ['']:
             return len(lst_value)
         else:
@@ -109,13 +139,15 @@ def check_negative_cols(quant_questions:int, negative_str:str):
 
 
 
-def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_questions:str,end_folder:str):
+def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_questions:str,end_folder:str,checkbox_not_yandex:str):
     """
     Функция для генерации результатов социометрического исследования
     :param data_file: файл с данными из форм
     :param quantity_descr_cols: количество анкетных колонок
     :param negative_questions: строка с порядковыми номерам негативных вопросов
     :param end_folder: конечная папка
+    :param checkbox_not_yandex: определяет структуру файла с ответами. Значения Yes No если Yes то ответы разделены
+    запятыми и находятся в одной колонке вопроса. Если No то это яндекс форма где каждый ответ это отдельная колонка
     """
 
     t = time.localtime()
@@ -140,7 +172,6 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
     dupl_df.replace(np.nan, None, inplace=True)  # для того чтобы в пустых ячейках ничего не отображалось
 
     dupl_df.to_excel(f'{end_folder}/Дубликаты {current_time}.xlsx',index=False)
-
 
 
     base_df.drop_duplicates(subset='ФИО',inplace=True) # удаляем дубликаты
@@ -187,21 +218,38 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                      'Индекс референтности группы':copy.deepcopy(ind_templ_dct)} # словарь для хранения групповых индексов
 
 
+
     for idx, name_question in enumerate(lst_questions,1):
-        lst_columns_question = [col for col in df.columns if name_question in col] # список для хранения всех подвопросов
-        descr_df[f'Вопрос_{idx}'] = df[lst_columns_question].apply(extract_answer_several_option, axis=1)
+        if checkbox_not_yandex == 'No':
+            lst_columns_question = [col for col in df.columns if name_question in col] # список для хранения всех подвопросов
+            descr_df[f'Вопрос_{idx}'] = df[lst_columns_question].apply(extract_answer_several_option, axis=1)
 
-        # Создаем датафрейм для обработки отдельного вопроса
-        one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
-        one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
-        # Добавляем колонку с количеством выборов
-        one_qustion_df['Количество_выборов'] = one_qustion_df[f'Вопрос_{idx}'].apply(calc_quantity_change)
-        checked_dct[idx] = one_qustion_df
+            # Создаем датафрейм для обработки отдельного вопроса
+            one_qustion_df = base_df.iloc[:,:quantity_descr_cols]
+            one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
+            # Добавляем колонку с количеством выборов
+            one_qustion_df['Количество_выборов'] = one_qustion_df[f'Вопрос_{idx}'].apply(calc_quantity_change)
+            checked_dct[idx] = one_qustion_df
 
-        # считаем отдельную колонку
-        one_dct = copy.deepcopy(template_dct)
-        one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_anwers(x,one_dct),axis=1)
-        lst_value_dct.append(one_dct) # добавляем в список
+            # считаем отдельную колонку
+            one_dct = copy.deepcopy(template_dct)
+
+            one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers(x, one_dct), axis=1)
+            lst_value_dct.append(one_dct) # добавляем в список
+        else:
+            # Обработка не яндексовских форм
+            # Создаем датафрейм для обработки отдельного вопроса
+            descr_df[f'Вопрос_{idx}'] = df[name_question] # присваиваем колонку
+            one_qustion_df = base_df.iloc[:, :quantity_descr_cols]
+            one_qustion_df[f'Вопрос_{idx}'] = descr_df[f'Вопрос_{idx}']
+            # Добавляем колонку с количеством выборов
+            one_qustion_df['Количество_выборов'] = one_qustion_df[f'Вопрос_{idx}'].apply(calc_quantity_change_not_yandex)
+            checked_dct[idx] = one_qustion_df
+
+            # считаем отдельную колонку
+            one_dct = copy.deepcopy(template_dct)
+            one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers_not_yandex(x, one_dct), axis=1)
+            lst_value_dct.append(one_dct) # добавляем в список
         # заполняем социоматрицу на отдельный вопрос
         one_matrix_df = template_matrix_df.copy()
         for key,value_dct in one_dct.items():
@@ -597,8 +645,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
+    main_file = 'data/Социометрия Гугл.xlsx'
     main_quantity_descr_cols = 1
     main_negative_questions = '2'
     main_end_folder = 'data/Результат'
-    generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder)
+    main_checkbox_not_yandex = 'No'
+    main_checkbox_not_yandex = 'Yes'
+    generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
