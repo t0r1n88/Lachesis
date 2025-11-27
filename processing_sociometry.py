@@ -288,6 +288,7 @@ def create_sociograms(lst_graphs:list,end_folder:str):
     """
     # Создаем сокращенные имена
     for idx,dct_graph in enumerate(lst_graphs,1):
+        plt.close('all') # очищаем от старых графиков
         # Создаем сокращенные имена
         short_names = {}
         for i, name in enumerate(dct_graph.keys()):
@@ -325,113 +326,97 @@ def create_sociograms(lst_graphs:list,end_folder:str):
 
         # Создаем варианты позиционирования
         layout_options = {
-            1: ("Spring layout (рекомендуется)", layout_spring_no_overlap),
+            1: ("Пружинная раскладка", layout_spring_no_overlap),
             2: ("Кластерное расположение", layout_clustered_no_overlap),
             3: ("Концентрические круги", layout_shell_no_overlap),
             4: ("Сетка", layout_grid_no_overlap),
-            5: ("Kamada-Kawai", layout_kamada_kawai_no_overlap),
+            5: ("Камада-Каваи", layout_kamada_kawai_no_overlap),
             6: ("Спиральное", layout_spiral_no_overlap)
         }
 
-        # Выбираем вариант
-        selected_option = 5  # Spring layout рекомендуется для лучшей читаемости
-        layout_name, layout_func = layout_options[selected_option]
-        pos = layout_func(G)
+        # Создаем все варианты отображения для вопроса
+        for selected_option in layout_options.keys():
+            layout_name, layout_func = layout_options[selected_option]
+            pos = layout_func(G)
 
+            # Создаем рисунок с увеличенным размером
+            plt.figure(figsize=(16, 12))
 
+            # Определяем стили для ребер
+            edge_colors = []
+            edge_widths = []
+            for edge in G.edges():
+                weight = G[edge[0]][edge[1]]['weight']
+                if weight == 2:
+                    edge_colors.append('green')
+                    edge_widths.append(3.0)
+                else:
+                    edge_colors.append('red')
+                    edge_widths.append(1.5)
 
-        # Создаем рисунок с увеличенным размером
-        plt.figure(figsize=(16, 12))
+            # Вычисляем степени для визуализации
+            degrees = dict(G.degree())
+            node_colors = [degrees[node] for node in G.nodes()]
+            node_sizes = [800 + degrees[node] * 200 for node in G.nodes()]
 
-        # Определяем стили для ребер
-        edge_colors = []
-        edge_widths = []
-        for edge in G.edges():
-            weight = G[edge[0]][edge[1]]['weight']
-            if weight == 2:
-                edge_colors.append('green')
-                edge_widths.append(3.0)
-            else:
-                edge_colors.append('red')
-                edge_widths.append(1.5)
-
-        # Вычисляем степени для визуализации
-        degrees = dict(G.degree())
-        node_colors = [degrees[node] for node in G.nodes()]
-        node_sizes = [800 + degrees[node] * 200 for node in G.nodes()]
-
-        # Рисуем узлы с обводкой для лучшей видимости
-        nodes = nx.draw_networkx_nodes(
-            G, pos,
-            node_size=node_sizes,
-            node_color=node_colors,
-            cmap='YlOrRd',
-            edgecolors='black',
-            linewidths=3,  # Утолщаем обводку
-            alpha=0.9
-        )
-
-        # Рисуем подписи узлов с фоном для читаемости
-        label_pos = {}
-        for node, (x, y) in pos.items():
-            label_pos[node] = (x, y - 0.3)  # Сдвигаем подписи немного вниз
-
-        for node, (x, y) in label_pos.items():
-            plt.text(x, y, node, fontsize=9, fontweight='bold',
-                     ha='center', va='center',
-                     bbox=dict(boxstyle="round,pad=0.3", facecolor='white',
-                               alpha=0.8, edgecolor='none'))
-
-
-        # Рисуем ребра
-        for i, (u, v) in enumerate(G.edges()):
-            nx.draw_networkx_edges(
+            # Рисуем узлы с обводкой для лучшей видимости
+            nodes = nx.draw_networkx_nodes(
                 G, pos,
-                edgelist=[(u, v)],
-                edge_color=[edge_colors[i]],
-                width=[edge_widths[i]],
-                arrows=True,
-                arrowsize=25,
-                arrowstyle='->',
-                connectionstyle='arc3,rad=0.2',  # Увеличиваем изгиб стрелок
-                alpha=0.8
+                node_size=node_sizes,
+                node_color=node_colors,
+                cmap='YlOrRd',
+                edgecolors='black',
+                linewidths=3,  # Утолщаем обводку
+                alpha=0.9
             )
 
+            # Рисуем подписи узлов с фоном для читаемости
+            label_pos = {}
+            for node, (x, y) in pos.items():
+                label_pos[node] = (x, y - 0.3)  # Сдвигаем подписи немного вниз
+
+            for node, (x, y) in label_pos.items():
+                plt.text(x, y, node, fontsize=9, fontweight='bold',
+                         ha='center', va='center',
+                         bbox=dict(boxstyle="round,pad=0.3", facecolor='white',
+                                   alpha=0.8, edgecolor='none'))
 
 
-        # Добавляем цветовую шкалу
-        cbar = plt.colorbar(nodes, label='Количество связей', shrink=0.8)
-        cbar.ax.tick_params(labelsize=9)
-
-        plt.title(f'Социограмма группы - {layout_name}\n Зеленые стрелки: взаимные выборы | Красные стрелки: обычные выборы',
-                  size=14, pad=20)
-        plt.axis('off')
-
-        # Сохраняем с высоким качеством
-        filename = f'sociogram_no_overlap_{selected_option}.png'
-        plt.savefig(filename, dpi=300, bbox_inches='tight',
-                    facecolor='white', edgecolor='none',
-                    transparent=False)
-
-        plt.show()
-        raise ZeroDivisionError
+            # Рисуем ребра
+            for i, (u, v) in enumerate(G.edges()):
+                nx.draw_networkx_edges(
+                    G, pos,
+                    edgelist=[(u, v)],
+                    edge_color=[edge_colors[i]],
+                    width=[edge_widths[i]],
+                    arrows=True,
+                    arrowsize=25,
+                    arrowstyle='->',
+                    connectionstyle='arc3,rad=0.2',  # Увеличиваем изгиб стрелок
+                    alpha=0.8
+                )
 
 
 
-        # plt.title(f'Социограмма вопрос №{idx}', size=14)
-        # plt.axis('off')
-        # plt.tight_layout()
-        # # Создаем папку
-        # finish_path = f'{end_folder}/Вопрос_{idx}'
-        # if not os.path.exists(finish_path):
-        #     os.makedirs(finish_path)
-        #
-        # plt.savefig(f'{finish_path}/Вопрос_{idx}.png')
-        #
-        #
-        # print("Связи в графе:")
-        # for edge in G_short.edges():
-        #     print(f"  {edge[0]} → {edge[1]}")
+            # Добавляем цветовую шкалу
+            cbar = plt.colorbar(nodes, label='Количество связей', shrink=0.8)
+            cbar.ax.tick_params(labelsize=9)
+
+            plt.title(f'Социограмма группы - {layout_name}\n Зеленые стрелки: взаимные выборы | Красные стрелки: обычные выборы',
+                      size=14, pad=20)
+            plt.axis('off')
+
+
+            # Создаем папку
+            finish_path = f'{end_folder}/Вопрос_{idx}'
+            if not os.path.exists(finish_path):
+                os.makedirs(finish_path)
+
+            # Сохраняем с высоким качеством
+            plt.savefig(f'{finish_path}/{layout_options[selected_option][0]}.png',dpi=300, bbox_inches='tight',
+                        facecolor='white', edgecolor='none',
+                        transparent=False)
+
 
 
 
