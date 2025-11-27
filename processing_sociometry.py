@@ -13,6 +13,10 @@ warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 warnings.simplefilter(action='ignore', category=DeprecationWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 
+import networkx as nx
+import matplotlib.pyplot as plt
+from scipy.spatial import distance
+import os
 
 
 class NotReqColumn(Exception):
@@ -133,6 +137,295 @@ def check_negative_cols(quant_questions:int, negative_str:str):
         return out_lst
     else:
         return []
+
+
+ # Функция для проверки и устранения перекрытий
+def avoid_overlap(pos, min_distance=1.5):
+    """
+    Устраняет перекрытия узлов, отодвигая их друг от друга
+    """
+    nodes = list(pos.keys())
+    n = len(nodes)
+    new_pos = pos.copy()
+
+    max_iterations = 100
+    for iteration in range(max_iterations):
+        overlap_found = False
+        for i in range(n):
+            for j in range(i + 1, n):
+                node_i = nodes[i]
+                node_j = nodes[j]
+                dist = distance.euclidean(new_pos[node_i], new_pos[node_j])
+
+                if dist < min_distance:
+                    overlap_found = True
+                    # Вычисляем вектор отталкивания
+                    dx = new_pos[node_i][0] - new_pos[node_j][0]
+                    dy = new_pos[node_i][1] - new_pos[node_j][1]
+
+                    # Нормализуем и увеличиваем расстояние
+                    if dist == 0:
+                        dx, dy = 1, 1  # Случайное направление если узлы в одной точке
+                    else:
+                        dx, dy = dx / dist, dy / dist
+
+                    # Сдвигаем узлы
+                    shift = (min_distance - dist) / 2
+                    new_pos[node_i] = (new_pos[node_i][0] + dx * shift,
+                                       new_pos[node_i][1] + dy * shift)
+                    new_pos[node_j] = (new_pos[node_j][0] - dx * shift,
+                                       new_pos[node_j][1] - dy * shift)
+
+        if not overlap_found:
+            break
+
+    return new_pos
+
+
+# ВАРИАНТ 1: Spring layout с увеличенными расстояниями
+def layout_spring_no_overlap(G):
+    pos = nx.spring_layout(G, k=5, iterations=200, scale=10)
+    pos = avoid_overlap(pos, min_distance=2.0)
+    return pos
+
+# ВАРИАНТ 2: Кластерное позиционирование с большими расстояниями
+def layout_clustered_no_overlap(G):
+    degrees = dict(G.degree())
+    clusters = {}
+    for node, degree in degrees.items():
+        if degree not in clusters:
+            clusters[degree] = []
+        clusters[degree].append(node)
+
+    pos = {}
+    x_pos = 0
+    for degree, nodes in sorted(clusters.items(), reverse=True):
+        y_pos = 0
+        for i, node in enumerate(nodes):
+            pos[node] = (x_pos + i * 0.3, y_pos - i * 2.0)  # Увеличиваем расстояния
+        x_pos += 4  # Увеличиваем расстояние между кластерами
+
+    pos = avoid_overlap(pos, min_distance=1.8)
+    return pos
+
+# ВАРИАНТ 3: Shell layout (концентрические круги)
+def layout_shell_no_overlap(G):
+    degrees = dict(G.degree())
+    sorted_nodes = sorted(degrees.items(), key=lambda x: x[1], reverse=True)
+
+    # Разбиваем на 2 концентрических круга
+    core_nodes = [node for node, deg in sorted_nodes if deg >= 2]
+    peripheral_nodes = [node for node, deg in sorted_nodes if deg < 2]
+
+    pos = {}
+
+    # Ядро - внутренний круг
+    if core_nodes:
+        core_pos = nx.circular_layout(core_nodes, scale=3)
+        pos.update(core_pos)
+
+    # Периферия - внешний круг
+    if peripheral_nodes:
+        peripheral_pos = nx.circular_layout(peripheral_nodes, scale=6)
+        pos.update(peripheral_pos)
+
+    pos = avoid_overlap(pos, min_distance=2.0)
+    return pos
+
+# ВАРИАНТ 4: Grid layout (сетка)
+def layout_grid_no_overlap(G):
+    nodes = list(G.nodes())
+    n = len(nodes)
+
+    # Вычисляем размер сетки
+    cols = int(np.ceil(np.sqrt(n)))
+    rows = int(np.ceil(n / cols))
+
+    pos = {}
+    for i, node in enumerate(nodes):
+        row = i // cols
+        col = i % cols
+        pos[node] = (col * 3, -row * 3)  # Увеличиваем шаг сетки
+
+    return pos
+
+# ВАРИАНТ 5: Kamada-Kawai layout (оптимизированный)
+def layout_kamada_kawai_no_overlap(G):
+    try:
+        pos = nx.kamada_kawai_layout(G, scale=10)
+        pos = avoid_overlap(pos, min_distance=2.0)
+        return pos
+    except:
+        return layout_spring_no_overlap(G)
+
+# ВАРИАНТ 6: Спиральное расположение
+def layout_spiral_no_overlap(G):
+    nodes = list(G.nodes())
+    n = len(nodes)
+    pos = {}
+
+    for i, node in enumerate(nodes):
+        # Спиральная формула
+        theta = i * 2 * np.pi / (n * 0.8)  # Увеличиваем шаг
+        r = 2 + theta * 0.5  # Радиус увеличивается
+        x = r * np.cos(theta)
+        y = r * np.sin(theta)
+        pos[node] = (x, y)
+
+    pos = avoid_overlap(pos, min_distance=2.0)
+    return pos
+
+
+def create_sociograms(lst_graphs:list,end_folder:str):
+    """
+    Функция для создания и сохранения социограмм
+    :param lst_graphs:список из словарей для каждого вопроса с отношениями
+    :param end_folder:конечная папка
+    """
+    # Создаем сокращенные имена
+    for idx,dct_graph in enumerate(lst_graphs,1):
+        # Создаем сокращенные имена
+        short_names = {}
+        for i, name in enumerate(dct_graph.keys()):
+            parts = name.split()
+            first_part = parts[0] # Фамилия
+            if len(parts) == 1:
+                short_names[name] = first_part
+            else:
+                out_name = f'{first_part} '
+                for part in parts[1:]:
+                    out_name += f'{part[0]}.'
+                short_names[name] = out_name
+
+        # Создаем ориентированный граф
+        G = nx.DiGraph()
+        G.add_nodes_from(short_names.values())
+
+        # Добавляем ребра
+        all_choices = []
+        for person_from, choices in dct_graph.items():
+            for person_to, choice in choices.items():
+                if choice == 1 and person_from != person_to:
+                    from_short = short_names[person_from]
+                    to_short = short_names[person_to]
+                    all_choices.append((from_short, to_short))
+
+        for choice in all_choices:
+            from_node, to_node = choice
+            reverse_choice = (to_node, from_node)
+            if reverse_choice in all_choices:
+                G.add_edge(from_node, to_node, weight=2)
+            else:
+                G.add_edge(from_node, to_node, weight=1)
+
+
+        # Создаем варианты позиционирования
+        layout_options = {
+            1: ("Spring layout (рекомендуется)", layout_spring_no_overlap),
+            2: ("Кластерное расположение", layout_clustered_no_overlap),
+            3: ("Концентрические круги", layout_shell_no_overlap),
+            4: ("Сетка", layout_grid_no_overlap),
+            5: ("Kamada-Kawai", layout_kamada_kawai_no_overlap),
+            6: ("Спиральное", layout_spiral_no_overlap)
+        }
+
+        # Выбираем вариант
+        selected_option = 6  # Spring layout рекомендуется для лучшей читаемости
+        layout_name, layout_func = layout_options[selected_option]
+        pos = layout_func(G)
+
+        # Создаем рисунок с увеличенным размером
+        plt.figure(figsize=(16, 12))
+
+        # Определяем стили для ребер
+        edge_colors = []
+        edge_widths = []
+        for edge in G.edges():
+            weight = G[edge[0]][edge[1]]['weight']
+            if weight == 2:
+                edge_colors.append('green')
+                edge_widths.append(3.0)
+            else:
+                edge_colors.append('red')
+                edge_widths.append(1.5)
+
+        # Вычисляем степени для визуализации
+        degrees = dict(G.degree())
+        node_colors = [degrees[node] for node in G.nodes()]
+        node_sizes = [800 + degrees[node] * 200 for node in G.nodes()]
+
+        # Рисуем узлы с обводкой для лучшей видимости
+        nodes = nx.draw_networkx_nodes(
+            G, pos,
+            node_size=node_sizes,
+            node_color=node_colors,
+            cmap='YlOrRd',
+            edgecolors='black',
+            linewidths=3,  # Утолщаем обводку
+            alpha=0.9
+        )
+
+        # Рисуем подписи узлов с фоном для читаемости
+        label_pos = {}
+        for node, (x, y) in pos.items():
+            label_pos[node] = (x, y - 0.3)  # Сдвигаем подписи немного вниз
+
+        for node, (x, y) in label_pos.items():
+            plt.text(x, y, node, fontsize=9, fontweight='bold',
+                     ha='center', va='center',
+                     bbox=dict(boxstyle="round,pad=0.3", facecolor='white',
+                               alpha=0.8, edgecolor='none'))
+
+        # Рисуем ребра
+        for i, (u, v) in enumerate(G.edges()):
+            nx.draw_networkx_edges(
+                G, pos,
+                edgelist=[(u, v)],
+                edge_color=[edge_colors[i]],
+                width=[edge_widths[i]],
+                arrows=True,
+                arrowsize=25,
+                arrowstyle='->',
+                connectionstyle='arc3,rad=0.2',  # Увеличиваем изгиб стрелок
+                alpha=0.8
+            )
+
+
+        # Добавляем цветовую шкалу
+        cbar = plt.colorbar(nodes, label='Количество связей', shrink=0.8)
+        cbar.ax.tick_params(labelsize=9)
+
+        plt.title(f'Социограмма группы - {layout_name}\n🟢 Зеленые: взаимные выборы | 🔴 Красные: обычные выборы',
+                  size=14, pad=20)
+        plt.axis('off')
+
+        # Сохраняем с высоким качеством
+        filename = f'sociogram_no_overlap_{selected_option}.png'
+        plt.savefig(filename, dpi=300, bbox_inches='tight',
+                    facecolor='white', edgecolor='none',
+                    transparent=False)
+
+        plt.show()
+
+
+
+        # plt.title(f'Социограмма вопрос №{idx}', size=14)
+        # plt.axis('off')
+        # plt.tight_layout()
+        # # Создаем папку
+        # finish_path = f'{end_folder}/Вопрос_{idx}'
+        # if not os.path.exists(finish_path):
+        #     os.makedirs(finish_path)
+        #
+        # plt.savefig(f'{finish_path}/Вопрос_{idx}.png')
+        #
+        #
+        # print("Связи в графе:")
+        # for edge in G_short.edges():
+        #     print(f"  {edge[0]} → {edge[1]}")
+
+
+
 
 
 
@@ -623,6 +916,9 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
             out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
 
+    # Создаем и сохраняем социограммы
+    create_sociograms(lst_value_dct,end_folder)
+
 
 
 
@@ -644,12 +940,13 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
 if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
-    main_file = 'data/Социометрия негатив.xlsx'
-    main_file = 'data/Социометрия Гугл.xlsx'
+    # main_file = 'data/Социометрия негатив.xlsx'
+    main_file = 'data/Социометрия смеш.xlsx'
+    # main_file = 'data/Социометрия Гугл.xlsx'
     main_quantity_descr_cols = 1
     main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
-    main_checkbox_not_yandex = 'Yes'
+    # main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
