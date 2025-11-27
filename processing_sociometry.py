@@ -276,6 +276,10 @@ def layout_spiral_no_overlap(G):
     return pos
 
 
+
+
+
+
 def create_sociograms(lst_graphs:list,end_folder:str):
     """
     Функция для создания и сохранения социограмм
@@ -330,9 +334,11 @@ def create_sociograms(lst_graphs:list,end_folder:str):
         }
 
         # Выбираем вариант
-        selected_option = 6  # Spring layout рекомендуется для лучшей читаемости
+        selected_option = 5  # Spring layout рекомендуется для лучшей читаемости
         layout_name, layout_func = layout_options[selected_option]
         pos = layout_func(G)
+
+
 
         # Создаем рисунок с увеличенным размером
         plt.figure(figsize=(16, 12))
@@ -376,6 +382,7 @@ def create_sociograms(lst_graphs:list,end_folder:str):
                      bbox=dict(boxstyle="round,pad=0.3", facecolor='white',
                                alpha=0.8, edgecolor='none'))
 
+
         # Рисуем ребра
         for i, (u, v) in enumerate(G.edges()):
             nx.draw_networkx_edges(
@@ -391,11 +398,12 @@ def create_sociograms(lst_graphs:list,end_folder:str):
             )
 
 
+
         # Добавляем цветовую шкалу
         cbar = plt.colorbar(nodes, label='Количество связей', shrink=0.8)
         cbar.ax.tick_params(labelsize=9)
 
-        plt.title(f'Социограмма группы - {layout_name}\n🟢 Зеленые: взаимные выборы | 🔴 Красные: обычные выборы',
+        plt.title(f'Социограмма группы - {layout_name}\n Зеленые стрелки: взаимные выборы | Красные стрелки: обычные выборы',
                   size=14, pad=20)
         plt.axis('off')
 
@@ -406,6 +414,7 @@ def create_sociograms(lst_graphs:list,end_folder:str):
                     transparent=False)
 
         plt.show()
+        raise ZeroDivisionError
 
 
 
