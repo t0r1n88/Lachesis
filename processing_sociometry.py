@@ -422,10 +422,19 @@ def create_sociograms(lst_graphs:list,end_folder:str):
                         facecolor='white', edgecolor='none',
                         transparent=False)
 
+            # Создаем список связей
+            lst_stat_link = []
 
+            for u, v in G.edges():
+                weight = G[u][v].get('weight', 1)  # Безопасное получение веса
+                if weight == 2:
+                    lst_stat_link.append(['ВЗАИМНЫЙ',u,'↔',v])
+                else:
+                    lst_stat_link.append(['ОДНОСТОРОННИЙ',u,'→',v])
 
+            stat_link_df = pd.DataFrame(data=lst_stat_link,columns=['Тип выбора ','Сделавший выбор','Направление','Выбранный'])
 
-
+            stat_link_df.to_excel(f'{finish_path}/Список связей Вопрос_{idx}.xlsx',index=False)
 
 
 
