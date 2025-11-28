@@ -5,6 +5,7 @@
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов по профориентации
 from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
 from processing_complex import generate_result_all_age # функция для обработки тестов
+from processing_sociometry import generate_result_sociometry # функция для обработки социометрии
 
 import pandas as pd
 import os
@@ -220,6 +221,33 @@ def generate_other_docs():
         messagebox.showerror('Лахесис',
                              f'Выберите шаблон,файл с данными и папку куда будут генерироваться файлы')
         logging.exception('AN ERROR HAS OCCURRED')
+
+
+"""
+Функции для социометрии
+"""
+
+def select_file_data_sociometry():
+    """
+    Функция для выбора файла с ответами социометрии
+    :return: Путь к файлу с данными
+    """
+    global name_file_data_sociometry
+    # Получаем путь к файлу
+    name_file_data_sociometry = filedialog.askopenfilename(filetypes=(('Excel files', '*.xlsx'), ('all files', '*.*')))
+
+
+def select_end_folder_sociometry():
+    """
+    Функция для выбора папки куда будут генерироваться файлы
+    :return:
+    """
+    global path_to_end_folder_sociometry
+    path_to_end_folder_sociometry = filedialog.askdirectory()
+
+
+
+
 
 
 def resource_path(relative_path):
@@ -672,6 +700,109 @@ if __name__ == '__main__':
                                     command=processing_generate_docs
                                     )
     btn_create_files_other.grid(column=0, row=14, padx=10, pady=10)
+
+
+    """
+    Создаем вкладку для обработки результатов социометрии
+    """
+    tab_create_sociometry = Frame(tab_control)
+    tab_control.add(tab_create_sociometry, text='Обработка\nСоциометрии')
+
+    create_sociometry_frame_description = LabelFrame(tab_create_sociometry)
+    create_sociometry_frame_description.pack()
+
+    lbl_hello_sociometry = Label(create_sociometry_frame_description,
+                      text='Обработка результатов социометрии\n'
+                           'ПРИМЕЧАНИЯ\n'
+                           'Данные обрабатываются С ПЕРВОГО ЛИСТА В ФАЙЛЕ !!!\n'
+                           'Заголовок таблицы должен занимать только первую строку!\n'
+                           'Для корректной работы программы уберите из таблицы\nобъединенные ячейки'
+                      , width=60)
+    lbl_hello_sociometry.pack(side=LEFT, anchor=N, ipadx=25, ipady=10)
+    # #
+    # #
+    # Картинка
+    path_to_img_sociometry = resource_path('logo.png')
+    img_sociometry = PhotoImage(file=path_to_img_sociometry)
+    Label(create_sociometry_frame_description,
+          image=img_sociometry, padx=10, pady=10
+          ).pack(side=LEFT, anchor=E, ipadx=5, ipady=5)
+
+    # Создаем фрейм для действий
+    create_sociometry_frame_action = LabelFrame(tab_create_sociometry, text='Подготовка')
+    create_sociometry_frame_action.pack()
+
+    btn_data_sociometry = Button(create_sociometry_frame_action, text='1) Выберите файл с данными',
+                                 font=('Arial Bold', 14),
+                                 command=select_file_data_sociometry
+                                 )
+    btn_data_sociometry.pack(padx=10, pady=10)
+
+    # Чекбокс отвечающий за тип файла
+    mode_type_file = StringVar()
+    mode_type_file.set('No')  # по умолчанию сложная структура создаваться не будет
+    chbox_mode_type_file = Checkbutton(create_sociometry_frame_action,
+                                              text='Поставьте галочку, если файл с данными НЕ из Яндекс форм.\n'
+                                                   'т.е. выборы в нем разделены запятыми а не разделены на отдельные колонки',
+                                              variable=mode_type_file,
+                                              offvalue='No',
+                                              onvalue='Yes')
+    chbox_mode_type_file.pack()
+
+    # Определяем переменную
+    var_entry_desc_cols = StringVar()
+    # Описание поля
+    label_name_desc_cols = Label(create_sociometry_frame_action,
+                                        text='2) Введите количество колонок в начале таблицы\n не относящихся к вопросам социометрии\nНапример 2')
+    label_name_desc_cols.pack()
+    # поле ввода
+    entry_desc_cols = Entry(create_sociometry_frame_action, textvariable=var_entry_desc_cols,
+                                   width=30)
+    entry_desc_cols.pack()
+
+
+
+
+    #
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    # Определяем текстовую переменную
+    entry_name_column_data_sociometry = StringVar()
+    # Описание поля
+    label_name_column_data_sociometry = Label(create_sociometry_frame_action,
+                                              text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
+    label_name_column_data_sociometry.pack(padx=10, pady=10)
+    # поле ввода
+    data_column_entry_sociometry = Entry(create_sociometry_frame_action, textvariable=entry_name_column_data_sociometry,
+                                         width=30)
+    data_column_entry_sociometry.pack(ipady=5)
+
+    # Поле для ввода названия генериуемых документов
+    # Определяем текстовую переменную
+    entry_type_file_sociometry = StringVar()
+    # Описание поля
+    label_name_column_type_file_sociometry = Label(create_sociometry_frame_action,
+                                                   text='4) Введите название создаваемых документов')
+    label_name_column_type_file_sociometry.pack(padx=10, pady=10)
+    # поле ввода
+    type_file_column_entry_sociometry = Entry(create_sociometry_frame_action, textvariable=entry_type_file_sociometry,
+                                              width=30)
+    type_file_column_entry_sociometry.pack(ipady=5)
+
+    btn_choose_end_folder_sociometry = Button(create_sociometry_frame_action, text='5) Выберите конечную папку',
+                                              font=('Arial Bold', 14),
+                                              command=select_end_folder_sociometry
+                                              )
+    btn_choose_end_folder_sociometry.pack(padx=10, pady=10)
+
+
+
+
+
+
+
+
+
 
     """
       Создаем вкладку создания документов
