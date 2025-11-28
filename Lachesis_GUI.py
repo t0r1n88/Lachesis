@@ -246,6 +246,27 @@ def select_end_folder_sociometry():
     path_to_end_folder_sociometry = filedialog.askdirectory()
 
 
+def generate_sociometry():
+    """
+    Функция для обработки результатов социометрии
+    :return:
+    """
+    try:
+        quantity_descr_cols = int(var_entry_desc_cols.get()) # количество анкетных колонок
+        negative_questions = var_entry_number_column.get() # название создаваемого документа
+        type_file = mode_type_file.get() # Яндекс форма или иная форма
+        generate_result_sociometry(name_file_data_sociometry,quantity_descr_cols,negative_questions,path_to_end_folder_sociometry,type_file)
+
+    except NameError as e:
+        messagebox.showerror('Лахесис',
+                             f'Выберите файл с данными и папку куда будут генерироваться файлы')
+        logging.exception('AN ERROR HAS OCCURRED')
+    except ValueError as e:
+        messagebox.showerror('Лахесис',
+                             f'Введите ЦЕЛОЕ число для того чтобы указать количество количество колонок в начале таблицы не относящееся к вопросам социометрии')
+        logging.exception('AN ERROR HAS OCCURRED')
+
+
 
 
 
@@ -474,7 +495,7 @@ def open_list_pioneers():
 
 if __name__ == '__main__':
     window = Tk()
-    window.title('Лахеcис Обработка результатов психологических тестов ver 3.2')
+    window.title('Лахеcис Обработка результатов психологических тестов ver 4.0')
 
     # Устанавливаем размер и положение окна
     set_window_size(window)
@@ -740,10 +761,10 @@ if __name__ == '__main__':
 
     # Чекбокс отвечающий за тип файла
     mode_type_file = StringVar()
-    mode_type_file.set('No')  # по умолчанию сложная структура создаваться не будет
+    mode_type_file.set('No')  # по умолчанию будет обрабатываться яндекс форма
     chbox_mode_type_file = Checkbutton(create_sociometry_frame_action,
                                               text='Поставьте галочку, если файл с данными НЕ из Яндекс форм.\n'
-                                                   'т.е. выборы в нем разделены запятыми а не разделены на отдельные колонки',
+                                                   'т.е. выборы в нем разделены запятыми, а не разделены на отдельные колонки',
                                               variable=mode_type_file,
                                               offvalue='No',
                                               onvalue='Yes')
@@ -761,39 +782,34 @@ if __name__ == '__main__':
     entry_desc_cols.pack()
 
 
-
-
-    #
-    # Создаем кнопку для выбора папки куда будут генерироваться файлы
-
-    # Определяем текстовую переменную
-    entry_name_column_data_sociometry = StringVar()
-    # Описание поля
-    label_name_column_data_sociometry = Label(create_sociometry_frame_action,
-                                              text='3) Введите название колонки в таблице\n по которой будут создаваться имена файлов')
-    label_name_column_data_sociometry.pack(padx=10, pady=10)
-    # поле ввода
-    data_column_entry_sociometry = Entry(create_sociometry_frame_action, textvariable=entry_name_column_data_sociometry,
-                                         width=30)
-    data_column_entry_sociometry.pack(ipady=5)
-
     # Поле для ввода названия генериуемых документов
     # Определяем текстовую переменную
-    entry_type_file_sociometry = StringVar()
+    var_entry_number_column = StringVar()
     # Описание поля
-    label_name_column_type_file_sociometry = Label(create_sociometry_frame_action,
-                                                   text='4) Введите название создаваемых документов')
-    label_name_column_type_file_sociometry.pack(padx=10, pady=10)
+    label_number_column = Label(create_sociometry_frame_action,
+                                   text='3) Введите через запятую порядковые номера вопросов с негативным выбором\n'
+                                        'Например 2,4 или 3.\n'
+                                        'Если таких вопросов нет, то НИЧЕГО не вводите\n'
+                                        )
+    label_number_column.pack()
     # поле ввода
-    type_file_column_entry_sociometry = Entry(create_sociometry_frame_action, textvariable=entry_type_file_sociometry,
-                                              width=30)
-    type_file_column_entry_sociometry.pack(ipady=5)
+    entry_number_column = Entry(create_sociometry_frame_action, textvariable=var_entry_number_column, width=30)
+    entry_number_column.pack()
 
-    btn_choose_end_folder_sociometry = Button(create_sociometry_frame_action, text='5) Выберите конечную папку',
+    # Создаем кнопку для выбора папки куда будут генерироваться файлы
+
+    btn_choose_end_folder_sociometry = Button(create_sociometry_frame_action, text='4) Выберите конечную папку',
                                               font=('Arial Bold', 14),
                                               command=select_end_folder_sociometry
                                               )
     btn_choose_end_folder_sociometry.pack(padx=10, pady=10)
+
+    # Создаем кнопку для генерации
+    btn_create_sociometry = Button(tab_create_sociometry, text='5) Получить результаты',
+                                    font=('Arial Bold', 14),
+                                    command=generate_sociometry
+                                    )
+    btn_create_sociometry.pack()
 
 
 
@@ -993,7 +1009,7 @@ if __name__ == '__main__':
 
     lbl_about = Label(about_frame_description,
                       text="""Лахесис Обработка результатов психологических тестов.
-                              Версия 3.2
+                              Версия 4.0
                               Язык программирования - Python 3\n
                               Используемая лицензия BSD-2-Clause\n
                               Copyright (c) <2025> <Будаев Олег Тимурович>\n
