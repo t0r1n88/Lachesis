@@ -580,7 +580,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
                 lst_soc_index.extend([None,None])
                 one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
-                one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
+                one_matrix_df['Индекс эмоциональной экспансивности'] = round(one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1),2)
                 one_matrix_df['Коэффициент удовлетворенности'] = one_matrix_df[lst_fio].sum(axis=1)
                 tmp_change_row = list(change_row) # делаем список для развертывания
                 tmp_change_row.extend([None,None])
@@ -601,7 +601,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
                 lst_soc_index.extend([None,None])
                 one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
-                one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
+                one_matrix_df['Индекс эмоциональной экспансивности'] = round(one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1),2)
                 one_matrix_df['Коэффициент удовлетворенности'] = one_matrix_df[lst_fio].sum(axis=1)
                 tmp_change_row = list(change_row) # делаем список для развертывания
                 tmp_change_row.extend([None,None])
@@ -620,7 +620,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 lst_soc_index = list(map(lambda x:round(x/(len(base_df)-1),2),lst_soc_index))
                 lst_soc_index.extend([None,None])
                 one_matrix_df['Индекс социометрического статуса'] = lst_soc_index
-                one_matrix_df['Индекс эмоциональной экспансивности'] = one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1)
+                one_matrix_df['Индекс эмоциональной экспансивности'] = round(one_matrix_df[lst_fio].sum(axis=1) / (len(base_df) - 1),2)
                 one_matrix_df['Коэффициент удовлетворенности'] = one_matrix_df[lst_fio].sum(axis=1)
                 tmp_change_row = list(change_row) # делаем список для развертывания
                 tmp_change_row.extend([None,None])
@@ -744,9 +744,9 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             union_df['Сделано выборов'] = union_df.apply(calc_itog, axis=1)
 
             # Добавляем подсчет общего экспансивного индекса
-            union_df['+ИЭЭ'] = union_df['+ выборов'] / (len(lst_fio) - 1)
-            union_df['-ИЭЭ'] = union_df['- выборов'] / (len(lst_fio) - 1)
-            union_df['Общий ИЭЭ'] = union_df['Сделано выборов'] / (len(lst_fio) - 1)
+            union_df['+ИЭЭ'] = round(union_df['+ выборов'] / (len(lst_fio) - 1),2)
+            union_df['-ИЭЭ'] = round(union_df['- выборов'] / (len(lst_fio) - 1),2)
+            union_df['Общий ИЭЭ'] = round(union_df['Сделано выборов'] / (len(lst_fio) - 1),2)
             lst_union_aa = union_df['Общий ИЭЭ'].tolist()[:len(lst_fio)+1] # делаем список чтобы потом заменить значения для выборов
             lst_union_aa.extend([None,None,None,None,None])
             union_df['Общий ИЭЭ'] = lst_union_aa
@@ -829,7 +829,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             # Подсчитываем колонку Итого
             union_df['Сделано выборов'] = union_df.apply(calc_itog,axis=1)
 
-            union_df['Общий ИЭЭ'] = union_df['Сделано выборов'] / (len(lst_fio) - 1)
+            union_df['Общий ИЭЭ'] = round(union_df['Сделано выборов'] / (len(lst_fio) - 1),2)
             lst_union_aa = union_df['Общий ИЭЭ'].tolist()[:len(lst_fio)+1] # делаем список чтобы потом заменить значения для выборов
             lst_union_aa.extend([None])
             union_df['Общий ИЭЭ'] = lst_union_aa
@@ -976,6 +976,5 @@ if __name__ == '__main__':
     main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
-    main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
