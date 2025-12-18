@@ -44,9 +44,176 @@ def calc_value_vcha(row):
     return f'{value_forward}/5'
 
 
+def calc_value_o(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [48,37,11,2,33,43,9,53]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
 
 
+def calc_value_ruvs(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [32,25,15,47,40]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
 
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+def calc_value_psp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [30,52,14,35,18,4]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+
+def calc_value_ppvs(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [50,31,41,39,12,1]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+
+def calc_value_ip(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [24,46,42,8,36]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+
+def calc_value_prp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [23,44,21]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+def calc_value_ppbd(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [29,16]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+
+def calc_value_ppp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [34,6]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+
+def calc_value_uz(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [54,10,13,27]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+def calc_value_opchu(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [20,3]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
+
+def calc_value_r(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [38,5,7,17]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if idx +1 in lst_pr:
+            value_forward += value
+
+    value_forward = round(value_forward / len(lst_pr),2)
+
+    return f'{value_forward}/5'
 
 
 
@@ -169,6 +336,18 @@ def processing_acope_polskaya(base_df: pd.DataFrame, answers_df: pd.DataFrame, l
         raise BadValueACOPEP
 
     base_df['ВЧА_Значение'] = answers_df.apply(calc_value_vcha, axis=1)
+    base_df['О_Значение'] = answers_df.apply(calc_value_o, axis=1)
+    base_df['РУВС_Значение'] = answers_df.apply(calc_value_ruvs, axis=1)
+    base_df['ПСП_Значение'] = answers_df.apply(calc_value_psp, axis=1)
+    base_df['ППВС_Значение'] = answers_df.apply(calc_value_ppvs, axis=1)
+
+    base_df['ИП_Значение'] = answers_df.apply(calc_value_ip, axis=1)
+    base_df['ПРП_Значение'] = answers_df.apply(calc_value_prp, axis=1)
+    base_df['ППБД_Значение'] = answers_df.apply(calc_value_ppbd, axis=1)
+    base_df['ППП_Значение'] = answers_df.apply(calc_value_ppp, axis=1)
+    base_df['УЗ_Значение'] = answers_df.apply(calc_value_uz, axis=1)
+    base_df['ОПЧЮ_Значение'] = answers_df.apply(calc_value_opchu, axis=1)
+    base_df['Р_Значение'] = answers_df.apply(calc_value_r, axis=1)
 
 
 
