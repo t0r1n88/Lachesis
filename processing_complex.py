@@ -79,6 +79,7 @@ from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Оп
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
 from personality_structure.acope_polskaya import processing_acope_polskaya # Копинг стратегии для подростков Польская
+from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni # Копинг стратегии Лазарус НИПНИ Бехтерева
 
 
 
@@ -244,6 +245,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                      'Кеттел 14-PF Рукавишников Соколова': (processing_kettel_pf_ruk_sok, 142),
                      'ACOPE Польская': (processing_acope_polskaya, 54),
+                     'WCQ НИПНИ Бехтерева': (processing_lazarus_wcq_nipni, 50),
 
 
 
@@ -318,6 +320,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                               'Кеттел 14-PF Рукавишников Соколова': 'Опросник Кеттела 14PF Рукавишников Соколова',
                               'ACOPE Польская': 'Опросник копинг-установок подростков Польская',
+                              'WCQ НИПНИ Бехтерева': 'Способы совладающего поведения Лазарус НИПНИ Бехтерева',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -879,11 +882,12 @@ if __name__ == '__main__':
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_0.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/WCQ.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
