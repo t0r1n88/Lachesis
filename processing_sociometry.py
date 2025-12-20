@@ -68,11 +68,12 @@ def calc_answers(row:pd.Series, dct:dict,miss_dct:dict):
                     else:
                         miss_dct[value] += 1
 
-def calc_answers_not_yandex(row:pd.Series, dct:dict):
+def calc_answers_not_yandex(row:pd.Series, dct:dict,miss_dct:dict):
     """
     Функция для извлечения данных из строки формата Значение1,Значение2 в словарь
     :param row: колонка ФИО и колонка с ответами
     :param dct: словарь который нужно заполнить
+    :param miss_dct: словарь для тех кто не тестировался
     :return: словарь
     """
     fio, value_str = row.tolist()
@@ -81,7 +82,13 @@ def calc_answers_not_yandex(row:pd.Series, dct:dict):
         if lst_value != ['']:
             for value in lst_value:
                 value = value.strip()
-                dct[fio][value] += 1
+                if value in dct.keys():
+                    dct[fio][value] += 1
+                else:
+                    if value not in miss_dct:
+                        miss_dct[value] = 1
+                    else:
+                        miss_dct[value] += 1
 
 
 
@@ -566,8 +573,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
                 # считаем отдельную колонку
                 one_dct = copy.deepcopy(template_dct)
-                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers_not_yandex(x, one_dct), axis=1)
+                missing_dct = dict()  # словарь для тех кто не тестировался
+                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers_not_yandex(x, one_dct,missing_dct), axis=1)
                 lst_value_dct.append(one_dct) # добавляем в список
+                dct_missing_person[f'{idx}'] = missing_dct
+
             # заполняем социоматрицу на отдельный вопрос
             one_matrix_df = template_matrix_df.copy()
             for key,value_dct in one_dct.items():
@@ -990,10 +1000,10 @@ if __name__ == '__main__':
     # main_file = 'data/Социометрия негатив.xlsx'
     main_file = 'data/Социометрия смеш.xlsx'
     main_file = 'data/110 n.xlsx'
-    # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 2
-    main_negative_questions = '2,4,6,8'
+    main_file = 'data/Социометрия Гугл.xlsx'
+    main_quantity_descr_cols = 1
+    main_negative_questions = '2'
     main_end_folder = 'data/Результат'
-    main_checkbox_not_yandex = 'No'
+    main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
