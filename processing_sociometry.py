@@ -47,11 +47,12 @@ def extract_answer_several_option(row:pd.Series):
     return ';'.join(temp_lst)
 
 
-def calc_answers(row:pd.Series, dct:dict):
+def calc_answers(row:pd.Series, dct:dict,miss_dct:dict):
     """
     Функция для извлечения данных из строки формата Значение1;Значение2 в словарь
     :param row: колонка ФИО и колонка с ответами
     :param dct: словарь который нужно заполнить
+    :param miss_dct: словарь для тех кто не тестировался
     :return: словарь
     """
     fio, value_str = row.tolist()
@@ -61,6 +62,11 @@ def calc_answers(row:pd.Series, dct:dict):
             for value in lst_value:
                 if value in dct.keys():
                     dct[fio][value] += 1
+                else:
+                    if value not in miss_dct:
+                        miss_dct[value] = 1
+                    else:
+                        miss_dct[value] += 1
 
 def calc_answers_not_yandex(row:pd.Series, dct:dict):
     """
@@ -287,7 +293,7 @@ def layout_spiral_no_overlap(G):
 
 
 
-def create_sociograms(lst_graphs:list,end_folder:str):
+def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
     """
     Функция для создания и сохранения социограмм
     :param lst_graphs:список из словарей для каждого вопроса с отношениями
@@ -296,6 +302,16 @@ def create_sociograms(lst_graphs:list,end_folder:str):
     # Создаем сокращенные имена
     for idx,dct_graph in enumerate(lst_graphs,1):
         plt.close('all') # очищаем от старых графиков
+        # Создаем папку
+        finish_path = f'{end_folder}/Вопрос_{idx}'
+        if not os.path.exists(finish_path):
+            os.makedirs(finish_path)
+        if len(dct_missing_person[str(idx)]) != 0: # сохраняем списки тех не тестировался но кого выбрали
+            miss_df = pd.DataFrame.from_dict(dct_missing_person[str(idx)],orient='index',columns=['Количество выборов'])
+            miss_df = miss_df.reset_index()
+            miss_df.columns = ['ФИО','Количество выборов']
+            miss_df.sort_values(by='ФИО',inplace=True)
+            miss_df.to_excel(f'{finish_path}/Выборы не тестировавшихся Вопрос_{idx}.xlsx',index=False)
         # Создаем сокращенные имена
         short_names = {}
         for i, name in enumerate(dct_graph.keys()):
@@ -414,10 +430,7 @@ def create_sociograms(lst_graphs:list,end_folder:str):
             plt.axis('off')
 
 
-            # Создаем папку
-            finish_path = f'{end_folder}/Вопрос_{idx}'
-            if not os.path.exists(finish_path):
-                os.makedirs(finish_path)
+
 
             # Сохраняем с высоким качеством
             plt.savefig(f'{finish_path}/{layout_options[selected_option][0]}.png',dpi=300, bbox_inches='tight',
@@ -456,6 +469,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         checked_dct = dict()  # словарь для хранения проверочных датафреймов по каждому вопросу
         matrix_dct = dict()  # словарь для хранения матриц датафреймов по каждому вопросу
         lst_value_dct = [] # список для хранения словарей по каждому вопросу
+        dct_missing_person = dict() # словарь для хранения словарей с выборами тех кто не прошел тестирование
 
 
         base_df = pd.read_excel(data_file,dtype=str) # исходный датафрейм
@@ -493,7 +507,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         descr_df = base_df.iloc[:,:quantity_descr_cols] # датафрейм с анкетными данными в который будут записываться данные по всем вопросам
         df = base_df.iloc[:,quantity_descr_cols:] # датафрейм с ответами
         lst_questions = [] # список для хранения самих вопросов
-        # Находим все уникальные вопросы
+        # Находим все уникальные вопросы и отсутсвующих в случае если используется яндекс форма
         for name_column in df.columns:
             lst_answer = name_column.split(' / ')
             question = lst_answer[0]  # Вопрос
@@ -518,7 +532,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                          'Индекс групповой конфликтности': copy.deepcopy(ind_templ_dct),
                          'Индекс референтности группы':copy.deepcopy(ind_templ_dct)} # словарь для хранения групповых индексов
 
-
+        # Делаем список пропущ
 
         for idx, name_question in enumerate(lst_questions,1):
             if checkbox_not_yandex == 'No':
@@ -535,8 +549,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 # считаем отдельную колонку
                 one_dct = copy.deepcopy(template_dct)
 
-                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers(x, one_dct), axis=1)
+                missing_dct = dict() # словарь для тех кто не тестировался
+
+                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers(x, one_dct,missing_dct), axis=1)
                 lst_value_dct.append(one_dct) # добавляем в список
+                dct_missing_person[f'{idx}'] = missing_dct
             else:
                 # Обработка не яндексовских форм
                 # Создаем датафрейм для обработки отдельного вопроса
@@ -926,8 +943,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
                 out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
 
-        # Создаем и сохраняем социограммы
-        create_sociograms(lst_value_dct,end_folder)
+        # Создаем и сохраняем социограммы и выборы тех кто не тестировался
+        create_sociograms(lst_value_dct,end_folder,dct_missing_person)
     except NotReqColumn:
         messagebox.showerror('Лахеcис',
                              f'При обработке файла с выборами социометрии обнаружено отсутствие обязательной колонки:\n'
@@ -939,11 +956,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         messagebox.showerror('Лахеcис',
                              f'Слишком длинный путь к создаваемым файлам. Выберите более короткий путь сохранения (прямо на диске C)')
 
-    # except KeyError:
-    #     messagebox.showerror('Лахеcис',
-    #                          f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
-    #                          f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
-    #                          f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
+    except KeyError:
+        messagebox.showerror('Лахеcис',
+                             f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
+                             f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
+                             f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')
