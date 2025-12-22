@@ -70,12 +70,57 @@ def calc_standart_value(ser:pd.Series, dct_value:dict):
     return dct_value[sex][age][value]
 
 
+def calc_level(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if value< 40:
+        return 'редкое использование'
+    elif 40 <= value <= 60:
+        return 'умеренное использование'
+    else:
+        return 'выраженное использование'
 
 
 
 
+def create_list_on_level_wcq(base_df:pd.DataFrame, out_dct:dict, lst_level:list, dct_prefix:dict):
+    """
+    Функция для создания списков по уровням шкал
+    :param base_df: датафрейм с результатами
+    :param out_dct: словарь с датафреймами
+    :param lst_level: список уровней по которым нужно сделать списки
+    :param dct_prefix: префиксы для названий листов
+    :return: обновлейнный out dct
+    """
+    for key,value in dct_prefix.items():
+        dct_level = dict()
+        for level in lst_level:
+            temp_df = base_df[base_df[key] == level]
+            if temp_df.shape[0] != 0:
+                if level == 'редкое использование':
+                    level = 'редкое'
+                elif level == 'умеренное использование':
+                    level = 'умеренное'
+                else:
+                    level = 'выраженное'
+                dct_level[f'{dct_prefix[key]}. {level}'] = temp_df
+        out_dct.update(dct_level)
+
+    return out_dct
 
 
+def create_result_wcq_nipnib(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+    lst_level = ['редкое использование', 'умеренное использование', 'выраженное использование']
 
 
 
@@ -89,6 +134,8 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
     out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+    union_base_df = base_df.copy()  # делаем копию анкетной части чтобы потом соединить ее с ответной частью
+    quantity_cols_base_df = base_df.shape[1]  # количество колонок в анкетной части
 
     # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
     clean_df_lst = []
@@ -219,71 +266,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
         error_message = ';'.join(lst_error_answers)
         raise BadValueWCQLB
 
-    # lst_temp = []
-    # lst_temp = list(map(lambda x: x - 1, lst_temp))
-    # base_df['Темп_сырое'] = answers_df.take(lst_temp, axis=1).apply(calc_value, axis=1)
-    # dct_temp = {'Женский':{'до 20 лет':{0:,1:,2:,
-    #                                  3:,4:,5:,
-    #                                  6:,7:,8:,
-    #                                  9:,10:,11:,
-    #                                  12:,13:,14:,
-    #                                  15:,16:,17:,
-    #                                  18:},
-    #                     '21-30 лет':{0:,1:,2:,
-    #                                  3:,4:,5:,
-    #                                  6:,7:,8:,
-    #                                  9:,10:,11:,
-    #                                  12:,13:,14:,
-    #                                  15:,16:,17:,
-    #                                  18:},
-    #                     '31-45 лет': {0:, 1: , 2: ,
-    #                                   3:, 4: , 5: ,
-    #                                   6: , 7: , 8: ,
-    #                                   9: , 10: , 11: ,
-    #                                   12: , 13: , 14: ,
-    #                                   15: , 16: , 17: ,
-    #                                   18:},
-    #                     '46-60 лет': {0:, 1: , 2: ,
-    #                                   3: , 4: , 5: ,
-    #                                   6: , 7: , 8: ,
-    #                                   9: , 10: , 11: ,
-    #                                   12: , 13: , 14: ,
-    #                                   15: , 16: , 17: ,
-    #                                   18:}
-    #                    },
-    #          'Мужской': {'до 20 лет': {0: , 1: , 2: ,
-    #                                    3: , 4: , 5: ,
-    #                                    6: , 7: , 8: ,
-    #                                    9: , 10: , 11: ,
-    #                                    12: , 13: , 14: ,
-    #                                    15: , 16: , 17: ,
-    #                                    18: },
-    #                      '21-30 лет': {0: , 1: , 2: ,
-    #                                    3: , 4: , 5: ,
-    #                                    6: , 7: , 8: ,
-    #                                    9: , 10: , 11: ,
-    #                                    12: , 13: , 14: ,
-    #                                    15: , 16: , 17: ,
-    #                                    18: },
-    #                      '31-45 лет': {0: , 1: , 2: ,
-    #                                    3: , 4: , 5: ,
-    #                                    6: , 7: , 8: ,
-    #                                    9: , 10: , 11: ,
-    #                                    12: , 13: , 14: ,
-    #                                    15: , 16: , 17: ,
-    #                                    18: },
-    #                      '46-60 лет': {0: , 1: , 2: ,
-    #                                    3: , 4: , 5: ,
-    #                                    6: , 7: , 8: ,
-    #                                    9: , 10: , 11: ,
-    #                                    12: , 13: , 14: ,
-    #                                    15: , 16: , 17: ,
-    #                                    18: }
-    #                      }
-    #          }
 
-
-    test_df = pd.read_excel('data/test.xlsx')
 
     # 1 Шкала Конфронтация
     lst_k = [2,3,13,21,26,37]
@@ -351,6 +334,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
 
     base_df['К_Значение'] = base_df[['Пол', 'Возраст', 'К_сырое']].apply(lambda x: calc_standart_value(x, dct_k), axis=1)
+    base_df['К_Уровень'] = base_df['К_Значение'].apply(calc_level)
 
     # Дистанцирование
     lst_d = [8,9,11,16,32,35]
@@ -417,6 +401,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
              }
 
     base_df['Д_Значение'] = base_df[['Пол', 'Возраст', 'Д_сырое']].apply(lambda x: calc_standart_value(x, dct_d), axis=1)
+    base_df['Д_Уровень'] = base_df['Д_Значение'].apply(calc_level)
 
     lst_s = [6,10,27,34,44,49,50]
     lst_s = list(map(lambda x: x - 1, lst_s))
@@ -490,6 +475,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
              }
     base_df['С_Значение'] = base_df[['Пол', 'Возраст', 'С_сырое']].apply(lambda x: calc_standart_value(x, dct_s),
                                                                          axis=1)
+    base_df['С_Уровень'] = base_df['С_Значение'].apply(calc_level)
 
     # Поиск социальной поддержки
     lst_psp = [4,14,17,24,33,36]
@@ -556,6 +542,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
              }
     base_df['ПСП_Значение'] = base_df[['Пол', 'Возраст', 'ПСП_сырое']].apply(lambda x: calc_standart_value(x, dct_psp),
                                                                          axis=1)
+    base_df['ПСП_Уровень'] = base_df['ПСП_Значение'].apply(calc_level)
 
     # Принятие ответственности
     lst_po = [5,19,22,42]
@@ -607,6 +594,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
     base_df['ПО_Значение'] = base_df[['Пол', 'Возраст', 'ПО_сырое']].apply(lambda x: calc_standart_value(x, dct_po),
                                                                          axis=1)
+    base_df['ПО_Уровень'] = base_df['ПО_Значение'].apply(calc_level)
 
 
     # Бегство Избегание
@@ -691,6 +679,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
     base_df['БИ_Значение'] = base_df[['Пол', 'Возраст', 'БИ_сырое']].apply(lambda x: calc_standart_value(x, dct_bi),
                                                                          axis=1)
+    base_df['БИ_Уровень'] = base_df['БИ_Значение'].apply(calc_level)
 
     # Планирование решения проблемы
     lst_prp = [1,20,30,39,40,43]
@@ -758,6 +747,7 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
     base_df['ПРП_Значение'] = base_df[['Пол', 'Возраст', 'ПРП_сырое']].apply(lambda x: calc_standart_value(x, dct_prp),
                                                                          axis=1)
+    base_df['ПРП_Уровень'] = base_df['ПРП_Значение'].apply(calc_level)
 
     # Положительная переоценка
     lst_pp = [15,18,23,28,29,45,48]
@@ -833,14 +823,143 @@ def processing_lazarus_wcq_nipni(base_df: pd.DataFrame, answers_df: pd.DataFrame
 
     base_df['ПП_Значение'] = base_df[['Пол', 'Возраст', 'ПП_сырое']].apply(lambda x: calc_standart_value(x, dct_pp),
                                                                          axis=1)
+    base_df['ПП_Уровень'] = base_df['ПП_Значение'].apply(calc_level)
+
+    # Упорядочиваем
+    result_df = base_df.iloc[:, quantity_cols_base_df:]  # отсекаем часть с результатами чтобы упорядочить
+    new_order_lst = ['К_Уровень','Д_Уровень','С_Уровень','ПСП_Уровень','ПО_Уровень','БИ_Уровень','ПРП_Уровень','ПП_Уровень',
+                     'К_Значение','Д_Значение','С_Значение','ПСП_Значение','ПО_Значение','БИ_Значение','ПРП_Значение','ПП_Значение',
+                     'К_сырое','Д_сырое','С_сырое','ПСП_сырое','ПО_сырое','БИ_сырое','ПРП_сырое','ПП_сырое']
+
+    result_df = result_df.reindex(columns=new_order_lst)  # изменяем порядок
+    base_df = pd.concat([union_base_df, result_df], axis=1)  # соединяем и перезаписываем base_df
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+    part_df['ССПЛ_НИПНИБ_К_Уровень'] = base_df['К_Уровень']
+    part_df['ССПЛ_НИПНИБ_Д_Уровень'] = base_df['Д_Уровень']
+    part_df['ССПЛ_НИПНИБ_С_Уровень'] = base_df['С_Уровень']
+    part_df['ССПЛ_НИПНИБ_ПСП_Уровень'] = base_df['ПСП_Уровень']
+
+    part_df['ССПЛ_НИПНИБ_ПО_Уровень'] = base_df['ПО_Уровень']
+    part_df['ССПЛ_НИПНИБ_БИ_Уровень'] = base_df['БИ_Уровень']
+    part_df['ССПЛ_НИПНИБ_ПРП_Уровень'] = base_df['ПРП_Уровень']
+    part_df['ССПЛ_НИПНИБ_ПП_Уровень'] = base_df['ПП_Уровень']
+
+    part_df['ССПЛ_НИПНИБ_К_Значение'] = base_df['К_Значение']
+    part_df['ССПЛ_НИПНИБ_Д_Значение'] = base_df['Д_Значение']
+    part_df['ССПЛ_НИПНИБ_С_Значение'] = base_df['С_Значение']
+    part_df['ССПЛ_НИПНИБ_ПСП_Значение'] = base_df['ПСП_Значение']
+
+    part_df['ССПЛ_НИПНИБ_ПО_Значение'] = base_df['ПО_Значение']
+    part_df['ССПЛ_НИПНИБ_БИ_Значение'] = base_df['БИ_Значение']
+    part_df['ССПЛ_НИПНИБ_ПРП_Значение'] = base_df['ПРП_Значение']
+    part_df['ССПЛ_НИПНИБ_ПП_Значение'] = base_df['ПП_Значение']
+
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    base_df.sort_values(by='К_Значение',inplace=True,ascending=False)
 
 
 
-    test_df['Значение'] = test_df[['Пол','Возраст','Сырое']].apply(lambda x:calc_standart_value(x, dct_pp), axis=1)
+    # Делаем свод  по  шкалам
+    dct_svod_sub = {'К_Значение': 'К_Уровень',
+                    'Д_Значение': 'Д_Уровень',
+                    'С_Значение': 'С_Уровень',
+                    'ПСП_Значение': 'ПСП_Уровень',
 
-    test_df.to_excel('data/ppp.xlsx',index=False)
+                    'ПО_Значение': 'ПО_Уровень',
+                    'БИ_Значение': 'БИ_Уровень',
+                    'ПРП_Значение': 'ПРП_Уровень',
+                    'ПП_Значение': 'ПП_Уровень',
+                    }
 
-    base_df.to_excel('data/base.xlsx',index=False)
+    dct_rename_svod_sub = {'К_Значение': 'К',
+                           'Д_Значение': 'Д',
+                           'С_Значение': 'С',
+                           'ПСП_Значение': 'ПСП',
+
+                           'ПО_Значение': 'ПО',
+                           'БИ_Значение': 'БИ',
+                           'ПРП_Значение': 'ПРП',
+                           'ПП_Значение': 'ПП',
+                           }
+
+    lst_sub = ['редкое использование', 'умеренное использование', 'выраженное использование']
+
+    base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
+
+    # считаем среднее значение по шкалам
+    avg_k = round(base_df['К_Значение'].mean(), 2)
+    avg_d = round(base_df['Д_Значение'].mean(), 2)
+    avg_s = round(base_df['С_Значение'].mean(), 2)
+    avg_psp = round(base_df['ПСП_Значение'].mean(), 2)
+
+    avg_po = round(base_df['ПО_Значение'].mean(), 2)
+    avg_bi = round(base_df['БИ_Значение'].mean(), 2)
+    avg_prp = round(base_df['ПРП_Значение'].mean(), 2)
+    avg_pp = round(base_df['ПП_Значение'].mean(), 2)
+
+    avg_dct = {'Среднее значение стратегии Конфронтация': avg_k,
+               'Среднее значение стратегии Дистанцирование': avg_d,
+               'Среднее значение стратегии Самоконтроль': avg_s,
+               'Среднее значение стратегии Поиск социальной поддержки': avg_psp,
+
+               'Среднее значение стратегии Принятие ответственности': avg_po,
+               'Среднее значение стратегии Бегство-избегание': avg_bi,
+               'Среднее значение стратегии Планирование решения проблемы': avg_prp,
+               'Среднее значение стратегии Положительная переоценка': avg_pp,
+               }
+
+    avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+    avg_df = avg_df.reset_index()
+    avg_df.columns = ['Показатель', 'Среднее значение']
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df,
+               'Список для проверки': out_answer_df,
+               'Свод Шкалы': base_svod_sub_df,
+               'Среднее': avg_df,
+               }
+
+    dct_prefix = {'К_Уровень': 'К',
+                  'Д_Уровень': 'Д',
+                  'С_Уровень': 'С',
+                  'ПСП_Уровень': 'ПСП',
+
+                  'ПО_Уровень': 'ПО',
+                  'БИ_Уровень': 'БИ',
+                  'ПРП_Уровень': 'ПРП',
+                  'ПП_Уровень': 'ПП',
+
+                  }
+
+    out_dct = create_list_on_level_wcq(base_df, out_dct, lst_sub, dct_prefix)
+    """
+                    Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+                    """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+
+    else:
+        out_dct = create_result_wcq_nipnib(base_df, out_dct, lst_svod_cols)
+        return out_dct, part_df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
