@@ -308,7 +308,6 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
     """
     # Создаем сокращенные имена
     for idx,dct_graph in enumerate(lst_graphs,1):
-        plt.close('all') # очищаем от старых графиков
         # Создаем папку
         finish_path = f'{end_folder}/Вопрос_{idx}'
         if not os.path.exists(finish_path):
@@ -457,6 +456,8 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
             stat_link_df = pd.DataFrame(data=lst_stat_link,columns=['Тип выбора ','Сделавший выбор','Направление','Выбранный'])
 
             stat_link_df.to_excel(f'{finish_path}/Список связей Вопрос_{idx}.xlsx',index=False)
+        plt.close('all') # очищаем от старых графиков
+
 
 
 
@@ -997,13 +998,13 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
 if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
-    # main_file = 'data/Социометрия негатив.xlsx'
-    main_file = 'data/Социометрия смеш.xlsx'
-    main_file = 'data/110 n.xlsx'
-    main_file = 'data/Социометрия Гугл.xlsx'
+    main_file = 'data/Социометрия негатив.xlsx'
+    # main_file = 'data/Социометрия смеш.xlsx'
+    # main_file = 'data/110 n.xlsx'
+    # main_file = 'data/Социометрия Гугл.xlsx'
     main_quantity_descr_cols = 1
     main_negative_questions = '2'
     main_end_folder = 'data/Результат'
-    main_checkbox_not_yandex = 'Yes'
+    main_checkbox_not_yandex = 'No'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')

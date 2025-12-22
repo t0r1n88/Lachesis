@@ -1,7 +1,6 @@
 """
 Функции для создания документов из шаблонов
 """
-
 import pandas as pd
 import numpy as np
 import os
@@ -19,6 +18,7 @@ import warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 warnings.simplefilter(action='ignore', category=DeprecationWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
+warnings.simplefilter(action='ignore', category=FutureWarning)
 pd.options.mode.chained_assignment = None
 import platform
 import logging
@@ -65,6 +65,49 @@ class PdfLinux(Exception):
     """
     pass
 
+
+
+def convert_to_date(value):
+    """
+    Функция для конвертации строки в текст
+    :param value: значение для конвертации
+    :return:
+    """
+    try:
+        date_value = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+        return date_value
+    except ValueError:
+        result = re.search(r'^\d{2}\.\d{2}\.\d{4}$', value)
+        if result:
+            try:
+                temp_date = datetime.datetime.strptime(result.group(0), '%d.%m.%Y')
+                return temp_date
+            except ValueError:
+                # для случаев вида 45.09.2007
+                return f''
+        else:
+            # Пытаемся обработать варианты с пробелом или лишними точками между блоками
+            value = str(value)
+            lst_dig = re.findall(r'\d',value)
+            if len(lst_dig) != 8:
+                return f''
+            # делаем строку
+            temp_date = f'{lst_dig[0]}{lst_dig[1]}.{lst_dig[2]}{lst_dig[3]}.{lst_dig[4]}{lst_dig[5]}{lst_dig[6]}{lst_dig[7]}'
+            try:
+                temp_date = datetime.datetime.strptime(temp_date, '%d.%m.%Y')
+                return temp_date
+            except ValueError:
+                # для случаев вида 45.09.2007
+                return f''
+
+    except:
+        return f''
+
+
+
+
+
+
 def create_doc_convert_date(cell):
     """
     Функция для конвертации даты при создании документов
@@ -74,10 +117,11 @@ def create_doc_convert_date(cell):
     try:
         string_date = datetime.datetime.strftime(cell, '%d.%m.%Y')
         return string_date
-    except ValueError:
+    except:
         return ''
-    except TypeError:
-        return ''
+
+
+
 
 
 def processing_date_column(df, lst_columns):
@@ -99,7 +143,7 @@ def processing_date_column(df, lst_columns):
         else:  # иначе проверяем следующее значение
             continue
     for i in lst_date_columns:  # Перебираем список с колонками дат, превращаем их в даты и конвертируем в нужный строковый формат
-        df.iloc[:, i] = pd.to_datetime(df.iloc[:, i], errors='coerce', dayfirst=True)
+        df.iloc[:, i] = df.iloc[:, i].apply(convert_to_date)
         df.iloc[:, i] = df.iloc[:, i].apply(create_doc_convert_date)
 
 def check_date_columns(i, value):
@@ -226,7 +270,7 @@ def prepare_entry_str(raw_str:str,pattern:str,repl_str:str,sep_lst:str)->list:
     lst_number_column_folder_structure = list(map(lambda x:int(x)-1,lst_number_column_folder_structure))
     return lst_number_column_folder_structure
 
-def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode_pdf:str,name_os):
+def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode_pdf:str,name_os,name_type:str):
     """
     Функция для сохранения результатов
     :param finish_path: путь к папке сохранения
@@ -235,6 +279,7 @@ def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode
     :param idx: счетчик
     :param mode_pdf: чекбокс сохранения PDF
     :param name_os: операционная система
+    :param name_type: тип файла
     :return:
     """
     if os.path.exists(f'{finish_path}/{name_file}.docx'):
@@ -243,7 +288,7 @@ def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode
             if name_os == 'Windows':
                 if not os.path.exists(f'{finish_path}/PDF'):
                     os.makedirs(f'{finish_path}/PDF')
-                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_file}_{idx}.pdf',
+                convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/PDF/{name_type} {name_file}_{idx}.pdf',
                         keep_active=True)
             else:
                 raise NotImplementedError
@@ -253,7 +298,7 @@ def save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,mode
             if name_os == 'Windows':
                 if not os.path.exists(f'{finish_path}/PDF'):
                     os.makedirs(f'{finish_path}/PDF')
-                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_file}.pdf',
+                convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/PDF/{name_type} {name_file}.pdf',
                         keep_active=True)
             else:
                 raise NotImplementedError
@@ -273,16 +318,56 @@ def short_version_save_result_file(finish_path:str,name_file:str,doc:DocxTemplat
         name_file = f'Не заполнено_{idx}'
     if os.path.exists(f'{finish_path}/{name_file}.docx'):
         doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+        if len(f'{finish_path}/{name_file}_{idx}.pdf') > 255:
+            raise FileNotFoundError
         convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_file}_{idx}.pdf',
                 keep_active=True)
         os.remove(f'{finish_path}/{name_file}_{idx}.docx')
     else:
         doc.save(f'{finish_path}/{name_file}.docx')
+        if len(f'{finish_path}/{name_file}.pdf') > 255:
+            raise FileNotFoundError
         convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_file}.pdf',
                 keep_active=True)
         os.remove(f'{finish_path}/{name_file}.docx')
 
-def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc,name_column, name_type_file,path_to_end_folder_doc, name_value_column, mode_pdf,
+
+def second_short_version_save_result_file(finish_path:str,name_file:str,doc:DocxTemplate,idx:int,name_type:str):
+    """
+    Функция для сохранения результатов в pdf для варианта без раскладывания по папкам
+    :param finish_path: путь к папке сохранения
+    :param name_file: название файла
+    :param doc: объект DocxTemplate
+    :param idx: счетчик
+    :param name_type: тип создаваемого документа
+    :return:
+    """
+    # проверка на случай если имя состоит только из пробелов
+    check_space = re.sub(r'\s','',name_file)
+    if len(check_space) == 0:
+        name_file = f'Не заполнено_{idx}'
+    if os.path.exists(f'{finish_path}/{name_file}.docx'):
+        doc.save(f'{finish_path}/{name_file}_{idx}.docx')
+        if len(f'{finish_path}/{name_type} {name_file}_{idx}.pdf') > 255:
+            raise FileNotFoundError
+        convert(f'{finish_path}/{name_file}_{idx}.docx', f'{finish_path}/{name_type} {name_file}_{idx}.pdf',
+                keep_active=True)
+        os.remove(f'{finish_path}/{name_file}_{idx}.docx')
+    else:
+        doc.save(f'{finish_path}/{name_file}.docx')
+        if len(f'{finish_path}/{name_type} {name_file}.pdf') > 255:
+            raise FileNotFoundError
+        convert(f'{finish_path}/{name_file}.docx', f'{finish_path}/{name_type} {name_file}.pdf',
+                keep_active=True)
+        os.remove(f'{finish_path}/{name_file}.docx')
+
+
+
+
+
+
+
+def generate_docs_from_template(name_file_template_doc, name_file_data_doc,name_column, name_type_file,path_to_end_folder_doc, name_value_column, mode_pdf,
                                 mode_combine, mode_group,mode_structure_folder,number_structure_folder,mode_full):
     """
     Функция для создания однотипных документов из шаблона Word и списка Excel
@@ -312,6 +397,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
         # Добавил параметр dtype =str чтобы данные не преобразовались а использовались так как в таблице
         try:
             df = pd.read_excel(name_file_data_doc, dtype=str)
+            df.dropna(how='all',inplace=True) # удаляем пустые строки
         except:
             messagebox.showerror('Лахесис',
                                  f'Не удалось обработать файл xlsx с данными на основе которых будут создаваться документы. Возможно файл поврежден')
@@ -327,7 +413,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
 
         # Конвертируем в пригодный строковый формат
         for i in lst_date_columns:
-            df.iloc[:, i] = pd.to_datetime(df.iloc[:, i], errors='coerce', dayfirst=True)
+            df.iloc[:, i] = df.iloc[:, i].apply(convert_to_date)
             df.iloc[:, i] = df.iloc[:, i].apply(create_doc_convert_date)
 
         # Конвертируем датафрейм в список словарей
@@ -464,6 +550,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                         # Создаем название для папки
                         clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                    name_folder)  # очищаем название от лишних символов
+                        clean_name_folder = clean_name_folder.strip() # очищаем от пробелов в начале и конце
                         finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
                         if not os.path.exists(finish_path):
                             os.makedirs(finish_path)
@@ -485,7 +572,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                         raise OSError
                                     name_file = name_file[:threshold_name]  # ограничиваем название файла
                                     # Сохраняем файл
-                                    save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os)
+                                    save_result_file(finish_path, name_file, doc, idx, mode_pdf,name_os,name_type_file)
                             else:
                                 raise CheckBoxException
                         else:
@@ -545,6 +632,8 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                         clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                          first_name_folder)  # очищаем название от лишних символов
 
+                        clean_first_name_folder = clean_first_name_folder.strip()
+
                         # получаем отфильтрованный датафрейм по значениям колонки первого уровня
                         temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
                         lst_unique_value_second_layer = temp_df_first_layer[
@@ -555,6 +644,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                 temp_df_first_layer[name_second_layer_column] == second_name_folder]
                             clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                               second_name_folder)  # очищаем название от лишних символов
+                            clean_second_name_folder = clean_second_name_folder.strip()
 
                             finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
                             if not os.path.exists(finish_path):
@@ -576,7 +666,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                             raise OSError
                                         name_file = name_file[:threshold_name]  # ограничиваем название файла
                                         # Сохраняем файл
-                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf, name_os)
+                                        save_result_file(finish_path, name_file, doc, idx, mode_pdf, name_os,name_type_file)
                                 else:
                                     raise CheckBoxException
                             else:
@@ -637,6 +727,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                     for first_name_folder in lst_unique_value_first_layer:
                         clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                          first_name_folder)  # очищаем название от лишних символов
+                        clean_first_name_folder = clean_first_name_folder.strip()
 
                         # получаем отфильтрованный датафрейм по значениям колонки первого уровня
                         temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
@@ -648,11 +739,13 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                 temp_df_first_layer[name_second_layer_column] == second_name_folder]
                             clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                               second_name_folder)  # очищаем название от лишних символов
+                            clean_second_name_folder = clean_second_name_folder.strip()
                             lst_unique_value_third_layer = temp_df_second_layer[
                                 name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
                             for third_name_folder in lst_unique_value_third_layer:
                                 clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                                  third_name_folder)  # очищаем название от лишних символов
+                                clean_third_name_folder = clean_third_name_folder.strip()
                                 temp_df_third_layer = temp_df_second_layer[
                                     temp_df_second_layer[name_third_layer_column] == third_name_folder]
 
@@ -678,7 +771,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                                 raise OSError
                                             name_file = name_file[:threshold_name]  # ограничиваем название файла
                                             # Сохраняем файл
-                                            save_result_file(finish_path, name_file, doc, idx, mode_pdf, name_os)
+                                            save_result_file(finish_path, name_file, doc, idx, mode_pdf, name_os,name_type_file)
                                     else:
                                         raise CheckBoxException
                                 else:
@@ -736,7 +829,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                         # проверяем файл на наличие, если файл с таким названием уже существует то добавляем окончание
                         if name_file in used_name_file:
                             name_file = f'{name_file}_{idx}'
-                        short_version_save_result_file(path_to_end_folder_doc, name_file[:80], doc, idx)
+                        second_short_version_save_result_file(path_to_end_folder_doc, name_file[:80], doc, idx,name_type_file)
                         used_name_file.add(name_file)
                 else:
                     # Добавляем разрыв в шаблон чтобы объединенный файл был без смешивания
@@ -771,12 +864,14 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                     # Заменяем пробелы на Не заполнено
                     df[main_layer_name_column] = df[main_layer_name_column].apply(
                         lambda x: 'Не заполнено' if x == ' ' else x)
+
                     lst_unique_value = df[main_layer_name_column].unique()  # получаем список уникальных значений
                     for name_folder in lst_unique_value:
                         temp_df = df[df[main_layer_name_column] == name_folder]  # фильтруем по названию
                         # Создаем название для папки
                         clean_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                    name_folder)  # очищаем название от лишних символов
+                        clean_name_folder = clean_name_folder.strip()
                         finish_path = f'{path_to_end_folder_doc}/{clean_name_folder}'
                         if not os.path.exists(finish_path):
                             os.makedirs(finish_path)
@@ -825,6 +920,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                     for first_name_folder in lst_unique_value_first_layer:
                         clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                          first_name_folder)  # очищаем название от лишних символов
+                        clean_first_name_folder = clean_first_name_folder.strip()
 
                         # получаем отфильтрованный датафрейм по значениям колонки первого уровня
                         temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
@@ -836,6 +932,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                 temp_df_first_layer[name_second_layer_column] == second_name_folder]
                             clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                               second_name_folder)  # очищаем название от лишних символов
+                            clean_second_name_folder = clean_second_name_folder.strip()
 
                             finish_path = f'{path_to_end_folder_doc}/{clean_first_name_folder}/{clean_second_name_folder}'
                             if not os.path.exists(finish_path):
@@ -887,6 +984,7 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                     for first_name_folder in lst_unique_value_first_layer:
                         clean_first_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                          first_name_folder)  # очищаем название от лишних символов
+                        clean_first_name_folder = clean_first_name_folder.strip()
 
                         # получаем отфильтрованный датафрейм по значениям колонки первого уровня
                         temp_df_first_layer = df[df[name_first_layer_column] == first_name_folder]  # фильтруем по названию
@@ -898,11 +996,13 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
                                 temp_df_first_layer[name_second_layer_column] == second_name_folder]
                             clean_second_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                               second_name_folder)  # очищаем название от лишних символов
+                            clean_second_name_folder = clean_second_name_folder.strip()
                             lst_unique_value_third_layer = temp_df_second_layer[
                                 name_third_layer_column].unique()  # получаем список уникальных значений третьего уровня
                             for third_name_folder in lst_unique_value_third_layer:
                                 clean_third_name_folder = re.sub(r'[\r\b\n\t<>:"?*|\\/]', '_',
                                                                  third_name_folder)  # очищаем название от лишних символов
+                                clean_third_name_folder = clean_third_name_folder.strip()
                                 temp_df_third_layer = temp_df_second_layer[
                                     temp_df_second_layer[name_third_layer_column] == third_name_folder]
 
@@ -958,8 +1058,10 @@ def generate_other_docs_from_template(name_file_template_doc, name_file_data_doc
         logging.exception('AN ERROR HAS OCCURRED')
     except FileNotFoundError:
         messagebox.showerror('Лахесис',
-                             f'Перенесите файлы, конечную папку с которой вы работете в корень диска. Проблема может быть\n '
-                             f'в слишком длинном пути к обрабатываемым файлам или конечной папке.')
+                             f'Перенесите файлы, конечную папку с которой вы работаете в корень диска. Проблема может быть\n '
+                             f'в слишком длинном пути к обрабатываемым файлам или конечной папке.\n'
+                             f'Проверьте количество символов в ячейках колонки по значениям которой создаются названия файлов.\n'
+                             f'Попробуйте сократить количество символов в колонке по значениям которой создаются названия файлов.')
     except exceptions.TemplateSyntaxError:
         messagebox.showerror('Лахесис',
                              f'Ошибка в оформлении вставляемых значений в шаблоне\n'
@@ -1011,15 +1113,19 @@ if __name__ == '__main__':
     name_value_column_main = 'Алехин Данила Прокопьевич'
     mode_pdf_main = 'No'
     name_file_template_doc_main = 'data/Создание документов/Пример Шаблон согласия.docx'
+    name_file_template_doc_main = 'data/сертификаты_шаблон_2025.docx'
+    name_file_template_doc_main = 'data/Карточка гражданина Форма № 10.docx'
     name_file_data_doc_main = 'data/Создание документов/Таблица для заполнения согласия.xlsx'
+    name_file_data_doc_main = 'data/участники конкурса резюме.xlsx'
+    name_file_data_doc_main = 'data/БАЗА.xlsx'
     path_to_end_folder_doc_main = 'data/result'
-    mode_combine_main = 'Yes'
+    mode_combine_main = 'No'
     mode_group_main = 'No'
     main_mode_structure_folder = 'Yes'
-    main_structure_folder = '10,11,13'
-    main_mode_full = 'Yes'
+    main_structure_folder = '6'
+    main_mode_full = 'No'
 
-    generate_other_docs_from_template(name_file_template_doc_main,name_file_data_doc_main,name_column_main, name_type_file_main, path_to_end_folder_doc_main,
+    generate_docs_from_template(name_file_template_doc_main,name_file_data_doc_main,name_column_main, name_type_file_main, path_to_end_folder_doc_main,
                                 name_value_column_main, mode_pdf_main,
                                 mode_combine_main, mode_group_main,main_mode_structure_folder,main_structure_folder,main_mode_full)
 
