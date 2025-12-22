@@ -443,6 +443,8 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
                         facecolor='white', edgecolor='none',
                         transparent=False)
 
+            plt.close('all') # очищаем от старых графиков
+
             # Создаем список связей
             lst_stat_link = []
 
@@ -456,7 +458,6 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
             stat_link_df = pd.DataFrame(data=lst_stat_link,columns=['Тип выбора ','Сделавший выбор','Направление','Выбранный'])
 
             stat_link_df.to_excel(f'{finish_path}/Список связей Вопрос_{idx}.xlsx',index=False)
-        plt.close('all') # очищаем от старых графиков
 
 
 
@@ -955,6 +956,10 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
 
         # Создаем и сохраняем социограммы и выборы тех кто не тестировался
+        print(lst_value_dct)
+        print(dct_missing_person)
+
+        raise ZeroDivisionError
         create_sociograms(lst_value_dct,end_folder,dct_missing_person)
     except NotReqColumn:
         messagebox.showerror('Лахеcис',

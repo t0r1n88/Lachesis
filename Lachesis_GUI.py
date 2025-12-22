@@ -3,7 +3,7 @@
 Графический интерфейс программы
 """
 from create_result_docs import generate_result_docs # импортируем функцию по созданию документов по профориентации
-from create_other_docs import generate_other_docs_from_template # импортируем функцию для создания остальных документов
+from create_other_docs import generate_docs_from_template # импортируем функцию для создания остальных документов
 from processing_complex import generate_result_all_age # функция для обработки тестов
 from processing_sociometry import generate_result_sociometry # функция для обработки социометрии
 
@@ -214,7 +214,7 @@ def generate_other_docs():
         # получаем состояние чекбокса создания структуры папок
         mode_structure_folder = mode_structure_folder_value_other_doc.get()
 
-        generate_other_docs_from_template(name_file_template_other_doc,name_file_data_other_doc,name_column, name_type_file, path_to_end_folder_other_doc, name_value_column, mode_pdf,
+        generate_docs_from_template(name_file_template_other_doc,name_file_data_other_doc,name_column, name_type_file, path_to_end_folder_other_doc, name_value_column, mode_pdf,
                                     mode_combine, mode_group,mode_structure_folder,number_structure_folder,mode_full)
 
     except NameError as e:
