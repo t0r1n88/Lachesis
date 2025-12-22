@@ -47,12 +47,13 @@ def extract_answer_several_option(row:pd.Series):
     return ';'.join(temp_lst)
 
 
-def calc_answers(row:pd.Series, dct:dict,miss_dct:dict):
+def calc_answers(row:pd.Series, dct:dict,miss_dct:dict,chosen_miss_dct:dict):
     """
     Функция для извлечения данных из строки формата Значение1;Значение2 в словарь
     :param row: колонка ФИО и колонка с ответами
     :param dct: словарь который нужно заполнить
     :param miss_dct: словарь для тех кто не тестировался
+    :param chosen_miss_dct: словарь для учета тех кто выбрал отсутствующих
     :return: словарь
     """
     fio, value_str = row.tolist()
@@ -63,17 +64,24 @@ def calc_answers(row:pd.Series, dct:dict,miss_dct:dict):
                 if value in dct.keys():
                     dct[fio][value] += 1
                 else:
+                    if fio not in chosen_miss_dct:
+                        chosen_miss_dct[fio] = dict() # создаем словарь для данного ключа
+                        chosen_miss_dct[fio][value] = 1
+                    else:
+                        chosen_miss_dct[fio][value] = 1
+
                     if value not in miss_dct:
                         miss_dct[value] = 1
                     else:
                         miss_dct[value] += 1
 
-def calc_answers_not_yandex(row:pd.Series, dct:dict,miss_dct:dict):
+def calc_answers_not_yandex(row:pd.Series, dct:dict,miss_dct:dict,chosen_miss_dct:dict):
     """
     Функция для извлечения данных из строки формата Значение1,Значение2 в словарь
     :param row: колонка ФИО и колонка с ответами
     :param dct: словарь который нужно заполнить
     :param miss_dct: словарь для тех кто не тестировался
+    :param chosen_miss_dct: словарь для учета тех кто выбрал отсутствующих
     :return: словарь
     """
     fio, value_str = row.tolist()
@@ -85,11 +93,16 @@ def calc_answers_not_yandex(row:pd.Series, dct:dict,miss_dct:dict):
                 if value in dct.keys():
                     dct[fio][value] += 1
                 else:
+                    if fio not in chosen_miss_dct:
+                        chosen_miss_dct[fio] = dict() # создаем словарь для данного ключа
+                        chosen_miss_dct[fio][value] = 1
+                    else:
+                        chosen_miss_dct[fio][value] = 1
+
                     if value not in miss_dct:
                         miss_dct[value] = 1
                     else:
                         miss_dct[value] += 1
-
 
 
 def calc_itog(row:pd.Series):
@@ -300,10 +313,12 @@ def layout_spiral_no_overlap(G):
 
 
 
-def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
+def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct_chosen_missng:dict):
     """
     Функция для создания и сохранения социограмм
     :param lst_graphs:список из словарей для каждого вопроса с отношениями
+    :param dct_missing_person: словарь для отметки количества выборов отсутствующих
+    :param dct_chosen_missng: словарь для хранения кто выбрал отсутствующих
     :param end_folder:конечная папка
     """
     # Создаем сокращенные имена
@@ -317,7 +332,27 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict):
             miss_df = miss_df.reset_index()
             miss_df.columns = ['ФИО','Количество выборов']
             miss_df.sort_values(by='ФИО',inplace=True)
-            miss_df.to_excel(f'{finish_path}/Выборы не тестировавшихся Вопрос_{idx}.xlsx',index=False)
+            # Делаем файл с тем кто выбрал
+            rows = []
+            for key1, inner_dict in dct_chosen_missng[str(idx)].items():
+                for key2, value in inner_dict.items():
+                    rows.append({
+                        'Кто выбрал': key1,
+                        'Кого выбрали': key2,
+                        'Для подсчета': value
+                    })
+
+            missing_stat_link_df = pd.DataFrame(rows)
+
+            with pd.ExcelWriter(f'{finish_path}/Выборы отсутствующих Вопрос_{idx}.xlsx', engine='xlsxwriter') as writer:
+                missing_stat_link_df.to_excel(writer,sheet_name='Выбравшие',index=False)
+                miss_df.to_excel(writer,sheet_name='Количество',index=False)
+
+
+
+
+
+
         # Создаем сокращенные имена
         short_names = {}
         for i, name in enumerate(dct_graph.keys()):
@@ -478,6 +513,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         checked_dct = dict()  # словарь для хранения проверочных датафреймов по каждому вопросу
         matrix_dct = dict()  # словарь для хранения матриц датафреймов по каждому вопросу
         lst_value_dct = [] # список для хранения словарей по каждому вопросу
+        dct_chosen_missing = dict() # словарь для хранения выборов не тестировавшихся
         dct_missing_person = dict() # словарь для хранения словарей с выборами тех кто не прошел тестирование
 
 
@@ -558,11 +594,13 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 # считаем отдельную колонку
                 one_dct = copy.deepcopy(template_dct)
 
-                missing_dct = dict() # словарь для тех кто не тестировался
+                missing_dct = dict() # словарь для тех кто не
+                chosen_missing_dct = dict() # словарь для отслеживания выборов не тестировавшихся
 
-                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers(x, one_dct,missing_dct), axis=1)
+                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers(x, one_dct,missing_dct,chosen_missing_dct), axis=1)
                 lst_value_dct.append(one_dct) # добавляем в список
                 dct_missing_person[f'{idx}'] = missing_dct
+                dct_chosen_missing[f'{idx}'] = chosen_missing_dct
             else:
                 # Обработка не яндексовских форм
                 # Создаем датафрейм для обработки отдельного вопроса
@@ -576,9 +614,13 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 # считаем отдельную колонку
                 one_dct = copy.deepcopy(template_dct)
                 missing_dct = dict()  # словарь для тех кто не тестировался
-                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers_not_yandex(x, one_dct,missing_dct), axis=1)
+                chosen_missing_dct = dict() # словарь для отслеживания выборов не тестировавшихся
+
+                one_qustion_df[['ФИО',f'Вопрос_{idx}']].apply(lambda x: calc_answers_not_yandex(x, one_dct,missing_dct,chosen_missing_dct), axis=1)
                 lst_value_dct.append(one_dct) # добавляем в список
                 dct_missing_person[f'{idx}'] = missing_dct
+                dct_chosen_missing[f'{idx}'] = chosen_missing_dct
+
 
             # заполняем социоматрицу на отдельный вопрос
             one_matrix_df = template_matrix_df.copy()
@@ -956,11 +998,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                 out_df.to_excel(writer,sheet_name=str(name_sheet),index=True)
 
         # Создаем и сохраняем социограммы и выборы тех кто не тестировался
-        print(lst_value_dct)
-        print(dct_missing_person)
 
-        raise ZeroDivisionError
-        create_sociograms(lst_value_dct,end_folder,dct_missing_person)
+        create_sociograms(lst_value_dct,end_folder,dct_missing_person,dct_chosen_missing)
     except NotReqColumn:
         messagebox.showerror('Лахеcис',
                              f'При обработке файла с выборами социометрии обнаружено отсутствие обязательной колонки:\n'
@@ -972,11 +1011,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         messagebox.showerror('Лахеcис',
                              f'Слишком длинный путь к создаваемым файлам. Выберите более короткий путь сохранения (прямо на диске C)')
 
-    except KeyError:
-        messagebox.showerror('Лахеcис',
-                             f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
-                             f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
-                             f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
+    # except KeyError:
+    #     messagebox.showerror('Лахеcис',
+    #                          f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
+    #                          f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
+    #                          f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')
@@ -1005,10 +1044,10 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
-    # main_file = 'data/110 n.xlsx'
+    main_file = 'data/110 n.xlsx'
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 1
-    main_negative_questions = '2'
+    main_quantity_descr_cols = 2
+    main_negative_questions = '2,4,6,8'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
