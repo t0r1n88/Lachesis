@@ -882,7 +882,6 @@ if __name__ == '__main__':
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_0.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/WCQ.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
