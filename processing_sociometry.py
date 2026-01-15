@@ -12,7 +12,8 @@ import warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 warnings.simplefilter(action='ignore', category=DeprecationWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
-
+import itertools
+from collections import defaultdict
 import networkx as nx
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
@@ -309,6 +310,410 @@ def layout_spiral_no_overlap(G):
     return pos
 
 
+def analyze_mutual_pairs(G):
+    """
+    Анализирует и возвращает информацию о взаимных парах
+    """
+    mutual_pairs = []
+    nodes_in_mutual = set()
+
+    for u in G.nodes():
+        for v in G.nodes():
+            if u != v and u not in nodes_in_mutual and v not in nodes_in_mutual:
+                if G.has_edge(u, v) and G.has_edge(v, u):
+                    mutual_pairs.append((u, v))
+                    nodes_in_mutual.add(u)
+                    nodes_in_mutual.add(v)
+
+    # Группы (по 3 и более взаимосвязанных узлов)
+    groups = []
+    visited = set()
+
+    for node in G.nodes():
+        if node not in visited:
+            # Ищем связанную компоненту
+            component = set([node])
+            stack = [node]
+
+            while stack:
+                current = stack.pop()
+                for neighbor in G.neighbors(current):
+                    if neighbor not in component and G.has_edge(neighbor, current):
+                        component.add(neighbor)
+                        stack.append(neighbor)
+
+            if len(component) >= 3:
+                groups.append(list(component))
+                visited.update(component)
+
+    return {
+        'mutual_pairs': mutual_pairs,
+        'mutual_groups': groups,
+        'total_mutual_connections': len(mutual_pairs) * 2,
+        'nodes_in_mutual_pairs': list(nodes_in_mutual)
+    }
+
+
+def analyze_all_groups(G):
+    """
+    Детальный анализ различных типов групп в социограмме
+
+    Возвращает:
+    - mutual_pairs: взаимные пары (A↔B)
+    - cliques: полностью взаимосвязанные группы (каждый с каждым)
+    - dense_groups: группы с плотными связями (>75% возможных связей)
+    - star_centers: звездообразные структуры (один популярный в центре)
+    - chains: цепочки взаимных выборов
+    - isolates: изолированные узлы
+    """
+
+    # 1. ВЗАИМНЫЕ ПАРЫ (2 узла)
+    mutual_pairs = []
+    nodes_in_mutual = set()
+
+    # Проходим по всем уникальным парам узлов
+    nodes = list(G.nodes())
+    for i in range(len(nodes)):
+        for j in range(i + 1, len(nodes)):
+            u = nodes[i]
+            v = nodes[j]
+            if u == v:
+                continue  # Пропускаем петли
+
+            # Проверяем взаимность
+            if G.has_edge(u, v) and G.has_edge(v, u):
+                # Сортируем для уникальности
+                pair_tuple = tuple(sorted([u, v]))
+                if pair_tuple not in nodes_in_mutual:
+                    nodes_in_mutual.add(pair_tuple)
+                    mutual_pairs.append((u, v))
+
+
+
+    # 2. КЛИКИ (полностью взаимосвязанные группы)
+    cliques = []
+
+    # Конвертируем в неориентированный граф ТОЛЬКО с взаимными связями
+    G_mutual_undirected = nx.Graph()
+    for node in G.nodes():
+        G_mutual_undirected.add_node(node)
+
+    for u, v in G.edges():
+        if G.has_edge(v, u):  # Только взаимные связи
+            G_mutual_undirected.add_edge(u, v)
+
+    # Находим все клики размера 3 и более
+    if G_mutual_undirected.number_of_edges() > 0:
+        # Используем алгоритм поиска клик
+        for clique in nx.find_cliques(G_mutual_undirected):
+            if len(clique) >= 3:
+                # Проверяем, что это действительно клика (все связи взаимны)
+                is_valid_clique = True
+                for u, v in itertools.combinations(clique, 2):
+                    if not (G.has_edge(u, v) and G.has_edge(v, u)):
+                        is_valid_clique = False
+                        break
+
+                if is_valid_clique:
+                    # Сортируем для единообразия
+                    cliques.append(sorted(clique))
+
+    # Убираем дубликаты (клики могут находиться несколько раз)
+    unique_cliques = []
+    for clique in cliques:
+        clique_set = set(clique)
+        if not any(clique_set == set(unique) for unique in unique_cliques):
+            unique_cliques.append(clique)
+    cliques = unique_cliques
+
+    # 3. ПЛОТНЫЕ ГРУППЫ (dense_groups)
+    dense_groups = []
+    density_threshold = 0.75  # Минимальная плотность связей (75%)
+
+    # Находим сильно связные компоненты в графе взаимных связей
+    for component in nx.connected_components(G_mutual_undirected):
+        component = list(component)
+        if len(component) >= 3:
+            # Создаем подграф для этого компонента
+            subgraph = G_mutual_undirected.subgraph(component)
+
+            # Вычисляем плотность (отношение реальных связей к максимально возможным)
+            n = len(component)
+            max_possible_edges = n * (n - 1) / 2
+            actual_edges = subgraph.number_of_edges()
+            density = actual_edges / max_possible_edges if max_possible_edges > 0 else 0
+
+            if density >= density_threshold:
+                # Дополнительно проверяем взаимность всех связей
+                all_mutual = True
+                for u, v in itertools.combinations(component, 2):
+                    if subgraph.has_edge(u, v):
+                        if not (G.has_edge(u, v) and G.has_edge(v, u)):
+                            all_mutual = False
+                            break
+
+                if all_mutual:
+                    dense_groups.append({
+                        'nodes': sorted(component),
+                        'density': round(density, 2),
+                        'size': n,
+                        'edges': actual_edges
+                    })
+
+    # 4. ЗВЕЗДООБРАЗНЫЕ СТРУКТУРЫ (star_centers)
+    star_centers = []
+    min_star_rays = 3  # Минимальное количество "лучей" звезды
+
+    for node in G.nodes():
+        # Находим всех, кого выбрал этот узел (исходящие)
+        outgoing = set(G.successors(node))
+
+        # Находим всех, кто выбрал этот узел (входящие)
+        incoming = set(G.predecessors(node))
+
+        # Взаимные связи с этим узлом
+        mutual_with_node = outgoing.intersection(incoming)
+
+        # Односторонние исходящие связи (узел выбрал, но ему не ответили)
+        one_way_out = outgoing - incoming
+
+        # Односторонние входящие связи (выбрали узел, но он не ответил)
+        one_way_in = incoming - outgoing
+
+        # Классифицируем тип звезды
+        if len(mutual_with_node) >= min_star_rays-1:
+            # Звезда с взаимными связями (популярный лидер)
+            star_type = "Звезда с взаимными связями (2 и более взаимных связи)"
+        elif len(one_way_in) >= min_star_rays:
+            # Звезда, куда стекаются выборы (популярный, но не отвечает)
+            star_type = "Звезда, которого выбирают (популярный, но не отвечает-выбран 3 и более раз)"
+        elif len(one_way_out) >= min_star_rays:
+            # Звезда, которая раздает выборы (активный, но непопулярный)
+            star_type = "Звезда, которая раздает выборы (активный, но непопулярный - сделал 3 и более выборов)"
+        else:
+            continue
+
+        star_centers.append({
+            'center': node,
+            'type': star_type,
+            'mutual_connections': sorted(list(mutual_with_node)),
+            'one_way_incoming': sorted(list(one_way_in)),
+            'one_way_outgoing': sorted(list(one_way_out)),
+            'total_connections': len(outgoing.union(incoming))
+        })
+
+    # 5. ЦЕПОЧКИ (chains) взаимных выборов
+    chains = []
+
+    # Находим все простые пути в графе взаимных связей длиной 3 и более
+    G_mutual_directed = nx.DiGraph()
+    for u, v in G.edges():
+        if G.has_edge(v, u):  # Только взаимные связи
+            G_mutual_directed.add_edge(u, v)
+            G_mutual_directed.add_edge(v, u)
+
+    visited_chains = set()
+
+    for start_node in G_mutual_directed.nodes():
+        # Ищем пути длиной от 3 до 5 узлов
+        for end_node in G_mutual_directed.nodes():
+            if start_node != end_node:
+                try:
+                    # Находим все простые пути между start и end
+                    all_paths = list(nx.all_simple_paths(G_mutual_directed,
+                                                         start_node, end_node,
+                                                         cutoff=4))
+
+                    for path in all_paths:
+                        if len(path) >= 3:
+                            # Создаем ключ для уникальности (сортируем)
+                            path_key = tuple(sorted(path))
+                            if path_key not in visited_chains:
+                                # Проверяем, что это действительно цепочка взаимных выборов
+                                is_valid_chain = True
+                                for i in range(len(path) - 1):
+                                    if not (G.has_edge(path[i], path[i + 1]) and
+                                            G.has_edge(path[i + 1], path[i])):
+                                        is_valid_chain = False
+                                        break
+
+                                if is_valid_chain:
+                                    chains.append({
+                                        'path': path,
+                                        'length': len(path),
+                                        'nodes': path
+                                    })
+                                    visited_chains.add(path_key)
+                except:
+                    continue
+
+    # 6. ИЗОЛИРОВАННЫЕ УЗЛЫ (isolates)
+    isolates = []
+
+    for node in G.nodes():
+        # Узел считается изолированным, если у него нет взаимных связей
+        has_mutual = False
+        for neighbor in G.neighbors(node):
+            if G.has_edge(neighbor, node):
+                has_mutual = True
+                break
+
+        if not has_mutual and G.degree(node) == 0:
+            # Полная изоляция - нет никаких связей
+            isolates.append({
+                'node': node,
+                'type': 'Полностью изолирован (никого не выбрал и никто не выбрал)',
+                'outgoing': list(G.successors(node)),
+                'incoming': list(G.predecessors(node))
+            })
+        elif not has_mutual:
+            # Частичная изоляция - есть связи, но не взаимные
+            isolates.append({
+                'node': node,
+                'type': 'Частичная изоляция - есть связи, но не взаимные',
+                'outgoing': list(G.successors(node)),
+                'incoming': list(G.predecessors(node))
+            })
+
+    # 7. СТАТИСТИКА ПО СВЯЗЯМ
+    # ДОПОЛНИТЕЛЬНО: считаем петли отдельно
+    loops = []
+    for node in G.nodes():
+        if G.has_edge(node, node):  # Петля
+            loops.append(node)
+
+
+    total_edges = G.number_of_edges()
+    mutual_edges = sum(1 for u, v in G.edges() if G.has_edge(v, u)) - len(loops) # отнимаем количество петель
+    one_way_edges = total_edges - mutual_edges
+
+    # Собираем полную статистику
+    return {
+        'mutual_pairs': mutual_pairs,
+        'cliques': cliques,
+        'dense_groups': dense_groups,
+        'star_centers': star_centers,
+        'chains': chains,
+        'isolates': isolates,
+        'loops': loops,
+        'statistics': {
+            'total_nodes': G.number_of_nodes(),
+            'total_edges': total_edges,
+            'mutual_edges': mutual_edges,
+            'one_way_edges': one_way_edges,
+            'mutual_ratio': mutual_edges / total_edges if total_edges > 0 else 0,
+            'avg_degree': sum(dict(G.degree()).values()) / G.number_of_nodes() if G.number_of_nodes() > 0 else 0,
+            'density': nx.density(G)
+        }
+    }
+
+# Функция для сохранения детального отчета
+def save_detailed_group_analysis(analysis, save_path):
+    """
+    Сохраняет детальный анализ групп в текстовый файл
+    """
+    with open(save_path, 'w', encoding='utf-8') as f:
+        f.write("=" * 70 + "\n")
+        f.write("ДЕТАЛЬНЫЙ АНАЛИЗ ГРУПП В СОЦИОГРАММЕ\n")
+        f.write("=" * 70 + "\n\n")
+
+        # Статистика
+        stats = analysis['statistics']
+        f.write("ОБЩАЯ СТАТИСТИКА:\n")
+        f.write("-" * 40 + "\n")
+        f.write(f"Всего узлов: {stats['total_nodes']}\n")
+        f.write(f"Всего связей: {stats['total_edges']}\n")
+        f.write(f"Взаимных связей: {stats['mutual_edges']} ({stats['mutual_ratio']:.1%})\n")
+        f.write(f"Односторонних связей: {stats['one_way_edges']}\n")
+        f.write(f"Средняя степень узла: {stats['avg_degree']:.2f}\n")
+        f.write(f"Плотность графа: {stats['density']:.4f}\n\n")
+
+        # Взаимные пары
+        f.write("ВЗАИМНЫЕ ПАРЫ:\n")
+        f.write("-" * 40 + "\n")
+        if analysis['mutual_pairs']:
+            for i, (u, v) in enumerate(analysis['mutual_pairs'], 1):
+                f.write(f"{i}. {u} ↔ {v}\n")
+        else:
+            f.write("Нет взаимных пар\n")
+        f.write(f"Всего: {len(analysis['mutual_pairs'])} пар\n\n")
+
+        # Клики
+        f.write("КЛИКИ (полностью взаимосвязанные группы):\n")
+        f.write("-" * 40 + "\n")
+        if analysis['cliques']:
+            for i, clique in enumerate(analysis['cliques'], 1):
+                f.write(f"{i}. Размер {len(clique)}: {', '.join(clique)}\n")
+        else:
+            f.write("Нет клик размера ≥3\n")
+        f.write(f"Всего: {len(analysis['cliques'])} клик\n\n")
+
+        # Плотные группы
+        f.write("ПЛОТНЫЕ ГРУППЫ (плотность ≥ 75%):\n")
+        f.write("-" * 40 + "\n")
+        if analysis['dense_groups']:
+            for i, group in enumerate(analysis['dense_groups'], 1):
+                f.write(f"{i}. Размер {group['size']}, Плотность {group['density']}: "
+                        f"{', '.join(group['nodes'])}\n")
+        else:
+            f.write("Нет плотных групп\n")
+        f.write(f"Всего: {len(analysis['dense_groups'])} групп\n\n")
+
+        # Звездообразные структуры
+        f.write("ЗВЕЗДООБРАЗНЫЕ СТРУКТУРЫ (≥3 связи):\n")
+        f.write("-" * 40 + "\n")
+        if analysis['star_centers']:
+            for i, star in enumerate(analysis['star_centers'], 1):
+                f.write(f"{i}. Центр: {star['center']} ({star['type']})\n")
+                f.write(f"   Всего связей: {star['total_connections']}\n")
+                if star['mutual_connections']:
+                    f.write(f"   Взаимные: {', '.join(star['mutual_connections'])}\n")
+                if star['one_way_incoming']:
+                    f.write(f"   Входящие (не взаимные): {', '.join(star['one_way_incoming'])}\n")
+                if star['one_way_outgoing']:
+                    f.write(f"   Исходящие (не взаимные): {', '.join(star['one_way_outgoing'])}\n")
+                f.write("\n")
+        else:
+            f.write("Нет звездообразных структур\n")
+        f.write(f"Всего: {len(analysis['star_centers'])} структур\n\n")
+
+        # Цепочки
+        f.write("ЦЕПОЧКИ ВЗАИМНЫХ ВЫБОРОВ (длина ≥3):\n")
+        f.write("-" * 40 + "\n")
+        if analysis['chains']:
+            for i, chain in enumerate(analysis['chains'], 1):
+                f.write(f"{i}. Длина {chain['length']}: {' → '.join(chain['path'])}\n")
+        else:
+            f.write("Нет цепочек\n")
+        f.write(f"Всего: {len(analysis['chains'])} цепочек\n\n")
+
+        # Изолированные узлы
+        f.write("ИЗОЛИРОВАННЫЕ УЗЛЫ (нет взаимных выборов):\n")
+        f.write("-" * 40 + "\n")
+        if analysis['isolates']:
+            for i, isolate in enumerate(analysis['isolates'], 1):
+                f.write(f"{i}. {isolate['node']} ({isolate['type']})\n")
+                if isolate['outgoing']:
+                    f.write(f"   Исходящие: {', '.join(isolate['outgoing'])}\n")
+                if isolate['incoming']:
+                    f.write(f"   Входящие: {', '.join(isolate['incoming'])}\n")
+                f.write("\n")
+        else:
+            f.write("Нет изолированных узлов\n")
+        f.write(f"Всего: {len(analysis['isolates'])} узлов\n")
+
+        # Петли (случаи когда человек выбрал сам себя)
+        f.write("Петли (выбор самого себя):\n")
+        f.write("-" * 40 + "\n")
+        if analysis['loops']:
+            for i, loop in enumerate(analysis['loops'], 1):
+                f.write(f"{i}. {loop}")
+                f.write("\n")
+        else:
+            f.write("Нет петель (нет выборов самого себя)\n")
+        f.write(f"Всего: {len(analysis['loops'])} узлов\n")
+
+
 
 
 
@@ -349,22 +754,49 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                 miss_df.to_excel(writer,sheet_name='Количество',index=False)
 
 
-
-
-
-
         # Создаем сокращенные имена
         short_names = {}
+        check_dupl_set = set() # для проверки совпадения
         for i, name in enumerate(dct_graph.keys()):
             parts = name.split()
             first_part = parts[0] # Фамилия
             if len(parts) == 1:
                 short_names[name] = first_part
+            elif len(parts) == 2:
+                out_name = f'{first_part} {parts[1][:3]}.'
+                if out_name not in check_dupl_set:
+                    short_names[name] = out_name
+                    check_dupl_set.add(out_name)
+                else:
+                    short_names[name] = f'{out_name}_{i}'
+                    check_dupl_set.add(f'{out_name}_{i}')
+            elif len(parts) == 3:
+                out_name = f'{first_part} '
+                for part in parts[1:]:
+                    out_name += f'{part[0]}.'
+
+                if out_name not in check_dupl_set:
+                    short_names[name] = out_name
+                    check_dupl_set.add(out_name)
+                else:
+                    out_name = f'{first_part} {parts[1][:3]}.{parts[2][0]}.'
+                    if out_name not in check_dupl_set:
+                        short_names[name] = out_name
+                        check_dupl_set.add(out_name)
+                    else:
+                        short_names[name] = f'{out_name}_{i}'
+                        check_dupl_set.add(f'{out_name}_{i}')
             else:
                 out_name = f'{first_part} '
                 for part in parts[1:]:
                     out_name += f'{part[0]}.'
-                short_names[name] = out_name
+
+                if out_name not in check_dupl_set:
+                    short_names[name] = out_name
+                    check_dupl_set.add(out_name)
+                else:
+                    short_names[name] = f'{out_name}_{i}'
+                    check_dupl_set.add(f'{out_name}_{i}')
 
         # Создаем ориентированный граф
         G = nx.DiGraph()
@@ -386,6 +818,11 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                 G.add_edge(from_node, to_node, weight=2)
             else:
                 G.add_edge(from_node, to_node, weight=1)
+
+        detailed_analysis = analyze_all_groups(G)
+
+        # Сохраняем отчет
+        save_detailed_group_analysis(detailed_analysis, f'{finish_path}/Анализ_групп_Вопрос_{idx}.txt')
 
 
         # Создаем варианты позиционирования
@@ -466,7 +903,7 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
             cbar = plt.colorbar(nodes, label='Количество связей', shrink=0.8)
             cbar.ax.tick_params(labelsize=9)
 
-            plt.title(f'Социограмма группы - {layout_name}\n Зеленые стрелки: взаимные выборы | Красные стрелки: обычные выборы',
+            plt.title(f'Социограмма группы - {layout_name}\n Зеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
                       size=14, pad=20)
             plt.axis('off')
 
@@ -1044,11 +1481,11 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
     main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
-    main_file = 'data/110 n.xlsx'
-    main_file = 'data/Социометрия смеш.xlsx'
+    main_file = 'data/Группа 110 н.xlsx'
+    # main_file = 'data/Социометрия смеш.xlsx'
 
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 1
+    main_quantity_descr_cols = 2
     main_negative_questions = '2,4'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
