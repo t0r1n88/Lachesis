@@ -415,7 +415,7 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                     edge_colors.append('green')
                     edge_widths.append(3.0)
                 else:
-                    edge_colors.append('red')
+                    edge_colors.append('blue')
                     edge_widths.append(1.5)
 
             # Вычисляем степени для визуализации
@@ -1011,11 +1011,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         messagebox.showerror('Лахеcис',
                              f'Слишком длинный путь к создаваемым файлам. Выберите более короткий путь сохранения (прямо на диске C)')
 
-    # except KeyError:
-    #     messagebox.showerror('Лахеcис',
-    #                          f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
-    #                          f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
-    #                          f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
+    except KeyError:
+        messagebox.showerror('Лахеcис',
+                             f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
+                             f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
+                             f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')
@@ -1045,9 +1045,11 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
     main_file = 'data/110 n.xlsx'
+    main_file = 'data/Социометрия смеш.xlsx'
+
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 2
-    main_negative_questions = '2,4,6,8'
+    main_quantity_descr_cols = 1
+    main_negative_questions = '2,4'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
