@@ -588,6 +588,7 @@ def analyze_all_groups(G):
     one_way_edges = total_edges - mutual_edges
 
     # Собираем полную статистику
+
     return {
         'mutual_pairs': mutual_pairs,
         'cliques': cliques,
@@ -602,7 +603,8 @@ def analyze_all_groups(G):
             'mutual_edges': mutual_edges,
             'one_way_edges': one_way_edges,
             'mutual_ratio': mutual_edges / total_edges if total_edges > 0 else 0,
-            'avg_degree': sum(dict(G.degree()).values()) / G.number_of_nodes() if G.number_of_nodes() > 0 else 0,
+            # 'avg_degree': sum(dict(G.degree()).values()) / G.number_of_nodes() if G.number_of_nodes() > 0 else 0,
+            'avg_degree': sum(dict(G.degree()).values()) / G.number_of_edges() if G.number_of_edges() > 0 else 0,
             'density': nx.density(G)
         }
     }
@@ -614,7 +616,7 @@ def save_detailed_group_analysis(analysis, save_path):
     """
     with open(save_path, 'w', encoding='utf-8') as f:
         f.write("=" * 70 + "\n")
-        f.write("ДЕТАЛЬНЫЙ АНАЛИЗ ГРУПП В СОЦИОГРАММЕ\n")
+        f.write("АНАЛИЗ ГРУПП В СОЦИОГРАММЕ\n")
         f.write("=" * 70 + "\n\n")
 
         # Статистика
@@ -625,11 +627,11 @@ def save_detailed_group_analysis(analysis, save_path):
         f.write(f"Всего связей: {stats['total_edges']}\n")
         f.write(f"Взаимных связей: {stats['mutual_edges']} ({stats['mutual_ratio']:.1%})\n")
         f.write(f"Односторонних связей: {stats['one_way_edges']}\n")
-        f.write(f"Средняя степень узла: {stats['avg_degree']:.2f}\n")
-        f.write(f"Плотность графа: {stats['density']:.4f}\n\n")
+        f.write(f"Среднее количество входящих и исходящих связей: {stats['avg_degree']:.2f}\n")
+        f.write(f"Плотность графа (доля связей от максимально возможных в группе): {stats['density']:.4f}\n\n")
 
         # Взаимные пары
-        f.write("ВЗАИМНЫЕ ПАРЫ:\n")
+        f.write("ВЗАИМНЫЕ ПАРЫ (диады):\n")
         f.write("-" * 40 + "\n")
         if analysis['mutual_pairs']:
             for i, (u, v) in enumerate(analysis['mutual_pairs'], 1):
@@ -639,7 +641,7 @@ def save_detailed_group_analysis(analysis, save_path):
         f.write(f"Всего: {len(analysis['mutual_pairs'])} пар\n\n")
 
         # Клики
-        f.write("КЛИКИ (полностью взаимосвязанные группы):\n")
+        f.write("КЛИКИ (полностью взаимосвязанные группы - триады,тетрады и т.д.):\n")
         f.write("-" * 40 + "\n")
         if analysis['cliques']:
             for i, clique in enumerate(analysis['cliques'], 1):
@@ -648,16 +650,16 @@ def save_detailed_group_analysis(analysis, save_path):
             f.write("Нет клик размера ≥3\n")
         f.write(f"Всего: {len(analysis['cliques'])} клик\n\n")
 
-        # Плотные группы
-        f.write("ПЛОТНЫЕ ГРУППЫ (плотность ≥ 75%):\n")
-        f.write("-" * 40 + "\n")
-        if analysis['dense_groups']:
-            for i, group in enumerate(analysis['dense_groups'], 1):
-                f.write(f"{i}. Размер {group['size']}, Плотность {group['density']}: "
-                        f"{', '.join(group['nodes'])}\n")
-        else:
-            f.write("Нет плотных групп\n")
-        f.write(f"Всего: {len(analysis['dense_groups'])} групп\n\n")
+        # # Плотные группы
+        # f.write("ПЛОТНЫЕ ГРУППЫ (плотность ≥ 75%):\n")
+        # f.write("-" * 40 + "\n")
+        # if analysis['dense_groups']:
+        #     for i, group in enumerate(analysis['dense_groups'], 1):
+        #         f.write(f"{i}. Размер {group['size']}, Плотность {group['density']}: "
+        #                 f"{', '.join(group['nodes'])}\n")
+        # else:
+        #     f.write("Нет плотных групп\n")
+        # f.write(f"Всего: {len(analysis['dense_groups'])} групп\n\n")
 
         # Звездообразные структуры
         f.write("ЗВЕЗДООБРАЗНЫЕ СТРУКТУРЫ (≥3 связи):\n")
@@ -677,15 +679,15 @@ def save_detailed_group_analysis(analysis, save_path):
             f.write("Нет звездообразных структур\n")
         f.write(f"Всего: {len(analysis['star_centers'])} структур\n\n")
 
-        # Цепочки
-        f.write("ЦЕПОЧКИ ВЗАИМНЫХ ВЫБОРОВ (длина ≥3):\n")
-        f.write("-" * 40 + "\n")
-        if analysis['chains']:
-            for i, chain in enumerate(analysis['chains'], 1):
-                f.write(f"{i}. Длина {chain['length']}: {' → '.join(chain['path'])}\n")
-        else:
-            f.write("Нет цепочек\n")
-        f.write(f"Всего: {len(analysis['chains'])} цепочек\n\n")
+        # # Цепочки
+        # f.write("ЦЕПОЧКИ ВЗАИМНЫХ ВЫБОРОВ (длина ≥3):\n")
+        # f.write("-" * 40 + "\n")
+        # if analysis['chains']:
+        #     for i, chain in enumerate(analysis['chains'], 1):
+        #         f.write(f"{i}. Длина {chain['length']}: {' → '.join(chain['path'])}\n")
+        # else:
+        #     f.write("Нет цепочек\n")
+        # f.write(f"Всего: {len(analysis['chains'])} цепочек\n\n")
 
         # Изолированные узлы
         f.write("ИЗОЛИРОВАННЫЕ УЗЛЫ (нет взаимных выборов):\n")
@@ -703,15 +705,15 @@ def save_detailed_group_analysis(analysis, save_path):
         f.write(f"Всего: {len(analysis['isolates'])} узлов\n")
 
         # Петли (случаи когда человек выбрал сам себя)
-        f.write("Петли (выбор самого себя):\n")
-        f.write("-" * 40 + "\n")
-        if analysis['loops']:
-            for i, loop in enumerate(analysis['loops'], 1):
-                f.write(f"{i}. {loop}")
-                f.write("\n")
-        else:
-            f.write("Нет петель (нет выборов самого себя)\n")
-        f.write(f"Всего: {len(analysis['loops'])} узлов\n")
+        # f.write("Петли (выбор самого себя):\n")
+        # f.write("-" * 40 + "\n")
+        # if analysis['loops']:
+        #     for i, loop in enumerate(analysis['loops'], 1):
+        #         f.write(f"{i}. {loop}")
+        #         f.write("\n")
+        # else:
+        #     f.write("Нет петель (нет выборов самого себя)\n")
+        # f.write(f"Всего: {len(analysis['loops'])} узлов\n")
 
 
 
