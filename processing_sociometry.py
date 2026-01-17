@@ -20,6 +20,8 @@ from scipy.spatial import distance
 import os
 from tkinter import messagebox
 from collections import Counter
+from matplotlib.colors import BoundaryNorm
+from matplotlib.cm import ScalarMappable
 
 
 class NotReqColumn(Exception):
@@ -308,6 +310,172 @@ def layout_spiral_no_overlap(G):
         pos[node] = (x, y)
 
     pos = avoid_overlap(pos, min_distance=2.0)
+    return pos
+
+
+# ВАРИАНТ 7: Центральность по степени с постепенным размещением (как описано в требовании)
+def layout_centrality_no_overlap(G):
+    """
+       Располагает узлы по принципу центральности:
+       1. Сначала в центр помещают тех, кто получил наибольшее число выборов
+       2. Затем отображают их выборы и тех, кто их выбрал
+       3. Постепенно переходят ко всем оставшимся узлам
+       """
+    # Вычисляем входящую степень (популярность) для каждого узла
+    # Исключаем петли (самовыборы) из расчета популярности
+    in_degrees = {}
+    for node in G.nodes():
+        # Считаем только входящие связи от других узлов (не от себя)
+        incoming = list(G.predecessors(node))
+        # Убираем самого себя, если есть петля
+        if node in incoming:
+            incoming.remove(node)
+        in_degrees[node] = len(incoming)
+
+    # Сортируем узлы по убыванию популярности
+    sorted_nodes = sorted(in_degrees.items(), key=lambda x: x[1], reverse=True)
+
+
+    # Создаем множество уже размещенных узлов
+    placed_nodes = set()
+    pos = {}
+
+    # Параметры размещения
+    center_radius = 1.0
+    layer_distance = 3.0
+
+    # Шаг 1: Размещаем самых популярных в центре
+    max_in_degree = sorted_nodes[0][1] if sorted_nodes else 0
+
+    # Берем узлы с максимальной или близкой к максимальной популярностью
+    top_popular = []
+    for node, deg in sorted_nodes:
+        if deg >= max_in_degree * 0.8:  # Берем узлы с популярностью от 80% от максимума
+            top_popular.append(node)
+        if len(top_popular) >= 5:  # Ограничиваем количество центральных узлов
+            break
+
+
+    if top_popular:
+        if len(top_popular) == 1:
+            # Один самый популярный - в самый центр
+            pos[top_popular[0]] = (0, 0)
+            placed_nodes.add(top_popular[0])
+        else:
+            # Несколько популярных - размещаем по кругу в центре
+            angles = np.linspace(0, 2 * np.pi, len(top_popular), endpoint=False)
+            for i, node in enumerate(top_popular):
+                angle = angles[i]
+                x = center_radius * np.cos(angle) * 0.7  # Уменьшаем радиус для тесной группы
+                y = center_radius * np.sin(angle) * 0.7
+                pos[node] = (x, y)
+                placed_nodes.add(node)
+
+    # Шаг 2: Размещаем тех, кто выбрал центральных узлов и кого выбрали центральные
+    current_radius = center_radius + layer_distance
+    layer_nodes = []
+
+    # Собираем все узлы, связанные с центральными (исключая петли)
+    for center_node in top_popular:
+        # Те, кого выбрал центральный узел (исходящие связи)
+        for successor in G.successors(center_node):
+            if successor != center_node:  # Исключаем петли
+                if successor not in placed_nodes and successor not in layer_nodes:
+                    layer_nodes.append(successor)
+
+        # Те, кто выбрал центральный узел (входящие связи)
+        for predecessor in G.predecessors(center_node):
+            if predecessor != center_node:  # Исключаем петли
+                if predecessor not in placed_nodes and predecessor not in layer_nodes:
+                    layer_nodes.append(predecessor)
+
+    # Удаляем дубликаты (если узел связан с несколькими центральными)
+    layer_nodes = list(dict.fromkeys(layer_nodes))
+
+
+    # Размещаем узлы первого слоя
+    if layer_nodes:
+        angles = np.linspace(0, 2 * np.pi, len(layer_nodes), endpoint=False)
+        # Добавляем случайное смещение для лучшего распределения
+        angle_offset = np.random.random() * 2 * np.pi
+
+        for i, node in enumerate(layer_nodes):
+            angle = angles[i] + angle_offset
+            x = current_radius * np.cos(angle)
+            y = current_radius * np.sin(angle)
+            pos[node] = (x, y)
+            placed_nodes.add(node)
+
+    # Шаг 3: Размещаем остальные узлы по слоям
+    remaining_nodes = [node for node in G.nodes() if node not in placed_nodes]
+
+    # Сортируем оставшиеся узлы по степени центральности
+    remaining_sorted = sorted([(node, in_degrees[node]) for node in remaining_nodes],
+                              key=lambda x: x[1], reverse=True)
+
+
+    if remaining_sorted:
+        current_radius += layer_distance
+        # Разбиваем на группы по степени популярности
+        groups = []
+        current_group = []
+        current_deg = None
+
+        for node, deg in remaining_sorted:
+            if current_deg is None or abs(deg - current_deg) <= 1:
+                current_group.append(node)
+                current_deg = deg
+            else:
+                if current_group:
+                    groups.append(current_group)
+                current_group = [node]
+                current_deg = deg
+
+        if current_group:
+            groups.append(current_group)
+
+        # Размещаем группы по слоям
+        for group in groups:
+            if not group:
+                continue
+
+            angles = np.linspace(0, 2 * np.pi, len(group), endpoint=False)
+            # Разное смещение для каждой группы
+            angle_offset = np.random.random() * 2 * np.pi
+
+            for i, node in enumerate(group):
+                angle = angles[i] + angle_offset
+                x = current_radius * np.cos(angle)
+                y = current_radius * np.sin(angle)
+                pos[node] = (x, y)
+                placed_nodes.add(node)
+
+            # Увеличиваем радиус для следующей группы
+            current_radius += layer_distance * 0.7
+
+    # Проверяем, что все узлы размещены
+    if len(pos) < G.number_of_nodes():
+        # Размещаем оставшиеся узлы случайным образом
+        for node in G.nodes():
+            if node not in pos:
+                x = np.random.uniform(-current_radius, current_radius)
+                y = np.random.uniform(-current_radius, current_radius)
+                pos[node] = (x, y)
+
+    # Применяем алгоритм устранения перекрытий с большим расстоянием
+    pos = avoid_overlap(pos, min_distance=3.0)
+
+    # Центрируем граф
+    if pos:
+        # Находим центр масс
+        avg_x = sum(x for x, y in pos.values()) / len(pos)
+        avg_y = sum(y for x, y in pos.values()) / len(pos)
+
+        # Сдвигаем все точки так, чтобы центр масс был в (0, 0)
+        for node in pos:
+            x, y = pos[node]
+            pos[node] = (x - avg_x, y - avg_y)
+
     return pos
 
 
@@ -1189,6 +1357,71 @@ def save_detailed_metrics_report(metrics, save_path, question_num=None, G=None):
         #     write_line(point)
 
 
+# Функция для определения категорий узлов по популярности
+def get_node_categories(G):
+    """
+    Определяет категории узлов по количеству полученных выборов:
+    I - группа «лидеров» (звёзд), набравших максимальное число выборов.
+    II - референтная группа (предпочитаемых), набравших выборов выше среднего.
+    III - группа «пренебрегаемых», набравших выборов ниже среднего.
+    IV - группа «оттесненных» (изолированных), набравших 1-2 выборов.
+    V - группа «изолированных» (отверженные), не получивших ни одного выбора.
+    """
+    # Вычисляем входящие степени (популярность) без учета петель
+    in_degrees = {}
+    for node in G.nodes():
+        incoming = list(G.predecessors(node))
+        # Убираем самого себя, если есть петля
+        if node in incoming:
+            incoming.remove(node)
+        in_degrees[node] = len(incoming)
+
+    # Статистика для определения категорий
+    degrees_list = list(in_degrees.values())
+    max_degree = max(degrees_list) if degrees_list else 0
+    avg_degree = np.mean(degrees_list) if degrees_list else 0
+
+    # Определяем пороги для категорий
+    categories = {
+        'I': {'name': 'Лидеры (звезды)', 'color': 5, 'description': 'Максимальное число выборов'},
+        'II': {'name': 'Предпочитаемые', 'color': 4, 'description': 'Выше среднего'},
+        'III': {'name': 'Пренебрегаемые', 'color': 3, 'description': 'Ниже среднего'},
+        'IV': {'name': 'Оттесненные', 'color': 2, 'description': '1-2 выбора'},
+        'V': {'name': 'Изолированные', 'color': 1, 'description': '0 выборов'}
+    }
+
+    # Распределяем узлы по категориям
+    node_categories = {}
+    for node, degree in in_degrees.items():
+        if degree == max_degree and max_degree > 0:
+            category = 'I'
+        elif degree > avg_degree and degree > 0:
+            category = 'II'
+        elif degree < avg_degree and degree > 2:
+            category = 'III'
+        elif 1 <= degree <= 2:
+            category = 'IV'
+        else:  # degree == 0
+            category = 'V'
+        node_categories[node] = category
+
+    # Статистика по категориям
+    category_stats = {}
+    for cat_id, cat_info in categories.items():
+        nodes_in_cat = [node for node, cat in node_categories.items() if cat == cat_id]
+        category_stats[cat_id] = {
+            'name': cat_info['name'],
+            'color_value': cat_info['color'],
+            'count': len(nodes_in_cat),
+            'nodes': nodes_in_cat,
+            'description': cat_info['description']
+        }
+
+    return node_categories, category_stats, in_degrees
+
+
+
+
 
 
 
@@ -1296,6 +1529,9 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
 
         detailed_analysis = analyze_all_groups(G)
 
+        # Получаем категории узлов
+        node_categories, category_stats, in_degrees = get_node_categories(G)
+
         # Сохраняем отчет
         save_detailed_group_analysis(detailed_analysis, f'{finish_path}/Анализ_Вопрос_{idx}.txt')
 
@@ -1319,7 +1555,8 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
             3: ("Концентрические круги", layout_shell_no_overlap),
             4: ("Сетка", layout_grid_no_overlap),
             5: ("Камада-Каваи", layout_kamada_kawai_no_overlap),
-            6: ("Спиральное", layout_spiral_no_overlap)
+            6: ("Спиральное", layout_spiral_no_overlap),
+            7: ("Центрированное", layout_centrality_no_overlap)
         }
 
         # Создаем все варианты отображения для вопроса
@@ -1342,19 +1579,38 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                     edge_colors.append('blue')
                     edge_widths.append(1.5)
 
-            # Вычисляем степени для визуализации
-            degrees = dict(G.degree())
-            node_colors = [degrees[node] for node in G.nodes()]
-            node_sizes = [800 + degrees[node] * 200 for node in G.nodes()]
+            # Получаем значения категорий для цветов
+            node_category_values = [category_stats[node_categories[node]]['color_value'] for node in G.nodes()]
+
+            # Размеры узлов также могут зависеть от категории
+            node_sizes = []
+            for node in G.nodes():
+                category = node_categories[node]
+                if category == 'I':
+                    size = 1200  # Лидеры - самые большие
+                elif category == 'II':
+                    size = 1000  # Предпочитаемые - большие
+                elif category == 'III':
+                    size = 800  # Пренебрегаемые - средние
+                elif category == 'IV':
+                    size = 600  # Оттесненные - маленькие
+                else:  # 'V'
+                    size = 400  # Изолированные - самые маленькие
+                node_sizes.append(size)
+
+            # Создаем цветовую карту с 5 дискретными цветами
+            cmap = plt.cm.get_cmap('RdYlBu', 5)  # 5 дискретных цветов
 
             # Рисуем узлы с обводкой для лучшей видимости
             nodes = nx.draw_networkx_nodes(
                 G, pos,
                 node_size=node_sizes,
-                node_color=node_colors,
-                cmap='YlOrRd',
+                node_color=node_category_values,
+                cmap=cmap,
+                vmin=0.5,  # Минимальное значение для дискретных цветов
+                vmax=5.5,  # Максимальное значение для дискретных цветов
                 edgecolors='black',
-                linewidths=3,  # Утолщаем обводку
+                linewidths=3,
                 alpha=0.9
             )
 
@@ -1369,7 +1625,6 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                          bbox=dict(boxstyle="round,pad=0.3", facecolor='white',
                                    alpha=0.8, edgecolor='none'))
 
-
             # Рисуем ребра
             for i, (u, v) in enumerate(G.edges()):
                 nx.draw_networkx_edges(
@@ -1380,22 +1635,61 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                     arrows=True,
                     arrowsize=25,
                     arrowstyle='->',
-                    connectionstyle='arc3,rad=0.2',  # Увеличиваем изгиб стрелок
+                    connectionstyle='arc3,rad=0.2',
                     alpha=0.8
                 )
 
+            # Создаем кастомную цветовую шкалу - ПРАВИЛЬНЫЙ СПОСОБ
+            from matplotlib.colors import BoundaryNorm
+            from matplotlib.cm import ScalarMappable
 
+            # Границы для категорий
+            bounds = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5]
 
-            # Добавляем цветовую шкалу
-            cbar = plt.colorbar(nodes, label='Количество связей', shrink=0.8)
+            # Названия категорий для легенды
+            category_labels = [
+                'V: Изолированные (0 выборов)',
+                'IV: Оттесненные (1-2 выбора)',
+                'III: Пренебрегаемые (ниже среднего)',
+                'II: Предпочитаемые (выше среднего)',
+                'I: Лидеры (максимум выборов)'
+            ]
+
+            # Создаем нормализацию для дискретных цветов
+            norm = BoundaryNorm(bounds, cmap.N)
+
+            # Создаем ScalarMappable для цветовой шкалы
+            sm = ScalarMappable(cmap=cmap, norm=norm)
+            sm.set_array([])  # Пустой массив, так как данные уже отрисованы
+
+            # Добавляем цветовую шкалу с кастомными метками
+            ax = plt.gca()  # Получаем текущие оси
+            cbar = plt.colorbar(sm, ax=ax, shrink=0.8, pad=0.02)
+
+            # Устанавливаем кастомные метки
+            cbar.set_ticks([1, 2, 3, 4, 5])
+            cbar.set_ticklabels(category_labels)
             cbar.ax.tick_params(labelsize=9)
+            cbar.set_label('Категории популярности', fontsize=11, fontweight='bold')
 
-            plt.title(f'Социограмма группы - {layout_name}\n Зеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
-                      size=14, pad=20)
+            # Особое оформление для варианта с центральностью
+            if selected_option == 7:
+                # Добавляем пояснительную аннотацию
+                plt.figtext(0.02, 0.02,
+                            'Структура графа:\n• В центре - самые популярные\n• Первый круг - их выборы\n• Внешние круги - остальные',
+                            fontsize=10, bbox=dict(boxstyle="round,pad=0.5", facecolor='lightyellow', alpha=0.8))
+
+                plt.title(
+                    f'Социограмма группы - {layout_name}\n(Сначала самые популярные, затем их связи, затем остальные)\n'
+                    f'Зеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
+                    size=14, pad=20)
+
+            else:
+                plt.title(
+                    f'Социограмма группы - {layout_name}\nЗеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
+                    size=14, pad=20)
+
             plt.axis('off')
-
-
-
 
             # Сохраняем с высоким качеством
             plt.savefig(f'{finish_path}/{layout_options[selected_option][0]}.png',dpi=300, bbox_inches='tight',
@@ -1403,6 +1697,8 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                         transparent=False)
 
             plt.close('all') # очищаем от старых графиков
+
+
 
             # Создаем список связей
             lst_stat_link = []
@@ -1969,11 +2265,11 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
     main_file = 'data/Группа 110 н.xlsx'
-    main_file = 'data/Социометрия смеш.xlsx'
+    # main_file = 'data/Социометрия смеш.xlsx'
 
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 1
-    main_negative_questions = '2,4'
+    main_quantity_descr_cols = 2
+    main_negative_questions = '2,4,6,8'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
