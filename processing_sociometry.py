@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial import distance
 import os
 from tkinter import messagebox
+from collections import Counter
 
 
 class NotReqColumn(Exception):
@@ -603,7 +604,6 @@ def analyze_all_groups(G):
             'mutual_edges': mutual_edges,
             'one_way_edges': one_way_edges,
             'mutual_ratio': mutual_edges / total_edges if total_edges > 0 else 0,
-            # 'avg_degree': sum(dict(G.degree()).values()) / G.number_of_nodes() if G.number_of_nodes() > 0 else 0,
             'avg_degree': sum(dict(G.degree()).values()) / G.number_of_edges() if G.number_of_edges() > 0 else 0,
             'density': nx.density(G)
         }
@@ -615,9 +615,6 @@ def save_detailed_group_analysis(analysis, save_path):
     Сохраняет детальный анализ групп в текстовый файл
     """
     with open(save_path, 'w', encoding='utf-8') as f:
-        f.write("=" * 70 + "\n")
-        f.write("АНАЛИЗ ГРУПП В СОЦИОГРАММЕ\n")
-        f.write("=" * 70 + "\n\n")
 
         # Статистика
         stats = analysis['statistics']
@@ -714,6 +711,482 @@ def save_detailed_group_analysis(analysis, save_path):
         # else:
         #     f.write("Нет петель (нет выборов самого себя)\n")
         # f.write(f"Всего: {len(analysis['loops'])} узлов\n")
+
+
+def get_meaningful_metrics_with_names(G):
+    """
+    Расширенные метрики с идентификацией конкретных людей
+    """
+    metrics = {}
+
+    # 1. ПОПУЛЯРНОСТЬ (входящие степени) - КТО популярен
+    in_degrees = dict(G.in_degree())
+
+    metrics['popularity'] = {
+        'max_in_degree': max(in_degrees.values()),
+        'max_in_degree_nodes': [node for node, deg in in_degrees.items()
+                                if deg == max(in_degrees.values())],
+
+        'min_in_degree': min(in_degrees.values()),
+        'min_in_degree_nodes': [node for node, deg in in_degrees.items()
+                                if deg == min(in_degrees.values())],
+
+        'avg_in_degree': np.mean(list(in_degrees.values())),
+        'std_in_degree': np.std(list(in_degrees.values())),
+
+        # Топ-5 самых популярных
+        'top_5_popular': sorted(in_degrees.items(), key=lambda x: x[1], reverse=True)[:5],
+        # Весь список
+        'list_popular':sorted(in_degrees.items(), key=lambda x: x[1], reverse=True)[:1000],
+
+        # Распределение популярности
+        'popularity_distribution': dict(Counter(in_degrees.values())),
+
+        # Классификация по популярности
+        'highly_popular': [(node, deg) for node, deg in in_degrees.items()
+                           if deg > np.mean(list(in_degrees.values())) + np.std(list(in_degrees.values()))],
+        'unpopular': [(node, deg) for node, deg in in_degrees.items()
+                      if deg < np.mean(list(in_degrees.values())) - np.std(list(in_degrees.values()))]
+    }
+
+    # 2. АКТИВНОСТЬ (исходящие степени) - КТО активен
+    out_degrees = dict(G.out_degree())
+
+    metrics['activity'] = {
+        'max_out_degree': max(out_degrees.values()),
+        'max_out_degree_nodes': [node for node, deg in out_degrees.items()
+                                 if deg == max(out_degrees.values())],
+
+        'min_out_degree': min(out_degrees.values()),
+        'min_out_degree_nodes': [node for node, deg in out_degrees.items()
+                                 if deg == min(out_degrees.values())],
+
+        'avg_out_degree': np.mean(list(out_degrees.values())),
+        'std_out_degree': np.std(list(out_degrees.values())),
+
+        # Топ-5 самых активных
+        'top_5_active': sorted(out_degrees.items(), key=lambda x: x[1], reverse=True)[:5],
+        # Общий список активных
+        'list_active': sorted(out_degrees.items(), key=lambda x: x[1], reverse=True)[:1000],
+
+        # Распределение активности
+        'activity_distribution': dict(Counter(out_degrees.values())),
+
+        # Классификация по активности
+        'highly_active': [(node, deg) for node, deg in out_degrees.items()
+                          if deg > np.mean(list(out_degrees.values())) + np.std(list(out_degrees.values()))],
+        'passive': [(node, deg) for node, deg in out_degrees.items()
+                    if deg < np.mean(list(out_degrees.values())) - np.std(list(out_degrees.values()))]
+    }
+
+    # 3. БАЛАНС (разница входящих-исходящих) - КТО в какой категории
+    balance_data = []
+    for node in G.nodes():
+        in_deg = in_degrees[node]
+        out_deg = out_degrees[node]
+        diff = in_deg - out_deg
+        balance_data.append({
+            'node': node,
+            'in_degree': in_deg,
+            'out_degree': out_deg,
+            'balance': diff
+        })
+
+    # Сортируем по балансу
+    balance_data_sorted = sorted(balance_data, key=lambda x: x['balance'], reverse=True)
+
+    metrics['balance'] = {
+        # Количественные показатели
+        'balanced_nodes_count': sum(1 for item in balance_data if item['balance'] == 0),
+        'popular_nodes_count': sum(1 for item in balance_data if item['balance'] > 1),
+        'active_nodes_count': sum(1 for item in balance_data if item['balance'] < -1),
+        'slightly_popular_count': sum(1 for item in balance_data if 0 < item['balance'] <= 1),
+        'slightly_active_count': sum(1 for item in balance_data if -1 <= item['balance'] < 0),
+
+        # Конкретные люди в каждой категории
+        'balanced_nodes': [(item['node'], item['in_degree'], item['out_degree'])
+                           for item in balance_data if item['balance'] == 0],
+
+        'popular_nodes': [(item['node'], item['in_degree'], item['out_degree'], item['balance'])
+                          for item in balance_data if item['balance'] > 1],
+        'popular_nodes_sorted': sorted([(item['node'], item['balance'])
+                                        for item in balance_data if item['balance'] > 1],
+                                       key=lambda x: x[1], reverse=True)[:10],  # Топ-10 популярных
+
+        'active_nodes': [(item['node'], item['in_degree'], item['out_degree'], item['balance'])
+                         for item in balance_data if item['balance'] < -1],
+        'active_nodes_sorted': sorted([(item['node'], abs(item['balance']))
+                                       for item in balance_data if item['balance'] < -1],
+                                      key=lambda x: x[1], reverse=True)[:10],  # Топ-10 активных
+
+        # Экстремальные случаи
+        'most_popular': balance_data_sorted[0] if balance_data_sorted else None,  # Самый популярный
+        'most_active': balance_data_sorted[-1] if balance_data_sorted else None,  # Самый активный
+        'most_balanced': next((item for item in balance_data if item['balance'] == 0), None),
+
+        # Статистика баланса
+        'avg_balance': np.mean([item['balance'] for item in balance_data]),
+        'std_balance': np.std([item['balance'] for item in balance_data]),
+        'max_positive_balance': max(item['balance'] for item in balance_data),
+        'max_negative_balance': min(item['balance'] for item in balance_data)
+    }
+
+    # 4. СОЦИОМЕТРИЧЕСКИЕ СТАТУСЫ
+    metrics['sociometric_status'] = {
+        # "Звезды" - высокие входящие и исходящие
+        'stars': [(node, in_deg, out_deg) for node, in_deg, out_deg in
+                  [(n, in_degrees[n], out_degrees[n]) for n in G.nodes()]
+                  if in_deg > metrics['popularity']['avg_in_degree'] and
+                  out_deg > metrics['activity']['avg_out_degree']],
+
+        # "Лидеры" - высокие входящие, средние исходящие
+        'leaders': [(node, in_deg, out_deg) for node, in_deg, out_deg in
+                    [(n, in_degrees[n], out_degrees[n]) for n in G.nodes()]
+                    if in_deg > metrics['popularity']['avg_in_degree'] + metrics['popularity']['std_in_degree'] and
+                    abs(in_deg - out_deg) <= 2],
+
+        # "Изолированные" - низкие входящие и исходящие
+        'isolated': [(node, in_deg, out_deg) for node, in_deg, out_deg in
+                     [(n, in_degrees[n], out_degrees[n]) for n in G.nodes()]
+                     if in_deg < 2 and out_deg < 2],
+
+        # "Связные" - средние показатели, но много взаимных связей
+        'connectors': [(node, in_deg, out_deg) for node, in_deg, out_deg in
+                       [(n, in_degrees[n], out_degrees[n]) for n in G.nodes()]
+                       if abs(in_deg - out_deg) <= 1 and
+                       in_deg >= metrics['popularity']['avg_in_degree']],
+
+        # "Проблемные" - высокие исходящие, но низкие входящие
+        'problematic': [(node, in_deg, out_deg) for node, in_deg, out_deg in
+                        [(n, in_degrees[n], out_degrees[n]) for n in G.nodes()]
+                        if out_deg > in_deg * 2 and out_deg > 3]
+    }
+
+    # 5. ВЗАИМНОСТЬ - кто во взаимных связях
+    mutual_pairs = []
+    mutual_nodes = set()
+
+    for u in G.nodes():
+        for v in G.nodes():
+            if u != v and G.has_edge(u, v) and G.has_edge(v, u):
+                pair = tuple(sorted([u, v]))
+                if pair not in mutual_pairs:
+                    mutual_pairs.append(pair)
+                    mutual_nodes.add(u)
+                    mutual_nodes.add(v)
+
+    metrics['reciprocity'] = {
+        'mutual_pairs_count': len(mutual_pairs),
+        'mutual_pairs': mutual_pairs[:20],  # Первые 20 пар
+        'nodes_in_mutual': list(mutual_nodes),
+        'nodes_not_in_mutual': [node for node in G.nodes() if node not in mutual_nodes],
+
+        # Список по с количеством взаимных связей
+        'mutual_by_node': sorted(
+            [(node, sum(1 for v in G.nodes()
+                        if node != v and G.has_edge(node, v) and G.has_edge(v, node)))
+             for node in G.nodes()],
+            key=lambda x: x[1], reverse=True
+        )
+    }
+
+    # 6. СВОДНАЯ ИНФОРМАЦИЯ
+    metrics['summary'] = {
+        'total_nodes': G.number_of_nodes(),
+        'total_edges': G.number_of_edges(),
+        'density': nx.density(G),
+
+        'key_individuals': {
+            'most_popular_person': metrics['balance']['most_popular']['node'] if metrics['balance'][
+                'most_popular'] else None,
+            'most_popular_score': metrics['balance']['most_popular']['balance'] if metrics['balance'][
+                'most_popular'] else None,
+
+            'most_active_person': metrics['balance']['most_active']['node'] if metrics['balance'][
+                'most_active'] else None,
+            'most_active_score': abs(metrics['balance']['most_active']['balance']) if metrics['balance'][
+                'most_active'] else None,
+
+            'central_person': metrics['popularity']['top_5_popular'][0][0] if metrics['popularity'][
+                'top_5_popular'] else None,
+
+            'isolated_persons': [node for node, in_deg, out_deg in metrics['sociometric_status']['isolated']]
+        }
+    }
+
+    return metrics
+
+
+def save_detailed_metrics_report(metrics, save_path, question_num=None, G=None):
+    """
+    Сохраняет детальный отчет с именами людей в файл
+    """
+    with open(save_path, 'a', encoding='utf-8') as f:
+        # Вспомогательная функция для записи
+        def write_line(text=""):
+            f.write(text + "\n")
+
+        write_line("=" * 70)
+        write_line(f"Индивидуальные метрики - ВОПРОС {question_num}")
+        write_line("=" * 70)
+
+        # 1. САМЫЕ ВАЖНЫЕ ЛЮДИ
+        write_line("\nКЛЮЧЕВЫЕ ФИГУРЫ КОЛЛЕКТИВА:")
+        write_line("-" * 40)
+
+        # if metrics['balance']['most_popular']:
+        #     mp = metrics['balance']['most_popular']
+        #     write_line(f"САМЫЙ ПОПУЛЯРНЫЙ: {mp['node']}")
+        #     write_line(f"   • Получает выборов: {mp['in_degree']}")
+        #     write_line(f"   • Делает выборов: {mp['out_degree']}")
+        #     write_line(f"   • Баланс: +{mp['balance']} (намного больше получает, чем отдает)")
+        #
+        # if metrics['balance']['most_active']:
+        #     ma = metrics['balance']['most_active']
+        #     write_line(f"\nСАМЫЙ АКТИВНЫЙ: {ma['node']}")
+        #     write_line(f"   • Получает выборов: {ma['in_degree']}")
+        #     write_line(f"   • Делает выборов: {ma['out_degree']}")
+        #     write_line(f"   • Баланс: {ma['balance']} (намного больше отдает, чем получает)")
+
+        # 2. ТОП-5 ПОПУЛЯРНЫХ
+        write_line("\nТОП-5 САМЫХ ПОПУЛЯРНЫХ:")
+        write_line("-" * 40)
+        for i, (node, degree) in enumerate(metrics['popularity']['top_5_popular'], 1):
+            out_deg = dict(G.out_degree())[node] if G else 0
+            balance = degree - out_deg
+            balance_desc = "(сбалансирован)" if balance == 0 else f"(баланс: {balance:+d})"
+            write_line(f"{i:2d}. {node:30} | Выборов получил: {degree:2d} {balance_desc}")
+
+        # 3. ТОП-5 АКТИВНЫХ
+        write_line("\n ТОП-5 САМЫХ АКТИВНЫХ:")
+        write_line("-" * 40)
+        for i, (node, degree) in enumerate(metrics['activity']['top_5_active'], 1):
+            in_deg = dict(G.in_degree())[node] if G else 0
+            balance = in_deg - degree
+            balance_desc = "(сбалансирован)" if balance == 0 else f"(баланс: {balance:+d})"
+            write_line(f"{i:2d}. {node:30} | Выборов сделал: {degree:2d} {balance_desc}")
+
+        # 4. САМЫЕ НЕПОПУЛЯРНЫЕ
+        if metrics['popularity']['min_in_degree_nodes']:
+            write_line("\n САМЫЕ НЕПОПУЛЯРНЫЕ:")
+            write_line("-" * 40)
+            for node in metrics['popularity']['min_in_degree_nodes']:
+                in_deg = metrics['popularity']['min_in_degree']
+                out_deg = dict(G.out_degree())[node] if G else 0
+                write_line(f"• {node:30} | Получил: {in_deg} выборов | Сделал: {out_deg} выборов")
+
+        # 5. САМЫЕ ПАССИВНЫЕ
+        if metrics['activity']['min_out_degree_nodes']:
+            write_line("\n САМЫЕ ПАССИВНЫЕ:")
+            write_line("-" * 40)
+            for node in metrics['activity']['min_out_degree_nodes']:
+                out_deg = metrics['activity']['min_out_degree']
+                in_deg = dict(G.in_degree())[node] if G else 0
+                write_line(f"• {node:30} | Сделал: {out_deg} выборов | Получил: {in_deg} выборов")
+
+        # Общие списки по популярности и активности
+        if metrics['popularity']['list_popular']:
+            write_line("\n ОБЩИЙ СПИСОК ПОПУЛЯРНОСТИ:")
+            write_line("-" * 40)
+            for i, (node, degree) in enumerate(metrics['popularity']['list_popular'], 1):
+                out_deg = dict(G.out_degree())[node] if G else 0
+                balance = degree - out_deg
+                balance_desc = "(сбалансирован)" if balance == 0 else f"(баланс: {balance:+d})"
+                write_line(f"{i:2d}. {node:30} | Выборов получил: {degree:2d} {balance_desc}")
+
+        if metrics['activity']['list_active']:
+            write_line("\n ОБЩИЙ СПИСОК АКТИВНОСТИ:")
+            write_line("-" * 40)
+            for i, (node, degree) in enumerate(metrics['activity']['list_active'], 1):
+                in_deg = dict(G.in_degree())[node] if G else 0
+                balance = in_deg - degree
+                balance_desc = "(сбалансирован)" if balance == 0 else f"(баланс: {balance:+d})"
+                write_line(f"{i:2d}. {node:30} | Выборов сделал: {degree:2d} {balance_desc}")
+
+
+
+        # # 6. ИЗОЛИРОВАННЫЕ (если есть)
+        # if metrics['sociometric_status']['isolated']:
+        #     write_line("\n ИЗОЛИРОВАННЫЕ УЧАСТНИКИ:")
+        #     write_line("-" * 40)
+        #     for node, in_deg, out_deg in metrics['sociometric_status']['isolated']:
+        #         write_line(f"• {node:30} | Получил: {in_deg:2d} | Сделал: {out_deg:2d}")
+
+        # 7. СТАТИСТИКА БАЛАНСА
+        write_line("\n СТАТИСТИКА БАЛАНСА:")
+        write_line("-" * 40)
+        balance = metrics['balance']
+        total = metrics['summary']['total_nodes']
+
+        categories = [
+            ("Сбалансированные", balance['balanced_nodes_count']),
+            ("Популярные (+2 и более)", balance['popular_nodes_count']),
+            ("Активные (-2 и более)", balance['active_nodes_count']),
+            ("Слегка популярные (+1)", balance['slightly_popular_count']),
+            ("Слегка активные (-1)", balance['slightly_active_count'])
+        ]
+
+        for name, count in categories:
+            percentage = count / total * 100 if total > 0 else 0
+            write_line(f"{name:25}: {count:3d} чел. ({percentage:5.1f}%)")
+
+        # 8. ВЗАИМНЫЕ СВЯЗИ
+        write_line(f"\n ВЗАИМНЫЕ СВЯЗИ:")
+        write_line("-" * 40)
+        recip = metrics['reciprocity']
+        write_line(f"Всего взаимных пар: {recip['mutual_pairs_count']}")
+        write_line(f"Участников во взаимных связях: {len(recip['nodes_in_mutual'])} из {total}")
+        write_line(f"Без взаимных связей: {len(recip['nodes_not_in_mutual'])} из {total}")
+
+        # # Показать несколько взаимных пар
+        # if recip['mutual_pairs']:
+        #     write_line("\nПримеры взаимных пар:")
+        #     for i, (u, v) in enumerate(recip['mutual_pairs'][:10], 1):
+        #         write_line(f"{i:2d}. {u:25} ↔ {v:25}")
+            # if recip['mutual_pairs_count'] > 10:
+            #     write_line(f"... и ещё {recip['mutual_pairs_count'] - 10} пар")
+
+        # 9. ТОП УЧАСТНИКОВ ВО ВЗАИМНЫХ СВЯЗЯХ
+        if recip['mutual_by_node']:
+            write_line("\n ОБЩИЙ СПИСОК ПО ВЗАИМНЫМ СВЯЗЯМ:")
+            write_line("-" * 40)
+            for i, (node, count) in enumerate(recip['mutual_by_node'], 1):
+                write_line(f"{i:2d}. {node:30} | {count:2d} взаимных связей")
+
+        # 10. РАСПРЕДЕЛЕНИЕ ПОПУЛЯРНОСТИ
+        write_line("\n РАСПРЕДЕЛЕНИЕ ПОПУЛЯРНОСТИ (получено выборов):")
+        write_line("-" * 40)
+        pop = metrics['popularity']
+        write_line(f"Средняя популярность: {pop['avg_in_degree']:.2f} выборов на человека")
+        write_line(f"Разброс (стандартное отклонение): {pop['std_in_degree']:.2f}")
+        write_line(f"Максимум: {pop['max_in_degree']} выборов")
+        write_line(f"Минимум: {pop['min_in_degree']} выборов")
+
+        # 11. РАСПРЕДЕЛЕНИЕ АКТИВНОСТИ
+        write_line("\n РАСПРЕДЕЛЕНИЕ АКТИВНОСТИ (сделано выборов):")
+        write_line("-" * 40)
+        act = metrics['activity']
+        write_line(f"Средняя активность: {act['avg_out_degree']:.2f} выборов на человека")
+        write_line(f"Разброс (стандартное отклонение): {act['std_out_degree']:.2f}")
+        write_line(f"Максимум: {act['max_out_degree']} выборов")
+        write_line(f"Минимум: {act['min_out_degree']} выборов")
+
+        # # 12. ТИП КОЛЛЕКТИВА
+        # write_line(f"\n ТИП КОЛЛЕКТИВА:")
+        # write_line("-" * 40)
+        #
+        # avg_in = metrics['popularity']['avg_in_degree']
+        # avg_out = metrics['activity']['avg_out_degree']
+        # std_in = metrics['popularity']['std_in_degree']
+        # std_out = metrics['activity']['std_out_degree']
+        #
+        # # Определение типа
+        # if std_in < 2 and balance['balanced_nodes_count'] > total * 0.4:
+        #     collective_type = "ДЕМОКРАТИЧЕСКИЙ"
+        #     description = "равномерное распределение, много сбалансированных участников"
+        # elif std_in > 3 and metrics['balance']['most_popular']['balance'] > 5:
+        #     collective_type = "ИЕРАРХИЧЕСКИЙ"
+        #     description = "явный лидер, сильные различия в популярности"
+        # elif metrics['balance']['active_nodes_count'] > total * 0.3:
+        #     collective_type = "КОММУНИКАТИВНЫЙ"
+        #     description = "много активных участников, высокая социальная активность"
+        # elif len(recip['nodes_in_mutual']) > total * 0.7:
+        #     collective_type = "СПЛОЧЕННЫЙ"
+        #     description = "много взаимных связей, высокая взаимность"
+        # elif std_in < 1.5 and std_out < 1.5:
+        #     collective_type = "ОДНОРОДНЫЙ"
+        #     description = "мало различий между участниками"
+        # else:
+        #     collective_type = "СМЕШАННЫЙ ТИП"
+        #     description = "разнообразная социальная структура"
+        #
+        # write_line(f"Тип: {collective_type}")
+        # write_line(f"Описание: {description}")
+        #
+        # # 13. РЕКОМЕНДАЦИИ
+        # write_line("\n РЕКОМЕНДАЦИИ ДЛЯ РУКОВОДИТЕЛЯ:")
+        # write_line("-" * 40)
+        #
+        # recommendations = []
+        #
+        # # Анализ для рекомендаций
+        # if metrics['balance']['popular_nodes_count'] > total * 0.3:
+        #     recommendations.append("  Много популярных участников - возможна конкуренция за внимание")
+        #     recommendations.append("   → Разделить роли и зоны ответственности")
+        #
+        # if metrics['balance']['active_nodes_count'] < 3:
+        #     recommendations.append(" Мало активных инициаторов")
+        #     recommendations.append("   → Проводить тренинги по коммуникации, поощрять инициативу")
+        #
+        # if len(recip['nodes_not_in_mutual']) > total * 0.4:
+        #     recommendations.append(" Много участников без взаимных связей")
+        #     recommendations.append("   → Организовать командные мероприятия, парную работу")
+        #
+        # if metrics['sociometric_status']['isolated']:
+        #     isolated_names = ", ".join([node for node, _, _ in metrics['sociometric_status']['isolated'][:5]])
+        #     recommendations.append(f" Вовлекать изолированных в общие проекты")
+        #     recommendations.append(f"   → Особое внимание: {isolated_names}")
+        #
+        # if std_in > 3:
+        #     recommendations.append("  Большой разброс в популярности")
+        #     recommendations.append("   → Равномерно распределять внимание, избегать 'любимчиков'")
+        #
+        # if metrics['activity']['min_out_degree'] == 0:
+        #     recommendations.append(" Есть участники, которые никого не выбрали")
+        #     recommendations.append("   → Выяснить причины пассивности, индивидуальные беседы")
+        #
+        # if not recommendations:
+        #     recommendations.append(" Коллектив сбалансированный, особых проблем не выявлено")
+        #     recommendations.append("   → Поддерживать текущую атмосферу, продолжать командную работу")
+        #
+        # for rec in recommendations:
+        #     write_line(rec)
+
+        # write_line("-" * 40)
+        #
+        # hr_recommendations = []
+        #
+        # if metrics['balance']['most_popular']:
+        #     mp = metrics['balance']['most_popular']
+        #     hr_recommendations.append(f"• Неформальный лидер: {mp['node']}")
+        #     hr_recommendations.append(f"  Использовать его влияние для внедрения изменений")
+        #
+        # if metrics['sociometric_status']['connectors']:
+        #     connectors = metrics['sociometric_status']['connectors'][:3]
+        #     conn_names = ", ".join([node for node, _, _ in connectors])
+        #     hr_recommendations.append(f"• Потенциальные 'связные': {conn_names}")
+        #     hr_recommendations.append(f"  Могут помочь в коммуникации между группами")
+        #
+        # if metrics['sociometric_status']['problematic']:
+        #     problematic = metrics['sociometric_status']['problematic'][:3]
+        #     prob_names = ", ".join([node for node, _, _ in problematic])
+        #     hr_recommendations.append(f"• Требуют внимания: {prob_names}")
+        #     hr_recommendations.append(f"  Много инициативы, но мало отклика - возможна фрустрация")
+        #
+        # if not hr_recommendations:
+        #     hr_recommendations.append("• Особого внимания не требуется")
+        #     hr_recommendations.append("  Социальная структура коллектива в норме")
+        #
+        # for hr_rec in hr_recommendations:
+        #     write_line(hr_rec)
+
+        # # 15. ИТОГИ
+        # write_line("\n" + "=" * 70)
+        # write_line("КРАТКИЕ ИТОГИ:")
+        # write_line("=" * 70)
+
+        # # Самые важные цифры
+        # summary_points = [
+        #     f"• Участников: {total}",
+        #     f"• Всего выборов: {metrics['summary']['total_edges']}",
+        #     f"• Взаимных связей: {recip['mutual_pairs_count'] * 2} ({metrics.get('statistics', {}).get('mutual_ratio', 0) * 100:.1f}%)",
+        #     f"• Самый популярный: {metrics['balance']['most_popular']['node'] if metrics['balance']['most_popular'] else 'нет'}",
+        #     f"• Самый активный: {metrics['balance']['most_active']['node'] if metrics['balance']['most_active'] else 'нет'}",
+        #     f"• Тип коллектива: {collective_type}"
+        # ]
+        #
+        # for point in summary_points:
+        #     write_line(point)
 
 
 
@@ -824,7 +1297,19 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
         detailed_analysis = analyze_all_groups(G)
 
         # Сохраняем отчет
-        save_detailed_group_analysis(detailed_analysis, f'{finish_path}/Анализ_групп_Вопрос_{idx}.txt')
+        save_detailed_group_analysis(detailed_analysis, f'{finish_path}/Анализ_Вопрос_{idx}.txt')
+
+        # Индивидуальные метрики
+        # Получаем расширенные метрики
+        detailed_metrics = get_meaningful_metrics_with_names(G)
+
+        # Выводим отчет
+        save_detailed_metrics_report(
+            metrics=detailed_metrics,
+            save_path=f'{finish_path}/Анализ_Вопрос_{idx}.txt',
+            question_num=idx,
+            G=G  # Передаем граф для дополнительных расчетов
+        )
 
 
         # Создаем варианты позиционирования
@@ -1484,10 +1969,10 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
     main_file = 'data/Группа 110 н.xlsx'
-    # main_file = 'data/Социометрия смеш.xlsx'
+    main_file = 'data/Социометрия смеш.xlsx'
 
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 2
+    main_quantity_descr_cols = 1
     main_negative_questions = '2,4'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
