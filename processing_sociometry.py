@@ -2263,12 +2263,13 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия смеш.xlsx'
 
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_quantity_descr_cols = 2
+    main_file = 'data/Пример Социометрии 10б (2).xlsx'
+    main_quantity_descr_cols = 1
     # main_quantity_descr_cols = 1
-    main_negative_questions = '2,4'
+    main_negative_questions = ''
     # main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
-    # main_checkbox_not_yandex = 'Yes'
+    main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
