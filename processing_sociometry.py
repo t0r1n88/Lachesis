@@ -3,7 +3,6 @@
 """
 import pandas as pd
 pd.options.mode.chained_assignment = None
-import openpyxl
 import numpy as np
 import time
 import copy
@@ -13,15 +12,12 @@ warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 warnings.simplefilter(action='ignore', category=DeprecationWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 import itertools
-from collections import defaultdict
 import networkx as nx
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
 import os
 from tkinter import messagebox
 from collections import Counter
-from matplotlib.colors import BoundaryNorm
-from matplotlib.cm import ScalarMappable
 
 
 class NotReqColumn(Exception):
@@ -757,7 +753,6 @@ def analyze_all_groups(G):
     one_way_edges = total_edges - mutual_edges
 
     # Собираем полную статистику
-
     return {
         'mutual_pairs': mutual_pairs,
         'cliques': cliques,
@@ -772,7 +767,7 @@ def analyze_all_groups(G):
             'mutual_edges': mutual_edges,
             'one_way_edges': one_way_edges,
             'mutual_ratio': mutual_edges / total_edges if total_edges > 0 else 0,
-            'avg_degree': sum(dict(G.degree()).values()) / G.number_of_edges() if G.number_of_edges() > 0 else 0,
+            'avg_degree': round(total_edges / G.number_of_nodes(),2) ,
             'density': nx.density(G)
         }
     }
@@ -2265,12 +2260,15 @@ if __name__ == '__main__':
     main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
     main_file = 'data/Группа 110 н.xlsx'
-    # main_file = 'data/Социометрия смеш.xlsx'
+    main_file = 'data/Социометрия смеш.xlsx'
 
     # main_file = 'data/Социометрия Гугл.xlsx'
     main_quantity_descr_cols = 2
-    main_negative_questions = '2,4,6,8'
+    # main_quantity_descr_cols = 1
+    main_negative_questions = '2,4'
+    # main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
+    # main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')

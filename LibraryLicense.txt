@@ -121,9 +121,13 @@ Backport of pathlib-compatible object wrapper for zip files
 zipp https://pypi.org/project/zipp/
 MIT license
 
+Network Analysis in Python
+https://github.com/networkx
+CC0 1.0 Universal
 
-
-
+software for mathematics, science, and engineering
+https://github.com/scipy
+BSD 3-Clause
 
 
 
