@@ -783,12 +783,12 @@ def save_detailed_group_analysis(analysis, save_path):
         stats = analysis['statistics']
         f.write("ОБЩАЯ СТАТИСТИКА:\n")
         f.write("-" * 40 + "\n")
-        f.write(f"Всего узлов: {stats['total_nodes']}\n")
-        f.write(f"Всего связей: {stats['total_edges']}\n")
-        f.write(f"Взаимных связей: {stats['mutual_edges']} ({stats['mutual_ratio']:.1%})\n")
-        f.write(f"Односторонних связей: {stats['one_way_edges']}\n")
-        f.write(f"Среднее количество входящих и исходящих связей: {stats['avg_degree']:.2f}\n")
-        f.write(f"Плотность графа (доля связей от максимально возможных в группе): {stats['density']:.4f}\n\n")
+        f.write(f"Всего узлов (ответивших): {stats['total_nodes']}\n")
+        f.write(f"Всего связей (сделанных и полученных выборов): {stats['total_edges']}\n")
+        f.write(f"Взаимных связей (выборов): {stats['mutual_edges']} ({stats['mutual_ratio']:.1%})\n")
+        f.write(f"Односторонних связей (выборов): {stats['one_way_edges']}\n")
+        f.write(f"Среднее количество входящих и исходящих связей (выборов): {stats['avg_degree']:.2f}\n")
+        f.write(f"Плотность графа (доля связей (выборов) от максимально возможных в группе): {stats['density']:.4f}\n\n")
 
         # Взаимные пары
         f.write("ВЗАИМНЫЕ ПАРЫ (диады):\n")
