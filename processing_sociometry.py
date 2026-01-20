@@ -18,6 +18,16 @@ from scipy.spatial import distance
 import os
 from tkinter import messagebox
 from collections import Counter
+import logging
+logging.basicConfig(
+    level=logging.WARNING,
+    filename="error.log",
+    filemode='w',
+    # чтобы файл лога перезаписывался  при каждом запуске.Чтобы избежать больших простыней. По умолчанию идет 'a'
+    format="%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+    datefmt='%H:%M:%S',
+)
+
 
 
 class NotReqColumn(Exception):
@@ -2231,6 +2241,10 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
                              f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
                              f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
                              f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
+    except:
+        logging.exception('AN ERROR HAS OCCURRED')
+        messagebox.showerror('Лахеcис',
+                             'Возникла ошибка!!! Подробности ошибки в файле error.log')
     else:
         messagebox.showinfo('Лахеcис',
                                 'Данные успешно обработаны')
