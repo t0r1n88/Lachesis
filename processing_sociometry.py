@@ -13,6 +13,8 @@ warnings.simplefilter(action='ignore', category=DeprecationWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 import itertools
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')  # НЕИНТЕРАКТИВНЫЙ РЕЖИМ
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
 import os
