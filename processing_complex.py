@@ -27,6 +27,8 @@ from mental_state.psm_twenty_five_vodopyanova import processing_psm_twenty_five_
 from mental_state.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva # Симптоматический опросник SCL-K-9 Золотарева
 from mental_state.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
 
+from mental_state.ucla_three_russel import processing_ucla_three_ish # UCLA-3 Адаптация Ишмухаметов
+
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
 
@@ -247,6 +249,10 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ACOPE Польская': (processing_acope_polskaya, 54),
                      'WCQ НИПНИ Бехтерева': (processing_lazarus_wcq_nipni, 50),
 
+                     'UCLA 3 Рассел Ишмухаметов': (processing_ucla_three_ish, 20),
+
+
+
 
 
 
@@ -321,6 +327,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Кеттел 14-PF Рукавишников Соколова': 'Опросник Кеттела 14PF Рукавишников Соколова',
                               'ACOPE Польская': 'Опросник копинг-установок подростков Польская',
                               'WCQ НИПНИ Бехтерева': 'Способы совладающего поведения Лазарус НИПНИ Бехтерева',
+                              'UCLA 3 Рассел Ишмухаметов': 'Шкала одиночества версия 3 Рассел Ишмухаметов',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -875,18 +882,18 @@ if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры РЦО 5-6 кл.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_0.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_1.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_0.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_1.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
+    main_quantity_descr_cols = 3
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
