@@ -48,6 +48,109 @@ class BadValueAgeMODTRV(Exception):
 
 
 
+def calc_value_ot(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    value_forward = 0  # результат
+    for idx, value in enumerate(row):
+        if value == 'да':
+            value_forward += 1
+
+    return value_forward
+
+def calc_level_ot(ser:pd.Series):
+    """
+    Функция для подсчета уровня общей тревожности
+    :param ser: пол,возраст и значение
+    :param dct_value: словарь со значениями перевода
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    age = row[1] # возраст
+    value = row[2] # значение для обработки
+
+    if sex == 'Мужской':
+        if age == '7-10 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '11-12 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '13-14 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 4:
+                return 'средний уровень тревоги'
+            elif 5 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        else:
+            if value == 0:
+                return 'низкий уровень тревоги'
+            elif 1 <= value <= 4:
+                return 'средний уровень тревоги'
+            elif 5 <= value <= 6:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+    else:
+        if age == '7-10 лет':
+            if 0 <= value <= 2:
+                return 'низкий уровень тревоги'
+            elif 3 <= value <= 7:
+                return 'средний уровень тревоги'
+            elif 8 <= value <= 9:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '11-12 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '13-14 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        else:
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+
+
+
+
+
 
 
 
@@ -231,6 +334,25 @@ def processing_modt_rom_vas(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueMODTRV
+
+    # Шкала 1 Общая тревожность
+    lst_ot = [1,11,21,31,41,51,61,71,81,91]
+    lst_ot = list(map(lambda x: x - 1, lst_ot))
+    base_df['ОТ_Значение'] = answers_df.take(lst_ot, axis=1).apply(calc_value_ot, axis=1)
+    base_df['ОТ_Уровень'] = base_df[['Пол', 'Возраст', 'ОТ_Значение']].apply(lambda x: calc_level_ot(x),axis=1)
+
+
+
+
+    base_df.to_excel('data/res.xlsx')
+
+
+
+
+
+
+
+
 
 
 
