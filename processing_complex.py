@@ -28,6 +28,7 @@ from mental_state.scl_k_nine_zolotareva import processing_scl_k_nine_zolotareva 
 from mental_state.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tarabrina # SCL-90-R Тарабрина
 
 from mental_state.ucla_three_russel import processing_ucla_three_ish # UCLA-3 Адаптация Ишмухаметов
+from mental_state.modt_rom_vas import processing_modt_rom_vas # МОДТ Ромицына Вассерман
 
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
@@ -250,6 +251,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'WCQ НИПНИ Бехтерева': (processing_lazarus_wcq_nipni, 50),
 
                      'UCLA 3 Рассел Ишмухаметов': (processing_ucla_three_ish, 20),
+                     'МОДТ Ромицына Вассерман': (processing_modt_rom_vas, 100),
 
 
 
@@ -328,6 +330,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ACOPE Польская': 'Опросник копинг-установок подростков Польская',
                               'WCQ НИПНИ Бехтерева': 'Способы совладающего поведения Лазарус НИПНИ Бехтерева',
                               'UCLA 3 Рассел Ишмухаметов': 'Шкала одиночества версия 3 Рассел Ишмухаметов',
+                              'МОДТ Ромицына Вассерман': 'Многомерная оценка детской тревожности Ромицына Вассерман',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -893,7 +896,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
