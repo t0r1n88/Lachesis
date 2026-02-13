@@ -364,6 +364,214 @@ def calc_level_tvssoo(ser:pd.Series):
 
 
 
+def calc_value_tvvsu(row):
+    """
+    Функция для подсчета значения Тревога во взаимоотношениях с учителями
+    :return: число
+    """
+    value_forward = 0  # результат
+    lst_pos = [4,24,34,44,54,64,74,84,94]
+    lst_neg = [14]
+    for idx, value in enumerate(row,1):
+        if idx in lst_neg:
+            if value == 'нет':
+                value_forward += 1
+        elif idx in lst_pos:
+            if value == 'да':
+                value_forward += 1
+
+    return value_forward
+
+
+def calc_level_tvvsu(ser:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param ser: пол,возраст и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    age = row[1] # возраст
+    value = row[2] # значение для обработки
+    if sex == 'Мужской':
+        if age == '7-10 лет':
+            if 0 <= value <= 2:
+                return 'низкий уровень тревоги'
+            elif 3 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '11-12 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '13-14 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        else:
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+    else:
+        if age == '7-10 лет':
+            if 0 <= value <= 3:
+                return 'низкий уровень тревоги'
+            elif 4 <= value <= 7:
+                return 'средний уровень тревоги'
+            elif  value == 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '11-12 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '13-14 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        else:
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+
+
+def calc_value_tvvsr(row):
+    """
+    Функция для подсчета значения Тревога во взаимоотношениях с родителями
+    :return: число
+    """
+    value_forward = 0  # результат
+    lst_pos = [25,45,75,85,95]
+    lst_neg = [5,15,35,55,65]
+    for idx, value in enumerate(row,1):
+        if idx in lst_neg:
+            if value == 'нет':
+                value_forward += 1
+        elif idx in lst_pos:
+            if value == 'да':
+                value_forward += 1
+
+    return value_forward
+
+
+def calc_level_tvvsr(ser:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param ser: пол,возраст и значение
+    :return:
+    """
+    row = ser.tolist() # превращаем в список
+    sex = row[0] # пол
+    age = row[1] # возраст
+    value = row[2] # значение для обработки
+    if sex == 'Мужской':
+        if age == '7-10 лет':
+            if 0 <= value <= 2:
+                return 'низкий уровень тревоги'
+            elif 3 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif  value == 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '11-12 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 5:
+                return 'средний уровень тревоги'
+            elif 6 <= value <= 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '13-14 лет':
+            if 0 <= value <= 2:
+                return 'низкий уровень тревоги'
+            elif 3 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        else:
+            if 0 <= value <= 2:
+                return 'низкий уровень тревоги'
+            elif 3 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 9:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+    else:
+        if age == '7-10 лет':
+            if 0 <= value <= 2:
+                return 'низкий уровень тревоги'
+            elif 3 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '11-12 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif  value == 7:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        elif age == '13-14 лет':
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
+        else:
+            if 0 <= value <= 1:
+                return 'низкий уровень тревоги'
+            elif 2 <= value <= 6:
+                return 'средний уровень тревоги'
+            elif 7 <= value <= 8:
+                return 'высокий уровень тревоги'
+            else:
+                return 'крайне высокий уровень тревоги'
 
 
 
@@ -563,8 +771,13 @@ def processing_modt_rom_vas(base_df: pd.DataFrame, answers_df: pd.DataFrame,lst_
     base_df['ТВССОО_Значение'] = answers_df.apply(calc_value_tvssoo, axis=1)
     base_df['ТВССОО_Уровень'] = base_df[['Пол', 'Возраст', 'ТВССОО_Значение']].apply(lambda x: calc_level_tvssoo(x), axis=1)
 
+    # Шкала 4 Тревога во взаимоотношениях с учителями
+    base_df['ТВВСУ_Значение'] = answers_df.apply(calc_value_tvvsu, axis=1)
+    base_df['ТВВСУ_Уровень'] = base_df[['Пол', 'Возраст', 'ТВВСУ_Значение']].apply(lambda x: calc_level_tvvsu(x), axis=1)
 
-
+    # Шкала 5 Тревога во взаимоотношениях с родителями
+    base_df['ТВВСР_Значение'] = answers_df.apply(calc_value_tvvsr, axis=1)
+    base_df['ТВВСР_Уровень'] = base_df[['Пол', 'Возраст', 'ТВВСР_Значение']].apply(lambda x: calc_level_tvvsr(x), axis=1)
 
     base_df.to_excel('data/res.xlsx')
 
