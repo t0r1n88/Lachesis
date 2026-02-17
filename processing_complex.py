@@ -85,6 +85,9 @@ from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_k
 from personality_structure.acope_polskaya import processing_acope_polskaya # Копинг стратегии для подростков Польская
 from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni # Копинг стратегии Лазарус НИПНИ Бехтерева
 
+# Зависимости
+from dependence.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
+
 
 
 
@@ -254,6 +257,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'UCLA 3 Рассел Ишмухаметов': (processing_ucla_three_ish, 20),
                      'МОДТ Ромицына Вассерман': (processing_modt_rom_vas, 100),
                      'Психологические проблемы подростков Регуш 2023': (processing_ppp_regush, 60),
+                     'CIAS Чен Малыгин': (processing_cias_chen_mal, 26),
 
 
 
@@ -334,6 +338,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'UCLA 3 Рассел Ишмухаметов': 'Шкала одиночества версия 3 Рассел Ишмухаметов',
                               'МОДТ Ромицына Вассерман': 'Многомерная оценка детской тревожности Ромицына Вассерман',
                               'Психологические проблемы подростков Регуш 2023': 'Психологические проблемы подростков в реальной и виртуальной среде Регуш',
+                              'CIAS Чен Малыгин': 'Шкала интернет-зависимости Чен Малыгин',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
