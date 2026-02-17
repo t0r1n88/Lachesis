@@ -5,7 +5,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean_two,calc_count_scale,create_list_on_level,create_union_svod
+from lachesis_support_functions import round_mean_two,calc_count_scale,create_union_svod
 
 
 
