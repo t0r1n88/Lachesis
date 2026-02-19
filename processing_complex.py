@@ -53,6 +53,8 @@ from deviant.bass_darki_hvan_hostility import processing_bass_darki_hvan_hostili
 from deviant.bass_perry_enikopolov_agres import processing_bass_perry_enikopolov_agress # Опросник агрессивности Басс Перри Еникополов
 from deviant.cook_medley_mend_hostility import processing_cook_medley_mend_hostility # Шкала враждебности Кука-Медлей Менджерицкая
 from deviant.ag_cyba_sharov import processing_cyba_ag_sharov # Опросник киберагрессии Альварез-Гарсия Шаров
+from deviant.run_catq_antipina import processing_catq_run_antip # Опросник Типология киберагрессии, CATQ Адаптация С.С. Антипина
+
 
 # Профориентационные тесты
 from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
@@ -260,6 +262,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Психологические проблемы подростков Регуш 2023': (processing_ppp_regush, 60),
                      'CIAS Чен Малыгин': (processing_cias_chen_mal, 26),
                      'CYBA Альварез-Гарсия Шаров': (processing_cyba_ag_sharov, 19),
+                     'CATQ Антипина': (processing_catq_run_antip, 23),
 
 
 
@@ -342,6 +345,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Психологические проблемы подростков Регуш 2023': 'Психологические проблемы подростков в реальной и виртуальной среде Регуш',
                               'CIAS Чен Малыгин': 'Шкала интернет-зависимости Чен Малыгин',
                               'CYBA Альварез-Гарсия Шаров': 'Опросник киберагрессии Альварез-Гарсия Шаров',
+                              'CATQ Антипина': 'Опросник Типология киберагрессии, CATQ Антипина',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
