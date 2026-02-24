@@ -92,7 +92,7 @@ from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni
 from dependence.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
 from dependence.gpiustree_ger_hol import processing_gpiust_ger_hol # Общая шкала проблемного использования интернета -3 GPIUS3 Герасимова Холмогорова
 from dependence.lemish_rpdma_taruntaeva import processing_rpdma_lem_tar # Опросник Родительское посредничество детской медиаактивности Лемиш Адаптация П.И. Тарунтаева
-
+from dependence.kutueva_okzmsh import processing_okzmsh_kut # Тест для младших школьников на определение компьютерной зависимости О.Л. Кутуева
 
 
 
@@ -268,6 +268,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'CATQ Антипина': (processing_catq_run_antip, 23),
                      'GPIUS3 Герасимова Холмогорова': (processing_gpiust_ger_hol, 14),
                      'РПДМА Лемиш Тарунтаева': (processing_rpdma_lem_tar, 12),
+                     'ОКЗМШ Кутуева': (processing_okzmsh_kut, 8),
 
 
 
@@ -354,6 +355,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'CATQ Антипина': 'Опросник Типология киберагрессии, CATQ Антипина',
                               'GPIUS3 Герасимова Холмогорова': 'Общая шкала проблемного использования интернета -3 GPIUS3 Герасимова',
                               'РПДМА Лемиш Тарунтаева': 'Родительское посредничество детской медиаактивности Лемиш Тарунтаева',
+                              'ОКЗМШ Кутуева': 'Определение компьютерной зависимости младших школьников Кутуева',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
