@@ -91,6 +91,8 @@ from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni
 # Зависимости
 from dependence.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
 from dependence.gpiustree_ger_hol import processing_gpiust_ger_hol # Общая шкала проблемного использования интернета -3 GPIUS3 Герасимова Холмогорова
+from dependence.lemish_rpdma_taruntaeva import processing_rpdma_lem_tar # Опросник Родительское посредничество детской медиаактивности Лемиш Адаптация П.И. Тарунтаева
+
 
 
 
@@ -265,6 +267,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'CYBA Альварез-Гарсия Шаров': (processing_cyba_ag_sharov, 19),
                      'CATQ Антипина': (processing_catq_run_antip, 23),
                      'GPIUS3 Герасимова Холмогорова': (processing_gpiust_ger_hol, 14),
+                     'РПДМА Лемиш Тарунтаева': (processing_rpdma_lem_tar, 12),
 
 
 
@@ -342,6 +345,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Кеттел 14-PF Рукавишников Соколова': 'Опросник Кеттела 14PF Рукавишников Соколова',
                               'ACOPE Польская': 'Опросник копинг-установок подростков Польская',
                               'WCQ НИПНИ Бехтерева': 'Способы совладающего поведения Лазарус НИПНИ Бехтерева',
+
                               'UCLA 3 Рассел Ишмухаметов': 'Шкала одиночества версия 3 Рассел Ишмухаметов',
                               'МОДТ Ромицына Вассерман': 'Многомерная оценка детской тревожности Ромицына Вассерман',
                               'Психологические проблемы подростков Регуш 2023': 'Психологические проблемы подростков в реальной и виртуальной среде Регуш',
@@ -349,6 +353,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'CYBA Альварез-Гарсия Шаров': 'Опросник киберагрессии Альварез-Гарсия Шаров',
                               'CATQ Антипина': 'Опросник Типология киберагрессии, CATQ Антипина',
                               'GPIUS3 Герасимова Холмогорова': 'Общая шкала проблемного использования интернета -3 GPIUS3 Герасимова',
+                              'РПДМА Лемиш Тарунтаева': 'Родительское посредничество детской медиаактивности Лемиш Тарунтаева',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -917,7 +922,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
