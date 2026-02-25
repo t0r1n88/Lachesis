@@ -94,7 +94,7 @@ from dependence.gpiustree_ger_hol import processing_gpiust_ger_hol # Общая 
 from dependence.lemish_rpdma_taruntaeva import processing_rpdma_lem_tar # Опросник Родительское посредничество детской медиаактивности Лемиш Адаптация П.И. Тарунтаева
 from dependence.kutueva_okzmsh import processing_okzmsh_kut # Тест для младших школьников на определение компьютерной зависимости О.Л. Кутуева
 from dependence.pisarev_rokzmsh import processing_rokzmsh_pis # Тест для родителей младших школьников на определение компьютерной зависимости В.Г. Писарев
-
+from dependence.yurieva_ssdkz import processing_ssdkz_yur_bol # Способ скрининговой диагностики компьютерной зависимости Л.Н. Юрьева, Т.Ю. Больбот
 
 
 
@@ -271,6 +271,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'РПДМА Лемиш Тарунтаева': (processing_rpdma_lem_tar, 12),
                      'ОКЗМШ Кутуева': (processing_okzmsh_kut, 8),
                      'РОКЗМШ Писарев': (processing_rokzmsh_pis, 7),
+                     'ССДКЗ Юрьева Больбот': (processing_ssdkz_yur_bol, 11),
 
 
 
@@ -359,6 +360,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'РПДМА Лемиш Тарунтаева': 'Родительское посредничество детской медиаактивности Лемиш Тарунтаева',
                               'ОКЗМШ Кутуева': 'Определение компьютерной зависимости младших школьников Кутуева',
                               'РОКЗМШ Писарев': 'Тест для родителей на определение компьютерной зависимости младших школьников Писарев',
+                              'ССДКЗ Юрьева Больбот': 'Диагностика компьютерной зависимости Юрьева Больбот',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
