@@ -95,6 +95,7 @@ from dependence.lemish_rpdma_taruntaeva import processing_rpdma_lem_tar # Опр
 from dependence.kutueva_okzmsh import processing_okzmsh_kut # Тест для младших школьников на определение компьютерной зависимости О.Л. Кутуева
 from dependence.pisarev_rokzmsh import processing_rokzmsh_pis # Тест для родителей младших школьников на определение компьютерной зависимости В.Г. Писарев
 from dependence.yurieva_ssdkz import processing_ssdkz_yur_bol # Способ скрининговой диагностики компьютерной зависимости Л.Н. Юрьева, Т.Ю. Больбот
+from dependence.gichkina_opi import processing_opi_gichkina # Опросник поведения в интернете А.Е. Жичкина
 
 
 
@@ -272,6 +273,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОКЗМШ Кутуева': (processing_okzmsh_kut, 8),
                      'РОКЗМШ Писарев': (processing_rokzmsh_pis, 7),
                      'ССДКЗ Юрьева Больбот': (processing_ssdkz_yur_bol, 11),
+                     'ОПИ Жичкина': (processing_opi_gichkina, 21),
 
 
 
@@ -361,6 +363,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОКЗМШ Кутуева': 'Определение компьютерной зависимости младших школьников Кутуева',
                               'РОКЗМШ Писарев': 'Тест для родителей на определение компьютерной зависимости младших школьников Писарев',
                               'ССДКЗ Юрьева Больбот': 'Диагностика компьютерной зависимости Юрьева Больбот',
+                              'ОПИ Жичкина': 'Опросник поведения в интернете Жичкина ',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
