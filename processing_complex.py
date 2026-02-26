@@ -98,7 +98,7 @@ from dependence.yurieva_ssdkz import processing_ssdkz_yur_bol # Способ с�
 from dependence.gichkina_opi import processing_opi_gichkina # Опросник поведения в интернете А.Е. Жичкина
 from dependence.grishina_sumpki import processing_sumpki_gr # Степень увлеченности младших подростков компьютерными играми Гришина
 from dependence.kvon_sas_sheinov import processing_sas_kvon_shein # Шкала зависимости от смартфона SAS Квон Шейнов
-
+from dependence.pogorelov_vipss import processing_vipss_pog # Виртуальная идентичность пользователей социальных сетей Погорелов
 
 
 
@@ -278,6 +278,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОПИ Жичкина': (processing_opi_gichkina, 21),
                      'СУМПКИ Гришина': (processing_sumpki_gr, 22),
                      'ШЗС Квон Шейнова': (processing_sas_kvon_shein, 33),
+                     'ВИПСС Погорелов': (processing_vipss_pog, 43),
 
 
 
@@ -370,6 +371,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОПИ Жичкина': 'Опросник поведения в интернете Жичкина ',
                               'СУМПКИ Гришина': 'Степень увлеченности младших подростков компьютерными играми Гришина',
                               'ШЗС Квон Шейнова': 'Шкала зависимости от смартфона SAS Квон Шейнов',
+                              'ВИПСС Погорелов': 'Виртуальная идентичность пользователей социальных сетей Погорелов',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -937,7 +939,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
