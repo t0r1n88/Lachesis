@@ -97,6 +97,7 @@ from dependence.pisarev_rokzmsh import processing_rokzmsh_pis # Тест для 
 from dependence.yurieva_ssdkz import processing_ssdkz_yur_bol # Способ скрининговой диагностики компьютерной зависимости Л.Н. Юрьева, Т.Ю. Больбот
 from dependence.gichkina_opi import processing_opi_gichkina # Опросник поведения в интернете А.Е. Жичкина
 from dependence.grishina_sumpki import processing_sumpki_gr # Степень увлеченности младших подростков компьютерными играми Гришина
+from dependence.kvon_sas_sheinov import processing_sas_kvon_shein # Шкала зависимости от смартфона SAS Квон Шейнов
 
 
 
@@ -276,6 +277,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ССДКЗ Юрьева Больбот': (processing_ssdkz_yur_bol, 11),
                      'ОПИ Жичкина': (processing_opi_gichkina, 21),
                      'СУМПКИ Гришина': (processing_sumpki_gr, 22),
+                     'ШЗС Квон Шейнова': (processing_sas_kvon_shein, 33),
 
 
 
@@ -367,6 +369,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ССДКЗ Юрьева Больбот': 'Диагностика компьютерной зависимости Юрьева Больбот',
                               'ОПИ Жичкина': 'Опросник поведения в интернете Жичкина ',
                               'СУМПКИ Гришина': 'Степень увлеченности младших подростков компьютерными играми Гришина',
+                              'ШЗС Квон Шейнова': 'Шкала зависимости от смартфона SAS Квон Шейнов',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
