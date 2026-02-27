@@ -30,6 +30,7 @@ from mental_state.scl_r_nineteen_tarabrina import processing_scl_r_nineteen_tara
 from mental_state.ucla_three_russel import processing_ucla_three_ish # UCLA-3 Адаптация Ишмухаметов
 from mental_state.modt_rom_vas import processing_modt_rom_vas # МОДТ Ромицына Вассерман
 from mental_state.regush_ppp import processing_ppp_regush # Психологические проблемы подростков в реальной и виртуальной сфере Регуш
+from mental_state.goodman_sdq import processing_sdq_good_ul # Опросник Сильные стороны и трудности SDQ Гудман Ульянина и др.
 
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
@@ -103,6 +104,7 @@ from dependence.yang_iat_loskutova import processing_iat_yang_los # Тест н�
 from dependence.kochetkov_dga import processing_dga_koch # Методика диагностики гейм-аддикции Н.В. Кочетков
 from dependence.petrov_ozii import processing_ozii_pet_cher # Шкала оценки зависимости от Интернет-игр краткая форма, IGDS9-SF Петров, Черняк
 from dependence.tereshenko_gasa import processing_gasa_ter_gor # Шкала игровой зависимости для подростков, GASA Терещенко, Горбачева
+
 
 
 
@@ -287,6 +289,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ДГА Кочетков': (processing_dga_koch, 24),
                      'ОЗИИ Петров Черняк': (processing_ozii_pet_cher, 9),
                      'ИЗП Терещенко Горбачева': (processing_gasa_ter_gor, 7),
+                     'ССТ Гудман Ульянина': (processing_sdq_good_ul, 23),
 
 
 
@@ -384,6 +387,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ДГА Кочетков': 'Методика диагностики гейм-аддикции Кочетков',
                               'ОЗИИ Петров Черняк': 'Шкала оценки зависимости от Интернет-игр краткая форма, IGDS9-SF Петров, Черняк',
                               'ИЗП Терещенко Горбачева': 'Шкала игровой зависимости для подростков, GASA Терещенко, Горбачева',
+                              'ССТ Гудман Ульянина': 'Сильные стороны и трудности SDQ Гудман Ульянина и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -951,7 +955,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
