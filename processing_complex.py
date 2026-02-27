@@ -102,6 +102,7 @@ from dependence.pogorelov_vipss import processing_vipss_pog # Виртуальн
 from dependence.yang_iat_loskutova import processing_iat_yang_los # Тест на интернет-зависимость IAT Янг Лоскутова
 from dependence.kochetkov_dga import processing_dga_koch # Методика диагностики гейм-аддикции Н.В. Кочетков
 from dependence.petrov_ozii import processing_ozii_pet_cher # Шкала оценки зависимости от Интернет-игр краткая форма, IGDS9-SF Петров, Черняк
+from dependence.tereshenko_gasa import processing_gasa_ter_gor # Шкала игровой зависимости для подростков, GASA Терещенко, Горбачева
 
 
 
@@ -285,6 +286,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ТИЗ Янг Лоскутова': (processing_iat_yang_los, 20),
                      'ДГА Кочетков': (processing_dga_koch, 24),
                      'ОЗИИ Петров Черняк': (processing_ozii_pet_cher, 9),
+                     'ИЗП Терещенко Горбачева': (processing_gasa_ter_gor, 7),
 
 
 
@@ -381,6 +383,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ТИЗ Янг Лоскутова': 'Тест на интернет-зависимость IAT Янг Лоскутова',
                               'ДГА Кочетков': 'Методика диагностики гейм-аддикции Кочетков',
                               'ОЗИИ Петров Черняк': 'Шкала оценки зависимости от Интернет-игр краткая форма, IGDS9-SF Петров, Черняк',
+                              'ИЗП Терещенко Горбачева': 'Шкала игровой зависимости для подростков, GASA Терещенко, Горбачева',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
