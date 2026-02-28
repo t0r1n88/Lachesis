@@ -26,6 +26,416 @@ class BadCountColumnsSDQGU(Exception):
     """
     pass
 
+class NotReqColumn(Exception):
+    """
+    Исключение для обработки случая когда нет обязательных колонок Пол
+    """
+    pass
+
+class BadValueSex(Exception):
+    """
+    Исключение для обработки случая когда в колонке Пол есть значения отличающиеся от Мужской или Женский
+    """
+    pass
+
+
+def calc_value_psp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [1,4,8,15,18]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return value_forward
+
+
+def calc_level_sex_psp(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    sex,value = row
+
+    if sex == 'Мужской':
+        if 0 <= value <= 5:
+            return f'отклоняющиеся'
+        elif value == 6:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if 0 <= value <= 4:
+            return f'отклоняющиеся'
+        elif 5<= value <= 6:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+def calc_level_age_psp(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    age,value = row
+
+    if age == '10-13 лет':
+        if 0 <= value <= 4:
+            return f'отклоняющиеся'
+        elif 5<= value <= 6:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if 0 <= value <= 5:
+            return f'отклоняющиеся'
+        elif value == 6:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+def calc_value_ga(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [2,9,13,19,23]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in (19,23):
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 2
+                elif value == 1:
+                    value_forward += 1
+                else:
+                    value_forward += 0
+
+    return value_forward
+
+def calc_level_sex_ga(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    sex,value = row
+
+    if sex == 'Мужской':
+        if 6 <= value <= 10 :
+            return f'отклоняющиеся'
+        elif value == 5:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  6<= value <= 10 :
+            return f'отклоняющиеся'
+        elif value == 5:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+def calc_level_age_ga(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    age,value = row
+
+    if age == '10-13 лет':
+        if  6<= value <=10 :
+            return f'отклоняющиеся'
+        elif value == 5 :
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  5<= value <=10 :
+            return f'отклоняющиеся'
+        elif value == 4:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+def calc_value_emo(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [3,7,11,14,22]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return value_forward
+
+def calc_level_sex_emo(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    sex,value = row
+
+    if sex == 'Мужской':
+        if  6<= value <= 10:
+            return f'отклоняющиеся'
+        elif value == 5:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  8<= value <=10 :
+            return f'отклоняющиеся'
+        elif 6<= value <=7 :
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+def calc_level_age_emo(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    age,value = row
+
+    if age == '10-13 лет':
+        if  7<= value <= 10:
+            return f'отклоняющиеся'
+        elif value == 6:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  7<= value <=10 :
+            return f'отклоняющиеся'
+        elif 5<= value <= 6:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+def calc_value_pp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [5,10,16,20]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return value_forward
+
+def calc_level_sex_pp(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    sex,value = row
+
+    if sex == 'Мужской':
+        if  4<= value <= 8:
+            return f'отклоняющиеся'
+        elif value == 3:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  4<= value <= 8:
+            return f'отклоняющиеся'
+        elif value == 3:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+def calc_level_age_pp(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    age,value = row
+
+    if age == '10-13 лет':
+        if 4 <= value <=8 :
+            return f'отклоняющиеся'
+        elif value == 3 :
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if 3 <= value <=8 :
+            return f'отклоняющиеся'
+        elif value == 2:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+def calc_value_ps(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [6,12,17,21]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx != 12:
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 2
+                elif value == 1:
+                    value_forward += 1
+                else:
+                    value_forward += 0
+    return value_forward
+
+
+def calc_level_sex_ps(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    sex,value = row
+
+    if sex == 'Мужской':
+        if  5<= value <=8 :
+            return f'отклоняющиеся'
+        elif value == 4:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  5<= value <=8 :
+            return f'отклоняющиеся'
+        elif value == 4:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+def calc_level_age_ps(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    age,value = row
+
+    if age == '10-13 лет':
+        if  5<= value <=8 :
+            return f'отклоняющиеся'
+        elif value == 4:
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  5<= value <= 8:
+            return f'отклоняющиеся'
+        elif value == 4:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+def calc_value_ochp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [2,3,5,6,7,9,10,11,12,13,14,16,17,19,20,21,22,23]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in (12,19,23):
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 2
+                elif value == 1:
+                    value_forward += 1
+                else:
+                    value_forward += 0
+    return value_forward
+
+def calc_level_sex_ochp(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    sex,value = row
+
+    if sex == 'Мужской':
+        if  19<= value <=36 :
+            return f'отклоняющиеся'
+        elif 15<= value <= 18 :
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  19<= value <=36 :
+            return f'отклоняющиеся'
+        elif 17<= value <=18 :
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+def calc_level_age_ochp(row:pd.Series):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    age,value = row
+
+    if age == '10-13 лет':
+        if 20 <= value <=36 :
+            return f'отклоняющиеся'
+        elif 17<= value <= 19 :
+            return f'пограничные'
+        else:
+            return f'норма'
+    else:
+        if  18<= value <= 36 :
+            return f'отклоняющиеся'
+        elif 15 <= value <= 17:
+            return f'пограничные'
+        else:
+            return f'норма'
+
+
+
+
+
+
+
 def processing_sdq_good_ul(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки
@@ -44,6 +454,23 @@ def processing_sdq_good_ul(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_
         clean_df_lst.append(clean_name)
 
     answers_df.columns = clean_df_lst
+
+    # Проверяем наличие колонок Пол и Возраст
+    diff_req_cols = {'Пол'}.difference(set(base_df.columns))
+    if len(diff_req_cols) != 0:
+        raise NotReqColumn
+
+    # на случай пустых
+    base_df['Пол'].fillna('Не заполнено', inplace=True)
+    # очищаем от лишних пробелов
+    base_df['Пол'] = base_df['Пол'].apply(str.strip)
+
+    # Проверяем на пол
+    diff_sex = set(base_df['Пол'].unique()).difference({'Мужской', 'Женский'})
+    if len(diff_sex) != 0:
+        raise BadValueSex
+
+
     lst_check_cols = ['Я стараюсь быть хорошим с другими людьми',
                       'Я неугомонный, не могу оставаться спокойным',
                       'У меня часто бывают головные боли, боли в животе и тошнота',
@@ -104,3 +531,34 @@ def processing_sdq_good_ul(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueSDQGU
+
+    base_df['ПСП_Значение'] = answers_df.apply(calc_value_psp,axis=1)
+    base_df['ПСП_Пол_Уровень'] = base_df[['Пол','ПСП_Значение']].apply(calc_level_sex_psp, axis=1)
+    base_df['ПСП_Возраст_Уровень'] = base_df[['Возраст','ПСП_Значение']].apply(calc_level_age_psp, axis=1)
+
+    base_df['ГА_Значение'] = answers_df.apply(calc_value_ga,axis=1)
+    base_df['ГА_Пол_Уровень'] = base_df[['Пол','ГА_Значение']].apply(calc_level_sex_ga, axis=1)
+    base_df['ГА_Возраст_Уровень'] = base_df[['Возраст','ГА_Значение']].apply(calc_level_age_ga, axis=1)
+
+
+    base_df['ЭС_Значение'] = answers_df.apply(calc_value_emo,axis=1)
+    base_df['ЭС_Пол_Уровень'] = base_df[['Пол','ЭС_Значение']].apply(calc_level_sex_emo, axis=1)
+    base_df['ЭС_Возраст_Уровень'] = base_df[['Возраст','ЭС_Значение']].apply(calc_level_age_emo, axis=1)
+
+
+    base_df['ПП_Значение'] = answers_df.apply(calc_value_pp,axis=1)
+    base_df['ПП_Пол_Уровень'] = base_df[['Пол','ПП_Значение']].apply(calc_level_sex_pp, axis=1)
+    base_df['ПП_Возраст_Уровень'] = base_df[['Возраст','ПП_Значение']].apply(calc_level_age_pp, axis=1)
+
+    base_df['ПС_Значение'] = answers_df.apply(calc_value_ps,axis=1)
+    base_df['ПС_Пол_Уровень'] = base_df[['Пол','ПС_Значение']].apply(calc_level_sex_ps, axis=1)
+    base_df['ПС_Возраст_Уровень'] = base_df[['Возраст','ПС_Значение']].apply(calc_level_age_ps, axis=1)
+
+    base_df['ОЧП_Значение'] = answers_df.apply(calc_value_ochp,axis=1)
+    base_df['ОЧП_Пол_Уровень'] = base_df[['Пол','ОЧП_Значение']].apply(calc_level_sex_ochp, axis=1)
+    base_df['ОЧП_Возраст_Уровень'] = base_df[['Возраст','ОЧП_Значение']].apply(calc_level_age_ochp, axis=1)
+
+
+
+    base_df.to_excel('data/res.xlsx',index=False)
+
