@@ -33,6 +33,7 @@ from mental_state.regush_ppp import processing_ppp_regush # Психологич
 from mental_state.goodman_sdq import processing_sdq_good_ul # Опросник Сильные стороны и трудности SDQ Гудман Ульянина и др.
 from mental_state.prihogan_cmas import processing_cmas_prihog # Шкала явной тревожности для детей CMAS А.М. Прихожан
 from mental_state.prihogan_p_cmas import processing_p_cmas_prihog # Шкала явной тревожности для подростков CMAS А.М. Прихожан
+from mental_state.teylor_tmas import processing_tmas__teylor_nor # Шкала проявлений тревоги Тейлор Норакидзе
 
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
@@ -294,6 +295,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ССТ Гудман Ульянина': (processing_sdq_good_ul, 23),
                      'CMAS Прихожан': (processing_cmas_prihog, 53),
                      'CMAS Подростки Прихожан': (processing_p_cmas_prihog, 65),
+                     'TMAS Тейлор Норакидзе': (processing_tmas__teylor_nor, 60),
 
 
 
@@ -394,6 +396,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ССТ Гудман Ульянина': 'Сильные стороны и трудности SDQ Гудман Ульянина и др.',
                               'CMAS Прихожан': 'Шкала явной тревожности для детей CMAS Прихожан',
                               'CMAS Подростки Прихожан': 'Шкала явной тревожности для подростков CMAS Прихожан',
+                              'TMAS Тейлор Норакидзе': 'Шкала проявлений тревоги TMAS Тейлор Норакидзе',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -418,7 +421,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Шкала оценки интенсивности боевого опыта','Опросник на скрининг ПТСР','SCL-90-R Тарабрина',
                            'Прогноз-2 Рыбников','DASS 21 Золотарева','PSM-25 Водопьянова',
 
-                           'МОДТ Ромицына Вассерман','Психологические проблемы подростков Регуш 2023','ССТ Гудман Ульянина','CMAS Прихожан'
+                           'МОДТ Ромицына Вассерман','Психологические проблемы подростков Регуш 2023','ССТ Гудман Ульянина','CMAS Прихожан',
+                           'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе'
 
                            ]
         lst_check_alert_tests = []
@@ -546,7 +550,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
                                    'субдепрессивное состояние или маскированная депрессия',
-                                   'нарушение адаптации','126-150','61-80','20-26','6-7','высокий уровень ШТФ','ближе к высокому','высокий уровень тревоги','4.01-5','явно повышенный'
+                                   'нарушение адаптации','126-150','61-80','20-26','6-7','высокий уровень ШТФ','ближе к высокому','высокий уровень тревоги','4.01-5','явно повышенный',
+                                   'высокий'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             if len(alert_df) == 0:
