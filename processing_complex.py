@@ -33,7 +33,8 @@ from mental_state.regush_ppp import processing_ppp_regush # Психологич
 from mental_state.goodman_sdq import processing_sdq_good_ul # Опросник Сильные стороны и трудности SDQ Гудман Ульянина и др.
 from mental_state.prihogan_cmas import processing_cmas_prihog # Шкала явной тревожности для детей CMAS А.М. Прихожан
 from mental_state.prihogan_p_cmas import processing_p_cmas_prihog # Шкала явной тревожности для подростков CMAS А.М. Прихожан
-from mental_state.teylor_tmas import processing_tmas__teylor_nor # Шкала проявлений тревоги Тейлор Норакидзе
+from mental_state.teylor_tmas import processing_tmas_teylor_nor # Шкала проявлений тревоги Тейлор Норакидзе
+from mental_state.hvan_mipt import processing_mipt_hvan_zaycev # Методика измерения подростковой тревожности Хван Зайцев
 
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
@@ -295,7 +296,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ССТ Гудман Ульянина': (processing_sdq_good_ul, 23),
                      'CMAS Прихожан': (processing_cmas_prihog, 53),
                      'CMAS Подростки Прихожан': (processing_p_cmas_prihog, 65),
-                     'TMAS Тейлор Норакидзе': (processing_tmas__teylor_nor, 60),
+                     'TMAS Тейлор Норакидзе': (processing_tmas_teylor_nor, 60),
+                     'МИПТ Хван Зайцев': (processing_mipt_hvan_zaycev, 30),
 
 
 
@@ -397,6 +399,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'CMAS Прихожан': 'Шкала явной тревожности для детей CMAS Прихожан',
                               'CMAS Подростки Прихожан': 'Шкала явной тревожности для подростков CMAS Прихожан',
                               'TMAS Тейлор Норакидзе': 'Шкала проявлений тревоги TMAS Тейлор Норакидзе',
+                              'МИПТ Хван Зайцев': 'Методика измерения подростковой тревожности Хван Зайцев',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -422,7 +425,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Прогноз-2 Рыбников','DASS 21 Золотарева','PSM-25 Водопьянова',
 
                            'МОДТ Ромицына Вассерман','Психологические проблемы подростков Регуш 2023','ССТ Гудман Ульянина','CMAS Прихожан',
-                           'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе'
+                           'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе','МИПТ Хван Зайцев'
 
                            ]
         lst_check_alert_tests = []

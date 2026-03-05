@@ -246,7 +246,7 @@ def create_result_tmas_teyl_nor(base_df:pd.DataFrame, out_dct:dict, lst_svod_col
         return out_dct
 
 
-def processing_tmas__teylor_nor(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
+def processing_tmas_teylor_nor(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
