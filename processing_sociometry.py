@@ -44,6 +44,12 @@ class BadQuantNegCols(Exception):
     """
     pass
 
+class FewRows(Exception):
+    """
+    Исключение для обработки случая когда в файле после обработки дубликатов осталось меньше 3 строк
+    """
+    pass
+
 
 
 
@@ -1763,6 +1769,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
         base_df.drop_duplicates(subset='ФИО',inplace=True) # удаляем дубликаты
         base_df.sort_values(by='ФИО',inplace=True) # сортируем по алфавиту
+        # Проверяем количество строк должно быть не меньше 3
+        if len(base_df) < 3:
+            lst_short = base_df['ФИО'].tolist()
+            lst_short = [f'\n{value}\n' for value in lst_short]
+            raise FewRows
         # Создаем шаблон социоматрицы
         template_matrix_df = pd.DataFrame(index=base_df['ФИО'].tolist(),columns=base_df['ФИО'].tolist())
 
@@ -2231,6 +2242,16 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
         messagebox.showerror('Лахеcис',
                              f'При обработке файла с выборами социометрии обнаружено отсутствие обязательной колонки:\n'
                              f'{diff_req_cols}\n В таблице с выборами обязательно должна быть колонка с названием ФИО')
+    except BadQuantNegCols:
+        messagebox.showerror('Лахеcис',
+                             f'Порядковый номер вопроса с негативным выбором превышает общее количество вопросов:\n'
+                             f'То есть если у вас 4 вопроса нельзя указывать число 5,6 и и т.д.')
+    except FewRows:
+        messagebox.showerror('Лахеcис',
+                             f'После очистки файла с выборами от дубликатов и пустых строк осталось МЕНЬШЕ 3 строк с ФИО :\n'
+                             f'Для работы программы требуется 3 и более строки с ФИО. Проверьте файл с выборами и файл с дубликатами.\n'
+                             f'Остались указанные ФИО: {"".join(lst_short)}')
+
     except PermissionError:
         messagebox.showerror('Лахеcис',
                                  f'Закройте все файлы созданные программой Лахесис и запустите повторно обработку')
@@ -2240,8 +2261,11 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
     except KeyError:
         messagebox.showerror('Лахеcис',
-                             f'Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
-                             f'Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
+                             f'Найдены ошибки в структуре файла!\n'
+                             f' Проверьте следующие варианты:\n'
+                             f'А) Откройте файл с выборами и проверьте количество колонок не относящихся к вопросам социометрии, иногда Яндекс Формы автоматически добавляет служебные колонки;\n'
+                             f'Б) Проверьте структуру файла с выборами. Если вы использовали Яндекс форму, то чекбокс типа обрабатываемого файла должен быть пустым(галочки не должно стоять).\n'
+                             f'В) Если файл создан с помощью гугл формы или других средств, то есть для каждого вопроса выборы тестируемого находятся в одной ячейке\n'
                              f'и разделены запятой, то чекбокс типа обрабатываемого файла должен быть нажат(галочка должна стоять)')
     except:
         logging.exception('AN ERROR HAS OCCURRED')
@@ -2280,12 +2304,13 @@ if __name__ == '__main__':
 
     # main_file = 'data/Социометрия Гугл.xlsx'
     main_file = 'data/Пример Социометрии 10б (2).xlsx'
-    main_quantity_descr_cols = 1
+    main_file = 'data/2026-03-15 Копия 10 класс.xlsx'
+    main_quantity_descr_cols = 3
     # main_quantity_descr_cols = 1
-    main_negative_questions = ''
+    main_negative_questions = '2,4'
     # main_negative_questions = '2'
     main_end_folder = 'data/Результат'
     main_checkbox_not_yandex = 'No'
-    main_checkbox_not_yandex = 'Yes'
+    # main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
     print('Lindy Booth')
