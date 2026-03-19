@@ -34,13 +34,13 @@ def calc_level(value):
     :return:
     """
     if 0 <= value <= 2:
-        return '0-2'
+        return '0-2 ПТСР'
     elif 3 <= value <= 5:
-        return '3-5'
+        return '3-5 ПТСР'
     elif 6 <= value <= 7:
-        return '6-7'
+        return '6-7 ПТСР'
     else:
-        return '8-10'
+        return '8-10 ПТСР'
 
 def calc_mean(df:pd.DataFrame,lst_cat:list,val_cat):
     """
@@ -68,9 +68,9 @@ def create_result_scl_k_nine_zolotareva(base_df:pd.DataFrame, out_dct:dict, lst_
     :param lst_svod_cols: список сводных колонок
     :return: словарь
     """
-    lst_level = ['0-2','3-5','6-7','8-10']
+    lst_level = ['0-2 ПТСР', '3-5 ПТСР', '6-7 ПТСР', '8-10 ПТСР']
     lst_reindex_main_level_cols = lst_svod_cols.copy()
-    lst_reindex_main_level_cols.extend(['0-2','3-5','6-7','8-10',
+    lst_reindex_main_level_cols.extend(['0-2 ПТСР', '3-5 ПТСР', '6-7 ПТСР', '8-10 ПТСР',
                                'Итого'])  # Основная шкала
 
     svod_count_one_level_df = calc_count_scale(base_df, lst_svod_cols,
@@ -104,7 +104,7 @@ def create_result_scl_k_nine_zolotareva(base_df:pd.DataFrame, out_dct:dict, lst_
 
     else:
         for idx, name_column in enumerate(lst_svod_cols):
-            lst_reindex_column_level_cols = [lst_svod_cols[idx],'0-2','3-5','6-7','8-10',
+            lst_reindex_column_level_cols = [lst_svod_cols[idx],'0-2 ПТСР', '3-5 ПТСР', '6-7 ПТСР', '8-10 ПТСР',
                                'Итого']
 
             svod_count_column_level_df = calc_count_scale(base_df, lst_svod_cols[idx],
@@ -211,7 +211,7 @@ def processing_scrining_ptsr(result_df: pd.DataFrame, answers_df: pd.DataFrame, 
 
         # Общий свод по уровням общей шкалы всего в процентном соотношении
         base_svod_all_df = pd.DataFrame(
-            index=['0-2','3-5','6-7','8-10'])
+            index=['0-2 ПТСР', '3-5 ПТСР', '6-7 ПТСР', '8-10 ПТСР'])
 
         svod_level_df = pd.pivot_table(base_df, index='Диапазон_ОСПТСР',
                                        values='Значение_ОСПТСР',
@@ -233,7 +233,7 @@ def processing_scrining_ptsr(result_df: pd.DataFrame, answers_df: pd.DataFrame, 
                    'Свод Общий': base_svod_all_df,
                    }
 
-        lst_level = ['0-2','3-5','6-7','8-10']
+        lst_level = ['0-2 ПТСР', '3-5 ПТСР', '6-7 ПТСР', '8-10 ПТСР']
         dct_level = dict()
 
         for level in lst_level:

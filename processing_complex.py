@@ -550,7 +550,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
             # Отбираем тех кто требует внимания.
             set_alert_value = ['высокий уровень выгорания','имеется выгорание','критический уровень выгорания','крайне высокий уровень',
                                '250-299','300 и более','очень высокий уровень','низкий уровень адаптации','выраженная социально-психологическая дезадаптация',
-                               'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая','истинное депрессивное состояние',
+                               'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая','истинное депрессивное состояние','8-10 ПТСР',
                                'посттравматическое стрессовое расстройство','151-175','176-195','81-110','27-36','неблагоприятный','высокий уровень DASS','высокий уровень ППН',
                                'ярко выраженный признак','высокий показатель','крайне высокий уровень тревоги','очень высокий','отклоняющиеся','высокий ШДБ'
                                ] # особое внимание
@@ -558,7 +558,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом',
                                    'не благоприятное состояние','преобладает плохое настроение','низкий уровень самооценки','высокий уровень социального остракизма',
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
-                                   'субдепрессивное состояние или маскированная депрессия',
+                                   'субдепрессивное состояние или маскированная депрессия','6-7 ПТСР',
                                    'нарушение адаптации','126-150','61-80','20-26','высокий уровень ШТФ','ближе к высокому','высокий уровень тревоги','4.01-5','явно повышенный',
                                    'высокий','повышенный ШДБ'
                                    ] # обратить внимание
@@ -965,17 +965,19 @@ if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_1.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 3.1.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_1.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Данные 3.1.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
