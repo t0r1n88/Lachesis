@@ -63,6 +63,7 @@ from deviant.cook_medley_mend_hostility import processing_cook_medley_mend_hosti
 from deviant.ag_cyba_sharov import processing_cyba_ag_sharov # Опросник киберагрессии Альварез-Гарсия Шаров
 from deviant.run_catq_antipina import processing_catq_run_antip # Опросник Типология киберагрессии, CATQ Адаптация С.С. Антипина
 from deviant.pochebut_va import processing_va_pochebut # Виды агрессивности Л.Г. Почебут
+from deviant.dap_p import processing_dap_p_vmed # ДАП-П
 
 
 # Профориентационные тесты
@@ -306,6 +307,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ШДБ Колачев Чистопольская': (processing_pas_hol_kol, 13),
                      'ОСР Шмелев Разуваева': (processing_osr_shmel_raz, 29),
                      'ВА Почебут': (processing_va_pochebut, 40),
+                     'ДАП-П ВМедА': (processing_dap_p_vmed, 48),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -406,6 +408,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ШДБ Колачев Чистопольская': 'Шкала душевной боли, PAS-13 Холден Колачев Чистопольская и др.',
                               'ОСР Шмелев Разуваева': 'Опросник суицидального риска Шмелев Разуваева',
                               'ВА Почебут': 'Виды агрессивности Почебут',
+                              'ДАП-П ВМедА': 'ДАП-П опросник девиантное поведение для школьников',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -432,7 +435,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                            'МОДТ Ромицына Вассерман','Психологические проблемы подростков Регуш 2023','ССТ Гудман Ульянина','CMAS Прихожан',
                            'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе','МИПТ Хван Зайцев','ШДБ Колачев Чистопольская','ОСР Шмелев Разуваева',
-                           'ВА Почебут'
+                           'ВА Почебут','ДАП-П ВМедА'
 
                            ]
         lst_check_alert_tests = []
@@ -978,7 +981,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
