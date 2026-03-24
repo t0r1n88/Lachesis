@@ -63,7 +63,8 @@ from deviant.cook_medley_mend_hostility import processing_cook_medley_mend_hosti
 from deviant.ag_cyba_sharov import processing_cyba_ag_sharov # Опросник киберагрессии Альварез-Гарсия Шаров
 from deviant.run_catq_antipina import processing_catq_run_antip # Опросник Типология киберагрессии, CATQ Адаптация С.С. Антипина
 from deviant.pochebut_va import processing_va_pochebut # Виды агрессивности Л.Г. Почебут
-from deviant.dap_p import processing_dap_p_school # ДАП-П
+from deviant.dap_p_school import processing_dap_p_school # ДАП-П Школьный вариант
+from deviant.dap_p_spo import processing_dap_p_spo # ДАП-П СПО вариант
 
 
 # Профориентационные тесты
@@ -308,6 +309,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОСР Шмелев Разуваева': (processing_osr_shmel_raz, 29),
                      'ВА Почебут': (processing_va_pochebut, 40),
                      'ДАП-П Школьники': (processing_dap_p_school, 48),
+                     'ДАП-П Студенты': (processing_dap_p_spo, 60),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -408,7 +410,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ШДБ Колачев Чистопольская': 'Шкала душевной боли, PAS-13 Холден Колачев Чистопольская и др.',
                               'ОСР Шмелев Разуваева': 'Опросник суицидального риска Шмелев Разуваева',
                               'ВА Почебут': 'Виды агрессивности Почебут',
-                              'ДАП-П Школьники': 'ДАП-П опросник девиантное поведение для школьников',
+                              'ДАП-П Школьники': 'ДАП-П опросник девиантное поведение Школьники',
+                              'ДАП-П Студенты': 'ДАП-П опросник девиантное поведение Студенты СПО',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
