@@ -410,7 +410,7 @@ def processing_dap_p_school(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst
         quantity_cols_base_df = base_df.shape[1]  # количество колонок в анкетной части
 
         if len(answers_df.columns) != 48:  # проверяем количество колонок с вопросами
-            raise BadCountColumnsDAPP
+            raise BadCountColumnsDAPPS
 
         # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
         clean_df_lst = []
@@ -484,7 +484,7 @@ def processing_dap_p_school(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst
                 error_order_lst.append(f'На месте колонки {main} находится колонка {temp}')
                 error_order_message = ';'.join(error_order_lst)
         if len(error_order_lst) != 0:
-            raise BadOrderDAPP
+            raise BadOrderDAPPS
 
         # словарь для замены слов на числа
         dct_replace_value = {'нет, это совсем не так': 0,
@@ -509,7 +509,7 @@ def processing_dap_p_school(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst
 
         if len(lst_error_answers) != 0:
             error_message = ';'.join(lst_error_answers)
-            raise BadValueDAPP
+            raise BadValueDAPPS
 
 
         base_df['ИП_Значение'] = answers_df.sum(axis=1)
