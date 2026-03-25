@@ -99,6 +99,7 @@ from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Оп
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
 from personality_structure.acope_polskaya import processing_acope_polskaya # Копинг стратегии для подростков Польская
 from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni # Копинг стратегии Лазарус НИПНИ Бехтерева
+from personality_structure.matalina_hol import processing_hol_mat # Экспресс-диагностика характерологических особенностей личности Маталина
 
 # Зависимости
 from cyberpsychology.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
@@ -312,6 +313,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ДАП-П Школьники': (processing_dap_p_school, 48),
                      'ДАП-П Студенты': (processing_dap_p_spo, 60),
                      'ДВДГР Рожков Ковальчук': (processing_dvdgr_roj_kov, 74),
+                     'ХОЛ Маталина': (processing_hol_mat, 60),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -415,6 +417,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ДАП-П Школьники': 'ДАП-П опросник девиантное поведение Школьники',
                               'ДАП-П Студенты': 'ДАП-П опросник девиантное поведение Студенты СПО',
                               'ДВДГР Рожков Ковальчук': 'Методика первичной диагностики и выявления детей «группы риска Рожков Ковальчук',
+                              'ХОЛ Маталина': 'Экспресс-диагностика характерологических особенностей личности Маталина',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
