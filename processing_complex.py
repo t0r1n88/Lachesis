@@ -96,6 +96,7 @@ from ptsr.forecast_two_rybnikov import processing_forecast_two_rybnikov # Мет
 from motivation.kotik_motiv_target import processing_kotik_motiv_target # Опросник мотивации к достижению цели, к успеху Элерс Котик
 from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Опросник мотивации к избеганию неудач Элерс Котик
 from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Опросник оценки склонности к риску, RSK (Г. Шуберт)
+from motivation.prihogan_dmuaou import processing_dmuaoup_prihogan # Диагностика мотивации учения и эмоционального отношения к учению в средних и старших классах школы Прихожан
 
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
@@ -318,6 +319,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ХОЛ Маталина': (processing_hol_mat, 60),
                      'HQ-25 Лякина Федоров': (processing_hqtf_lyak_fed, 25),
                      'ДОПО-3к Леонтьев Осин': (processing_dopok_leon_osin, 24),
+                     'ДМУЭОУ Прихожан': (processing_dmuaoup_prihogan, 40),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -424,6 +426,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ХОЛ Маталина': 'Экспресс-диагностика характерологических особенностей личности Маталина',
                               'HQ-25 Лякина Федоров': 'Опросник хикикомори, HQ-25 Тео Лякина Федоров',
                               'ДОПО-3к Леонтьев Осин': 'ДОПО-3к Леонтьев Осин',
+                              'ДМУЭОУ Прихожан': 'Диагностика мотивации учения и эмоционального отношения к учению Прихожан',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -451,7 +454,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'МОДТ Ромицына Вассерман','Психологические проблемы подростков Регуш 2023','ССТ Гудман Ульянина','CMAS Прихожан',
                            'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе','МИПТ Хван Зайцев','ШДБ Колачев Чистопольская','ОСР Шмелев Разуваева',
                            'ВА Почебут','ДАП-П Школьники','ДАП-П Студенты','ДВДГР Рожков Ковальчук',
-                           'HQ-25 Лякина Федоров','ДОПО-3к Леонтьев Осин'
+                           'HQ-25 Лякина Федоров','ДОПО-3к Леонтьев Осин','ДМУЭОУ Прихожан'
 
                            ]
         lst_check_alert_tests = []
@@ -573,7 +576,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                'очень высокий уровень тревожности','тяжелая депрессия','безнадежность тяжёлая','истинное депрессивное состояние','8-10 ПТСР',
                                'посттравматическое стрессовое расстройство','151-175','176-195','81-110','27-36','неблагоприятный','высокий уровень DASS','высокий уровень ППН',
                                'ярко выраженный признак','высокий показатель','крайне высокий уровень тревоги','очень высокий','отклоняющиеся','высокий ШДБ',
-                               '25-29 ИП СР','высокая склонность к ДП'
+                               '25-29 ИП СР','высокая склонность к ДП','V уровень'
                                ] # особое внимание
 
             set_attention_value = ['пограничное выгорание','симптомы выгорания','начинающееся выгорание','средний уровень выгорания','высокий уровень','доминирующий симптом',
@@ -997,8 +1000,8 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_quantity_descr_cols = 4
+    main_svod_cols = '1,2,3'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
