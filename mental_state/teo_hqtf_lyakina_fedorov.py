@@ -43,6 +43,37 @@ def calc_level(value):
         return f'75-100'
 
 
+
+def calc_value_ip(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [1,2,3,4,5,6,7,8,9,10,
+              11,12,13,14,15,16,17,18,19,20,
+              21,22,23,24,25]
+    lst_neg = [4,15,25,22,7,10,21]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 4
+                elif value == 1:
+                    value_forward += 3
+                elif value == 2:
+                    value_forward += 2
+                elif value == 1:
+                    value_forward += 1
+                else:
+                    value_forward += 0
+
+
+    return value_forward
+
+
 def calc_value_s(row):
     """
     Функция для подсчета значения
@@ -400,7 +431,7 @@ def processing_hqtf_lyak_fed(base_df: pd.DataFrame, answers_df: pd.DataFrame, ls
             error_message = ';'.join(lst_error_answers)
             raise BadValueHQTFLF
 
-        base_df['ИП_Значение'] = answers_df.sum(axis=1)
+        base_df['ИП_Значение'] = answers_df.apply(calc_value_ip,axis=1)
         base_df['ИП_Диапазон'] = base_df['ИП_Значение'].apply(calc_level)
 
         base_df['С_Значение'] = answers_df.apply(calc_value_s, axis=1)

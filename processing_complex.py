@@ -39,6 +39,7 @@ from mental_state.spilberger_hanin_stai import processing_stai_spil_han # Шка
 from mental_state.holden_pas_kol_chist import processing_pas_hol_kol # Шкала душевной боли, PAS-13 Холден Колачев Чистопольская и др.
 from mental_state.shmelev_osr_razuvaeva import processing_osr_shmel_raz # Опросник суицидального риска А.Г. Шмелев Т.Н. Разуваева
 from mental_state.teo_hqtf_lyakina_fedorov import processing_hqtf_lyak_fed # Опросник хикикомори, HQ-25 Тео Лякина Федоров
+from mental_state.dopok_leon_osin import processing_dopok_leon_osin # Дифференциальный опросник переживания одиночества (краткий вариант) ДОПО-3к Леонтьев Осин
 
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
@@ -316,6 +317,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ДВДГР Рожков Ковальчук': (processing_dvdgr_roj_kov, 74),
                      'ХОЛ Маталина': (processing_hol_mat, 60),
                      'HQ-25 Лякина Федоров': (processing_hqtf_lyak_fed, 25),
+                     'ДОПО-3к Леонтьев Осин': (processing_dopok_leon_osin, 24),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -421,6 +423,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ДВДГР Рожков Ковальчук': 'Методика первичной диагностики и выявления детей «группы риска Рожков Ковальчук',
                               'ХОЛ Маталина': 'Экспресс-диагностика характерологических особенностей личности Маталина',
                               'HQ-25 Лякина Федоров': 'Опросник хикикомори, HQ-25 Тео Лякина Федоров',
+                              'ДОПО-3к Леонтьев Осин': 'ДОПО-3к Леонтьев Осин',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -447,7 +450,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                            'МОДТ Ромицына Вассерман','Психологические проблемы подростков Регуш 2023','ССТ Гудман Ульянина','CMAS Прихожан',
                            'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе','МИПТ Хван Зайцев','ШДБ Колачев Чистопольская','ОСР Шмелев Разуваева',
-                           'ВА Почебут','ДАП-П Школьники','ДАП-П Студенты','ДВДГР Рожков Ковальчук'
+                           'ВА Почебут','ДАП-П Школьники','ДАП-П Студенты','ДВДГР Рожков Ковальчук',
+                           'HQ-25 Лякина Федоров','ДОПО-3к Леонтьев Осин'
 
                            ]
         lst_check_alert_tests = []
@@ -577,7 +581,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'легкая степень социально-психологической дезадаптации','0-19','высокий уровень тревожности','умеренная депрессия','безнадежность умеренная',
                                    'субдепрессивное состояние или маскированная депрессия','6-7 ПТСР',
                                    'нарушение адаптации','126-150','61-80','20-26','высокий уровень ШТФ','ближе к высокому','высокий уровень тревоги','4.01-5','явно повышенный',
-                                   'высокий','повышенный ШДБ','18-24 ИП СР','76-100%','высокий уровень агрессивности','значительная предрасположенность к ДП','группа риска'
+                                   'высокий','повышенный ШДБ','18-24 ИП СР','76-100%','высокий уровень агрессивности','значительная предрасположенность к ДП','группа риска',
+                                   '75-100%'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             if len(alert_df) == 0:
@@ -993,7 +998,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = ''
+    main_svod_cols = '1,2'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
