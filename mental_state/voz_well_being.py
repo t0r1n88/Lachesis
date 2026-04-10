@@ -261,7 +261,7 @@ def processing_voz_well_being(result_df: pd.DataFrame, answers_df: pd.DataFrame,
         # Соединяем анкетную часть с результатной
         base_df = pd.concat([result_df, base_df], axis=1)
 
-        base_df.sort_values(by='Значение_общего_самочувствия', ascending=False, inplace=True)  # сортируем
+        base_df.sort_values(by='Значение_общего_самочувствия', ascending=True, inplace=True)  # сортируем
 
         # Делаем свод  по  шкалам
         dct_svod_sub = {'Значение_общего_самочувствия': 'Диапазон_общего_самочувствия',
@@ -288,11 +288,18 @@ def processing_voz_well_being(result_df: pd.DataFrame, answers_df: pd.DataFrame,
         avg_df = avg_df.reset_index()
         avg_df.columns = ['Показатель', 'Среднее значение']
 
+
+
         # формируем основной словарь
         out_dct = {'Списочный результат': base_df, 'Список для проверки': out_answer_df,
                    'Свод':base_svod_sub_df,
                    'Среднее': avg_df,
                    }
+
+        dct_prefix = {'Диапазон_общего_самочувствия': 'ИОС',
+                      }
+
+        out_dct = create_list_on_level(base_df, out_dct, lst_level, dct_prefix)
 
         """
             Сохраняем в зависимости от необходимости делать своды по определенным колонкам
