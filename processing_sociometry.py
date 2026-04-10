@@ -1439,12 +1439,13 @@ def get_node_categories(G):
 
 
 
-def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct_chosen_missng:dict):
+def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct_chosen_missng:dict,dct_questions:dict):
     """
     Функция для создания и сохранения социограмм
     :param lst_graphs:список из словарей для каждого вопроса с отношениями
     :param dct_missing_person: словарь для отметки количества выборов отсутствующих
     :param dct_chosen_missng: словарь для хранения кто выбрал отсутствующих
+    :param dct_questions: словарь для хранения названия вопроса
     :param end_folder:конечная папка
     """
     # Создаем сокращенные имена
@@ -1693,13 +1694,13 @@ def create_sociograms(lst_graphs:list,end_folder:str,dct_missing_person:dict,dct
                             fontsize=10, bbox=dict(boxstyle="round,pad=0.5", facecolor='lightyellow', alpha=0.8))
 
                 plt.title(
-                    f'Социограмма группы - {layout_name}\n(Сначала самые популярные, затем их связи, затем остальные)\n'
+                    f'Социограмма группы - {layout_name}\nВопрос №{idx}: {dct_questions[f"Вопрос_{idx}"]}\n(Сначала самые популярные, затем их связи, затем остальные)\n'
                     f'Зеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
                     size=14, pad=20)
 
             else:
                 plt.title(
-                    f'Социограмма группы - {layout_name}\nЗеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
+                    f'Социограмма группы - {layout_name}\nВопрос №{idx}: {dct_questions[f"Вопрос_{idx}"]}\nЗеленые стрелки: взаимные выборы | Синие стрелки: обычные выборы',
                     size=14, pad=20)
 
             plt.axis('off')
@@ -1796,6 +1797,8 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
             question = lst_answer[0]  # Вопрос
             if question not in lst_questions:
                 lst_questions.append(question)
+        # Создаем словарь для хранения вопросов
+        dct_questions = {f'Вопрос_{idx}':question for idx,question in enumerate(lst_questions,1)}
 
         # проверяем и обрабатываем строку с колонками по которым нужно делать свод
         lst_negative_cols = check_negative_cols(len(lst_questions), negative_questions)
@@ -2237,7 +2240,7 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
         # Создаем и сохраняем социограммы и выборы тех кто не тестировался
 
-        create_sociograms(lst_value_dct,end_folder,dct_missing_person,dct_chosen_missing)
+        create_sociograms(lst_value_dct,end_folder,dct_missing_person,dct_chosen_missing,dct_questions)
     except NotReqColumn:
         messagebox.showerror('Лахеcис',
                              f'При обработке файла с выборами социометрии обнаружено отсутствие обязательной колонки:\n'
@@ -2297,19 +2300,19 @@ def generate_result_sociometry(data_file:str,quantity_descr_cols:int,negative_qu
 
 if __name__ == '__main__':
     main_file = 'data/Социометрия.xlsx'
-    main_file = 'data/Социометрия негатив.xlsx'
     # main_file = 'data/Социометрия смеш.xlsx'
     main_file = 'data/Группа 110 н.xlsx'
     main_file = 'data/Социометрия смеш.xlsx'
+    main_file = 'data/Социометрия негатив.xlsx'
+
 
     # main_file = 'data/Социометрия Гугл.xlsx'
-    main_file = 'data/Пример Социометрии 10б (2).xlsx'
-    main_file = 'data/2026-03-15 Копия 10 класс.xlsx'
     main_quantity_descr_cols = 3
-    # main_quantity_descr_cols = 1
-    main_negative_questions = '2,4'
+    main_quantity_descr_cols = 1
+    main_negative_questions = '2'
     # main_negative_questions = '2'
     main_end_folder = 'data/Результат'
+    main_end_folder = 'data/1'
     main_checkbox_not_yandex = 'No'
     # main_checkbox_not_yandex = 'Yes'
     generate_result_sociometry(main_file,main_quantity_descr_cols,main_negative_questions,main_end_folder,main_checkbox_not_yandex)
