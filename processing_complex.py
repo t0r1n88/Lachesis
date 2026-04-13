@@ -120,6 +120,12 @@ from cyberpsychology.kochetkov_dga import processing_dga_koch # Методика
 from cyberpsychology.petrov_ozii import processing_ozii_pet_cher # Шкала оценки зависимости от Интернет-игр краткая форма, IGDS9-SF Петров, Черняк
 from cyberpsychology.tereshenko_gasa import processing_gasa_ter_gor # Шкала игровой зависимости для подростков, GASA Терещенко, Горбачева
 
+# Климат в коллективе
+from group_climate.lutoshkin_moupkk import processing_lutoshkin_moupkk # Методика оценки уровня психологического климата коллектива А.Н. Лутошкин
+
+
+
+
 
 
 
@@ -321,6 +327,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ДОПО-3к Леонтьев Осин': (processing_dopok_leon_osin, 24),
                      'ДМУЭОУ Прихожан': (processing_dmuaoup_prihogan, 40),
 
+                     'МОУПКК Лутошкин': (processing_lutoshkin_moupkk, 13),
+
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
@@ -427,6 +435,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'HQ-25 Лякина Федоров': 'Опросник хикикомори, HQ-25 Тео Лякина Федоров',
                               'ДОПО-3к Леонтьев Осин': 'ДОПО-3к Леонтьев Осин',
                               'ДМУЭОУ Прихожан': 'Диагностика мотивации учения и эмоционального отношения к учению Прихожан',
+
+                              'МОУПКК Лутошкин': 'Методика оценки уровня психологического климата коллектива Лутошкин',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -989,19 +999,20 @@ if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры РЦО 5-6 кл.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_1.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_2.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_1.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_2.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
-    main_svod_cols = '1,2,3'
+    main_quantity_descr_cols = 3
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
