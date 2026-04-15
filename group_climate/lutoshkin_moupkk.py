@@ -7,7 +7,7 @@
 import pandas as pd
 import re
 from tkinter import messagebox
-from lachesis_support_functions import round_mean,create_union_svod,create_list_on_level
+from lachesis_support_functions import round_mean_two,create_union_svod,create_list_on_level,calc_count_scale
 
 
 class BadValueLMOUPKK(Exception):
@@ -232,11 +232,103 @@ def calc_level(value):
     elif -15 <= value <= 0:
         return f'от -15 до 0'
     elif 1 <= value <= 14:
-        return f'50-64'
+        return f'от 1 до 15'
     else:
-        return f'65-80'
+        return f'от 16 до 39'
+
+def calc_level_all(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 22<=value:
+        return f'высокая степень БСПК'
+    elif 8 <= value <= 21:
+        return f'средняя степень БСПК'
+    elif 0 <= value <= 7:
+        return f'низкая степень БСПК'
+    elif -7 <= value <= -1:
+        return f'начальная НСПК'
+    elif -9 <= value <= -8:
+        return f'средняя НСПК'
+    else:
+        return f'сильная НСПК'
 
 
+def create_result_moupkk_lutoshkin(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+    """
+    Функция для подсчета результата если указаны колонки по которым нужно провести свод
+    :param df: датафрейм с результатами
+    :param out_dct: словарь с уже подсчитанными базовыми данными
+    :param lst_svod_cols: список сводных колонок
+    :return: словарь
+    """
+
+    lst_level_sj = ['от -39 до -16', 'от -15 до 0', 'от 1 до 15', 'от 16 до 39']
+    lst_reindex_one_level_sj_cols = lst_svod_cols.copy()
+    lst_reindex_one_level_sj_cols.extend(['от -39 до -16', 'от -15 до 0', 'от 1 до 15', 'от 16 до 39',
+                                       'Итого'])  # Основная шкала
+
+    svod_count_one_level_sj_df = calc_count_scale(base_df, lst_svod_cols,
+                                                    'Значение_ИОУПКК',
+                                                    'Диапазон_ИОУПКК',
+                                                    lst_reindex_one_level_sj_cols, lst_level_sj)
+
+    lst_t_sub = ['высокая степень БСПК','средняя степень БСПК','низкая степень БСПК','начальная НСПК','средняя НСПК','сильная НСПК']
+
+    lst_reindex_one_level_t_cols = lst_svod_cols.copy()
+    lst_reindex_one_level_t_cols.extend(['высокая степень БСПК','средняя степень БСПК','низкая степень БСПК','начальная НСПК','средняя НСПК','сильная НСПК',
+                                          'Итого'])  # Основная шкала
+
+    svod_count_one_level_t_df = calc_count_scale(base_df, lst_svod_cols,
+                                                  'Значение_ООУПКК',
+                                                  'Уровень_ООУПКК',
+                                                  lst_reindex_one_level_t_cols, lst_t_sub)
+
+    # Считаем среднее по субшкалам
+    svod_mean_one_df = pd.pivot_table(base_df,
+                                      index=lst_svod_cols,
+                                      values=[
+                                          'Значение_ИОУПКК','Значение_ООУПКК'
+                                      ],
+                                      aggfunc=round_mean_two)
+    svod_mean_one_df.reset_index(inplace=True)
+
+    # упорядочиваем колонки
+    new_order_cols = lst_svod_cols.copy()
+    new_order_cols.extend((['Значение_ИОУПКК','Значение_ООУПКК'
+                            ]))
+    svod_mean_one_df = svod_mean_one_df.reindex(columns=new_order_cols)
+
+    dct_rename_cols_mean = {'Значение_ИОУПКК': 'Ср. значение Индивидуальная оценка уровня психологического климата коллектива',
+                            'Значение_ООУПКК': 'Ср. значение Общая оценка уровня психологического климата коллектива',
+                            }
+    svod_mean_one_df.rename(columns=dct_rename_cols_mean, inplace=True)
+
+    # очищаем название колонки по которой делали свод
+    out_name_lst = []
+
+    for name_col in lst_svod_cols:
+        name = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_col)
+        if len(lst_svod_cols) == 1:
+            out_name_lst.append(name[:14])
+        elif len(lst_svod_cols) == 2:
+            out_name_lst.append(name[:7])
+        else:
+            out_name_lst.append(name[:4])
+
+    out_name = ' '.join(out_name_lst)
+    if len(out_name) > 14:
+        out_name = out_name[:14]
+
+    out_dct.update({f'Ср {out_name}': svod_mean_one_df,
+                    f'И {out_name}': svod_count_one_level_sj_df,
+                    f'О {out_name}': svod_count_one_level_t_df,
+                    })
+
+    if len(lst_svod_cols) == 1:
+        return out_dct
 
 
 
@@ -349,8 +441,75 @@ def processing_lutoshkin_moupkk(result_df: pd.DataFrame, answers_df: pd.DataFram
     base_df['Значение_ИОУПКК'] = answers_df.apply(calc_value, axis=1)
     base_df['Диапазон_ИОУПКК'] = base_df['Значение_ИОУПКК'].apply(calc_level)
 
+    base_df['Значение_ООУПКК'] = round(base_df['Значение_ИОУПКК'].sum() / len(base_df))
+    base_df['Уровень_ООУПКК'] = base_df['Значение_ООУПКК'].apply(calc_level_all)
 
-    base_df.to_excel('data/res.xlsx')
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+
+    part_df['МОУПККЛ_ИОУПКК_Значение'] = base_df['Значение_ИОУПКК']
+    part_df['МОУПККЛ_ИОУПКК_Диапазон'] = base_df['Диапазон_ИОУПКК']
+    part_df['МОУПККЛ_ООУПКК_Значение'] = base_df['Значение_ООУПКК']
+    part_df['МОУПККЛ_ООУПКК_Уровень'] = base_df['Уровень_ООУПКК']
+
+    out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+    # Соединяем анкетную часть с результатной
+    base_df = pd.concat([result_df, base_df], axis=1)
+    base_df.sort_values(by='Значение_ИОУПКК', ascending=True, inplace=True)  # сортируем
+
+    # Делаем свод  по  шкалам
+    dct_svod_sub = {'Значение_ИОУПКК': 'Диапазон_ИОУПКК',
+                    }
+
+    dct_rename_svod_sub = {'Значение_ИОУПКК': 'Индивидуальная оценка уровня психологического климата коллектива',
+                           }
+
+    lst_sub = ['от -39 до -16', 'от -15 до 0', 'от 1 до 15', 'от 16 до 39']
+
+    base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
+
+    avg_vcha = round(base_df['Значение_ИОУПКК'].mean(), 2)
+
+    avg_dct = {'Среднее значение Индивидуальная оценка уровня психологического климата коллектива': avg_vcha,
+               }
+
+    avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+    avg_df = avg_df.reset_index()
+    avg_df.columns = ['Показатель', 'Среднее значение']
+
+    # формируем основной словарь
+    out_dct = {'Списочный результат': base_df,
+               'Список для проверки': out_answer_df,
+               'Свод Шкалы': base_svod_sub_df,
+               'Среднее': avg_df,
+               }
+
+    dct_prefix = {'Диапазон_ИОУПКК': 'ИОУПКК',
+                  }
+
+    out_dct = create_list_on_level(base_df, out_dct, lst_sub, dct_prefix)
+
+    """
+                    Сохраняем в зависимости от необходимости делать своды по определенным колонкам
+                    """
+    if len(lst_svod_cols) == 0:
+        return out_dct, part_df
+    else:
+        out_dct = create_result_moupkk_lutoshkin(base_df, out_dct, lst_svod_cols)
+        return out_dct, part_df
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
