@@ -122,6 +122,7 @@ from cyberpsychology.tereshenko_gasa import processing_gasa_ter_gor # Шкала
 
 # Климат в коллективе
 from group_climate.lutoshkin_moupkk import processing_lutoshkin_moupkk # Методика оценки уровня психологического климата коллектива А.Н. Лутошкин
+from group_climate.nemov_school_spsk import processing_school_spskn_nemov # Социально-психологическая самоаттестация коллектива (школьный вариант) Р.С. Немов
 
 
 
@@ -328,6 +329,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ДМУЭОУ Прихожан': (processing_dmuaoup_prihogan, 40),
 
                      'МОУПКК Лутошкин': (processing_lutoshkin_moupkk, 13),
+                     'СПСК Немов Школа': (processing_school_spskn_nemov, 28),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -437,6 +439,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ДМУЭОУ Прихожан': 'Диагностика мотивации учения и эмоционального отношения к учению Прихожан',
 
                               'МОУПКК Лутошкин': 'Методика оценки уровня психологического климата коллектива Лутошкин',
+                              'СПСК Немов Школа': 'Социально-психологическая самоаттестация коллектива (школьный вариант) Немов',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1012,7 +1015,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = ''
+    main_svod_cols = '1,2'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
