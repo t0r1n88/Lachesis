@@ -295,8 +295,8 @@ def create_result_moupkk_lutoshkin(base_df:pd.DataFrame, out_dct:dict, lst_svod_
                                           'Итого'])  # Основная шкала
 
     svod_count_one_level_t_df = calc_count_scale(base_df, lst_svod_cols,
-                                                  'ОО_Значение',
-                                                  'ОО_Уровень',
+                                                  'ГО_Значение',
+                                                  'ГО_Уровень',
                                                   lst_reindex_one_level_t_cols, lst_t_sub)
 
     # Считаем среднее по субшкалам
@@ -355,8 +355,8 @@ def create_result_moupkk_lutoshkin(base_df:pd.DataFrame, out_dct:dict, lst_svod_
                                                           lst_reindex_column_io_level_cols, lst_level_sj)
 
             svod_count_column_level_oo_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                          'ОО_Значение',
-                                                          'ОО_Уровень',
+                                                          'ГО_Значение',
+                                                          'ГО_Уровень',
                                                           lst_reindex_column_oo_level_cols, lst_t_sub)
 
             # Считаем среднее по субшкалам
@@ -509,16 +509,16 @@ def processing_lutoshkin_moupkk(base_df: pd.DataFrame, answers_df: pd.DataFrame,
 
         if len(lst_svod_cols) == 0:
 
-            base_df['ОО_Значение'] = round(base_df['ИО_Значение'].sum() / len(base_df),1)
-            base_df['ОО_Уровень'] = base_df['ОО_Значение'].apply(calc_level_all)
+            base_df['ГО_Значение'] = round(base_df['ИО_Значение'].sum() / len(base_df),1)
+            base_df['ГО_Уровень'] = base_df['ГО_Значение'].apply(calc_level_all)
 
             # Создаем датафрейм для создания части в общий датафрейм
             part_df = pd.DataFrame()
 
             part_df['МОУПККЛ_ИО_Значение'] = base_df['ИО_Значение']
             part_df['МОУПККЛ_ИО_Диапазон'] = base_df['ИО_Диапазон']
-            part_df['МОУПККЛ_ОО_Значение'] = base_df['ОО_Значение']
-            part_df['МОУПККЛ_ОО_Уровень'] = base_df['ОО_Уровень']
+            part_df['МОУПККЛ_ГО_Значение'] = base_df['ГО_Значение']
+            part_df['МОУПККЛ_ГО_Уровень'] = base_df['ГО_Уровень']
 
             out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
@@ -565,17 +565,17 @@ def processing_lutoshkin_moupkk(base_df: pd.DataFrame, answers_df: pd.DataFrame,
                                              aggfunc=count_group_result)
 
             group_result_df = group_result_df.reset_index()
-            group_result_df.rename(columns={'ИО_Значение':'ОО_Значение'},inplace=True)
+            group_result_df.rename(columns={'ИО_Значение':'ГО_Значение'},inplace=True)
             base_df = base_df.merge(group_result_df,how='inner',on=lst_svod_cols)
-            base_df['ОО_Уровень'] = base_df['ОО_Значение'].apply(calc_level_all)
+            base_df['ГО_Уровень'] = base_df['ГО_Значение'].apply(calc_level_all)
 
             # Создаем датафрейм для создания части в общий датафрейм
             part_df = pd.DataFrame()
 
             part_df['МОУПККЛ_ИО_Значение'] = base_df['ИО_Значение']
             part_df['МОУПККЛ_ИО_Диапазон'] = base_df['ИО_Диапазон']
-            part_df['МОУПККЛ_ОО_Значение'] = base_df['ОО_Значение']
-            part_df['МОУПККЛ_ОО_Уровень'] = base_df['ОО_Уровень']
+            part_df['МОУПККЛ_ГО_Значение'] = base_df['ГО_Значение']
+            part_df['МОУПККЛ_ГО_Уровень'] = base_df['ГО_Уровень']
 
             out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
@@ -616,7 +616,7 @@ def processing_lutoshkin_moupkk(base_df: pd.DataFrame, answers_df: pd.DataFrame,
 
             out_dct = create_list_on_level(base_df, out_dct, lst_sub, dct_prefix)
 
-            dct_prefix_oo = {'ОО_Уровень': 'ОО',
+            dct_prefix_oo = {'ГО_Уровень': 'ГО',
                           }
             out_dct = create_list_on_level(base_df, out_dct, lst_main, dct_prefix_oo)
 

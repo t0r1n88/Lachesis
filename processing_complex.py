@@ -56,6 +56,7 @@ from ostrakizm.boykina_shnpo import processing_boykina_shnpo # Шкала нар
 from ostrakizm.boykina_shso import processing_boykina_shso # Шкала субъективного остракизма Бойкина
 from ostrakizm.norkina_vbs_school import processing_norkina_vbs_school # Выявление буллинг структуры Норкина Школьники
 from ostrakizm.norkina_vbs_student import processing_norkina_vbs_student # Выявление буллинг структуры Норкина Студенты
+from ostrakizm.bochaver_orb import processing_school_orb_bochaver # Опросник риска буллинга А.А. Бочавер и др.
 
 # Тесты девиантное поведение
 from deviant.leus_sdp import processing_leus_sdp # Склонность к девиантному поведению Леус
@@ -330,6 +331,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                      'МОУПКК Лутошкин': (processing_lutoshkin_moupkk, 13),
                      'СПСК Немов Школа': (processing_school_spskn_nemov, 28),
+                     'ОРБ Бочавер': (processing_school_orb_bochaver, 48),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -440,6 +442,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
                               'МОУПКК Лутошкин': 'Методика оценки уровня психологического климата коллектива Лутошкин',
                               'СПСК Немов Школа': 'Социально-психологическая самоаттестация коллектива (школьный вариант) Немов',
+                              'ОРБ Бочавер': 'Опросник риска буллинга Бочавер и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1014,8 +1017,8 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_quantity_descr_cols = 2
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
