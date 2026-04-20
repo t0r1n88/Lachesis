@@ -26,6 +26,100 @@ class BadCountColumnsBORB(Exception):
     """
     pass
 
+def calc_value_nb(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [1,3,7,11,12,16,20,31,33,34,36,46,
+              8,21,32,35]
+    lst_neg = [8,21,32,35]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_value_b(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [15,17,26,27,41,47,
+              19,25,28,44,48]
+    lst_neg = [19,25,28,44,48]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_value_ro(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [4,22,37,39,43,
+              2,5,6,38,42]
+    lst_neg = [2,5,6,38,42]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_value_rp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [9,10,13,14,18,23,24,29,30,40,45]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if value == 'да':
+                value_forward += 1
+    return value_forward
+
+
+
+def calc_level_sub(value,quantity):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+
+    result =round((value / quantity) * 100)
+
+    if 0<= result <= 24:
+        return f'0-24%'
+    elif 25 <= result <= 49:
+        return f'25-49%'
+    elif 50 <= result <= 74:
+        return f'50-74%'
+    else:
+        return f'75-100%'
+
+
 
 
 def processing_school_orb_bochaver(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
@@ -129,6 +223,131 @@ def processing_school_orb_bochaver(base_df: pd.DataFrame, answers_df: pd.DataFra
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueBORB
+
+    base_df['ИО_НБ_Значение'] = answers_df.apply(calc_value_nb, axis=1)
+    base_df['ИО_НБ_Диапазон'] = base_df['ИО_НБ_Значение'].apply(lambda x:calc_level_sub(x,16))
+
+    base_df['ИО_Б_Значение'] = answers_df.apply(calc_value_b, axis=1)
+    base_df['ИО_Б_Диапазон'] = base_df['ИО_Б_Значение'].apply(lambda x: calc_level_sub(x, 11))
+
+    base_df['ИО_РО_Значение'] = answers_df.apply(calc_value_ro, axis=1)
+    base_df['ИО_РО_Диапазон'] = base_df['ИО_РО_Значение'].apply(lambda x: calc_level_sub(x, 10))
+
+    base_df['ИО_РП_Значение'] = answers_df.apply(calc_value_rp, axis=1)
+    base_df['ИО_РП_Диапазон'] = base_df['ИО_РП_Значение'].apply(lambda x: calc_level_sub(x, 11))
+
+    if len(lst_svod_cols) == 0:
+        base_df['ГО_НБ_Значение'] = round(base_df['ИО_НБ_Значение'].sum() / len(base_df), 1)
+        base_df['ГО_Б_Значение'] = round(base_df['ИО_Б_Значение'].sum() / len(base_df), 1)
+        base_df['ГО_РО_Значение'] = round(base_df['ИО_РО_Значение'].sum() / len(base_df), 1)
+        base_df['ГО_РП_Значение'] = round(base_df['ИО_РП_Значение'].sum() / len(base_df), 1)
+
+        # Создаем датафрейм для создания части в общий датафрейм
+        part_df = pd.DataFrame()
+
+        part_df['ОРББ_ГО_НБ_Значение'] = base_df['ГО_НБ_Значение']
+        part_df['ОРББ_ГО_Б_Значение'] = base_df['ГО_Б_Значение']
+        part_df['ОРББ_ГО_РО_Значение'] = base_df['ГО_РО_Значение']
+        part_df['ОРББ_ГО_РП_Значение'] = base_df['ГО_РП_Значение']
+
+
+        part_df['ОРББ_ИО_НБ_Значение'] = base_df['ИО_НБ_Значение']
+        part_df['ОРББ_ИО_НБ_Диапазон'] = base_df['ИО_НБ_Диапазон']
+
+        part_df['ОРББ_ИО_Б_Значение'] = base_df['ИО_Б_Значение']
+        part_df['ОРББ_ИО_Б_Диапазон'] = base_df['ИО_Б_Диапазон']
+
+        part_df['ОРББ_ИО_РО_Значение'] = base_df['ИО_РО_Значение']
+        part_df['ОРББ_ИО_РО_Диапазон'] = base_df['ИО_РО_Диапазон']
+
+        part_df['ОРББ_ИО_РП_Значение'] = base_df['ИО_РП_Значение']
+        part_df['ОРББ_ИО_РП_Диапазон'] = base_df['ИО_РП_Диапазон']
+
+        out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+        # Соединяем анкетную часть с результатной
+        base_df.sort_values(by='ИО_НБ_Значение', ascending=False, inplace=True)  # сортируем
+
+        # Делаем свод  по  шкалам
+        dct_svod_sub = {'ИО_НБ_Значение': 'ИО_НБ_Диапазон',
+                        'ИО_Б_Значение': 'ИО_Б_Диапазон',
+                        'ИО_РО_Значение': 'ИО_РО_Диапазон',
+                        'ИО_РП_Значение': 'ИО_РП_Диапазон',
+                        }
+
+        dct_rename_svod_sub = {'ИО_НБ_Значение': 'ИО диапазона в % шкалы Небезопасность',
+                               'ИО_Б_Значение': 'ИО диапазона в % шкалы Благополучие',
+                               'ИО_РО_Значение': 'ИО диапазона в % шкалы Разобщенность',
+                               'ИО_РП_Значение': 'ИО диапазона в % шкалы Равноправие',
+                               }
+
+        lst_sub = ['0-24%', '25-49%', '50-74%','75-100%']
+
+        base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
+
+        # Делаем свод  по  шкалам
+        dct_svod_pr_sub = {'ИО_НБ_Значение': 'ИО_НБ_Диапазон',
+                        'ИО_РО_Значение': 'ИО_РО_Диапазон',
+                        }
+
+        dct_rename_svod_pr_sub = {'ИО_НБ_Значение': 'ИО диапазона в % шкалы Небезопасность',
+                               'ИО_РО_Значение': 'ИО диапазона в % шкалы Разобщенность',
+                               }
+
+        base_svod_sub_pr_df = create_union_svod(base_df, dct_svod_pr_sub, dct_rename_svod_pr_sub, lst_sub)
+
+
+        dct_svod_apr_sub = {
+                        'ИО_Б_Значение': 'ИО_Б_Диапазон',
+                        'ИО_РП_Значение': 'ИО_РП_Диапазон',
+                        }
+
+        dct_rename_svod_apr_sub = {
+                               'ИО_Б_Значение': 'ИО диапазона в % шкалы Благополучие',
+                               'ИО_РП_Значение': 'ИО диапазона в % шкалы Равноправие',
+                               }
+
+        base_svod_sub_apr_df = create_union_svod(base_df, dct_svod_apr_sub, dct_rename_svod_apr_sub, lst_sub)
+
+
+
+
+
+        avg_nb = round(base_df['ИО_НБ_Значение'].mean(), 2)
+        avg_b = round(base_df['ИО_Б_Значение'].mean(), 2)
+        avg_ro = round(base_df['ИО_РО_Значение'].mean(), 2)
+        avg_rp = round(base_df['ИО_РП_Значение'].mean(), 2)
+
+        avg_dct = {'Среднее значение Индивидуальная оценка шкалы Небезопасность': avg_nb,
+                   'Среднее значение Индивидуальная оценка шкалы Благополучие': avg_b,
+                   'Среднее значение Индивидуальная оценка шкалы Разобщенность': avg_ro,
+                   'Среднее значение Индивидуальная оценка шкалы Равноправие': avg_rp,
+                   }
+
+        avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+        avg_df = avg_df.reset_index()
+        avg_df.columns = ['Показатель', 'Среднее значение']
+
+        # формируем основной словарь
+        out_dct = {'Списочный результат': base_df,
+                   'Список для проверки': out_answer_df,
+                   'Свод Предикторы': base_svod_sub_pr_df,
+                   'Свод Антипредикторы': base_svod_sub_apr_df,
+                   'Свод Шкалы': base_svod_sub_df,
+                   'Среднее': avg_df,
+                   }
+
+        dct_prefix = {'ИО_НБ_Диапазон': 'НБ',
+                      'ИО_Б_Диапазон': 'Б',
+                      'ИО_РО_Диапазон': 'РО',
+                      'ИО_РП_Диапазон': 'РП',
+                      }
+
+        out_dct = create_list_on_level(base_df, out_dct, lst_sub, dct_prefix)
+
+        return out_dct, part_df
+
+
 
 
 
