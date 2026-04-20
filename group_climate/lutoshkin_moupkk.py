@@ -336,10 +336,19 @@ def create_result_moupkk_lutoshkin(base_df:pd.DataFrame, out_dct:dict, lst_svod_
 
     out_dct.update({f'Ср {out_name}': svod_mean_one_df,
                     f'ИО {out_name}': svod_count_one_level_sj_df,
-                    f'ОО {out_name}': svod_count_one_level_t_df,
+                    f'ГО {out_name}': svod_count_one_level_t_df,
                     })
 
     if len(lst_svod_cols) == 1:
+        dct_prefix = {'ИО_Диапазон': 'ИО',
+                      }
+
+        out_dct = create_list_on_level(base_df, out_dct, lst_level_sj, dct_prefix)
+
+        dct_prefix_oo = {'ГО_Уровень': 'ГО',
+                         }
+        out_dct = create_list_on_level(base_df, out_dct, lst_t_sub, dct_prefix_oo)
+
         return out_dct
     else:
         for idx, name_column in enumerate(lst_svod_cols):
@@ -384,8 +393,17 @@ def create_result_moupkk_lutoshkin(base_df:pd.DataFrame, out_dct:dict, lst_svod_
 
             out_dct.update({f'Ср {name_column}': svod_mean_column_df,
                             f'ИО {name_column}': svod_count_column_level_io_df,
-                            f'ОО {name_column}': svod_count_column_level_oo_df,
+                            f'ГО {name_column}': svod_count_column_level_oo_df,
                             })
+        dct_prefix = {'ИО_Диапазон': 'ИО',
+                      }
+
+        out_dct = create_list_on_level(base_df, out_dct, lst_level_sj, dct_prefix)
+
+        dct_prefix_oo = {'ГО_Уровень': 'ГО',
+                         }
+        out_dct = create_list_on_level(base_df, out_dct, lst_t_sub, dct_prefix_oo)
+
         return out_dct
 
 
@@ -611,14 +629,7 @@ def processing_lutoshkin_moupkk(base_df: pd.DataFrame, answers_df: pd.DataFrame,
                        'Среднее': avg_df,
                        }
 
-            dct_prefix = {'ИО_Диапазон': 'ИО',
-                          }
 
-            out_dct = create_list_on_level(base_df, out_dct, lst_sub, dct_prefix)
-
-            dct_prefix_oo = {'ГО_Уровень': 'ГО',
-                          }
-            out_dct = create_list_on_level(base_df, out_dct, lst_main, dct_prefix_oo)
 
 
 
