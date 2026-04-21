@@ -126,6 +126,7 @@ from cyberpsychology.tereshenko_gasa import processing_gasa_ter_gor # Шкала
 # Климат в коллективе
 from group_climate.lutoshkin_moupkk import processing_lutoshkin_moupkk # Методика оценки уровня психологического климата коллектива А.Н. Лутошкин
 from group_climate.nemov_school_spsk import processing_school_spskn_nemov # Социально-психологическая самоаттестация коллектива (школьный вариант) Р.С. Немов
+from group_climate.petrova_okk import processing_okk_pet_sh # Опросник Климат в классе Петрова Щебланова
 
 
 
@@ -336,6 +337,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОРБ Бочавер': (processing_school_orb_bochaver, 48),
                      'Буллинг Олвеус': (processing_ob_olveus, 13),
                      'ОВРБ НИЦМП': (processing_school_ovrb_nicmp, 17),
+                     'ОКК Петрова Щебланова': (processing_okk_pet_sh, 39),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -449,6 +451,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОРБ Бочавер': 'Опросник риска буллинга Бочавер и др.',
                               'Буллинг Олвеус': 'Опросник Буллинг Олвеус',
                               'ОВРБ НИЦМП': 'Опросник по выявлению рисков буллинга 5-11 кл. НИЦМП',
+                              'ОКК Петрова Щебланова': 'Опросник Климат в классе Петрова Щебланова',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1024,7 +1027,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = '1,2'
+    main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
