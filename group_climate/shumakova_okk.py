@@ -27,9 +27,132 @@ class BadCountColumnsOKKPS(Exception):
     pass
 
 
+def calc_level(value):
+    """
+    Функция для подсчета уровня
+    :param value: значение
+    :return:
+    """
+    if value == 1:
+        return 'очень низкий'
+    elif  2<=value <=3 :
+        return 'ниже среднего'
+    elif  4<=value <=6 :
+        return 'средний'
+    elif  7<=value <=8 :
+        return 'выше среднего'
+    else:
+        return 'очень высокий'
 
 
-def processing_okk_pet_sh(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
+
+
+def calc_value_pu(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [5,6,7,11,21,22,23,34,35,36]
+    lst_neg = [34]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 3
+                elif value == 1:
+                    value_forward += 2
+                elif value == 2:
+                    value_forward += 1
+                elif value == 3:
+                    value_forward += 0
+
+
+    return value_forward
+
+
+def calc_pu_sten(value):
+    """
+    Функция для подсчета Стена
+    """
+    if  0<= value <= 9 :
+        return 1
+    elif 10 <=value <= 13:
+        return 2
+    elif 14<=value <= 16 :
+        return 3
+    elif 17<=value <= 19 :
+        return 4
+    elif 20<=value <=22 :
+        return 5
+    elif 23<=value <=25 :
+        return 6
+    elif 26<=value <=28 :
+        return 7
+    elif value ==29 :
+        return 8
+    else:
+        return 9
+
+
+
+def calc_value_sto(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [3,4,8,9,19,24,25,33,37]
+    lst_neg = [3,19,24,37]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 3
+                elif value == 1:
+                    value_forward += 2
+                elif value == 2:
+                    value_forward += 1
+                elif value == 3:
+                    value_forward += 0
+
+
+    return value_forward
+
+
+def calc_sto_sten(value):
+    """
+    Функция для подсчета Стена
+    """
+    if  value == 0 :
+        return 1
+    elif  1<=value <=3 :
+        return 2
+    elif 4<=value <=6  :
+        return 3
+    elif 7<=value <=9  :
+        return 4
+    elif 10<=value <=11 :
+        return 5
+    elif 12<=value <=14 :
+        return 6
+    elif 15<=value <=17 :
+        return 7
+    elif 18<=value <=19:
+        return 8
+    else:
+        return 9
+
+
+
+
+
+
+def processing_okk_shum(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки
     :param base_df: часть датафрейма с описательными колонками
@@ -127,4 +250,20 @@ def processing_okk_pet_sh(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_s
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueOKKPS
+
+    base_df['ПУ_Значение'] = answers_df.apply(calc_value_pu, axis=1)
+    base_df['ПУ_Стен'] = base_df['ПУ_Значение'].apply(calc_pu_sten)
+    base_df['ПУ_Уровень'] = base_df['ПУ_Стен'].apply(calc_level)
+
+    base_df['СТО_Значение'] = answers_df.apply(calc_value_sto, axis=1)
+    base_df['СТО_Стен'] = base_df['СТО_Значение'].apply(calc_sto_sten)
+    base_df['СТО_Уровень'] = base_df['СТО_Стен'].apply(calc_level)
+
+
+
+    base_df.to_excel('data/res.xlsx')
+
+
+
+
 
