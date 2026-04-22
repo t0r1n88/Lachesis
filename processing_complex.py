@@ -451,7 +451,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОРБ Бочавер': 'Опросник риска буллинга Бочавер и др.',
                               'Буллинг Олвеус': 'Опросник Буллинг Олвеус',
                               'ОВРБ НИЦМП': 'Опросник по выявлению рисков буллинга 5-11 кл. НИЦМП',
-                              'ОКК ШЩС': 'Опросник Климат в классе Петрова Щебланова',
+                              'ОКК ШЩС': 'Опросник Климат в классе Шумакова, Щебланова, Сорокина',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1026,7 +1026,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
+    main_quantity_descr_cols = 3
     main_svod_cols = ''
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
