@@ -26,6 +26,18 @@ class BadCountColumnsOKKPS(Exception):
     """
     pass
 
+class NotReqColumn(Exception):
+    """
+    Исключение для обработки случая когда нет обязательных колонок Пол И ФИО
+    """
+    pass
+
+class BadValueAge(Exception):
+    """
+    Исключение для обработки случая когда в колонке Пол есть значения отличающиеся от 5-6. 7-8. 9-10 классов
+    """
+    pass
+
 
 def calc_level(value):
     """
@@ -148,6 +160,236 @@ def calc_sto_sten(value):
         return 9
 
 
+def calc_value_ork(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [13,14,15,18,27,29,39]
+    lst_neg = [27]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 3
+                elif value == 1:
+                    value_forward += 2
+                elif value == 2:
+                    value_forward += 1
+                elif value == 3:
+                    value_forward += 0
+
+
+    return value_forward
+
+def calc_ork_sten(row:pd.Series):
+    """
+    Функция для подсчета Стена
+    """
+    age,value = row
+    if age == '5–6 классы':
+        if  0<= value <=1  :
+            return 1
+        elif  2<=value <=4 :
+            return 2
+        elif 5<=value <=8  :
+            return 3
+        elif 9<=value <=10  :
+            return 4
+        elif 11<=value <=13 :
+            return 5
+        elif 14<=value <=15 :
+            return 6
+        elif 16<=value <=17 :
+            return 7
+        elif value == 18:
+            return 8
+        else:
+            return 9
+    elif age == '7–8 классы':
+        if  value == 0  :
+            return 1
+        elif  1<=value <= 4 :
+            return 2
+        elif 5<=value <= 7 :
+            return 3
+        elif 8<=value <= 9 :
+            return 4
+        elif 10<=value <=12 :
+            return 5
+        elif 13<=value <=14 :
+            return 6
+        elif 15<=value <=16 :
+            return 7
+        elif 17<=value <=18 :
+            return 8
+        else:
+            return 9
+    else:
+        if  value == 0  :
+            return 1
+        elif  1<=value <=2 :
+            return 2
+        elif 3<=value <=5  :
+            return 3
+        elif 6<=value <=7  :
+            return 4
+        elif 8<=value <=10 :
+            return 5
+        elif 11<=value <=12 :
+            return 6
+        elif 13<=value <=14 :
+            return 7
+        elif 15<=value <=17 :
+            return 8
+        else:
+            return 9
+
+
+
+def calc_value_spo(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [2,10,16,17,20,26]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+
+
+    return value_forward
+
+def calc_spo_sten(value):
+    """
+    Функция для подсчета Стена
+    """
+
+    if  0<= value <=1:
+        return 1
+    elif  value == 2:
+        return 2
+    elif 3<=value <= 4:
+        return 3
+    elif value ==5:
+        return 4
+    elif 6<=value <=7:
+        return 5
+    elif value ==8:
+        return 6
+    elif 9<=value <= 11:
+        return 7
+    elif 12 <=value <=13:
+        return 8
+    else:
+        return 9
+
+
+def calc_value_dshs(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [1,28,38]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+
+
+    return value_forward
+
+def calc_dshs_sten(value):
+    """
+    Функция для подсчета Стена
+    """
+
+    if  0<= value <=1:
+        return 1
+    elif  value == 2:
+        return 2
+    elif value == 3:
+        return 3
+    elif value ==4:
+        return 4
+    elif value ==5:
+        return 5
+    elif value ==6 :
+        return 6
+    elif value ==7:
+        return 7
+    elif value ==8 :
+        return 8
+    else:
+        return 9
+
+
+def calc_value_vou(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [12,30,31,32]
+    lst_neg = [12,30]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                value_forward += value
+            else:
+                if value == 0:
+                    value_forward += 3
+                elif value == 1:
+                    value_forward += 2
+                elif value == 2:
+                    value_forward += 1
+                elif value == 3:
+                    value_forward += 0
+
+
+    return value_forward
+
+def calc_vou_sten(value):
+    """
+    Функция для подсчета Стена
+    """
+
+    if  0<= value <= 3:
+        return 1
+    elif  value ==4:
+        return 2
+    elif 5<=value <=6:
+        return 3
+    elif value ==7  :
+        return 4
+    elif value ==8:
+        return 5
+    elif value ==9 :
+        return 6
+    elif value ==10 :
+        return 7
+    elif value ==11:
+        return 8
+    else:
+        return 9
+
+def create_itog_stens(row):
+    """
+    Функция для создания строки с итоговым стеном
+    :param row: строка с результатами
+    :return:
+    """
+    lst_out = list(map(str,row))
+    return '-'.join(lst_out)
+
+
+
+
+
 
 
 
@@ -159,7 +401,18 @@ def processing_okk_shum(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svo
     :param answers_df: часть датафрейма с ответами
     :param lst_svod_cols:  список с колонками по которым нужно делать свод
     """
-    out_answer_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+    # Проверяем наличие колонок Пол
+    diff_req_cols = {'Возраст'}.difference(set(base_df.columns))
+    if len(diff_req_cols) != 0:
+        raise NotReqColumn
+
+    # Проверяем на пол
+    diff_sex = set(base_df['Возраст'].unique()).difference({'5-6 классы', '7-8 классы','9-10 классы'})
+    if len(diff_sex) != 0:
+        raise BadValueAge
+
+    union_base_df = base_df.copy()  # делаем копию для последующего соединения с сырыми ответами
+    quantity_cols_base_df = base_df.shape[1]  # количество колонок в анкетной части
     if len(answers_df.columns) != 39:  # проверяем количество колонок с вопросами
         raise BadCountColumnsOKKPS
 
@@ -259,9 +512,84 @@ def processing_okk_shum(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svo
     base_df['СТО_Стен'] = base_df['СТО_Значение'].apply(calc_sto_sten)
     base_df['СТО_Уровень'] = base_df['СТО_Стен'].apply(calc_level)
 
+    base_df['ОРК_Значение'] = answers_df.apply(calc_value_ork, axis=1)
+    base_df['ОРК_Стен'] = base_df[['Возраст','ОРК_Значение']].apply(calc_ork_sten,axis=1)
+    base_df['ОРК_Уровень'] = base_df['ОРК_Стен'].apply(calc_level)
 
+
+    base_df['СПО_Значение'] = answers_df.apply(calc_value_spo, axis=1)
+    base_df['СПО_Стен'] = base_df['СПО_Значение'].apply(calc_spo_sten)
+    base_df['СПО_Уровень'] = base_df['СПО_Стен'].apply(calc_level)
+
+    base_df['ДШС_Значение'] = answers_df.apply(calc_value_dshs, axis=1)
+    base_df['ДШС_Стен'] = base_df['ДШС_Значение'].apply(calc_dshs_sten)
+    base_df['ДШС_Уровень'] = base_df['ДШС_Стен'].apply(calc_level)
+
+    base_df['ВОУ_Значение'] = answers_df.apply(calc_value_vou, axis=1)
+    base_df['ВОУ_Стен'] = base_df['ВОУ_Значение'].apply(calc_vou_sten)
+    base_df['ВОУ_Уровень'] = base_df['ВОУ_Стен'].apply(calc_level)
+
+    # Упорядочиваем
+    result_df = base_df.iloc[:, quantity_cols_base_df:]  # отсекаем часть с результатами чтобы упорядочить
+    lst_stens = [column for column in result_df.columns if 'Стен' in column]
+    result_df['Итоговые_стены'] = result_df[lst_stens].apply(create_itog_stens, axis=1)
+
+    new_order_lst = ['Итоговые_стены',
+                     'ПУ_Стен', 'СТО_Стен', 'ОРК_Стен',
+                     'СПО_Стен', 'ДШС_Стен', 'ВОУ_Стен',
+
+                     'ПУ_Уровень', 'СТО_Уровень', 'ОРК_Уровень',
+                     'СПО_Уровень', 'ДШС_Уровень', 'ВОУ_Уровень',
+
+                     'ПУ_Значение', 'СТО_Значение', 'ОРК_Значение',
+                     'СПО_Значение', 'ДШС_Значение', 'ВОУ_Значение'
+                     ]
+    result_df = result_df.reindex(columns=new_order_lst)  # изменяем порядок
+    base_df = pd.concat([union_base_df, result_df], axis=1)  # соединяем и перезаписываем base_df
 
     base_df.to_excel('data/res.xlsx')
+
+
+
+
+
+    # Создаем датафрейм для создания части в общий датафрейм
+    part_df = pd.DataFrame()
+
+    # Основные шкалы
+    part_df['ОККШЩС_Итоговые_стены'] = base_df['Итоговые_стены']
+
+    part_df['ОККШЩС_ПУ_Стен'] = base_df['ПУ_Стен']
+    part_df['ОККШЩС_СТО_Стен'] = base_df['СТО_Стен']
+    part_df['ОККШЩС_ОРК_Стен'] = base_df['ОРК_Стен']
+
+    part_df['ОККШЩС_СПО_Стен'] = base_df['СПО_Стен']
+    part_df['ОККШЩС_ДШС_Стен'] = base_df['ДШС_Стен']
+    part_df['ОККШЩС_ВОУ_Стен'] = base_df['ВОУ_Стен']
+
+
+    part_df['ОККШЩС_ПУ_Уровень'] = base_df['ПУ_Уровень']
+    part_df['ОККШЩС_СТО_Уровень'] = base_df['СТО_Уровень']
+    part_df['ОККШЩС_ОРК_Уровень'] = base_df['ОРК_Уровень']
+
+    part_df['ОККШЩС_СПО_Уровень'] = base_df['СПО_Уровень']
+    part_df['ОККШЩС_ДШС_Уровень'] = base_df['ДШС_Уровень']
+    part_df['ОККШЩС_ВОУ_Уровень'] = base_df['ВОУ_Уровень']
+
+
+    part_df['ОККШЩС_ПУ_Значение'] = base_df['ПУ_Значение']
+    part_df['ОККШЩС_СТО_Значение'] = base_df['СТО_Значение']
+    part_df['ОККШЩС_ОРК_Значение'] = base_df['ОРК_Значение']
+
+    part_df['ОККШЩС_СПО_Значение'] = base_df['СПО_Значение']
+    part_df['ОККШЩС_ДШС_Значение'] = base_df['ДШС_Значение']
+    part_df['ОККШЩС_ВОУ_Значение'] = base_df['ВОУ_Значение']
+
+
+
+
+
+
 
 
 
