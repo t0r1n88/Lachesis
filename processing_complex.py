@@ -11,6 +11,7 @@ from prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # 
 from prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
 from prof_burnout.pavlova_ocs import processing_ocs_pav # Шкала организационного цинизма Павлова
+from prof_burnout.isaeva_ob import processing_ob_isaeva # Опросник благополучия PERMA-Profiler Исаева, Акимова, Волкова
 
 # Тесты ментальное и психологическое состояние
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
@@ -341,6 +342,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОВРБ НИЦМП': (processing_school_ovrb_nicmp, 17),
                      'ОКК ШЩС': (processing_okk_shum, 39),
                      'ШОЦ ПДН': (processing_ocs_pav, 13),
+                     'ОБ ИАВ': (processing_ob_isaeva, 23),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -456,6 +458,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОВРБ НИЦМП': 'Опросник по выявлению рисков буллинга 5-11 кл. НИЦМП',
                               'ОКК ШЩС': 'Опросник Климат в классе Шумакова, Щебланова, Сорокина',
                               'ШОЦ ПДН': 'Шкала организационного цинизма, OCS Павлова и др.',
+                              'ОБ ИАВ': 'Опросник благополучия PERMA-Profiler Исаева и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
