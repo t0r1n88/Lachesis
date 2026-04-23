@@ -595,6 +595,8 @@ def create_result_okk_shumakova(base_df:pd.DataFrame, out_dct:dict, lst_svod_col
 
 
 
+
+
 def processing_okk_shum(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки

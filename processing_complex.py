@@ -10,6 +10,8 @@ from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burn
 from prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
 from prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
 
+from prof_burnout.pavlova_ocs import processing_ocs_pav # Шкала организационного цинизма Павлова
+
 # Тесты ментальное и психологическое состояние
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
 from mental_state.aizenk_self_mental_state import processing_aizenk_self_mental_state # Самодиагностика психического состояния Айзенк
@@ -338,6 +340,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Буллинг Олвеус': (processing_ob_olveus, 13),
                      'ОВРБ НИЦМП': (processing_school_ovrb_nicmp, 17),
                      'ОКК ШЩС': (processing_okk_shum, 39),
+                     'ШОЦ ПДН': (processing_ocs_pav, 13),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -452,6 +455,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Буллинг Олвеус': 'Опросник Буллинг Олвеус',
                               'ОВРБ НИЦМП': 'Опросник по выявлению рисков буллинга 5-11 кл. НИЦМП',
                               'ОКК ШЩС': 'Опросник Климат в классе Шумакова, Щебланова, Сорокина',
+                              'ШОЦ ПДН': 'Шкала организационного цинизма, OCS Павлова и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
