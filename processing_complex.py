@@ -103,6 +103,7 @@ from motivation.kotik_motiv_target import processing_kotik_motiv_target # Опр
 from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Опросник мотивации к избеганию неудач Элерс Котик
 from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Опросник оценки склонности к риску, RSK (Г. Шуберт)
 from motivation.prihogan_dmuaou import processing_dmuaoup_prihogan # Диагностика мотивации учения и эмоционального отношения к учению в средних и старших классах школы Прихожан
+from motivation.serg_control import processing_okp_serg # Опросник Контроль поведения Сергиенко, Виленская, Ветрова
 
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
@@ -343,6 +344,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОКК ШЩС': (processing_okk_shum, 39),
                      'ШОЦ ПДН': (processing_ocs_pav, 13),
                      'ОБ ИАВ': (processing_ob_isaeva, 23),
+                     'ОКП СВВ': (processing_okp_serg, 27),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -459,6 +461,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОКК ШЩС': 'Опросник Климат в классе Шумакова, Щебланова, Сорокина',
                               'ШОЦ ПДН': 'Шкала организационного цинизма, OCS Павлова и др.',
                               'ОБ ИАВ': 'Опросник благополучия PERMA-Profiler Исаева и др.',
+                              'ОКП СВВ': 'Опросник Контроль поведения Сергиенко и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
