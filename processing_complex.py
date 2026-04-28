@@ -105,6 +105,7 @@ from motivation.kotik_avoiding_fail import processing_kotik_avoiding_fail # Оп
 from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Опросник оценки склонности к риску, RSK (Г. Шуберт)
 from motivation.prihogan_dmuaou import processing_dmuaoup_prihogan # Диагностика мотивации учения и эмоционального отношения к учению в средних и старших классах школы Прихожан
 from motivation.serg_control import processing_okp_serg # Опросник Контроль поведения Сергиенко, Виленская, Ветрова
+from motivation.gordeeva_shamsh import processing_shamsh_gor # Методика Шкалы академической мотивации школьников Гордеева, Сычев, Гижицкий, Гавриченкова
 
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
@@ -347,6 +348,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОБ ИАВ': (processing_ob_isaeva, 23),
                      'ОКП СВВ': (processing_okp_serg, 27),
                      'ИСКБШ Г': (processing_iskbsh_gil, 35),
+                     'ШАМ-Ш ГСГГ': (processing_shamsh_gor, 32),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -465,6 +467,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОБ ИАВ': 'Опросник благополучия PERMA-Profiler Исаева и др.',
                               'ОКП СВВ': 'Опросник Контроль поведения Сергиенко и др.',
                               'ИСКБШ Г': 'Индекс социокультурной безопасности школьника Гилемханова',
+                              'ШАМ-Ш ГСГГ': 'Шкалы академической мотивации школьников Гордеева и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1040,7 +1043,7 @@ if __name__ == '__main__':
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
     main_quantity_descr_cols = 3
-    main_svod_cols = ''
+    main_svod_cols = '1,2'
 
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
