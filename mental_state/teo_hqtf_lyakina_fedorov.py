@@ -65,7 +65,7 @@ def calc_value_ip(row):
                     value_forward += 3
                 elif value == 2:
                     value_forward += 2
-                elif value == 1:
+                elif value == 3:
                     value_forward += 1
                 else:
                     value_forward += 0
@@ -94,7 +94,7 @@ def calc_value_s(row):
                     value_forward += 3
                 elif value == 2:
                     value_forward += 2
-                elif value == 1:
+                elif value == 3:
                     value_forward += 1
                 else:
                     value_forward += 0
@@ -141,7 +141,7 @@ def calc_value_i(row):
                     value_forward += 3
                 elif value == 2:
                     value_forward += 2
-                elif value == 1:
+                elif value == 3:
                     value_forward += 1
                 else:
                     value_forward += 0
@@ -168,7 +168,7 @@ def calc_value_ap(row):
                     value_forward += 3
                 elif value == 2:
                     value_forward += 2
-                elif value == 1:
+                elif value == 3:
                     value_forward += 1
                 else:
                     value_forward += 0
@@ -177,7 +177,7 @@ def calc_value_ap(row):
     return value_forward
 
 
-def create_result_hol_matalina(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+def create_result_hqtf_lyakina(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
     Функция для подсчета результата если указаны колонки по которым нужно провести свод
     :param df: датафрейм с результатами
@@ -532,7 +532,7 @@ def processing_hqtf_lyak_fed(base_df: pd.DataFrame, answers_df: pd.DataFrame, ls
             return out_dct, part_df
 
         else:
-            out_dct = create_result_hol_matalina(base_df, out_dct, lst_svod_cols)
+            out_dct = create_result_hqtf_lyakina(base_df, out_dct, lst_svod_cols)
             return out_dct, part_df
 
     except BadOrderHQTFLF:
