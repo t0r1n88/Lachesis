@@ -75,6 +75,7 @@ from deviant.pochebut_va import processing_va_pochebut # Виды агресси
 from deviant.dap_p_school import processing_dap_p_school # ДАП-П Школьный вариант
 from deviant.dap_p_spo import processing_dap_p_spo # ДАП-П СПО вариант
 from deviant.rojkov_dvdgr import processing_dvdgr_roj_kov # Методика первичной диагностики и выявления детей «группы риска Рожков Ковальчук
+from deviant.vasyagina_olro_mlad import processing_olro_vas_mlad # Скрининговая методика оценки личностных ресурсов обучающихся Васягина, Григорян, Баринова форма 1 для 5-8 классов
 
 
 # Профориентационные тесты
@@ -349,6 +350,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОКП СВВ': (processing_okp_serg, 27),
                      'ИСКБШ Г': (processing_iskbsh_gil, 35),
                      'ШАМ-Ш ГСГГ': (processing_shamsh_gor, 32),
+                     'СМОЛРО ВГБ Млад': (processing_olro_vas_mlad, 46),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -468,6 +470,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОКП СВВ': 'Опросник Контроль поведения Сергиенко и др.',
                               'ИСКБШ Г': 'Индекс социокультурной безопасности школьника Гилемханова',
                               'ШАМ-Ш ГСГГ': 'Шкалы академической мотивации школьников Гордеева и др.',
+                              'СМОЛРО ВГБ Млад': 'Оценка личностных ресурсов Васягина и др. 5-8 класс',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
