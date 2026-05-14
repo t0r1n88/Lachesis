@@ -116,6 +116,7 @@ from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_k
 from personality_structure.acope_polskaya import processing_acope_polskaya # Копинг стратегии для подростков Польская
 from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni # Копинг стратегии Лазарус НИПНИ Бехтерева
 from personality_structure.matalina_hol import processing_hol_mat # Экспресс-диагностика характерологических особенностей личности Маталина
+from personality_structure.razvalaeva_dmti import processing_dmti_raz # Опросник Тенденции в принятии решений DMTI Разваляева
 
 # Зависимости
 from cyberpsychology.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
@@ -357,6 +358,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'СМОЛРО ВГБ Стар': (processing_olro_vas_star, 51),
                      'ИЖЦ Резапкина': (processing_igz_rez, 40),
                      'ОСП ЗЗК': (processing_osp_zar, 12),
+                     'ТПР Разваляева': (processing_dmti_raz, 20),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -480,6 +482,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'СМОЛРО ВГБ Стар': 'Оценка личностных ресурсов Васягина и др. 9-11 класс, студенты',
                               'ИЖЦ Резапкина': 'Иерархия жизненных ценностей Резапкина',
                               'ОСП ЗЗК': 'Опросник Субъектная позиция Зарецкий и др.',
+                              'ТПР Разваляева': 'Опросник Тенденции в принятии решений DMTI Разваляева',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
