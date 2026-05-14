@@ -379,7 +379,7 @@ def processing_olro_vas_mlad(base_df: pd.DataFrame, answers_df: pd.DataFrame, ls
         dct_svod_sub = {'ЛР_Значение': 'ЛР_Уровень',
                         }
 
-        dct_rename_svod_sub = {'ЛР_Значение': 'Шкала личностных ресурсов"',
+        dct_rename_svod_sub = {'ЛР_Значение': 'Шкала личностных ресурсов',
                                }
 
         lst_sub = [ 'высокий уровень','средний уровень','низкий уровень']
