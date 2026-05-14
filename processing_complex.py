@@ -109,6 +109,7 @@ from motivation.kotik_risk_appetite import processing_kotik_risk_appetite # Оп
 from motivation.prihogan_dmuaou import processing_dmuaoup_prihogan # Диагностика мотивации учения и эмоционального отношения к учению в средних и старших классах школы Прихожан
 from motivation.serg_control import processing_okp_serg # Опросник Контроль поведения Сергиенко, Виленская, Ветрова
 from motivation.gordeeva_shamsh import processing_shamsh_gor # Методика Шкалы академической мотивации школьников Гордеева, Сычев, Гижицкий, Гавриченкова
+from motivation.zarezki_osp import processing_osp_zar # Опросник Субъектная позиция Зарецкий, Зарецкий, Кулагина
 
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
@@ -355,6 +356,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'СМОЛРО ВГБ Млад': (processing_olro_vas_mlad, 46),
                      'СМОЛРО ВГБ Стар': (processing_olro_vas_star, 51),
                      'ИЖЦ Резапкина': (processing_igz_rez, 40),
+                     'ОСП ЗЗК': (processing_osp_zar, 12),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -477,6 +479,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'СМОЛРО ВГБ Млад': 'Оценка личностных ресурсов Васягина и др. 5-8 класс',
                               'СМОЛРО ВГБ Стар': 'Оценка личностных ресурсов Васягина и др. 9-11 класс, студенты',
                               'ИЖЦ Резапкина': 'Иерархия жизненных ценностей Резапкина',
+                              'ОСП ЗЗК': 'Опросник Субъектная позиция Зарецкий и др.',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
