@@ -9,6 +9,7 @@ from prof_burnout.maslach_prof_burnount_vodopyanova import processing_maslach_pr
 from prof_burnout.boiko_emotional_burnout import processing_boiko_emotional_burnout # Профессиональное выгорание Бойко
 from prof_burnout.bat_short_version_demkin import processing_short_bat_demkin # BAT краткая версия Демкин
 from prof_burnout.rukavishnikov_psych_burnout import processing_rukav_psych_burnout # Опросник психологического выгорания Рукавишников
+from prof_burnout.gordeeva_ossh import processing_ossh_gor # Опросник Ситуации в школе Гордеева, Сычев
 
 from prof_burnout.pavlova_ocs import processing_ocs_pav # Шкала организационного цинизма Павлова
 from prof_burnout.isaeva_ob import processing_ob_isaeva # Опросник благополучия PERMA-Profiler Исаева, Акимова, Волкова
@@ -361,6 +362,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОСП ЗЗК': (processing_osp_zar, 12),
                      'ТПР Разваляева': (processing_dmti_raz, 20),
                      'ШШПА Бехтер': (processing_sspa_beh, 8),
+                     'ОСШ ГС': (processing_ossh_gor, 60),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -486,6 +488,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОСП ЗЗК': 'Опросник Субъектная позиция Зарецкий и др.',
                               'ТПР Разваляева': 'Опросник Тенденции в принятии решений DMTI Разваляева',
                               'ШШПА Бехтер': 'Шкала Шварцера Проактивные аттитюды Бехтер',
+                              'ОСШ ГС': 'Опросник Ситуации в школе Гордеева, Сычев',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
