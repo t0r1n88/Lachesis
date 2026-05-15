@@ -59,6 +59,82 @@ def calc_value_pa(row):
     return round(value_forward / len(lst_pr),2)
 
 
+def calc_value_ss(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [1,5,9,15,18,23,28,31,34,39,44,46,50,54,58]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return round(value_forward / len(lst_pr),2)
+
+
+def calc_value_cs(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [3,8,11,14,17,22,27,30,33,37,42,48,49,53,57]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return round(value_forward / len(lst_pr),2)
+
+def calc_value_hs(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [2,6,10,13,20,24,25,32,35,40,43,47,52,56,60]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return round(value_forward / len(lst_pr),2)
+
+
+def calc_value_vs(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [4,19,41,55,59]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return round(value_forward / len(lst_pr),2)
+
+def calc_value_ps(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [7,12,16,21,26,29,36,38,45,51]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return round(value_forward / len(lst_pr),2)
+
+
+def calc_value_ns(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [15,18,23,28,31,34,50,54]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            value_forward += value
+    return round(value_forward / len(lst_pr),2)
+
+
 
 
 
@@ -196,6 +272,25 @@ def processing_ossh_gor(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svo
 
     base_df['ПА_Значение'] = answers_df.apply(calc_value_pa, axis=1)
     base_df['ПА_Диапазон'] = base_df['ПА_Значение'].apply(calc_level)
+
+    base_df['СС_Значение'] = answers_df.apply(calc_value_ss, axis=1)
+    base_df['СС_Диапазон'] = base_df['СС_Значение'].apply(calc_level)
+
+    base_df['КС_Значение'] = answers_df.apply(calc_value_cs, axis=1)
+    base_df['КС_Диапазон'] = base_df['КС_Значение'].apply(calc_level)
+
+    base_df['ХС_Значение'] = answers_df.apply(calc_value_hs, axis=1)
+    base_df['ХС_Диапазон'] = base_df['ХС_Значение'].apply(calc_level)
+
+
+    base_df['ВС_Значение'] = answers_df.apply(calc_value_vs, axis=1)
+    base_df['ВС_Диапазон'] = base_df['ВС_Значение'].apply(calc_level)
+
+    base_df['ПС_Значение'] = answers_df.apply(calc_value_ps, axis=1)
+    base_df['ПС_Диапазон'] = base_df['ПС_Значение'].apply(calc_level)
+
+    base_df['НС_Значение'] = answers_df.apply(calc_value_ns, axis=1)
+    base_df['НС_Диапазон'] = base_df['НС_Значение'].apply(calc_level)
 
 
     base_df.to_excel('data/res.xlsx')
