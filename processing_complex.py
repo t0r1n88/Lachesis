@@ -119,6 +119,7 @@ from personality_structure.lazarus_wcq_nipni import processing_lazarus_wcq_nipni
 from personality_structure.matalina_hol import processing_hol_mat # Экспресс-диагностика характерологических особенностей личности Маталина
 from personality_structure.razvalaeva_dmti import processing_dmti_raz # Опросник Тенденции в принятии решений DMTI Разваляева
 from personality_structure.behter_pa import processing_sspa_beh # Шкала Шварцера Проактивные аттитюды Бехтер
+from personality_structure.alexsandrova_sdjs import processing_sdjs_alex # Семантический дифференциал жизненной ситуации Александрова., Дерманова
 
 # Зависимости
 from cyberpsychology.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
@@ -363,6 +364,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ТПР Разваляева': (processing_dmti_raz, 20),
                      'ШШПА Бехтер': (processing_sspa_beh, 8),
                      'ОСШ ГС': (processing_ossh_gor, 60),
+                     'СДЖС АД': (processing_sdjs_alex, 39),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -489,6 +491,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ТПР Разваляева': 'Опросник Тенденции в принятии решений DMTI Разваляева',
                               'ШШПА Бехтер': 'Шкала Шварцера Проактивные аттитюды Бехтер',
                               'ОСШ ГС': 'Опросник Ситуации в школе Гордеева, Сычев',
+                              'СДЖС АД': 'Семантический дифференциал жизненной ситуации Александрова, Дерманова',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
