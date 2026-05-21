@@ -121,6 +121,7 @@ from personality_structure.razvalaeva_dmti import processing_dmti_raz # Опро
 from personality_structure.behter_pa import processing_sspa_beh # Шкала Шварцера Проактивные аттитюды Бехтер
 from personality_structure.alexsandrova_sdjs import processing_sdjs_alex # Семантический дифференциал жизненной ситуации Александрова., Дерманова
 from personality_structure.garanyan_op import processing_op_ghu # Опросник перфекционизма Гаранян, Холмогорова, Юдеева
+from personality_structure.tatarko_osa import processing_osa_tatarko # Опросник социальных аксиом (ОСА-31) Татарко, Лебедева
 
 # Зависимости
 from cyberpsychology.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
@@ -367,6 +368,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОСШ ГС': (processing_ossh_gor, 60),
                      'СДЖС АД': (processing_sdjs_alex, 39),
                      'ОП ГХЮ': (processing_op_ghu, 18),
+                     'ОСА ТЛ': (processing_osa_tatarko, 31),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -495,6 +497,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОСШ ГС': 'Опросник Ситуации в школе Гордеева, Сычев',
                               'СДЖС АД': 'Семантический дифференциал жизненной ситуации Александрова, Дерманова',
                               'ОП ГХЮ': 'Опросник перфекционизма Гаранян, Холмогорова, Юдеева',
+                              'ОСА ТЛ': 'Опросник социальных аксиом (ОСА-31) Татарко, Лебедева',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
