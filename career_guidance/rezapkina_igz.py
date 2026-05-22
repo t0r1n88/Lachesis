@@ -654,7 +654,7 @@ def processing_igz_rez(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod
 
     except BadCountColumnsIGZR:
         messagebox.showerror('Лахеcис',
-                             f'Проверьте количество колонок с ответами на тест Иерархия жизненных ценностей Резапкина \n'
+                             f'Проверьте количество колонок с ответами на тест Иерархия жизненных ценностей Резапкина\n'
                              f'Должно быть 40 колонок с ответами')
 
 
