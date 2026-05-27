@@ -752,10 +752,6 @@ def processing_okk_shum(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svo
         result_df = result_df.reindex(columns=new_order_lst)  # изменяем порядок
         base_df = pd.concat([union_base_df, result_df], axis=1)  # соединяем и перезаписываем base_df
 
-        base_df.to_excel('data/res.xlsx')
-
-
-
 
 
         # Создаем датафрейм для создания части в общий датафрейм

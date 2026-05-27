@@ -262,7 +262,7 @@ def count_group_result(df:pd.DataFrame):
     :param df:
     :return:
     """
-    return round(df.sum() / len(df),1)
+    return round(df.sum() / len(df),2)
 
 
 
@@ -583,8 +583,11 @@ def processing_lutoshkin_moupkk(base_df: pd.DataFrame, answers_df: pd.DataFrame,
                                              aggfunc=count_group_result)
 
             group_result_df = group_result_df.reset_index()
-            group_result_df.rename(columns={'ИО_Значение':'ГО_Значение'},inplace=True)
-            base_df = base_df.merge(group_result_df,how='inner',on=lst_svod_cols)
+            group_result_df.rename(columns={'ИО_Значение': 'ГО_Значение'}, inplace=True)
+            base_df['Порядок'] = range(1,len(base_df) + 1)  # сохраняем порядок
+            base_df = base_df.merge(group_result_df, how='inner', on=lst_svod_cols)
+            base_df = base_df.sort_values('Порядок').drop(columns=['Порядок'])  # восстанавливаем порядок
+            base_df = base_df.reset_index(drop=True)
             base_df['ГО_Уровень'] = base_df['ГО_Значение'].apply(calc_level_all)
 
             # Создаем датафрейм для создания части в общий датафрейм
