@@ -611,8 +611,6 @@ def processing_lutoshkin_moupkk(base_df: pd.DataFrame, answers_df: pd.DataFrame,
                                    }
 
             lst_sub = ['от -39 до -16', 'от -15 до 0', 'от 1 до 15', 'от 16 до 39']
-            lst_main = ['высокая степень БСПК', 'средняя степень БСПК', 'низкая степень БСПК', 'начальная НСПК',
-                        'средняя НСПК', 'сильная НСПК']
 
             base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
 

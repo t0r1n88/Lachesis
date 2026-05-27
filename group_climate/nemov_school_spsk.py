@@ -33,13 +33,44 @@ def calc_level(value):
     :param value:
     :return:
     """
+    result = round((value / 112)*100)
 
-    if 3<= value:
+    if 75 <= result:
         return f'высокий уровень ЭО'
-    elif 2 <= value < 3:
+    elif 50 <= result < 74:
         return f'средний уровень ЭО'
     else:
         return f'низкий уровень ЭО'
+
+
+def calc_level_sub(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+
+    if 0 <=value <= 25:
+        return f'0-25'
+    elif 26 <= value <= 50:
+        return f'26-50'
+    elif 51 <= value <= 75:
+        return f'51-75'
+    elif 76 <= value <= 100:
+        return f'76-100'
+    else:
+        return f'101-112'
+
+
+def count_group_result(df:pd.DataFrame):
+    """
+    Для подсчета внутри группы
+    :param df:
+    :return:
+    """
+    return round(df.sum() / len(df),2)
+
+
 
 def create_result_school_spsk_nemov(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
@@ -49,32 +80,44 @@ def create_result_school_spsk_nemov(base_df:pd.DataFrame, out_dct:dict, lst_svod
     :param lst_svod_cols: список сводных колонок
     :return: словарь
     """
-    lst_level = ['высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО']
 
-    lst_reindex_one_level_cols = lst_svod_cols.copy()
-    lst_reindex_one_level_cols.extend(['высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО',
+    lst_level_sj = ['0-25', '26-50', '51-75', '76-100','101-112']
+    lst_reindex_one_level_sj_cols = lst_svod_cols.copy()
+    lst_reindex_one_level_sj_cols.extend(['0-25', '26-50', '51-75', '76-100','101-112',
                                        'Итого'])  # Основная шкала
-    svod_count_one_level_vcha_df = calc_count_scale(base_df, lst_svod_cols,
-                                                    'ЭО_Значение',
-                                                    'ЭО_Уровень',
-                                                    lst_reindex_one_level_cols, lst_level)
+
+    svod_count_one_level_sj_df = calc_count_scale(base_df, lst_svod_cols,
+                                                    'ИО_Значение',
+                                                    'ИО_Диапазон',
+                                                    lst_reindex_one_level_sj_cols, lst_level_sj)
+
+    lst_t_sub = ['высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО']
+
+    lst_reindex_one_level_t_cols = lst_svod_cols.copy()
+    lst_reindex_one_level_t_cols.extend(['высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО',
+                                         'Итого'])  # Основная шкала
+
+    svod_count_one_level_t_df = calc_count_scale(base_df, lst_svod_cols,
+                                                 'ГО_Значение',
+                                                 'ГО_Уровень',
+                                                 lst_reindex_one_level_t_cols, lst_t_sub)
 
     # Считаем среднее по субшкалам
     svod_mean_one_df = pd.pivot_table(base_df,
                                       index=lst_svod_cols,
                                       values=[
-                                          'ЭО_Значение',
+                                          'ИО_Значение'
                                       ],
                                       aggfunc=round_mean_two)
     svod_mean_one_df.reset_index(inplace=True)
 
     # упорядочиваем колонки
     new_order_cols = lst_svod_cols.copy()
-    new_order_cols.extend((['ЭО_Значение'
+    new_order_cols.extend((['ИО_Значение'
                             ]))
     svod_mean_one_df = svod_mean_one_df.reindex(columns=new_order_cols)
 
-    dct_rename_cols_mean = {'ЭО_Значение': 'Ср. эталонность общности',
+    dct_rename_cols_mean = {'ИО_Значение': 'Ср. значение Индивидуальная оценка уровня эталонности общности',
                             }
     svod_mean_one_df.rename(columns=dct_rename_cols_mean, inplace=True)
 
@@ -95,48 +138,77 @@ def create_result_school_spsk_nemov(base_df:pd.DataFrame, out_dct:dict, lst_svod
         out_name = out_name[:14]
 
     out_dct.update({f'Ср {out_name}': svod_mean_one_df,
-                    f'ЭО {out_name}': svod_count_one_level_vcha_df,
+                    f'ИО {out_name}': svod_count_one_level_sj_df,
+                    f'ГО {out_name}': svod_count_one_level_t_df,
                     })
 
     if len(lst_svod_cols) == 1:
+        dct_prefix = {'ИО_Диапазон': 'ИО',
+                      }
+
+        out_dct = create_list_on_level(base_df, out_dct, lst_level_sj, dct_prefix)
+
+        dct_prefix_oo = {'ГО_Уровень': 'ГО',
+                         }
+        out_dct = create_list_on_level(base_df, out_dct, lst_t_sub, dct_prefix_oo)
+
         return out_dct
+
     else:
         for idx, name_column in enumerate(lst_svod_cols):
-            lst_reindex_column_level_cols = [lst_svod_cols[idx],'высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО',
-                                                  'Итого']
-            svod_count_column_level_vcha_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                               'ЭО_Значение',
-                                                               'ЭО_Уровень',
-                                                               lst_reindex_column_level_cols, lst_level)
+            lst_reindex_column_io_level_cols = [lst_svod_cols[idx],'0-25', '26-50', '51-75', '76-100','101-112',
+                                   'Итого']  # Основная шкала
+
+            lst_reindex_column_oo_level_cols = [lst_svod_cols[idx],'высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО',
+                                   'Итого']  # Основная шкала
+
+            svod_count_column_level_io_df = calc_count_scale(base_df, lst_svod_cols[idx],
+                                                          'ИО_Значение',
+                                                          'ИО_Диапазон',
+                                                          lst_reindex_column_io_level_cols, lst_level_sj)
+
+            svod_count_column_level_oo_df = calc_count_scale(base_df, lst_svod_cols[idx],
+                                                          'ГО_Значение',
+                                                          'ГО_Уровень',
+                                                          lst_reindex_column_oo_level_cols, lst_t_sub)
 
             # Считаем среднее по субшкалам
             svod_mean_column_df = pd.pivot_table(base_df,
                                                  index=[lst_svod_cols[idx]],
                                                  values=[
-                                                     'ЭО_Значение',
+                                                     'ИО_Значение'
                                                  ],
                                                  aggfunc=round_mean_two)
             svod_mean_column_df.reset_index(inplace=True)
 
             # упорядочиваем колонки
             new_order_cols = [lst_svod_cols[idx]].copy()
-            new_order_cols.extend((['ЭО_Значение'
+            new_order_cols.extend((['ИО_Значение'
                                     ]))
             svod_mean_column_df = svod_mean_column_df.reindex(columns=new_order_cols)
 
-            dct_rename_cols_mean = {'ЭО_Значение': 'Ср. эталонность общности',
-                                    }
+            dct_rename_cols_mean = {
+                'ИО_Значение': 'Ср. значение Индивидуальная оценка уровня эталонности общности',
+            }
             svod_mean_column_df.rename(columns=dct_rename_cols_mean, inplace=True)
-            # Готовим наименование
             name_column = lst_svod_cols[idx]
             name_column = re.sub(r'[\[\]\'+()<> :"?*|\\/]', '_', name_column)
             name_column = name_column[:15]
+
             out_dct.update({f'Ср {name_column}': svod_mean_column_df,
-                            f'ЭО {name_column}': svod_count_column_level_vcha_df,
+                            f'ИО {name_column}': svod_count_column_level_io_df,
+                            f'ГО {name_column}': svod_count_column_level_oo_df,
                             })
+        dct_prefix = {'ИО_Диапазон': 'ИО',
+                      }
+
+        out_dct = create_list_on_level(base_df, out_dct, lst_level_sj, dct_prefix)
+
+        dct_prefix_oo = {'ГО_Уровень': 'ГО',
+                         }
+        out_dct = create_list_on_level(base_df, out_dct, lst_t_sub, dct_prefix_oo)
+
         return out_dct
-
-
 
 
 def processing_school_spskn_nemov(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
@@ -229,61 +301,133 @@ def processing_school_spskn_nemov(base_df: pd.DataFrame, answers_df: pd.DataFram
             error_message = ';'.join(lst_error_answers)
             raise BadValueSPSKNSH
 
-        base_df['ИП_Значение'] = answers_df.sum(axis=1)
-        base_df['ЭО_Значение'] = round(base_df['ИП_Значение'] / 28,1)
-        base_df['ЭО_Уровень'] = base_df['ЭО_Значение'].apply(calc_level)
+        base_df['ИО_Значение'] = answers_df.sum(axis=1)
+        base_df['ИО_Диапазон'] = base_df['ИО_Значение'].apply(calc_level_sub)
 
-        # Создаем датафрейм для создания части в общий датафрейм
-        part_df = pd.DataFrame()
-        part_df['СПСКНШ_ИП_Значение'] = base_df['ИП_Значение']
-        part_df['СПСКНШ_ЭО_Значение'] = base_df['ЭО_Значение']
-        part_df['СПСКНШ_ЭО_Уровень'] = base_df['ЭО_Уровень']
-
-        base_df.sort_values(by='ЭО_Значение', ascending=True, inplace=True)  # сортируем
-        out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
-
-        # Делаем свод  по  шкалам
-        dct_svod_sub = {'ЭО_Значение': 'ЭО_Уровень',
-                        }
-
-        dct_rename_svod_sub = {
-            'ЭО_Значение': 'Уровень эталонности общности',
-        }
-
-        lst_sub = ['высокий уровень ЭО', 'средний уровень ЭО', 'низкий уровень ЭО']
-
-        base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
-
-        avg_psp = round(base_df['ЭО_Значение'].mean(), 2)
-
-        avg_dct = {'Среднее значение эталонности общности': avg_psp,
-                   }
-
-        avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
-        avg_df = avg_df.reset_index()
-        avg_df.columns = ['Показатель', 'Среднее значение']
-
-        # формируем основной словарь
-        out_dct = {'Списочный результат': base_df,
-                   'Список для проверки': out_answer_df,
-                   'Свод Шкалы': base_svod_sub_df,
-                   'Среднее': avg_df,
-                   }
-
-        dct_prefix = {'ЭО_Уровень': 'ЭО',
-                      }
-
-        out_dct = create_list_on_level(base_df, out_dct, lst_sub, dct_prefix)
-
-        """
-                                Сохраняем в зависимости от необходимости делать своды по определенным колонкам
-                                """
         if len(lst_svod_cols) == 0:
-            return out_dct, part_df
 
+            base_df['ГО_Значение'] = round(base_df['ИО_Значение'].sum() / len(base_df),2)
+            base_df['ГО_Уровень'] = base_df['ГО_Значение'].apply(calc_level)
+
+            # Создаем датафрейм для создания части в общий датафрейм
+            part_df = pd.DataFrame()
+
+            part_df['СПСКНШ_ИО_Значение'] = base_df['ИО_Значение']
+            part_df['СПСКНШ_ИО_Диапазон'] = base_df['ИО_Диапазон']
+            part_df['СПСКНШ_ГО_Значение'] = base_df['ГО_Значение']
+            part_df['СПСКНШ_ГО_Уровень'] = base_df['ГО_Уровень']
+
+            out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+            # Соединяем анкетную часть с результатной
+            base_df.sort_values(by='ИО_Значение', ascending=True, inplace=True)  # сортируем
+
+            # Делаем свод  по  шкалам
+            dct_svod_sub = {'ИО_Значение': 'ИО_Диапазон',
+                            }
+
+            dct_rename_svod_sub = {'ИО_Значение': 'Индивидуальная оценка уровня эталонности общности',
+                                   }
+
+            lst_sub = ['0-25', '26-50', '51-75', '76-100','101-112']
+
+            base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
+
+            avg_vcha = round(base_df['ИО_Значение'].mean(), 2)
+
+            avg_dct = {'Среднее значение Индивидуальная оценка уровня эталонности общности': avg_vcha,
+                       }
+
+            avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+            avg_df = avg_df.reset_index()
+            avg_df.columns = ['Показатель', 'Среднее значение']
+
+            # формируем основной словарь
+            out_dct = {'Списочный результат': base_df,
+                       'Список для проверки': out_answer_df,
+                       'Свод Шкалы': base_svod_sub_df,
+                       'Среднее': avg_df,
+                       }
+
+            dct_prefix = {'ИО_Диапазон': 'ИО',
+                          }
+
+            out_dct = create_list_on_level(base_df, out_dct, lst_sub, dct_prefix)
+
+            return out_dct, part_df
         else:
+            # Высчитываем по отдельности для каждой группы
+            group_result_df = pd.pivot_table(base_df,index=lst_svod_cols,
+                                             values=['ИО_Значение'],
+                                             aggfunc=count_group_result)
+            group_result_df = group_result_df.reset_index()
+            group_result_df.rename(columns={'ИО_Значение': 'ГО_Значение'}, inplace=True)
+            base_df['Порядок'] = range(1,len(base_df) + 1)  # сохраняем порядок
+            base_df = base_df.merge(group_result_df, how='inner', on=lst_svod_cols)
+            base_df = base_df.sort_values('Порядок').drop(columns=['Порядок'])  # восстанавливаем порядок
+            base_df = base_df.reset_index(drop=True)
+            base_df['ГО_Уровень'] = base_df['ГО_Значение'].apply(calc_level)
+
+            # Создаем датафрейм для создания части в общий датафрейм
+            part_df = pd.DataFrame()
+
+            part_df['СПСКНШ_ИО_Значение'] = base_df['ИО_Значение']
+            part_df['СПСКНШ_ИО_Диапазон'] = base_df['ИО_Диапазон']
+            part_df['СПСКНШ_ГО_Значение'] = base_df['ГО_Значение']
+            part_df['СПСКНШ_ГО_Уровень'] = base_df['ГО_Уровень']
+
+            out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
+
+            # Соединяем анкетную часть с результатной
+            base_df.sort_values(by='ИО_Значение', ascending=True, inplace=True)  # сортируем
+
+            # Делаем свод  по  шкалам
+            dct_svod_sub = {'ИО_Значение': 'ИО_Диапазон',
+                            }
+
+            dct_rename_svod_sub = {'ИО_Значение': 'Индивидуальная оценка уровня эталонности общности',
+                                   }
+
+            lst_sub = ['0-25', '26-50', '51-75', '76-100', '101-112']
+
+            base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
+
+            avg_vcha = round(base_df['ИО_Значение'].mean(), 2)
+
+            avg_dct = {'Среднее значение Индивидуальная оценка уровня эталонности общности': avg_vcha,
+                       }
+
+            avg_df = pd.DataFrame.from_dict(avg_dct, orient='index')
+            avg_df = avg_df.reset_index()
+            avg_df.columns = ['Показатель', 'Среднее значение']
+
+            # формируем основной словарь
+            out_dct = {'Списочный результат': base_df,
+                       'Список для проверки': out_answer_df,
+                       'Свод Шкалы': base_svod_sub_df,
+                       'Среднее': avg_df,
+                       }
+
+
+
+
+
             out_dct = create_result_school_spsk_nemov(base_df, out_dct, lst_svod_cols)
             return out_dct, part_df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     except BadOrderSPSKNSH:
