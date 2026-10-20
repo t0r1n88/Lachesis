@@ -1,5 +1,5 @@
 """
-Скрипт для обработки результатов теста Самооценка психического состояния Айзенка
+Скрипт для обработки результатов теста Склонность подростка к суицидальному поведению М.В. Горская
 """
 
 import pandas as pd
@@ -8,20 +8,20 @@ from tkinter import messagebox
 from lachesis_support_functions import round_mean,create_union_svod,create_list_on_level
 
 
-class BadOrderASMS(Exception):
+class BadOrderGSPSP(Exception):
     """
     Исключение для обработки случая когда колонки не совпадают
     """
     pass
 
 
-class BadValueASMS(Exception):
+class BadValueGSPSP(Exception):
     """
     Исключение для неправильных значений в вариантах ответов
     """
     pass
 
-class BadCountColumnsASMS(Exception):
+class BadCountColumnsGSPSP(Exception):
     """
     Исключение для обработки случая если количество колонок не равно 40
     """
@@ -331,7 +331,7 @@ def create_result_asms(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
 
 
 
-def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
+def processing_gorskaya_spsp(result_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
     """
     Функция для обработки
     :param result_df: часть датафрейма с описательными колонками
@@ -341,7 +341,7 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
     try:
         out_answer_df = result_df.copy()  # делаем копию для последующего соединения с сырыми ответами
         if len(answers_df.columns) != 40:  # проверяем количество колонок с вопросами
-            raise BadCountColumnsASMS
+            raise BadCountColumnsGSPSP
 
         # очищаем названия колонок от возможных сочетаний .1 которые добавляет пандас при одинаковых колонках
         clean_df_lst = []
@@ -367,7 +367,7 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
                          'Мне трудно сдерживать себя, когда я сержусь','Я сильно переживаю, если в моей жизни что-то неожиданно меняется',
                          'Меня легко убедить','Я чувствую растерянность, когда у меня возникают трудности',
                          'Я предпочитаю руководить, а не подчиняться','Нередко я проявляю упрямство',
-                         'В трудные минуты я иногда веду себя по-детски','В трудные минуты жизни иногда веду себя по-детски, хочу, чтобы меня пожалели',
+                         'Меня беспокоит состояние моего здоровья','В трудные минуты я иногда веду себя по-детски',
                          'У меня резкая, грубоватая жестикуляция','Я неохотно иду на риск',
                          'Я с трудом переношу время ожидания','Я думаю, что никогда не смогу исправить свои недостатки',
                          'Я мстителен','Меня расстраивают даже незначительные нарушения моих планов',
@@ -383,7 +383,7 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
                 error_order_lst.append(f'На месте колонки {main} находится колонка {temp}')
                 error_order_message = ';'.join(error_order_lst)
         if len(error_order_lst) != 0:
-            raise BadOrderASMS
+            raise BadOrderGSPSP
 
         # словарь для замены слов на числа
         dct_replace_value = {'не подходит': 0,
@@ -408,7 +408,7 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
 
         if len(lst_error_answers) != 0:
             error_message = ';'.join(lst_error_answers)
-            raise BadValueASMS
+            raise BadValueGSPSP
 
         base_df = pd.DataFrame()
 
@@ -514,21 +514,21 @@ def processing_aizenk_self_mental_state(result_df: pd.DataFrame, answers_df: pd.
 
             return out_dct, part_df
 
-    except BadOrderASMS:
+    except BadOrderGSPSP:
         messagebox.showerror('Лахеcис',
-                             f'При обработке вопросов теста Самооценка психических состояний Айзенк обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
+                             f'При обработке вопросов теста Склонность подростка к суицидальному поведению Горская обнаружены неправильные вопросы. Проверьте названия колонок с вопросами:\n'
                              f'{error_order_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вопросов из руководства пользователя программы Лахесис.')
-    except BadValueASMS:
+    except BadValueGSPSP:
         messagebox.showerror('Лахеcис',
-                             f'При обработке вопросов теста Самооценка психических состояний Айзенк обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
+                             f'При обработке вопросов теста Склонность подростка к суицидальному поведению Горская обнаружены неправильные варианты ответов. Проверьте ответы на указанных строках:\n'
                              f'{error_message[:5000]}\n'
                              f'Используйте при создании Яндекс-формы написание вариантов ответа из руководства пользователя программы Лахесис.')
 
 
-    except BadCountColumnsASMS:
+    except BadCountColumnsGSPSP:
         messagebox.showerror('Лахеcис',
-                             f'Проверьте количество колонок с ответами на тест Самооценка психических состояний Айзенк\n'
+                             f'Проверьте количество колонок с ответами на тест Склонность подростка к суицидальному поведению Горская\n'
                              f'Должно быть 40 колонок с ответами')
 
 

@@ -16,7 +16,7 @@ from prof_burnout.isaeva_ob import processing_ob_isaeva # Опросник бл�
 
 # Тесты ментальное и психологическое состояние
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
-from mental_state.aizenk_self_mental_state import processing_aizenk_self_mental_state # Самодиагностика психического состояния Айзенк
+from mental_state.gorskaya_spsp import processing_gorskaya_spsp # Склонность подростка к суицидальному поведению Горская
 from mental_state.rodjers_daimond_sneg_soc_psych_adapt import processing_rodjers_daimond_sneg_soc_psych_adapt # Шкала социально психологического состояния Роджерс Даймонд Снегирева
 from mental_state.doskin_san import processing_doskin_san # Опросник Самочувствие Активность Настроение Доскин Мирошниченко
 
@@ -260,7 +260,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Опросник психологического выгорания Рукавишников': (processing_rukav_psych_burnout, 72),
 
                      'Экспресс-диагностика адаптации первокурсников Гончарова': (processing_goncharova_adoptation_first_course, 11),
-                     'Самооценка психических состояний Айзенк': (processing_aizenk_self_mental_state, 40),
+                     'Склонность подростка к суицидальному поведению Горская': (processing_gorskaya_spsp, 40),
                      'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': (processing_rodjers_daimond_sneg_soc_psych_adapt, 101),
                      'САН Доскин Мирошников': (processing_doskin_san, 30),
                      'Индекс общего самочувствия ВОЗ 1999': (processing_voz_well_being, 5),
@@ -393,7 +393,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Опросник психологического выгорания Рукавишников': 'Опросник психологического выгорания Рукавишников',
 
                               'Экспресс-диагностика адаптации первокурсников Гончарова': 'Экспресс-диагностика адаптации первокурсников Гончарова',
-                              'Самооценка психических состояний Айзенк': 'Самооценка психических состояний Айзенк',
+                              'Склонность подростка к суицидальному поведению Горская': 'Склонность подростка к суицидальному поведению Горская',
                               'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': 'Социально-психологическая адаптированность Роджерс Даймонд Снегирева',
                               'САН Доскин Мирошников': 'САН Доскин Мирошников',
 
@@ -522,7 +522,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко',
                            'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников',
 
-                           'Экспресс-диагностика адаптации первокурсников Гончарова','Самооценка психических состояний Айзенк',
+                           'Экспресс-диагностика адаптации первокурсников Гончарова','Склонность подростка к суицидальному поведению Горская',
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
 
                            'Индекс общего самочувствия ВОЗ 1999','Шкала тревожности Кондаша Школьники','Шкала тревожности Кондаша Студенты',
@@ -1076,6 +1076,7 @@ if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_2.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры горская.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
@@ -1083,6 +1084,7 @@ if __name__ == '__main__':
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_1.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_2.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/2026-10-20 Склонность подростка к суицидальному поведению М.В. Горская.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
