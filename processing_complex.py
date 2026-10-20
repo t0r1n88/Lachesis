@@ -1077,6 +1077,7 @@ if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_2.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры горская.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры ивашкин.xlsx'
     # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
@@ -1084,7 +1085,7 @@ if __name__ == '__main__':
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_1.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_2.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/2026-10-20 Склонность подростка к суицидальному поведению М.В. Горская.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/2026-10-19 ОПШГО Ивашкин 8а.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
