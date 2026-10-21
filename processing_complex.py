@@ -111,6 +111,7 @@ from motivation.prihogan_dmuaou import processing_dmuaoup_prihogan # Диагн�
 from motivation.serg_control import processing_okp_serg # Опросник Контроль поведения Сергиенко, Виленская, Ветрова
 from motivation.gordeeva_shamsh import processing_shamsh_gor # Методика Шкалы академической мотивации школьников Гордеева, Сычев, Гижицкий, Гавриченкова
 from motivation.zarezki_osp import processing_osp_zar # Опросник Субъектная позиция Зарецкий, Зарецкий, Кулагина
+from motivation.luskanova_oushm import processing_oushm_lus # Опросник оценки школьной мотивации Лусканова
 
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
@@ -149,6 +150,9 @@ from group_climate.ivashkin_opg import processing_opsgo_ivashkin # Опреде�
 # Прочие тесты с не определенной категорией
 from other.lepshokova_mao import processing_mao_lepsh # Адаптированная и модифицированная методика аккультурационных ожиданий Берри Лепшокова Татарко
 from other.polyakova_vab import processing_vab_pol # Шкала взаимной адаптации в браке Спаниер Полякова, Сорокова, Гаранян
+
+
+
 
 
 
@@ -260,7 +264,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'Опросник психологического выгорания Рукавишников': (processing_rukav_psych_burnout, 72),
 
                      'Экспресс-диагностика адаптации первокурсников Гончарова': (processing_goncharova_adoptation_first_course, 11),
-                     'Склонность подростка к суицидальному поведению Горская': (processing_gorskaya_spsp, 40),
+                     'СПСП Горская': (processing_gorskaya_spsp, 40),
                      'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': (processing_rodjers_daimond_sneg_soc_psych_adapt, 101),
                      'САН Доскин Мирошников': (processing_doskin_san, 30),
                      'Индекс общего самочувствия ВОЗ 1999': (processing_voz_well_being, 5),
@@ -382,6 +386,9 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОПШГО Ивашкин': (processing_opsgo_ivashkin, 5),
 
 
+                     'ОУШМ Лусканова': (processing_oushm_lus, 10),
+
+
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         dct_out_name_tests = {'Профессиональное выгорание педагогов Водопьянова': 'Профессиональное выгорание педагогов Водопьянова',
@@ -393,7 +400,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'Опросник психологического выгорания Рукавишников': 'Опросник психологического выгорания Рукавишников',
 
                               'Экспресс-диагностика адаптации первокурсников Гончарова': 'Экспресс-диагностика адаптации первокурсников Гончарова',
-                              'Склонность подростка к суицидальному поведению Горская': 'Склонность подростка к суицидальному поведению Горская',
+                              'СПСП Горская': 'Склонность подростка к суицидальному поведению Горская',
                               'Социально-психологическая адаптированность Роджерс Даймонд Снегирева': 'Социально-психологическая адаптированность Роджерс Даймонд Снегирева',
                               'САН Доскин Мирошников': 'САН Доскин Мирошников',
 
@@ -515,6 +522,9 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОПШГО Ивашкин': 'Определение привлекательности для школьника группы одноклассников Ивашкин',
 
 
+                              'ОУШМ Лусканова': 'Оценка уровня школьной мотивации Лусканова',
+
+
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
 
         # Списки для проверки, чтобы листы Особое внимание и зона риска создавались только если в параметрах указаны эти тесты
@@ -522,7 +532,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'Выгорание Каппони Новак','Профессиональное выгорание Маслач Водопьянова','Эмоциональное выгорание Бойко',
                            'BAT краткая версия Демкин','Опросник психологического выгорания Рукавишников',
 
-                           'Экспресс-диагностика адаптации первокурсников Гончарова','Склонность подростка к суицидальному поведению Горская',
+                           'Экспресс-диагностика адаптации первокурсников Гончарова','СПСП Горская',
                            'Социально-психологическая адаптированность Роджерс Даймонд Снегирева','САН Доскин Мирошников',
 
                            'Индекс общего самочувствия ВОЗ 1999','Шкала тревожности Кондаша Школьники','Шкала тревожности Кондаша Студенты',
@@ -1076,16 +1086,14 @@ if __name__ == '__main__':
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Мотивация риск неудача.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Кеттел 14-PF.xlsx'
     main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_2.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры горская.xlsx'
-    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры ивашкин.xlsx'
-    # main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры Агрессивность.xlsx'
+    main_params_adults = 'c:/Users/1/PycharmProjects/Lachesis/data/параметры 4_3.xlsx'
 
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/РЦО 5-6 класс.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Мотивация,риск,неудача.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Кеттел 14-PF Рукавишников Соколова.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_1.xlsx'
     main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_2.xlsx'
-    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/2026-10-19 ОПШГО Ивашкин 8а.xlsx'
+    main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Батарея 4_3.xlsx'
     # main_adults_data = 'c:/Users/1/PycharmProjects/Lachesis/data/Агрессивность.xlsx'
 
 
