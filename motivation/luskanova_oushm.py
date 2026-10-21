@@ -73,7 +73,7 @@ def calc_value(row):
     elif row[5] == 'не хотел бы':
         value += 3
     elif row[5] == 'хотел бы':
-        value += 1
+        value += 0
     # 7
     if row[6] == 'часто':
         value += 3
@@ -102,8 +102,25 @@ def calc_value(row):
         value += 1
     elif row[9] == 'нет':
         value += 0
+
     return value
 
+def calc_level(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    if 25<= value <= 30:
+        return f'очень высокий уровень'
+    elif 20 <= value <= 24:
+        return f'высокий уровень'
+    elif 15 <= value <= 19:
+        return f'средний уровень'
+    elif 10 <= value <= 14:
+        return f'низкий уровень'
+    else:
+        return f'очень низкий'
 
 
 
@@ -185,6 +202,11 @@ def processing_oushm_lus(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_sv
         raise BadValueOUSHML
 
     base_df['ОУШМ_Значение'] = answers_df.apply(calc_value, axis=1)
+    base_df['ОУШМ_Уровень'] = base_df['ОУШМ_Значение'].apply(calc_level)
+
+
+
+    base_df.to_excel('data/res.xlsx',index=False)
 
 
 
