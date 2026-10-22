@@ -45,6 +45,7 @@ from mental_state.shmelev_osr_razuvaeva import processing_osr_shmel_raz # Опр
 from mental_state.teo_hqtf_lyakina_fedorov import processing_hqtf_lyak_fed # Опросник хикикомори, HQ-25 Тео Лякина Федоров
 from mental_state.dopok_leon_osin import processing_dopok_leon_osin # Дифференциальный опросник переживания одиночества (краткий вариант) ДОПО-3к Леонтьев Осин
 from mental_state.gilemhanova_ickbsh import processing_iskbsh_gil # Индекс социокультурной безопасности школьника Гилемханова
+from mental_state.aizenk_self_esteem import processing_aizenk_sps # Методика «Самооценки психических состояний» Г. Айзенка
 
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
@@ -387,6 +388,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
                      'ОУШМ Лусканова': (processing_oushm_lus, 10),
+                     'СПС Айзенк': (processing_aizenk_sps, 40),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -523,6 +525,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
 
 
                               'ОУШМ Лусканова': 'Оценка уровня школьной мотивации Лусканова',
+                              'СПС Айзенк': 'Самооценки психических состояний Айзенк',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок

@@ -177,7 +177,7 @@ def calc_count_level_sub(df:pd.DataFrame, lst_cat:list, val_cat, col_cat, lst_co
 
     return count_df
 
-def create_result_asms(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
+def create_result_spspg(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols:list):
     """
     Функция для подсчета результата если указаны колонки по которым нужно провести свод
     :param df: датафрейм с результатами
@@ -510,7 +510,7 @@ def processing_gorskaya_spsp(result_df: pd.DataFrame, answers_df: pd.DataFrame, 
         if len(lst_svod_cols) == 0:
             return out_dct, part_df
         else:
-            out_dct = create_result_asms(base_df, out_dct, lst_svod_cols)
+            out_dct = create_result_spspg(base_df, out_dct, lst_svod_cols)
 
             return out_dct, part_df
 
