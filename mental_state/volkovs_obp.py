@@ -109,3 +109,12 @@ def processing_volkovs_obp(result_df: pd.DataFrame, answers_df: pd.DataFrame, ls
     if len(lst_error_answers) != 0:
         error_message = ';'.join(lst_error_answers)
         raise BadValueOBPVV
+
+    base_df = pd.DataFrame()
+
+    # Вовлеченность
+    base_df['Значение_шкалы_Вовлеченность'] = answers_df.apply(calc_sub_value_engagement, axis=1)
+    base_df['Диапазон_шкалы_Вовлеченность'] = base_df['Значение_шкалы_Вовлеченность'].apply(calc_level)
+
+
+
