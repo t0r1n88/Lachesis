@@ -48,6 +48,7 @@ from mental_state.gilemhanova_ickbsh import processing_iskbsh_gil # Индекс
 from mental_state.aizenk_self_esteem import processing_aizenk_sps # Методика «Самооценки психических состояний» Г. Айзенка
 from mental_state.dovgik_bochaver_osb import processing_osb_dov_boch # Опросник субъективного благополучия WEMWBS Довжик Бочавер
 from mental_state.volkovs_obp import processing_volkovs_obp # Опросник благополучия подростков EPOCH Волкова Волкова
+from mental_state.prihogan_ltu_a_form import processing_ltu_prih_form_a # Шкала личностной тревожности учащихся А. М. Прихожан Форма А
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
 
@@ -394,6 +395,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОСБ Довжик Бочавер': (processing_osb_dov_boch, 14),
                      'ОБП Волкова Волкова': (processing_volkovs_obp, 20),
                      'МШШВ Фомина Моросанова': (processing_mshshv_fom_mor, 37),
+                     'ШЛТУ Прихожан Форма А': (processing_ltu_prih_form_a, 40),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -534,6 +536,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОСБ Довжик Бочавер': 'Опросник субъективного благополучия – WEMWBS Довжик Бочавер',
                               'ОБП Волкова Волкова': 'Опросник благополучия подростков EPOCH Волкова Волкова',
                               'МШШВ Фомина Моросанова': 'Многомерная шкала школьной вовлеченности, MSES Фомина Моросанова',
+                              'ШЛТУ Прихожан Форма А': 'Шкала личностной тревожности учащихся Прихожан',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1109,7 +1112,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 4
     main_svod_cols = ''
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
