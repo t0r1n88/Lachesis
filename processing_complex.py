@@ -114,6 +114,7 @@ from motivation.serg_control import processing_okp_serg # Опросник Ко�
 from motivation.gordeeva_shamsh import processing_shamsh_gor # Методика Шкалы академической мотивации школьников Гордеева, Сычев, Гижицкий, Гавриченкова
 from motivation.zarezki_osp import processing_osp_zar # Опросник Субъектная позиция Зарецкий, Зарецкий, Кулагина
 from motivation.luskanova_oushm import processing_oushm_lus # Опросник оценки школьной мотивации Лусканова
+from motivation.fomina_mor_mshshv import processing_mshshv_fom_mor # Многомерная шкала школьной вовлеченности, MSES Фомина Моросанова
 
 # Структура личности
 from personality_structure.kettel_pf_fourteen_rukav_sokolova import processing_kettel_pf_ruk_sok # Тест Кеттела для подростков
@@ -392,6 +393,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'СПС Айзенк': (processing_aizenk_sps, 40),
                      'ОСБ Довжик Бочавер': (processing_osb_dov_boch, 14),
                      'ОБП Волкова Волкова': (processing_volkovs_obp, 20),
+                     'МШШВ Фомина Моросанова': (processing_mshshv_fom_mor, 37),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -531,6 +533,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'СПС Айзенк': 'Самооценки психических состояний Айзенк',
                               'ОСБ Довжик Бочавер': 'Опросник субъективного благополучия – WEMWBS Довжик Бочавер',
                               'ОБП Волкова Волкова': 'Опросник благополучия подростков EPOCH Волкова Волкова',
+                              'МШШВ Фомина Моросанова': 'Многомерная шкала школьной вовлеченности, MSES Фомина Моросанова',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
