@@ -49,6 +49,7 @@ from mental_state.aizenk_self_esteem import processing_aizenk_sps # Методи
 from mental_state.dovgik_bochaver_osb import processing_osb_dov_boch # Опросник субъективного благополучия WEMWBS Довжик Бочавер
 from mental_state.volkovs_obp import processing_volkovs_obp # Опросник благополучия подростков EPOCH Волкова Волкова
 from mental_state.prihogan_ltu_a_form import processing_ltu_prih_form_a # Шкала личностной тревожности учащихся А. М. Прихожан Форма А
+from mental_state.prihogan_ltu_b_form import processing_ltu_prih_form_b # Шкала личностной тревожности учащихся А. М. Прихожан Форма Б
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
 
@@ -396,6 +397,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОБП Волкова Волкова': (processing_volkovs_obp, 20),
                      'МШШВ Фомина Моросанова': (processing_mshshv_fom_mor, 37),
                      'ШЛТУ Прихожан Форма А': (processing_ltu_prih_form_a, 40),
+                     'ШЛТУ Прихожан Форма Б': (processing_ltu_prih_form_b, 40),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -536,7 +538,8 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОСБ Довжик Бочавер': 'Опросник субъективного благополучия – WEMWBS Довжик Бочавер',
                               'ОБП Волкова Волкова': 'Опросник благополучия подростков EPOCH Волкова Волкова',
                               'МШШВ Фомина Моросанова': 'Многомерная шкала школьной вовлеченности, MSES Фомина Моросанова',
-                              'ШЛТУ Прихожан Форма А': 'Шкала личностной тревожности учащихся Прихожан',
+                              'ШЛТУ Прихожан Форма А': 'Шкала личностной тревожности учащихся Прихожан Форма А',
+                              'ШЛТУ Прихожан Форма Б': 'Шкала личностной тревожности учащихся Прихожан Форма Б',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
