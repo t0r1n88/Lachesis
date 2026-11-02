@@ -50,6 +50,7 @@ from mental_state.dovgik_bochaver_osb import processing_osb_dov_boch # Опро�
 from mental_state.volkovs_obp import processing_volkovs_obp # Опросник благополучия подростков EPOCH Волкова Волкова
 from mental_state.prihogan_ltu_a_form import processing_ltu_prih_form_a # Шкала личностной тревожности учащихся А. М. Прихожан Форма А
 from mental_state.prihogan_ltu_b_form import processing_ltu_prih_form_b # Шкала личностной тревожности учащихся А. М. Прихожан Форма Б
+from mental_state.osin_rasskazova_tj import processing_tj_osin_ras # Тест жизнестойкости Осин Рассказова
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
 
@@ -399,6 +400,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ШЛТУ Прихожан Форма А': (processing_ltu_prih_form_a, 40),
                      'ШЛТУ Прихожан Форма Б': (processing_ltu_prih_form_b, 40),
                      'ДДНЭ Давыдов Хломов': (processing_ddna_dav_hlom, 66),
+                     'ТЖ Осин Рассказова': (processing_tj_osin_ras, 24),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -542,6 +544,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ШЛТУ Прихожан Форма А': 'Шкала личностной тревожности учащихся Прихожан Форма А',
                               'ШЛТУ Прихожан Форма Б': 'Шкала личностной тревожности учащихся Прихожан Форма Б',
                               'ДДНЭ Давыдов Хломов': 'Диагностика диспозиций насильственного экстремизма Давыдов Хломов',
+                              'ТЖ Осин Рассказова': 'Тест жизнестойкости Осин Рассказова',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
