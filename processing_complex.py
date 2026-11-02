@@ -82,7 +82,7 @@ from deviant.dap_p_spo import processing_dap_p_spo # ДАП-П СПО вариа
 from deviant.rojkov_dvdgr import processing_dvdgr_roj_kov # Методика первичной диагностики и выявления детей «группы риска Рожков Ковальчук
 from deviant.vasyagina_olro_mlad import processing_olro_vas_mlad # Скрининговая методика оценки личностных ресурсов обучающихся Васягина, Григорян, Баринова форма 1 для 5-8 классов
 from deviant.vasyagina_orlo_star import processing_olro_vas_star # Скрининговая методика оценки личностных ресурсов обучающихся Васягина, Григорян, Баринова форма 2 для 9-11 классов, студентов
-
+from deviant.davidov_hlom_ddna import processing_ddna_dav_hlom # Методика диагностики диспозиций насильственного экстремизма Давыдов Хломов
 
 # Профориентационные тесты
 from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
@@ -398,6 +398,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'МШШВ Фомина Моросанова': (processing_mshshv_fom_mor, 37),
                      'ШЛТУ Прихожан Форма А': (processing_ltu_prih_form_a, 40),
                      'ШЛТУ Прихожан Форма Б': (processing_ltu_prih_form_b, 40),
+                     'ДДНЭ Давыдов Хломов': (processing_ddna_dav_hlom, 66),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -540,6 +541,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'МШШВ Фомина Моросанова': 'Многомерная шкала школьной вовлеченности, MSES Фомина Моросанова',
                               'ШЛТУ Прихожан Форма А': 'Шкала личностной тревожности учащихся Прихожан Форма А',
                               'ШЛТУ Прихожан Форма Б': 'Шкала личностной тревожности учащихся Прихожан Форма Б',
+                              'ДДНЭ Давыдов Хломов': 'Диагностика диспозиций насильственного экстремизма Давыдов Хломов',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -568,7 +570,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                            'CMAS Подростки Прихожан','TMAS Тейлор Норакидзе','МИПТ Хван Зайцев','ШДБ Колачев Чистопольская','ОСР Шмелев Разуваева',
                            'ВА Почебут','ДАП-П Школьники','ДАП-П Студенты','ДВДГР Рожков Ковальчук',
                            'HQ-25 Лякина Федоров','ДОПО-3к Леонтьев Осин','ДМУЭОУ Прихожан','Буллинг Олвеус','ОВРБ НИЦМП',
-                           'ШЛТУ Прихожан Форма А','ШЛТУ Прихожан Форма Б'
+                           'ШЛТУ Прихожан Форма А','ШЛТУ Прихожан Форма Б','ДДНЭ Давыдов Хломов'
 
                            ]
         lst_check_alert_tests = []
@@ -699,7 +701,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                                    'субдепрессивное состояние или маскированная депрессия','6-7 ПТСР',
                                    'нарушение адаптации','126-150','61-80','20-26','высокий уровень ШТФ','ближе к высокому','высокий уровень тревоги','4.01-5','явно повышенный',
                                    'высокий','повышенный ШДБ','18-24 ИП СР','76-100%','высокий уровень агрессивности','значительная предрасположенность к ДП','группа риска',
-                                   '75-100%','явно повышенная тревожность'
+                                   '75-100%','явно повышенная тревожность','24-26 ДДНЭ','28-30 ДДНЭ'
                                    ] # обратить внимание
             alert_df = main_itog_df[main_itog_df.isin(set_alert_value).any(axis=1)] # фильтруем требующих особого внимания
             if len(alert_df) == 0:
@@ -1116,7 +1118,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 4
+    main_quantity_descr_cols = 3
     main_svod_cols = ''
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
