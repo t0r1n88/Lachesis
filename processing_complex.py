@@ -14,12 +14,14 @@ from prof_burnout.gordeeva_ossh import processing_ossh_gor # Опросник С
 from prof_burnout.pavlova_ocs import processing_ocs_pav # Шкала организационного цинизма Павлова
 from prof_burnout.isaeva_ob import processing_ob_isaeva # Опросник благополучия PERMA-Profiler Исаева, Акимова, Волкова
 
-# Тесты ментальное и психологическое состояние
+# Адаптация
 from mental_state.goncharova_adoptation_first_course import processing_goncharova_adoptation_first_course # Экспресс-диагностика первокурсников Гончарова
-from mental_state.gorskaya_spsp import processing_gorskaya_spsp # Склонность подростка к суицидальному поведению Горская
 from mental_state.rodjers_daimond_sneg_soc_psych_adapt import processing_rodjers_daimond_sneg_soc_psych_adapt # Шкала социально психологического состояния Роджерс Даймонд Снегирева
 from mental_state.doskin_san import processing_doskin_san # Опросник Самочувствие Активность Настроение Доскин Мирошниченко
+from mental_state.kovaleva_ouap import processing_ouap_kov_tar # Опросник для учителя по адаптации первоклассников Ковалева Тарасенко
 
+# Тесты ментальное и психологическое состояние
+from mental_state.gorskaya_spsp import processing_gorskaya_spsp # Склонность подростка к суицидальному поведению Горская
 from mental_state.voz_well_being import processing_voz_well_being # Индекс общего самочувствия ВОЗ 1999
 from mental_state.kondash_anxiety_school import processing_kondash_anxiety_school # Шкала тревожности Кондаша Школьники
 from mental_state.kondash_anxiety_student import processing_kondash_anxiety_student # Шкала тревожности Кондаша Студенты
@@ -401,6 +403,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ШЛТУ Прихожан Форма Б': (processing_ltu_prih_form_b, 40),
                      'ДДНЭ Давыдов Хломов': (processing_ddna_dav_hlom, 66),
                      'ТЖ Осин Рассказова': (processing_tj_osin_ras, 24),
+                     'ОУАП Ковалева Тарасенко': (processing_ouap_kov_tar, 46),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -545,6 +548,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ШЛТУ Прихожан Форма Б': 'Шкала личностной тревожности учащихся Прихожан Форма Б',
                               'ДДНЭ Давыдов Хломов': 'Диагностика диспозиций насильственного экстремизма Давыдов Хломов',
                               'ТЖ Осин Рассказова': 'Тест жизнестойкости Осин Рассказова',
+                              'ОУАП Ковалева Тарасенко': 'Опросник для учителя по адаптации первоклассников Ковалева Тарасенко',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -1121,7 +1125,7 @@ if __name__ == '__main__':
 
 
     main_end_folder = 'c:/Users/1/PycharmProjects/Lachesis/data/Результат'
-    main_quantity_descr_cols = 3
+    main_quantity_descr_cols = 1
     main_svod_cols = ''
     generate_result_all_age(main_params_adults, main_adults_data, main_end_folder, main_quantity_descr_cols, main_svod_cols)
 
