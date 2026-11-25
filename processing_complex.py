@@ -87,6 +87,7 @@ from deviant.rojkov_dvdgr import processing_dvdgr_roj_kov # Методика п�
 from deviant.vasyagina_olro_mlad import processing_olro_vas_mlad # Скрининговая методика оценки личностных ресурсов обучающихся Васягина, Григорян, Баринова форма 1 для 5-8 классов
 from deviant.vasyagina_orlo_star import processing_olro_vas_star # Скрининговая методика оценки личностных ресурсов обучающихся Васягина, Григорян, Баринова форма 2 для 9-11 классов, студентов
 from deviant.davidov_hlom_ddna import processing_ddna_dav_hlom # Методика диагностики диспозиций насильственного экстремизма Давыдов Хломов
+from deviant.gurina_oku import processing_oku_gurina # Опросник ксенофобских установок Гурина
 
 # Профориентационные тесты
 from career_guidance.shein_cok import processing_shein_cok # Якоря карьеры ЦОК Шейн
@@ -406,6 +407,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ТЖ Осин Рассказова': (processing_tj_osin_ras, 24),
                      'ОУАП Ковалева Тарасенко': (processing_ouap_kov_tar, 46),
                      'ЭОАРШ Чирков Соколова Сорокина': (processing_aoarsh_chir_ss, 7),
+                     'ОКУ Гурина': (processing_oku_gurina, 20),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -552,6 +554,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ТЖ Осин Рассказова': 'Тест жизнестойкости Осин Рассказова',
                               'ОУАП Ковалева Тарасенко': 'Опросник для учителя по адаптации первоклассников Ковалева Тарасенко',
                               'ЭОАРШ Чирков Соколова Сорокина': 'Экспертная оценка адаптированности ребёнка к школе Чирков Соколова Сорокина',
+                              'ОКУ Гурина': 'Шкала оценки ксенофобских установок Гурина',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
