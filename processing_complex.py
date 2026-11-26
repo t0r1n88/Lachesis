@@ -54,6 +54,7 @@ from mental_state.volkovs_obp import processing_volkovs_obp # Опросник �
 from mental_state.prihogan_ltu_a_form import processing_ltu_prih_form_a # Шкала личностной тревожности учащихся А. М. Прихожан Форма А
 from mental_state.prihogan_ltu_b_form import processing_ltu_prih_form_b # Шкала личностной тревожности учащихся А. М. Прихожан Форма Б
 from mental_state.osin_rasskazova_tj import processing_tj_osin_ras # Тест жизнестойкости Осин Рассказова
+from mental_state.morosanova_sspm2020 import processing_sspmtt_moros # Стиль саморегуляции поведения, ССПМ-2020
 # Тесты предложенные РЦО
 from mental_state.philips_school_anxiety import processing_philips_school_anxiety # Тест школьной тревожности Филлипса
 
@@ -408,6 +409,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОУАП Ковалева Тарасенко': (processing_ouap_kov_tar, 46),
                      'ЭОАРШ Чирков Соколова Сорокина': (processing_aoarsh_chir_ss, 7),
                      'ОКУ Гурина': (processing_oku_gurina, 20),
+                     'ССПМ 2020 Моросанова': (processing_sspmtt_moros, 28),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -555,6 +557,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОУАП Ковалева Тарасенко': 'Опросник для учителя по адаптации первоклассников Ковалева Тарасенко',
                               'ЭОАРШ Чирков Соколова Сорокина': 'Экспертная оценка адаптированности ребёнка к школе Чирков Соколова Сорокина',
                               'ОКУ Гурина': 'Шкала оценки ксенофобских установок Гурина',
+                              'ССПМ 2020 Моросанова': 'Стиль саморегуляции поведения, ССПМ-2020  Моросанова',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
