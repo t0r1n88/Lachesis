@@ -136,6 +136,7 @@ from personality_structure.garanyan_op import processing_op_ghu # Опросни
 from personality_structure.tatarko_osa import processing_osa_tatarko # Опросник социальных аксиом (ОСА-31) Татарко, Лебедева
 from personality_structure.vodopyanova_spss import processing_spss_vod_star # Стратегия преодоления стрессовых ситуаций, SACS Хобфолл С., 1994 Адаптация Н.Е. Водопьянова, Е.С. Старченкова
 from personality_structure.leontiev_sgo import processing_leontiev_sgo # Стратегия смысложизненных ориентаций Леонтьев
+from personality_structure.stolin_oso import processing_oso_stolin_pan # Опросник самоотношения В.В. Столин, С.Р. Пантелеев
 
 # Зависимости
 from cyberpsychology.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
@@ -414,6 +415,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ССПМ 2020 Моросанова': (processing_sspmtt_moros, 28),
                      'СПСС Водопьянова Старченкова': (processing_spss_vod_star, 54),
                      'СЖО Леонтьев': (processing_leontiev_sgo, 20),
+                     'ОСО Столин Пантелеев': (processing_oso_stolin_pan, 57),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -564,6 +566,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ССПМ 2020 Моросанова': 'Стиль саморегуляции поведения, ССПМ-2020  Моросанова',
                               'СПСС Водопьянова Старченкова': 'Стратегия преодоления стрессовых ситуаций, SACS Водопьянова Старченкова',
                               'СЖО Леонтьев': 'Тест смысложизненных ориентаций Леонтьев',
+                              'ОСО Столин Пантелеев': 'Опросник самоотношения Столин Пантелеев',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
