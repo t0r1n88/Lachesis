@@ -354,14 +354,18 @@ def calc_value_og(row):
 
     return value_forward
 
+def calc_percent(value,quantity):
+    result = round((value / quantity) * 100)
+    return result
 
-def calc_level(value,quantity):
+
+
+def calc_level(result):
     """
     Функция для подсчета уровня
     :param value:
     :return:
     """
-    result =round((value / quantity) * 100)
 
     if 1 <= result <= 20:
         return f'1-20%'
@@ -896,7 +900,7 @@ def create_result_sgo_leontiev(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols
                                        'Итого'])  # Основная шкала
 
     svod_count_one_level_l_df = calc_count_scale(base_df, lst_svod_cols,
-                                                 'ОЖ_Значение',
+                                                 'ОЖ_Сырое_значение',
                                                  'ОЖ_Диапазон',
                                                  lst_reindex_one_level_l_cols, lst_l)
 
@@ -908,27 +912,27 @@ def create_result_sgo_leontiev(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols
 
     # АД
     svod_count_one_level_t_df = calc_count_scale(base_df, lst_svod_cols,
-                                                 'Ц_Значение',
+                                                 'Ц_Сырое_значение',
                                                  'Ц_Диапазон',
                                                  lst_reindex_one_level_cols, lst_level)
 
     svod_count_one_level_p_df = calc_count_scale(base_df, lst_svod_cols,
-                                                 'П_Значение',
+                                                 'П_Сырое_значение',
                                                  'П_Диапазон',
                                                  lst_reindex_one_level_cols, lst_level)
 
     svod_count_one_level_r_df = calc_count_scale(base_df, lst_svod_cols,
-                                                 'Р_Значение',
+                                                 'Р_Сырое_значение',
                                                  'Р_Диапазон',
                                                  lst_reindex_one_level_cols, lst_level)
 
     svod_count_one_level_lka_df = calc_count_scale(base_df, lst_svod_cols,
-                                                 'ЛКЯ_Значение',
+                                                 'ЛКЯ_Сырое_значение',
                                                  'ЛКЯ_Диапазон',
                                                  lst_reindex_one_level_cols, lst_level)
 
     svod_count_one_level_lkg_df = calc_count_scale(base_df, lst_svod_cols,
-                                                 'ЛКЖ_Значение',
+                                                 'ЛКЖ_Сырое_значение',
                                                  'ЛКЖ_Диапазон',
                                                  lst_reindex_one_level_cols, lst_level)
 
@@ -936,33 +940,33 @@ def create_result_sgo_leontiev(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols
     # Считаем среднее по субшкалам
     svod_mean_one_df = pd.pivot_table(base_df,
                                       index=lst_svod_cols,
-                                      values=['ОЖ_Значение',
-                                              'Ц_Значение',
-                                              'П_Значение',
-                                              'Р_Значение',
-                                              'ЛКЯ_Значение',
-                                              'ЛКЖ_Значение',
+                                      values=['ОЖ_Обработанное_значение_%',
+                                              'Ц_Обработанное_значение_%',
+                                              'П_Обработанное_значение_%',
+                                              'Р_Обработанное_значение_%',
+                                              'ЛКЯ_Обработанное_значение_%',
+                                              'ЛКЖ_Обработанное_значение_%',
                                               ],
                                       aggfunc=round_mean_two)
     svod_mean_one_df.reset_index(inplace=True)
 
     # упорядочиваем колонки
     new_order_cols = lst_svod_cols.copy()
-    new_order_cols.extend((['ОЖ_Значение',
-                                              'Ц_Значение',
-                                              'П_Значение',
-                                              'Р_Значение',
-                                              'ЛКЯ_Значение',
-                                              'ЛКЖ_Значение',
+    new_order_cols.extend((['ОЖ_Обработанное_значение_%',
+                                              'Ц_Обработанное_значение_%',
+                                              'П_Обработанное_значение_%',
+                                              'Р_Обработанное_значение_%',
+                                              'ЛКЯ_Обработанное_значение_%',
+                                              'ЛКЖ_Обработанное_значение_%',
                             ]))
     svod_mean_one_df = svod_mean_one_df.reindex(columns=new_order_cols)
 
-    dct_rename_cols_mean = {'ОЖ_Значение': 'Ср. Общий показатель ОЖ',
-                            'Ц_Значение': 'Ср. Цели',
-                            'П_Значение': 'Ср. Процесс',
-                            'Р_Значение': 'Ср. Результат',
-                            'ЛКЯ_Значение': 'Ср. Локус контроля – Я',
-                            'ЛКЖ_Значение': 'Ср. Локус контроля - жизнь',
+    dct_rename_cols_mean = {'ОЖ_Обработанное_значение_%': 'Ср. Общий показатель ОЖ',
+                            'Ц_Обработанное_значение_%': 'Ср. Цели',
+                            'П_Обработанное_значение_%': 'Ср. Процесс',
+                            'Р_Обработанное_значение_%': 'Ср. Результат',
+                            'ЛКЯ_Обработанное_значение_%': 'Ср. Локус контроля – Я',
+                            'ЛКЖ_Обработанное_значение_%': 'Ср. Локус контроля - жизнь',
                             }
     svod_mean_one_df.rename(columns=dct_rename_cols_mean, inplace=True)
 
@@ -1000,7 +1004,7 @@ def create_result_sgo_leontiev(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols
                                                'Итого']
 
             svod_count_column_level_l_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                            'ОЖ_Значение',
+                                                            'ОЖ_Сырое_значение',
                                                             'ОЖ_Диапазон',
                                                             lst_reindex_column_level_l_cols, lst_l)
 
@@ -1010,60 +1014,60 @@ def create_result_sgo_leontiev(base_df:pd.DataFrame, out_dct:dict, lst_svod_cols
 
             # АД
             svod_count_column_level_t_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                            'Ц_Значение',
+                                                            'Ц_Сырое_значение',
                                                             'Ц_Диапазон',
                                                             lst_reindex_column_level_cols, lst_level)
 
             svod_count_column_level_p_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                            'П_Значение',
+                                                            'П_Сырое_значение',
                                                             'П_Диапазон',
                                                             lst_reindex_column_level_cols, lst_level)
 
             svod_count_column_level_r_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                            'Р_Значение',
+                                                            'Р_Сырое_значение',
                                                             'Р_Диапазон',
                                                             lst_reindex_column_level_cols, lst_level)
 
             svod_count_column_level_lka_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                              'ЛКЯ_Значение',
+                                                              'ЛКЯ_Сырое_значение',
                                                               'ЛКЯ_Диапазон',
                                                               lst_reindex_column_level_cols, lst_level)
 
             svod_count_column_level_lkg_df = calc_count_scale(base_df, lst_svod_cols[idx],
-                                                              'ЛКЖ_Значение',
+                                                              'ЛКЖ_Сырое_значение',
                                                               'ЛКЖ_Диапазон',
                                                               lst_reindex_column_level_cols, lst_level)
 
             # Считаем среднее по субшкалам
             svod_mean_column_df = pd.pivot_table(base_df,
                                                  index=[lst_svod_cols[idx]],
-                                                 values=['ОЖ_Значение',
-                                                         'Ц_Значение',
-                                                         'П_Значение',
-                                                         'Р_Значение',
-                                                         'ЛКЯ_Значение',
-                                                         'ЛКЖ_Значение',
+                                                 values=['ОЖ_Обработанное_значение_%',
+                                                         'Ц_Обработанное_значение_%',
+                                                         'П_Обработанное_значение_%',
+                                                         'Р_Обработанное_значение_%',
+                                                         'ЛКЯ_Обработанное_значение_%',
+                                                         'ЛКЖ_Обработанное_значение_%',
                                                          ],
                                                  aggfunc=round_mean_two)
             svod_mean_column_df.reset_index(inplace=True)
 
             # упорядочиваем колонки
             new_order_cols = [lst_svod_cols[idx]].copy()
-            new_order_cols.extend((['ОЖ_Значение',
-                                    'Ц_Значение',
-                                    'П_Значение',
-                                    'Р_Значение',
-                                    'ЛКЯ_Значение',
-                                    'ЛКЖ_Значение',
+            new_order_cols.extend((['ОЖ_Обработанное_значение_%',
+                                                         'Ц_Обработанное_значение_%',
+                                                         'П_Обработанное_значение_%',
+                                                         'Р_Обработанное_значение_%',
+                                                         'ЛКЯ_Обработанное_значение_%',
+                                                         'ЛКЖ_Обработанное_значение_%',
                                     ]))
             svod_mean_column_df = svod_mean_column_df.reindex(columns=new_order_cols)
 
-            dct_rename_cols_mean = {'ОЖ_Значение': 'Ср. Общий показатель ОЖ',
-                                    'Ц_Значение': 'Ср. Цели',
-                                    'П_Значение': 'Ср. Процесс',
-                                    'Р_Значение': 'Ср. Результат',
-                                    'ЛКЯ_Значение': 'Ср. Локус контроля – Я',
-                                    'ЛКЖ_Значение': 'Ср. Локус контроля - жизнь',
+            dct_rename_cols_mean = {'ОЖ_Обработанное_значение_%': 'Ср. Общий показатель ОЖ',
+                                    'Ц_Обработанное_значение_%': 'Ср. Цели',
+                                    'П_Обработанное_значение_%': 'Ср. Процесс',
+                                    'Р_Обработанное_значение_%': 'Ср. Результат',
+                                    'ЛКЯ_Обработанное_значение_%': 'Ср. Локус контроля – Я',
+                                    'ЛКЖ_Обработанное_значение_%': 'Ср. Локус контроля - жизнь',
                                     }
             svod_mean_column_df.rename(columns=dct_rename_cols_mean, inplace=True)
 
@@ -1165,51 +1169,58 @@ def processing_leontiev_sgo(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst
             error_message = ';'.join(lst_error_answers)
             raise BadValueSGOL
 
-        base_df['ОЖ_Значение'] = answers_df.apply(calc_value_og, axis=1)
-        base_df['ОЖ_Диапазон'] = base_df['ОЖ_Значение'].apply(lambda x: calc_level(x, 140))
+        base_df['ОЖ_Сырое_значение'] = answers_df.apply(calc_value_og, axis=1)
+        base_df['ОЖ_Обработанное_значение_%'] = base_df['ОЖ_Сырое_значение'].apply(lambda x: calc_percent(x, 140))
+        base_df['ОЖ_Диапазон'] = base_df['ОЖ_Обработанное_значение_%'].apply(calc_level)
 
-        base_df['Ц_Значение'] = answers_df.apply(calc_value_t, axis=1)
-        base_df['Ц_Диапазон'] = base_df['Ц_Значение'].apply(lambda x: calc_level(x,42))
+        base_df['Ц_Сырое_значение'] = answers_df.apply(calc_value_t, axis=1)
+        base_df['Ц_Обработанное_значение_%'] = base_df['Ц_Сырое_значение'].apply(lambda x: calc_percent(x,42))
+        base_df['Ц_Диапазон'] = base_df['Ц_Обработанное_значение_%'].apply(calc_level)
 
-        base_df['П_Значение'] = answers_df.apply(calc_value_p, axis=1)
-        base_df['П_Диапазон'] = base_df['П_Значение'].apply(lambda x: calc_level(x, 42))
+        base_df['П_Сырое_значение'] = answers_df.apply(calc_value_p, axis=1)
+        base_df['П_Обработанное_значение_%'] = base_df['П_Сырое_значение'].apply(lambda x: calc_percent(x, 42))
+        base_df['П_Диапазон'] = base_df['П_Обработанное_значение_%'].apply(calc_level)
 
-        base_df['Р_Значение'] = answers_df.apply(calc_value_r, axis=1)
-        base_df['Р_Диапазон'] = base_df['Р_Значение'].apply(lambda x: calc_level(x, 35))
+        base_df['Р_Сырое_значение'] = answers_df.apply(calc_value_r, axis=1)
+        base_df['Р_Обработанное_значение_%'] = base_df['Р_Сырое_значение'].apply(lambda x: calc_percent(x, 35))
+        base_df['Р_Диапазон'] = base_df['Р_Обработанное_значение_%'].apply(calc_level)
 
-        base_df['ЛКЯ_Значение'] = answers_df.apply(calc_value_lka, axis=1)
-        base_df['ЛКЯ_Диапазон'] = base_df['ЛКЯ_Значение'].apply(lambda x: calc_level(x, 28))
+        base_df['ЛКЯ_Сырое_значение'] = answers_df.apply(calc_value_lka, axis=1)
+        base_df['ЛКЯ_Обработанное_значение_%'] = base_df['ЛКЯ_Сырое_значение'].apply(lambda x: calc_percent(x, 28))
+        base_df['ЛКЯ_Диапазон'] = base_df['ЛКЯ_Обработанное_значение_%'].apply(calc_level)
 
-        base_df['ЛКЖ_Значение'] = answers_df.apply(calc_value_lkg, axis=1)
-        base_df['ЛКЖ_Диапазон'] = base_df['ЛКЖ_Значение'].apply(lambda x: calc_level(x, 42))
+        base_df['ЛКЖ_Сырое_значение'] = answers_df.apply(calc_value_lkg, axis=1)
+        base_df['ЛКЖ_Обработанное_значение_%'] = base_df['ЛКЖ_Сырое_значение'].apply(lambda x: calc_percent(x, 42))
+        base_df['ЛКЖ_Диапазон'] = base_df['ЛКЖ_Обработанное_значение_%'].apply(calc_level)
+
 
         part_df = pd.DataFrame()
-        part_df['СЖОЛ_ОЖ_Значение'] = base_df['ОЖ_Значение']
+        part_df['СЖОЛ_ОЖ_Обработанное_значение_%'] = base_df['ОЖ_Обработанное_значение_%']
         part_df['СЖОЛ_ОЖ_Диапазон'] = base_df['ОЖ_Диапазон']
 
-        part_df['СЖОЛ_Ц_Значение'] = base_df['Ц_Значение']
+        part_df['СЖОЛ_Ц_Обработанное_значение_%'] = base_df['Ц_Обработанное_значение_%']
         part_df['СЖОЛ_Ц_Диапазон'] = base_df['Ц_Диапазон']
 
-        part_df['СЖОЛ_П_Значение'] = base_df['П_Значение']
+        part_df['СЖОЛ_П_Обработанное_значение_%'] = base_df['П_Обработанное_значение_%']
         part_df['СЖОЛ_П_Диапазон'] = base_df['П_Диапазон']
 
-        part_df['СЖОЛ_Р_Значение'] = base_df['Р_Значение']
+        part_df['СЖОЛ_Р_Обработанное_значение_%'] = base_df['Р_Обработанное_значение_%']
         part_df['СЖОЛ_Р_Диапазон'] = base_df['Р_Диапазон']
 
-        part_df['СЖОЛ_ЛКЯ_Значение'] = base_df['ЛКЯ_Значение']
+        part_df['СЖОЛ_ЛКЯ_Обработанное_значение_%'] = base_df['ЛКЯ_Обработанное_значение_%']
         part_df['СЖОЛ_ЛКЯ_Диапазон'] = base_df['ЛКЯ_Диапазон']
 
-        part_df['СЖОЛ_ЛКЖ_Значение'] = base_df['ЛКЖ_Значение']
+        part_df['СЖОЛ_ЛКЖ_Обработанное_значение_%'] = base_df['ЛКЖ_Обработанное_значение_%']
         part_df['СЖОЛ_ЛКЖ_Диапазон'] = base_df['ЛКЖ_Диапазон']
 
-        base_df.sort_values(by='ОЖ_Значение', ascending=True, inplace=True)  # сортируем
+        base_df.sort_values(by='ОЖ_Сырое_значение', ascending=True, inplace=True)  # сортируем
         out_answer_df = pd.concat([out_answer_df, answers_df], axis=1)  # Датафрейм для проверки
 
         # Делаем свод  по  шкалам
-        dct_svod_l = {'ОЖ_Значение': 'ОЖ_Диапазон',
+        dct_svod_l = {'ОЖ_Обработанное_значение_%': 'ОЖ_Диапазон',
                       }
 
-        dct_rename_svod_l = {'ОЖ_Значение': 'Общий показатель ОЖ',
+        dct_rename_svod_l = {'ОЖ_Обработанное_значение_%': 'Общий показатель ОЖ',
                              }
 
         lst_l = ['1-20%','21-40%','41-60%','61-80%','81-100%']
@@ -1217,31 +1228,31 @@ def processing_leontiev_sgo(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst
         base_svod_l_df = create_union_svod(base_df, dct_svod_l, dct_rename_svod_l, lst_l)
 
         # Делаем свод  по  шкалам
-        dct_svod_sub = {'Ц_Значение': 'Ц_Диапазон',
-                        'П_Значение': 'П_Диапазон',
-                        'Р_Значение': 'Р_Диапазон',
-                        'ЛКЯ_Значение': 'ЛКЯ_Диапазон',
-                        'ЛКЖ_Значение': 'ЛКЖ_Диапазон',
+        dct_svod_sub = {'Ц_Обработанное_значение_%': 'Ц_Диапазон',
+                        'П_Обработанное_значение_%': 'П_Диапазон',
+                        'Р_Обработанное_значение_%': 'Р_Диапазон',
+                        'ЛКЯ_Обработанное_значение_%': 'ЛКЯ_Диапазон',
+                        'ЛКЖ_Обработанное_значение_%': 'ЛКЖ_Диапазон',
                         }
 
-        dct_rename_svod_sub = {'Ц_Значение': 'Цели',
-                               'П_Значение': 'Процесс',
-                               'Р_Значение': 'Результат',
-                               'ЛКЯ_Значение': 'Локус контроля – Я',
-                               'ЛКЖ_Значение': 'Локус контроля - жизнь',
+        dct_rename_svod_sub = {'Ц_Обработанное_значение_%': 'Цели',
+                               'П_Обработанное_значение_%': 'Процесс',
+                               'Р_Обработанное_значение_%': 'Результат',
+                               'ЛКЯ_Обработанное_значение_%': 'Локус контроля – Я',
+                               'ЛКЖ_Обработанное_значение_%': 'Локус контроля - жизнь',
                                }
 
         lst_sub = ['1-20%','21-40%','41-60%','61-80%','81-100%']
 
         base_svod_sub_df = create_union_svod(base_df, dct_svod_sub, dct_rename_svod_sub, lst_sub)
 
-        avg_obj = round(base_df['ОЖ_Значение'].mean(), 2)
+        avg_obj = round(base_df['ОЖ_Обработанное_значение_%'].mean(), 2)
 
-        avg_v = round(base_df['Ц_Значение'].mean(), 2)
-        avg_k = round(base_df['П_Значение'].mean(), 2)
-        avg_pr = round(base_df['Р_Значение'].mean(), 2)
-        avg_lka = round(base_df['ЛКЯ_Значение'].mean(), 2)
-        avg_lkg = round(base_df['ЛКЖ_Значение'].mean(), 2)
+        avg_v = round(base_df['Ц_Обработанное_значение_%'].mean(), 2)
+        avg_k = round(base_df['П_Обработанное_значение_%'].mean(), 2)
+        avg_pr = round(base_df['Р_Обработанное_значение_%'].mean(), 2)
+        avg_lka = round(base_df['ЛКЯ_Обработанное_значение_%'].mean(), 2)
+        avg_lkg = round(base_df['ЛКЖ_Обработанное_значение_%'].mean(), 2)
 
         avg_dct = {'Среднее значение Общий показатель ОЖ': avg_obj,
                    'Среднее значение шкалы Цели': avg_v,
