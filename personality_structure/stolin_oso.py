@@ -267,6 +267,462 @@ def calc_percent_as(value):
 
 
 
+def calc_value_ood(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [1, 5, 10, 15, 42, 55,
+              3, 26, 30, 32, 43, 44, 49]
+    lst_neg = [3, 26, 30, 32, 43, 44, 49]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_percent_ood(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    result = 0
+
+    if value == 0:
+        result =0
+    elif value == 1:
+        result =0
+    elif value ==2:
+        result =0.67
+    elif value ==3:
+        result =1.00
+    elif value ==4:
+        result =3.33
+    elif value ==5:
+        result =6.00
+    elif value ==6:
+        result =9.00
+    elif value ==7:
+        result =17.67
+    elif value ==8:
+        result =27.33
+    elif value ==9:
+        result =39.67
+    elif value ==10:
+        result =53.00
+    elif value ==11:
+        result =72.33
+    elif value ==12:
+        result =91.33
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+def calc_value_si(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [7, 17, 20, 33, 34, 52,
+              14, 51]
+    lst_neg = [14, 51]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+def calc_percent_si(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    result = 0
+
+    if value == 0:
+        result =0.67
+    elif value == 1:
+        result =2.00
+    elif value ==2:
+        result =5.33
+    elif value ==3:
+        result =16.00
+    elif value ==4:
+        result =29.00
+    elif value ==5:
+        result =49.67
+    elif value ==6:
+        result =71.33
+    elif value ==7:
+        result =92.33
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+
+def calc_value_usuv(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [2, 23, 37, 42, 46,
+              38, 39, 41]
+    lst_neg = [38, 39, 41]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+def calc_percent_usuv(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    result = 0
+
+    if value == 0:
+        result =3.77
+    elif value == 1:
+        result =7.33
+    elif value ==2:
+        result =16.67
+    elif value ==3:
+        result =29.33
+    elif value ==4:
+        result =49.67
+    elif value ==5:
+        result =65.67
+    elif value ==6:
+        result =81.33
+    elif value ==7:
+        result =92.33
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+def calc_value_uod(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [ 1, 5, 10, 52, 55,
+               32, 43,44]
+    lst_neg = [32, 43, 44]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_percent_uod(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    result = 0
+
+    if value == 0:
+        result =0
+    elif value == 1:
+        result =0.67
+    elif value ==2:
+        result =3.67
+    elif value ==3:
+        result =7.33
+    elif value ==4:
+        result =15.00
+    elif value ==5:
+        result =32.00
+    elif value ==6:
+        result =51.33
+    elif value ==7:
+        result =80.00
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+def calc_value_usp(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [12, 18, 28, 47, 48, 54,
+              21]
+    lst_neg = [21]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+def calc_percent_usp(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+    result = 0
+
+    if value == 0:
+        result =2.67
+    elif value == 1:
+        result =7.67
+    elif value ==2:
+        result =16.67
+    elif value ==3:
+        result =34.33
+    elif value ==4:
+        result =50.67
+    elif value ==5:
+        result =70.67
+    elif value ==6:
+        result =89.67
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+
+def calc_value_usr(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [50, 57,
+              25, 27, 31, 35, 36]
+    lst_neg = [25, 27, 31, 35, 36]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+def calc_percent_usr(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+
+    if value == 0:
+        result =3.00
+    elif value == 1:
+        result =9.67
+    elif value ==2:
+        result =25.67
+    elif value ==3:
+        result =38.33
+    elif value ==4:
+        result =60.33
+    elif value ==5:
+        result =79.67
+    elif value ==6:
+        result =92.00
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+def calc_value_uso(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [3, 4, 9, 11, 16, 24, 45, 56]
+    lst_neg = []
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_percent_uso(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+
+    if value == 0:
+        result =1.67
+    elif value == 1:
+        result =4.67
+    elif value ==2:
+        result =15.00
+    elif value ==3:
+        result =27.67
+    elif value ==4:
+        result =43.33
+    elif value ==5:
+        result =60.77
+    elif value ==6:
+        result =81.67
+    elif value ==7:
+        result =96.67
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+def calc_value_usi(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [17, 20, 33,
+              26, 30, 49, 51]
+    lst_neg = [26, 30, 49, 51]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_percent_usi(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+
+    if value == 0:
+        result =0.67
+    elif value == 1:
+        result =3.00
+    elif value ==2:
+        result =11.33
+    elif value ==3:
+        result =20.00
+    elif value ==4:
+        result =34.33
+    elif value ==5:
+        result =54.67
+    elif value ==6:
+        result =80.00
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+def calc_value_uspm(row):
+    """
+    Функция для подсчета значения
+    :return: число
+    """
+    lst_pr = [53,
+              6, 8, 13, 15, 22, 40]
+    lst_neg = [6, 8, 13, 15, 22, 40]
+    value_forward = 0  # результат
+    for idx, value in enumerate(row,1):
+        if idx in lst_pr:
+            if idx not in lst_neg:
+                if value == 'да':
+                    value_forward += 1
+            else:
+                if value == 'нет':
+                    value_forward += 1
+    return value_forward
+
+
+def calc_percent_uspm(value):
+    """
+    Функция для подсчета уровня
+    :param value:
+    :return:
+    """
+
+    if value == 0:
+        result =4.33
+    elif value == 1:
+        result =21.33
+    elif value ==2:
+        result =43.33
+    elif value ==3:
+        result =68.67
+    elif value ==4:
+        result =83.67
+    elif value ==5:
+        result =94.00
+    elif value ==6:
+        result =99.33
+    else:
+        result =100
+
+    result = round(result)
+    return f'{result}%'
+
+
+
+
+
 
 
 def processing_oso_stolin_pan(base_df: pd.DataFrame, answers_df: pd.DataFrame, lst_svod_cols:list):
@@ -394,6 +850,42 @@ def processing_oso_stolin_pan(base_df: pd.DataFrame, answers_df: pd.DataFrame, l
     base_df['АС_Сырое_Значение'] = answers_df.apply(calc_value_as, axis=1)
     base_df['АС_Накопленная_частота_%'] = base_df['АС_Сырое_Значение'].apply(calc_percent_as)
     base_df['АС_Уровень'] = base_df['АС_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['ООД_Сырое_Значение'] = answers_df.apply(calc_value_ood, axis=1)
+    base_df['ООД_Накопленная_частота_%'] = base_df['ООД_Сырое_Значение'].apply(calc_percent_ood)
+    base_df['ООД_Уровень'] = base_df['ООД_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['СИ_Сырое_Значение'] = answers_df.apply(calc_value_si, axis=1)
+    base_df['СИ_Накопленная_частота_%'] = base_df['СИ_Сырое_Значение'].apply(calc_percent_si)
+    base_df['СИ_Уровень'] = base_df['СИ_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УСУВ_Сырое_Значение'] = answers_df.apply(calc_value_usuv, axis=1)
+    base_df['УСУВ_Накопленная_частота_%'] = base_df['УСУВ_Сырое_Значение'].apply(calc_percent_usuv)
+    base_df['УСУВ_Уровень'] = base_df['УСУВ_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УОД_Сырое_Значение'] = answers_df.apply(calc_value_uod, axis=1)
+    base_df['УОД_Накопленная_частота_%'] = base_df['УОД_Сырое_Значение'].apply(calc_percent_uod)
+    base_df['УОД_Уровень'] = base_df['УОД_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УСП_Сырое_Значение'] = answers_df.apply(calc_value_usp, axis=1)
+    base_df['УСП_Накопленная_частота_%'] = base_df['УСП_Сырое_Значение'].apply(calc_percent_usp)
+    base_df['УСП_Уровень'] = base_df['УСП_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УСР_Сырое_Значение'] = answers_df.apply(calc_value_usr, axis=1)
+    base_df['УСР_Накопленная_частота_%'] = base_df['УСР_Сырое_Значение'].apply(calc_percent_usr)
+    base_df['УСР_Уровень'] = base_df['УСР_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УСО_Сырое_Значение'] = answers_df.apply(calc_value_uso, axis=1)
+    base_df['УСО_Накопленная_частота_%'] = base_df['УСО_Сырое_Значение'].apply(calc_percent_uso)
+    base_df['УСО_Уровень'] = base_df['УСО_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УСИ_Сырое_Значение'] = answers_df.apply(calc_value_usi, axis=1)
+    base_df['УСИ_Накопленная_частота_%'] = base_df['УСИ_Сырое_Значение'].apply(calc_percent_usi)
+    base_df['УСИ_Уровень'] = base_df['УСИ_Накопленная_частота_%'].apply(calc_level)
+
+    base_df['УСПМ_Сырое_Значение'] = answers_df.apply(calc_value_uspm, axis=1)
+    base_df['УСПМ_Накопленная_частота_%'] = base_df['УСПМ_Сырое_Значение'].apply(calc_percent_uspm)
+    base_df['УСПМ_Уровень'] = base_df['УСПМ_Накопленная_частота_%'].apply(calc_level)
 
 
 
