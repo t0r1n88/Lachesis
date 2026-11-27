@@ -135,7 +135,7 @@ from personality_structure.alexsandrova_sdjs import processing_sdjs_alex # Се�
 from personality_structure.garanyan_op import processing_op_ghu # Опросник перфекционизма Гаранян, Холмогорова, Юдеева
 from personality_structure.tatarko_osa import processing_osa_tatarko # Опросник социальных аксиом (ОСА-31) Татарко, Лебедева
 from personality_structure.vodopyanova_spss import processing_spss_vod_star # Стратегия преодоления стрессовых ситуаций, SACS Хобфолл С., 1994 Адаптация Н.Е. Водопьянова, Е.С. Старченкова
-
+from personality_structure.leontiev_sgo import processing_leontiev_sgo # Стратегия смысложизненных ориентаций Леонтьев
 
 # Зависимости
 from cyberpsychology.chen_cias import processing_cias_chen_mal # Шкала Интернет- зависимости CIAS Чен Малыгин
@@ -413,6 +413,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                      'ОКУ Гурина': (processing_oku_gurina, 20),
                      'ССПМ 2020 Моросанова': (processing_sspmtt_moros, 28),
                      'СПСС Водопьянова Старченкова': (processing_spss_vod_star, 54),
+                     'СЖО Леонтьев': (processing_leontiev_sgo, 20),
 
 
                      }  # словарь с наименованием теста функцией для его обработки и количеством колонок
@@ -562,6 +563,7 @@ def generate_result_all_age(params_adults: str, data_adults: str, end_folder: st
                               'ОКУ Гурина': 'Шкала оценки ксенофобских установок Гурина',
                               'ССПМ 2020 Моросанова': 'Стиль саморегуляции поведения, ССПМ-2020  Моросанова',
                               'СПСС Водопьянова Старченкова': 'Стратегия преодоления стрессовых ситуаций, SACS Водопьянова Старченкова',
+                              'СЖО Леонтьев': 'Тест смысложизненных ориентаций Леонтьев',
 
 
                               }  # словарь с наименованием теста функцией для его обработки и количеством колонок
